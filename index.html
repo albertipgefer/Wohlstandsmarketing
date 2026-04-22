@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Wohlstandsmarketing — Performance Marketing für Event & Gastro. Mehr qualifizierte Anfragen, mehr Umsatz." />
+
+  <!-- Meta Pixel Code -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1109190438031661');
+    fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+         src="https://www.facebook.com/tr?id=1109190438031661&ev=PageView&noscript=1"/>
+  </noscript>
+  <!-- End Meta Pixel Code -->
+
+  <title>Wohlstandsmarketing — Performance Marketing für Event & Gastro</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/reset.css" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/sections.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+</head>
+<body>
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
+
+  <!-- Navigation -->
+  <!-- Mobile Nav Overlay (direkt im body — kein backdrop-filter-Problem) -->
+  <ul class="nav-links" id="nav-links">
+    <li><a href="#leistungen">Leistungen</a></li>
+    <li><a href="#methode">Methode</a></li>
+    <li><a href="#ergebnisse">Ergebnisse</a></li>
+    <li><a href="#kontakt">Kontakt</a></li>
+  </ul>
+
+  <nav id="main-nav" class="main-nav">
+    <div class="container nav-container">
+      <a href="#hero" class="nav-logo"><span class="nav-logo-white">WOHLSTANDS</span><span class="nav-logo-orange">MARKETING</span></a>
+      <!-- Desktop: Nav-Links inline -->
+      <ul class="nav-links-desktop">
+        <li><a href="#leistungen">Leistungen</a></li>
+        <li><a href="#methode">Methode</a></li>
+        <li><a href="#ergebnisse">Ergebnisse</a></li>
+        <li><a href="#kontakt">Kontakt</a></li>
+      </ul>
+      <a href="https://tidycal.com/albertipgefer/erstgespraech-mit-wohlstandsmarketing" target="_blank" rel="noopener" class="btn-primary nav-cta">Erstgespräch buchen</a>
+      <button class="nav-toggle" aria-label="Menü öffnen" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section id="hero" class="section hero-section">
+    <div class="hero-bg-pattern"></div>
+    <div class="container hero-container">
+
+      <div class="hero-split">
+
+        <!-- Links oben: Headline -->
+        <div class="hero-left animate-in">
+          <h1 class="hero-headline">
+            Planbare Kundenanfragen.<br>
+            <span class="hero-headline-gold">Jeden Monat.</span>
+          </h1>
+        </div>
+
+        <!-- Rechts: Badge + Interaktiver Chart -->
+        <div class="hero-right animate-in">
+          <span class="badge hero-badge hero-badge-right">Performance Marketing für Event & Gastro</span>
+          <div class="hero-chart-card">
+            <div id="chart-tooltip" class="chart-tooltip"></div>
+            <div class="chart-card-header">
+              <div>
+                <p class="chart-card-label">Anfragen pro Monat</p>
+                <p class="chart-card-since">Entwicklung seit Zusammenarbeit</p>
+              </div>
+              <div class="chart-card-badge">+500%</div>
+            </div>
+            <div class="chart-svg-wrap">
+              <svg class="hero-chart-svg" viewBox="0 0 380 160" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="chartFillGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#1663de" stop-opacity="0.2"/>
+                    <stop offset="100%" stop-color="#1663de" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <!-- Horizontale Gitterlinien -->
+                <line x1="30" y1="32" x2="370" y2="32" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+                <line x1="30" y1="66" x2="370" y2="66" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+                <line x1="30" y1="101" x2="370" y2="101" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+                <line x1="30" y1="135" x2="370" y2="135" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+                <!-- Y-Achse Labels -->
+                <text x="24" y="36" text-anchor="end" font-size="9" fill="rgba(255,255,255,0.3)" font-family="Inter,sans-serif">30</text>
+                <text x="24" y="70" text-anchor="end" font-size="9" fill="rgba(255,255,255,0.3)" font-family="Inter,sans-serif">20</text>
+                <text x="24" y="105" text-anchor="end" font-size="9" fill="rgba(255,255,255,0.3)" font-family="Inter,sans-serif">10</text>
+                <text x="24" y="139" text-anchor="end" font-size="9" fill="rgba(255,255,255,0.3)" font-family="Inter,sans-serif">0</text>
+                <!-- X-Achse Labels -->
+                <text x="30" y="155" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.3)" font-family="Inter,sans-serif">Jan</text>
+                <text x="73" y="155" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.3)" font-family="Inter,sans-serif">Feb</text>
+                <text x="115" y="155" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.3)" font-family="Inter,sans-serif">Mär</text>
+                <text x="158" y="155" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.3)" font-family="Inter,sans-serif">Apr</text>
+                <text x="200" y="155" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.3)" font-family="Inter,sans-serif">Mai</text>
+                <text x="243" y="155" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.3)" font-family="Inter,sans-serif">Jun</text>
+                <text x="285" y="155" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.3)" font-family="Inter,sans-serif">Jul</text>
+                <text x="328" y="155" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.3)" font-family="Inter,sans-serif">Aug</text>
+                <text x="370" y="155" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.3)" font-family="Inter,sans-serif">Sep</text>
+                <!-- Fläche unter der Nach-Linie (animiert) -->
+                <path id="hero-chart-area-after" d="M 30 118 L 73 108 L 115 94 L 158 80 L 200 66 L 243 56 L 285 46 L 328 36 L 370 32 L 370 135 L 30 135 Z" fill="url(#chartFillGrad)" opacity="0"/>
+                <!-- Vor-Zusammenarbeit Linie (gestrichelt, flach) -->
+                <path d="M 30 118 L 73 118 L 115 115 L 158 121 L 200 118 L 243 118 L 285 115 L 328 121 L 370 118" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" fill="none" stroke-dasharray="4 4"/>
+                <!-- Seit-Zusammenarbeit Linie (animiert) -->
+                <path id="hero-chart-line-after" d="M 30 118 L 73 108 L 115 94 L 158 80 L 200 66 L 243 56 L 285 46 L 328 36 L 370 32" stroke="#1663de" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Hover-Flächen für Tooltip (unsichtbar) -->
+                <circle class="chart-point" cx="30" cy="118" r="9" fill="transparent" data-label="Jan: 5 Anfragen"/>
+                <circle class="chart-point" cx="73" cy="108" r="9" fill="transparent" data-label="Feb: 8 Anfragen"/>
+                <circle class="chart-point" cx="115" cy="94" r="9" fill="transparent" data-label="Mär: 12 Anfragen"/>
+                <circle class="chart-point" cx="158" cy="80" r="9" fill="transparent" data-label="Apr: 16 Anfragen"/>
+                <circle class="chart-point" cx="200" cy="66" r="9" fill="transparent" data-label="Mai: 20 Anfragen"/>
+                <circle class="chart-point" cx="243" cy="56" r="9" fill="transparent" data-label="Jun: 23 Anfragen"/>
+                <circle class="chart-point" cx="285" cy="46" r="9" fill="transparent" data-label="Jul: 26 Anfragen"/>
+                <circle class="chart-point" cx="328" cy="36" r="9" fill="transparent" data-label="Aug: 29 Anfragen"/>
+                <circle class="chart-point" cx="370" cy="32" r="9" fill="transparent" data-label="Sep: 30 Anfragen 🎉"/>
+                <!-- Sichtbare Datenpunkte -->
+                <circle cx="30" cy="118" r="3" fill="rgba(22,99,222,0.5)"/>
+                <circle cx="370" cy="32" r="4" fill="#1663de" stroke="rgba(22,99,222,0.3)" stroke-width="7" class="chart-dot-last"/>
+              </svg>
+            </div>
+            <div class="chart-legend">
+              <span class="chart-legend-item chart-legend-before">Vor Zusammenarbeit</span>
+              <span class="chart-legend-item chart-legend-after">Seit Zusammenarbeit</span>
+            </div>
+            <!-- WhatsApp Eingang -->
+            <div class="wa-notification">
+              <div class="wa-icon-wrap">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#25D366">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+              </div>
+              <div class="wa-text">
+                <span class="wa-name">Neue Anfrage 🎉</span>
+                <span class="wa-msg">Hallo, ich interessiere mich für eine Zusammenarbeit!</span>
+              </div>
+              <span class="wa-time">Jetzt</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Links unten: Subline + Buttons -->
+        <div class="hero-bottom animate-in">
+          <p class="hero-subline">
+            Event- und Gastrounternehmer gewinnen mit der WSM-Methode zuverlässig qualifizierte Anfragen — ohne Kaltakquise, ohne Zufall, ohne Zeitverschwendung.
+          </p>
+          <div class="hero-cta-group">
+            <a href="https://tidycal.com/albertipgefer/erstgespraech-mit-wohlstandsmarketing"
+               target="_blank" rel="noopener"
+               class="btn-primary">
+              <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Jetzt Erstgespräch buchen <span class="btn-time">(15 Min)</span>
+            </a>
+            <a href="#problem" class="btn-secondary hero-scroll-btn">
+              Mehr erfahren
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M8 3v10M3 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Stats Bar (volle Breite) -->
+      <div class="hero-stats animate-in">
+        <div class="hero-stat">
+          <span class="hero-stat-number">5,27 €</span>
+          <span class="hero-stat-label">Ø Kosten / Anfrage</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-number">29,93</span>
+          <span class="hero-stat-label">ROAS (Bestleistung)</span>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-number">120.000 €+</span>
+          <span class="hero-stat-label">Verwaltetes Werbebudget</span>
+        </div>
+      </div>
+
+    </div>
+    <div class="hero-scroll-indicator">
+      <div class="hero-scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- Problem -->
+  <section id="problem" class="section problem-section">
+    <div class="container">
+      <div class="section-header animate-in">
+        <span class="section-label">Das Problem</span>
+        <h2>Kennst du das?</h2>
+        <div class="gold-line"></div>
+      </div>
+      <div class="problem-grid animate-in">
+        <div class="card problem-card">
+          <div class="problem-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"/>
+              <path d="M12 8v4M12 16h.01" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3>Keine planbaren Neukundenanfragen</h3>
+          <p>Du weißt nicht, wie viele Anfragen nächsten Monat kommen — alles hängt von Empfehlungen und Mundpropaganda ab. Das ist kein Business, das ist Lotterie.</p>
+        </div>
+        <div class="card problem-card">
+          <div class="problem-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3>Zu wenig Anfragen trotz gutem Angebot</h3>
+          <p>Dein Angebot ist stark — aber kaum jemand weiß davon. Online bist du unsichtbar, während Mitbewerber mit schlechteren Leistungen mehr Buchungen einfahren.</p>
+        </div>
+        <div class="card problem-card">
+          <div class="problem-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3>Zeit für unqualifizierte Kontakte</h3>
+          <p>Die Anfragen die ankommen sind oft nicht budget-qualifiziert, falsch informiert oder schlicht nicht deine Zielgruppe. Deine Zeit ist zu wertvoll für solche Gespräche.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Agitation -->
+  <section id="agitation" class="section agitation-section">
+    <div class="container">
+      <div class="agitation-content animate-in">
+        <div class="agitation-accent-line"></div>
+        <div class="agitation-text">
+          <span class="section-label">Die Wahrheit</span>
+          <h2>Während du wartest, gewinnen andere.</h2>
+          <div class="agitation-body">
+            <p>Jeden Monat den du ohne System verbringst, ist ein Monat den dein Mitbewerber nutzt — um Anfragen einzusammeln, Kunden zu gewinnen und Umsatz aufzubauen.</p>
+            <p class="agitation-highlight">Empfehlungen sind schön. Aber sie sind nicht skalierbar. Nicht kontrollierbar. Nicht planbar.</p>
+            <p>Du kannst nicht entscheiden, wie viele Empfehlungen nächsten Monat kommen. Du kannst nicht bestimmen, ob die Qualität stimmt. Und du kannst vor allem nicht entscheiden, wann du wachsen willst — das entscheiden andere für dich.</p>
+            <p>Das Resultat: Du arbeitest hart, erzielst ordentliche Umsätze — aber du bist niemals wirklich in Kontrolle. Dein Wachstum hängt am guten Willen anderer.</p>
+          </div>
+          <p class="agitation-question">Wie lange willst du noch auf den nächsten Zufall warten?</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lösung -->
+  <section id="loesung" class="section loesung-section">
+    <div class="container">
+      <div class="loesung-content animate-in">
+        <span class="section-label">Die Lösung</span>
+        <h2>Es gibt einen besseren Weg.</h2>
+        <div class="gold-line"></div>
+        <p class="loesung-intro">Was wäre, wenn du jeden Monat eine vorhersehbare Anzahl an qualifizierten Anfragen hättest — von genau den Unternehmen, die du als Kunden willst?</p>
+        <div class="loesung-points">
+          <div class="loesung-point">
+            <span class="loesung-check">✓</span>
+            <span>Planbar: Du weißt, wie viele Anfragen kommen</span>
+          </div>
+          <div class="loesung-point">
+            <span class="loesung-check">✓</span>
+            <span>Qualifiziert: Budget, Interesse und Bedarf stimmen</span>
+          </div>
+          <div class="loesung-point">
+            <span class="loesung-check">✓</span>
+            <span>Skalierbar: Mehr Budget = mehr Anfragen, auf Knopfdruck</span>
+          </div>
+          <div class="loesung-point">
+            <span class="loesung-check">✓</span>
+            <span>Messbar: Du siehst genau, was dein Marketingbudget bringt</span>
+          </div>
+        </div>
+        <p class="loesung-transition">Das ist keine Magie. Das ist die WSM-Methode.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Methode -->
+  <section id="methode" class="section methode-section">
+  <div class="container">
+    <div class="section-header animate-in">
+      <span class="section-label">Das System</span>
+      <h2>Die WSM-Methode</h2>
+      <div class="gold-line" style="margin: 1.5rem auto;"></div>
+      <p class="methode-subline">One Funnel. One ICP. One Goal.</p>
+    </div>
+
+    <div class="wsm-steps">
+      <div class="wsm-step" data-step="1">
+        <div class="wsm-step-indicator">
+          <div class="wsm-step-number">01</div>
+          <div class="wsm-connector"></div>
+        </div>
+        <div class="wsm-step-content animate-in">
+          <span class="wsm-step-tag">Schritt 01</span>
+          <h3>No-Brainer Angebot</h3>
+          <p>Wir beginnen damit, deinen einzigartigen USP zu identifizieren — was macht dich unersetzlich für deine Zielgruppe? Darauf bauen wir ein Angebot, das so stark ist, dass sich deine Zielgruppe schlecht fühlt, wenn sie es ablehnt. Wer sich nicht einträgt, hat sofort das Gefühl, etwas Wertvolles zu verpassen.</p>
+          <div class="wsm-step-result">
+            <span class="wsm-result-icon">→</span>
+            <span>Ergebnis: Ein Angebot das automatisch niedrige Kosten pro Anfrage sichert</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="wsm-step" data-step="2">
+        <div class="wsm-step-indicator">
+          <div class="wsm-step-number">02</div>
+          <div class="wsm-connector"></div>
+        </div>
+        <div class="wsm-step-content animate-in">
+          <span class="wsm-step-tag">Schritt 02</span>
+          <h3>Creatives &amp; Ad Copy</h3>
+          <p>Ich erstelle professionelle Werbetexte (Ad Copy) die deine Zielgruppe direkt ansprechen und den nächsten Schritt verkaufen: die Eintragung ins Formular. Parallel designe ich mehrere Creative-Varianten aus verschiedenen Marketing-Perspektiven — optimiert auf maximale Conversion-Rate.</p>
+          <div class="wsm-step-result">
+            <span class="wsm-result-icon">→</span>
+            <span>Ergebnis: Mehrere getestete Varianten für Split-Tests</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="wsm-step" data-step="3">
+        <div class="wsm-step-indicator">
+          <div class="wsm-step-number">03</div>
+          <div class="wsm-connector"></div>
+        </div>
+        <div class="wsm-step-content animate-in">
+          <span class="wsm-step-tag">Schritt 03</span>
+          <h3>Meta Ads Kampagne</h3>
+          <p>Die Kampagne geht live — mit den richtigen Einstellungen um deine Zielgruppe in Instagram &amp; Facebook zu erreichen. Ich richte das vollständige Tracking ein: du siehst woher jede Anfrage kommt, der Algorithmus lernt und die Qualität steigt über Zeit. Parallel laufen Split-Tests um die "Winner" herauszukristallisieren — und dann beginnt die Skalierungsphase.</p>
+          <div class="wsm-step-result">
+            <span class="wsm-result-icon">→</span>
+            <span>Ergebnis: Ab Tag 1 erste Anfragen. Kontinuierliche Optimierung.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wsm-cta animate-in">
+      <a href="https://tidycal.com/albertipgefer/erstgespraech-mit-wohlstandsmarketing"
+         target="_blank" rel="noopener"
+         class="btn-primary">
+        <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Jetzt Erstgespräch buchen (15 Min)
+      </a>
+    </div>
+  </div>
+</section>
+
+  <!-- Leistungen -->
+  <section id="leistungen" class="section leistungen-section">
+  <div class="container">
+    <div class="section-header animate-in">
+      <span class="section-label">Leistungen</span>
+      <h2>Was ich für dich tue</h2>
+      <div class="gold-line" style="margin: 1.5rem auto;"></div>
+      <p class="section-desc">Alles aus einer Hand — strategisch aufeinander abgestimmt, damit jeder Euro Werbebudget maximale Wirkung entfaltet.</p>
+    </div>
+    <div class="leistungen-grid animate-in">
+      <div class="card leistung-card">
+        <div class="leistung-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="2" y="3" width="20" height="14" rx="2"/>
+            <path d="M8 21h8M12 17v4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="leistung-tag">Performance Marketing</span>
+        <h3>Meta Ads</h3>
+        <p>Instagram & Facebook Kampagnen die deine idealen Kunden dort erreichen, wo sie täglich sind. Von der Strategie bis zur laufenden Optimierung — ich manage alles.</p>
+        <ul class="leistung-list">
+          <li>Zielgruppen-Targeting & Creatives</li>
+          <li>Vollständiges Tracking & Pixel-Setup</li>
+          <li>Split-Tests & kontinuierliche Optimierung</li>
+          <li>Monatliches Reporting mit echten Zahlen</li>
+        </ul>
+        <div class="leistung-price">Preis auf Anfrage</div>
+      </div>
+      <div class="card leistung-card leistung-featured">
+        <div class="leistung-badge">Meist gebucht</div>
+        <div class="leistung-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.35-4.35" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="leistung-tag">Performance Marketing</span>
+        <h3>Google Ads</h3>
+        <p>Such-Anzeigen für Kunden die aktiv nach deiner Leistung suchen. Google Ads ist der direkteste Weg zu kaufbereiten Anfragen — wenn es richtig gemacht wird.</p>
+        <ul class="leistung-list">
+          <li>Keyword-Recherche & Kampagnenstruktur</li>
+          <li>Anzeigentexte & Erweiterungen</li>
+          <li>Conversion-Tracking & Bid-Optimierung</li>
+          <li>Monatliches Reporting mit echten Zahlen</li>
+        </ul>
+        <div class="leistung-price">Preis auf Anfrage</div>
+      </div>
+      <div class="card leistung-card">
+        <div class="leistung-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <span class="leistung-tag">Webdesign</span>
+        <h3>Webseiten & Landingpages</h3>
+        <p>Conversion-optimierte Seiten die Besucher in Anfragen verwandeln. Nicht Kunst um der Kunst willen — sondern Design das verkauft.</p>
+        <ul class="leistung-list">
+          <li>Conversion-optimiertes Design</li>
+          <li>Psychologisch optimierte Texte</li>
+          <li>Schnelle Ladezeiten & Mobile-First</li>
+          <li>A/B-Testing-fähige Struktur</li>
+        </ul>
+        <div class="leistung-price">Preis auf Anfrage</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+  <!-- Ergebnisse -->
+  <section id="ergebnisse" class="section ergebnisse-section">
+  <div class="container">
+    <div class="section-header animate-in">
+      <span class="section-label">Ergebnisse</span>
+      <h2>Ergebnisse sprechen für sich</h2>
+      <div class="gold-line" style="margin: 1.5rem auto;"></div>
+    </div>
+
+    <!-- Zähler-Stats -->
+    <div class="ergebnisse-stats animate-in">
+      <div class="stat-item">
+        <span class="stat-number" data-target="120000" data-suffix="€+">0</span>
+        <span class="stat-label">Verwaltetes Werbebudget</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-target="5" data-suffix="+ Jahre">0</span>
+        <span class="stat-label">B2B-Marketing-Erfahrung</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-target="527" data-prefix="ab " data-suffix=" €" data-divide="100">0</span>
+        <span class="stat-label">Ø Kosten pro Anfrage</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" data-target="2993" data-suffix=" ROAS" data-divide="100">0</span>
+        <span class="stat-label">Höchster erreichter ROAS</span>
+      </div>
+    </div>
+
+    <!-- Ergebnis-Karten -->
+    <div class="ergebnisse-cards animate-in">
+      <div class="card ergebnis-card">
+        <div class="ergebnis-header">
+          <span class="ergebnis-label">Kampagne A</span>
+          <span class="ergebnis-branche">Event-Branche</span>
+        </div>
+        <div class="ergebnis-zahlen">
+          <div class="ergebnis-zahl">
+            <span class="ergebnis-desc">Anfragen in 7 Tagen</span>
+            <span class="ergebnis-big">38</span>
+            <div class="ergebnis-bar-wrap">
+              <div class="ergebnis-bar" data-bar="75"></div>
+            </div>
+          </div>
+          <div class="ergebnis-zahl">
+            <span class="ergebnis-desc">Kosten pro Anfrage</span>
+            <span class="ergebnis-big">5,27 €</span>
+            <div class="ergebnis-bar-wrap">
+              <div class="ergebnis-bar" data-bar="92"></div>
+            </div>
+          </div>
+          <div class="ergebnis-zahl">
+            <span class="ergebnis-desc">ROAS</span>
+            <span class="ergebnis-big">29,93</span>
+            <div class="ergebnis-bar-wrap">
+              <div class="ergebnis-bar" data-bar="100"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card ergebnis-card">
+        <div class="ergebnis-header">
+          <span class="ergebnis-label">Kampagne B</span>
+          <span class="ergebnis-branche">Event-Branche</span>
+        </div>
+        <div class="ergebnis-zahlen">
+          <div class="ergebnis-zahl">
+            <span class="ergebnis-desc">Anfragen generiert</span>
+            <span class="ergebnis-big">89</span>
+            <div class="ergebnis-bar-wrap">
+              <div class="ergebnis-bar" data-bar="100"></div>
+            </div>
+          </div>
+          <div class="ergebnis-zahl">
+            <span class="ergebnis-desc">Kosten pro Anfrage</span>
+            <span class="ergebnis-big">12,84 €</span>
+            <div class="ergebnis-bar-wrap">
+              <div class="ergebnis-bar" data-bar="68"></div>
+            </div>
+          </div>
+          <div class="ergebnis-zahl">
+            <span class="ergebnis-desc">ROAS</span>
+            <span class="ergebnis-big">17,06</span>
+            <div class="ergebnis-bar-wrap">
+              <div class="ergebnis-bar" data-bar="80"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bild-Platzhalter -->
+    <div class="ergebnisse-images animate-in">
+      <p class="ergebnisse-images-label">Screenshots aus echten Kampagnen</p>
+      <div class="ergebnisse-images-grid">
+        <img src="assets/images/kampagne-1.png" alt="Kampagnen-Screenshot 1" class="result-image">
+        <img src="assets/images/kampagne-2.png" alt="Kampagnen-Screenshot 2" class="result-image">
+      </div>
+    </div>
+  </div>
+</section>
+
+  <!-- Über mich -->
+  <section id="ueber-mich" class="section ueber-mich-section">
+    <div class="container">
+      <div class="ueber-mich-grid animate-in">
+        <div class="ueber-mich-bild">
+          <img src="assets/images/albert-ipgefer.jpg" alt="Albert Ipgefer" class="ueber-mich-foto">
+        </div>
+        <div class="ueber-mich-text">
+          <span class="section-label">Über mich</span>
+          <h2>Albert Ipgefer</h2>
+          <div class="gold-line"></div>
+          <p class="ueber-mich-intro">Ich helfe Event- und Gastrounternehmen dabei, mit bezahlter Werbung planbar neue Kunden zu gewinnen — profitabel, messbar, skalierbar.</p>
+          <p>Mein Hintergrund liegt im Vertrieb. Das bedeutet: Ich denke nicht in Klicks und Impressionen, sondern in Ergebnissen. Eine Kampagne ist nur dann gut, wenn sie qualifizierte Anfragen bringt — zu einem Preis der sich rechnet.</p>
+          <p>In 5+ Jahren B2B-Marketing habe ich über 120.000 € Werbebudget verwaltet, dutzende Kampagnen für Kunden aus der Event- und Gastrobranche umgesetzt und dabei eines gelernt: der größte Hebel ist nicht das Budget — es ist das Angebot und die Zielgruppe.</p>
+          <p>Genau dafür habe ich die WSM-Methode entwickelt.</p>
+          <div class="ueber-mich-facts">
+            <div class="ueber-mich-fact">
+              <span class="fact-number">5+</span>
+              <span class="fact-label">Jahre Erfahrung</span>
+            </div>
+            <div class="ueber-mich-fact">
+              <span class="fact-number">120k€+</span>
+              <span class="fact-label">Budget verwaltet</span>
+            </div>
+            <div class="ueber-mich-fact">
+              <span class="fact-number">2</span>
+              <span class="fact-label">Plattformen (Meta + Google)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="section faq-section">
+    <div class="container">
+      <div class="section-header animate-in">
+        <span class="section-label">FAQ</span>
+        <h2>Häufige Fragen</h2>
+        <div class="gold-line" style="margin: 1.5rem auto;"></div>
+      </div>
+      <div class="faq-list animate-in">
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>Was kostet eine Zusammenarbeit?</span>
+            <span class="faq-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </button>
+          <div class="faq-answer">
+            <p>Die Investition hängt von deinem konkreten Bedarf ab. Buche ein kostenloses Erstgespräch — ich erstelle dir ein individuelles Angebot, das zu deinem Ziel passt.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>Wie schnell sehe ich erste Ergebnisse?</span>
+            <span class="faq-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </button>
+          <div class="faq-answer">
+            <p>Bei Meta Ads sind erste Anfragen oft bereits in den ersten 24–72 Stunden nach Kampagnenstart möglich. Die Skalierungsphase beginnt typischerweise ab Woche 3–4, wenn die Split-Tests ausgewertet wurden und die Winner-Ads feststehen. Google Ads braucht etwas länger für die Lernphase, zeigt aber oft präzisere Ergebnisse.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>Was passiert, wenn die Kampagne nicht die gewünschten Ergebnisse liefert?</span>
+            <span class="faq-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </button>
+          <div class="faq-answer">
+            <p>Ich optimiere kontinuierlich. Wenn eine Kampagne nicht performt, analysiere ich die Ursache und passe an — ob Zielgruppe, Creative, Ad Copy oder Landingpage. Genau dafür sind die ersten 3 Monate als Mindestlaufzeit vorgesehen: der Algorithmus braucht Zeit zum Lernen, und echte Optimierung passiert nach den ersten Daten.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>Muss ich selbst Erfahrung mit Werbung haben?</span>
+            <span class="faq-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </button>
+          <div class="faq-answer">
+            <p>Nein. Ich übernehme alles — Strategie, Setup, Umsetzung, Optimierung und Reporting. Du bekommst monatlich klare Zahlen und weißt genau, was dein Budget bringt. Du musst nichts über Werbung wissen — du musst nur bereit sein, in planbare Neukundengewinnung zu investieren.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>Arbeitest du auch mit Unternehmen außerhalb der Event- & Gastrobranche?</span>
+            <span class="faq-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </button>
+          <div class="faq-answer">
+            <p>Mein Fokus liegt auf der Event- und Gastrobranche, weil ich die Zielgruppen, saisonalen Besonderheiten und Kaufentscheidungen dort am tiefsten kenne. Das ist mein Vorteil gegenüber einer Generalisten-Agentur. Grundsätzlich sprechen wir gerne über deinen konkreten Fall im Erstgespräch.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>Was benötige ich, um loszulegen?</span>
+            <span class="faq-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </button>
+          <div class="faq-answer">
+            <p>Einen funktionierenden Business Facebook Account, ein Werbebudget und den Willen zu wachsen — den Rest übernehme ich. Im kostenlosen Erstgespräch analysieren wir gemeinsam deine Situation und ich erkläre dir, was konkret möglich ist.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Kontakt -->
+  <section id="kontakt" class="section kontakt-section">
+    <div class="kontakt-bg"></div>
+    <div class="container">
+      <div class="section-header animate-in">
+        <span class="section-label">Kontakt</span>
+        <h2>Bereit für planbare Anfragen?</h2>
+        <div class="gold-line" style="margin: 1.5rem auto;"></div>
+        <p class="section-desc">Buche jetzt ein kostenloses 15-minütiges Erstgespräch — ich schaue mir deine Situation an und zeige dir, was konkret möglich ist.</p>
+      </div>
+      <div class="kontakt-grid animate-in">
+        <div class="kontakt-cta-block">
+          <h3>Erstgespräch buchen</h3>
+          <p>15 Minuten. Kostenlos. Unverbindlich.<br>Du bekommst konkrete Einschätzung — kein Sales-Druck.</p>
+          <a href="https://tidycal.com/albertipgefer/erstgespraech-mit-wohlstandsmarketing"
+             target="_blank" rel="noopener"
+             class="btn-primary kontakt-btn">
+            <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Jetzt Erstgespräch buchen <span class="btn-time">(15 Min)</span>
+          </a>
+          <div class="kontakt-vertrauen">
+            <span>Kostenlos &amp; unverbindlich</span>
+            <span>Direkter Termin mit Albert</span>
+            <span>Konkrete Strategie für dein Business</span>
+          </div>
+        </div>
+        <div class="kontakt-form-block">
+          <h3>Oder schreib uns</h3>
+          <form class="kontakt-form" id="kontakt-form" action="https://formspree.io/f/XXXXXXXX" method="POST">
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" placeholder="Dein Name" required>
+            </div>
+            <div class="form-group">
+              <label for="email">E-Mail</label>
+              <input type="email" id="email" name="email" placeholder="deine@email.de" required>
+            </div>
+            <div class="form-group">
+              <label for="telefon">Telefon</label>
+              <input type="tel" id="telefon" name="telefon" placeholder="+49 ...">
+            </div>
+            <div class="form-group">
+              <label for="nachricht">Nachricht</label>
+              <textarea id="nachricht" name="nachricht" rows="4" placeholder="Kurze Beschreibung deines Unternehmens und was du erreichen möchtest..."></textarea>
+            </div>
+            <button type="submit" class="btn-primary form-submit">Nachricht senden</button>
+            <div class="form-success" id="form-success" style="display:none;">
+              <span>✓ Nachricht gesendet! Ich melde mich innerhalb von 24 Stunden.</span>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="footer" class="footer">
+    <div class="container footer-container">
+      <div class="footer-brand">
+        <span class="footer-logo"><span class="footer-logo-white">WOHLSTANDS</span><span class="footer-logo-orange">MARKETING</span></span>
+        <p>Performance Marketing für Event- &amp; Gastrobranche.<br>Planbare Anfragen. Messbare Ergebnisse.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#leistungen">Leistungen</a>
+        <a href="#methode">Methode</a>
+        <a href="#ergebnisse">Ergebnisse</a>
+        <a href="#kontakt">Kontakt</a>
+      </div>
+      <div class="footer-legal">
+        <a href="impressum.html">Impressum</a>
+        <a href="datenschutz.html">Datenschutz</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <span>© 2026 Wohlstandsmarketing — Albert Ipgefer. Alle Rechte vorbehalten.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JS -->
+  <script src="js/preloader.js" defer></script>
+  <script src="js/nav.js" defer></script>
+  <script src="js/animations.js" defer></script>
+  <script src="js/faq.js" defer></script>
+  <script src="js/hero-chart.js" defer></script>
+
+</body>
+</html>

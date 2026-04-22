@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Strategiegespräch — Wohlstandsmarketing</title>
+<meta name="robots" content="noindex, nofollow" />
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Meta Pixel Code (mit Enhanced Matching) -->
+<script>
+  // URL-Parameter aus Meta Lead-Form lesen (email, name)
+  var __wsmUrlParams = new URLSearchParams(window.location.search);
+  var __wsmEmail = (__wsmUrlParams.get('email') || '').toLowerCase().trim();
+  var __wsmName = (__wsmUrlParams.get('name') || '').trim();
+
+  // Schutz: wenn Meta die Platzhalter NICHT ersetzt hat (literal {{...}} in URL),
+  // behandeln wir die Werte als leer — sonst landet Müll in Pixel/Close/Mail
+  function __wsmIsPlaceholder(v) { return !v || v.indexOf('{{') !== -1 || v.indexOf('}}') !== -1 || v.indexOf('%7B') !== -1; }
+  if (__wsmIsPlaceholder(__wsmEmail)) __wsmEmail = '';
+  if (__wsmIsPlaceholder(__wsmName))  __wsmName = '';
+
+  var __wsmFirstName = __wsmName.split(' ')[0].toLowerCase();
+
+  // Enhanced Matching Object (Meta hasht intern)
+  var __wsmMatching = {};
+  if (__wsmEmail) __wsmMatching.em = __wsmEmail;
+  if (__wsmFirstName) __wsmMatching.fn = __wsmFirstName;
+
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1109190438031661', __wsmMatching);
+  fbq('track', 'PageView');
+  fbq('track', 'Lead');
+</script>
+<noscript>
+  <img height="1" width="1" style="display:none"
+       src="https://www.facebook.com/tr?id=1109190438031661&ev=PageView&noscript=1"/>
+</noscript>
+<!-- End Meta Pixel Code -->
+
+<style>
+  :root {
+    --bg: #0A0A0A;
+    --surface: #111111;
+    --surface-2: #1A1A1A;
+    --text: #F5F5F5;
+    --text-muted: #999999;
+    --accent: #1663DE;
+    --accent-light: #4D8EF5;
+    --gold: #DB6F16;
+    --gold-light: #F08C3C;
+    --gold-glow: rgba(219, 111, 22, 0.15);
+    --accent-glow: rgba(22, 99, 222, 0.15);
+    --border: rgba(219, 111, 22, 0.2);
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --font-heading: 'Playfair Display', Georgia, serif;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background:
+      radial-gradient(ellipse at top, rgba(22, 99, 222, 0.08), transparent 50%),
+      radial-gradient(ellipse at bottom, rgba(219, 111, 22, 0.05), transparent 50%),
+      var(--bg);
+  }
+
+  .shell {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Progress Bar */
+  .progress-wrap {
+    margin-bottom: 40px;
+  }
+  .progress-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .progress-bar {
+    height: 4px;
+    background: var(--surface-2);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light));
+    border-radius: 4px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  /* Frage-Card */
+  .step {
+    display: none;
+    animation: fadeIn 0.35s ease;
+  }
+  .step.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .badge {
+    display: inline-block;
+    background: var(--gold-glow);
+    color: var(--gold);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+    margin-bottom: 20px;
+  }
+
+  h1, h2 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text);
+  }
+
+  h1 {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    margin-bottom: 32px;
+  }
+
+  h2 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin-bottom: 16px;
+  }
+
+  .subtext {
+    color: var(--text-muted);
+    font-size: 1rem;
+    line-height: 1.75;
+    margin-bottom: 24px;
+  }
+
+  /* Answer Buttons */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .option {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 18px 20px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: 0.2s ease;
+  }
+  .option:hover {
+    background: rgba(22, 99, 222, 0.08);
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  /* Freitext-Eingabe (Folgefragen) */
+  .freetext {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 18px 20px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.5;
+    resize: vertical;
+    min-height: 140px;
+    margin-bottom: 16px;
+    transition: 0.2s ease;
+  }
+  .freetext::placeholder { color: var(--text-muted); }
+  .freetext:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: rgba(22, 99, 222, 0.06);
+  }
+  .freetext.error {
+    border-color: var(--gold);
+    animation: shake 0.3s;
+  }
+  @keyframes shake {
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+
+  .option-submit {
+    background: rgba(22, 99, 222, 0.12);
+    border-color: var(--accent);
+    color: var(--text);
+    text-align: center;
+    font-weight: 600;
+  }
+  .option-submit:hover {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+
+  /* Kontakt-Step */
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .contact-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 480px) {
+    .contact-row { grid-template-columns: 1fr; }
+  }
+  .contact-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .contact-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.02em;
+  }
+  .contact-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 16px 18px;
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 500;
+    transition: 0.2s ease;
+  }
+  .contact-input::placeholder { color: var(--text-muted); }
+  .contact-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: rgba(22, 99, 222, 0.06);
+  }
+  .contact-input.error {
+    border-color: var(--gold);
+    animation: shake 0.3s;
+  }
+  .contact-error {
+    font-size: 12px;
+    color: var(--gold-light);
+    min-height: 14px;
+    display: none;
+  }
+  .contact-error.show { display: block; }
+
+  /* Back-Button */
+  .back-btn {
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: var(--font-body);
+    font-weight: 500;
+    margin-bottom: 20px;
+    transition: 0.2s ease;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.02em;
+  }
+  .back-btn:hover {
+    color: var(--text);
+    border-color: var(--accent);
+    background: rgba(22, 99, 222, 0.05);
+  }
+
+  /* Ergebnis-Seite */
+  .result-card {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    padding: 32px;
+    box-shadow:
+      rgba(22, 99, 222, 0.1) 0px 0px 60px 0px,
+      rgba(0, 0, 0, 0.4) 0px 20px 40px 0px;
+  }
+
+  .tidycal-label {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-top: 28px;
+    margin-bottom: 12px;
+  }
+  .tidycal-label::before,
+  .tidycal-label::after {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    background: var(--gold);
+    opacity: 0.5;
+    vertical-align: middle;
+    margin: 0 12px;
+  }
+  .tidycal-wrap {
+    position: relative;
+    background: linear-gradient(180deg, var(--surface-2) 0%, var(--surface) 100%);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 10px;
+    margin-left: -24px;
+    margin-right: -24px;
+    overflow: hidden;
+    min-height: 820px;
+    box-shadow:
+      0 30px 80px rgba(0, 0, 0, 0.5),
+      0 0 50px rgba(219, 111, 22, 0.06);
+  }
+  .tidycal-wrap iframe {
+    width: 100%;
+    border: 0;
+    min-height: 800px;
+    display: block;
+    border-radius: 14px;
+    background: #fff;
+  }
+
+  .mitentscheider-note {
+    background: var(--gold-glow);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 16px 0 24px;
+    color: var(--gold-light);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  /* Footer */
+  .foot {
+    margin-top: auto;
+    padding-top: 40px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    line-height: 1.8;
+  }
+  .foot a {
+    color: var(--text-muted);
+    text-decoration: underline;
+    text-decoration-color: rgba(153, 153, 153, 0.4);
+    text-underline-offset: 3px;
+    transition: color 0.15s ease;
+  }
+  .foot a:hover { color: var(--text); }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- Zurück-Button (bei Bedarf angezeigt) -->
+  <button id="backButton" class="back-btn" type="button" style="display: none" aria-label="Zur vorherigen Frage">← Zurück</button>
+
+  <!-- Progress -->
+  <div class="progress-wrap">
+    <div class="progress-label"><span>Qualifizierungs-Check</span><span id="progressText">Schritt 1 / 7</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <!-- STEP 1 — Branche (Info) -->
+  <div class="step active" data-step="1">
+    <div class="badge">Danke für deine Anfrage</div>
+    <h1>In 60 Sekunden finden wir heraus, ob wir zusammenpassen.</h1>
+    <p class="subtext"><strong style="color: var(--text)">Frage 1:</strong> In welchem Bereich bist du tätig?</p>
+    <div class="options">
+      <button class="option" data-next="2" data-field="branche" data-value="Eventlocation">Eventlocation</button>
+      <button class="option" data-next="2" data-field="branche" data-value="Catering">Catering</button>
+      <button class="option" data-next="2" data-field="branche" data-value="Hochzeitsfotograf">Hochzeitsfotograf</button>
+      <button class="option" data-next="2" data-field="branche" data-value="DJ & Entertainment">DJ &amp; Entertainment</button>
+      <button class="option" data-next="2" data-field="branche" data-value="Sonstiger Event-Dienstleister">Sonstiger Event-Dienstleister</button>
+      <button class="option" data-next="2" data-field="branche" data-value="Andere Branche">Andere Branche</button>
+    </div>
+  </div>
+
+  <!-- STEP 2 — Herausforderung (Info) -->
+  <div class="step" data-step="2">
+    <p class="subtext"><strong style="color: var(--text)">Frage 2:</strong> Was ist aktuell deine größte Herausforderung im Geschäft?</p>
+    <div class="options">
+      <button class="option" data-next="4" data-field="herausforderung" data-value="Zu wenige Anfragen">Zu wenige Anfragen</button>
+      <button class="option" data-next="4" data-field="herausforderung" data-value="Unregelmäßige Auslastung">Unregelmäßige Auslastung</button>
+      <button class="option" data-next="4" data-field="herausforderung" data-value="Zu große Abhängigkeit von Empfehlungen">Zu große Abhängigkeit von Empfehlungen</button>
+      <button class="option" data-next="4" data-field="herausforderung" data-value="Keine planbaren Aufträge">Keine planbaren Aufträge</button>
+    </div>
+  </div>
+
+  <!-- STEP 3 — Entscheider (Qualifier, Pos 5 im Flow) -->
+  <div class="step" data-step="3">
+    <p class="subtext"><strong style="color: var(--text)">Frage 5:</strong> Wer entscheidet über das Marketing-Budget in deinem Unternehmen?</p>
+    <div class="options">
+      <button class="option" data-next="5" data-field="entscheider" data-value="Ich allein">Ich allein</button>
+      <button class="option" data-next="3a" data-field="entscheider" data-value="Ich und ein Partner gemeinsam">Ich und ein Partner gemeinsam</button>
+      <button class="option" data-next="7" data-field="entscheider" data-value="Jemand anderes" data-disq="entscheider">Jemand anderes</button>
+    </div>
+  </div>
+
+  <!-- STEP 3a — Partner mitbringen (bedingt) -->
+  <div class="step" data-step="3a">
+    <p class="subtext"><strong style="color: var(--text)">Kurze Folgefrage:</strong> Kannst du deinen Partner zum Strategiegespräch mitbringen?</p>
+    <div class="options">
+      <button class="option" data-next="5" data-field="partner_mitbringen" data-value="Ja">Ja, das ist möglich</button>
+      <button class="option" data-next="7" data-field="partner_mitbringen" data-value="Nein" data-disq="partner">Nein, eher nicht</button>
+    </div>
+  </div>
+
+  <!-- STEP 4 — Ziel (Qualifier, Pos 3 im Flow) -->
+  <div class="step" data-step="4">
+    <p class="subtext"><strong style="color: var(--text)">Frage 3:</strong> Was willst du in den nächsten 3 Monaten erreichen?</p>
+    <div class="options">
+      <button class="option" data-next="6" data-field="ziel" data-value="Mehr Umsatz">Mehr Umsatz</button>
+      <button class="option" data-next="6" data-field="ziel" data-value="Neue Kunden gewinnen">Neue Kunden gewinnen</button>
+      <button class="option" data-next="6" data-field="ziel" data-value="Planbare Aufträge">Planbare Aufträge</button>
+      <button class="option" data-next="6" data-field="ziel" data-value="Noch unklar">Noch unklar</button>
+    </div>
+  </div>
+
+  <!-- STEP 5 — Budget (Qualifier, Pos 6 im Flow) -->
+  <div class="step" data-step="5">
+    <p class="subtext"><strong style="color: var(--text)">Frage 6:</strong> Welches Marketing-Budget hast du für die nächsten 3 Monate eingeplant, um dein Ziel zu erreichen?</p>
+    <div class="options">
+      <button class="option" data-next="5a" data-field="budget" data-value="Unter 1.500 €">Unter 1.500 €</button>
+      <button class="option" data-next="7" data-field="budget" data-value="1.500 – 2.500 €">1.500 – 2.500 €</button>
+      <button class="option" data-next="7" data-field="budget" data-value="2.500 – 4.000 €">2.500 – 4.000 €</button>
+      <button class="option" data-next="7" data-field="budget" data-value="4.000 € und mehr">4.000 € und mehr</button>
+    </div>
+  </div>
+
+  <!-- STEP 5a — Budget Folgefrage (bei „Unter 1.500 €") -->
+  <div class="step" data-step="5a">
+    <p class="subtext"><strong style="color: var(--text)">Kurze Rückfrage:</strong> Wenn du die richtige Lösung siehst — wärst du grundsätzlich bereit, dafür auch mehr als 1.500 € pro Monat auszugeben, wenn es sich für dich lohnt?</p>
+    <div class="options">
+      <button class="option" data-next="7" data-field="budget_folge" data-value="Ja, wenn es sich lohnt">Ja, wenn es sich für mich lohnt</button>
+      <button class="option" data-next="7" data-field="budget_folge" data-value="Nein, aktuell nicht möglich" data-disq="budget">Nein, das ist aktuell nicht möglich</button>
+    </div>
+  </div>
+
+  <!-- STEP 6 — Verfügbarkeit (Qualifier, Pos 4 im Flow) -->
+  <div class="step" data-step="6">
+    <p class="subtext"><strong style="color: var(--text)">Frage 4:</strong> Wann wärst du zeitlich verfügbar, dich mit dem Projekt zu beschäftigen?</p>
+    <div class="options">
+      <button class="option" data-next="3" data-field="verfuegbarkeit" data-value="Sofort">Sofort</button>
+      <button class="option" data-next="3" data-field="verfuegbarkeit" data-value="Innerhalb 30 Tagen">Innerhalb der nächsten 30 Tage</button>
+      <button class="option" data-next="3" data-field="verfuegbarkeit" data-value="30–60 Tage">30 – 60 Tage</button>
+      <button class="option" data-next="3" data-field="verfuegbarkeit" data-value="Später als 60 Tage" data-disq="verfuegbarkeit">Später als 60 Tage</button>
+    </div>
+  </div>
+
+  <!-- STEP 7 — Kontaktdaten -->
+  <div class="step" data-step="7">
+    <p class="subtext"><strong style="color: var(--text)">Letzter Schritt:</strong> Damit wir dich erreichen können, brauchen wir noch deine Kontaktdaten.</p>
+    <div class="contact-form">
+      <div class="contact-row">
+        <div class="contact-field">
+          <label class="contact-label" for="kontakt-vorname">Vorname</label>
+          <input class="contact-input" type="text" id="kontakt-vorname" name="kontakt-vorname" autocomplete="given-name" placeholder="Max" />
+          <span class="contact-error" data-error-for="kontakt-vorname">Bitte Vornamen angeben.</span>
+        </div>
+        <div class="contact-field">
+          <label class="contact-label" for="kontakt-nachname">Nachname</label>
+          <input class="contact-input" type="text" id="kontakt-nachname" name="kontakt-nachname" autocomplete="family-name" placeholder="Mustermann" />
+          <span class="contact-error" data-error-for="kontakt-nachname">Bitte Nachnamen angeben.</span>
+        </div>
+      </div>
+      <div class="contact-field">
+        <label class="contact-label" for="kontakt-email">E-Mail</label>
+        <input class="contact-input" type="email" id="kontakt-email" name="kontakt-email" autocomplete="email" inputmode="email" placeholder="max@beispiel.de" />
+        <span class="contact-error" data-error-for="kontakt-email">Bitte eine gültige E-Mail-Adresse angeben.</span>
+      </div>
+      <div class="contact-field">
+        <label class="contact-label" for="kontakt-telefon">Telefonnummer (für schnelle Rückmeldung)</label>
+        <input class="contact-input" type="tel" id="kontakt-telefon" name="kontakt-telefon" autocomplete="tel" inputmode="tel" placeholder="0176 12345678" />
+        <span class="contact-error" data-error-for="kontakt-telefon">Bitte Telefonnummer angeben.</span>
+      </div>
+      <div class="options" style="margin-top: 8px">
+        <button class="option option-submit" id="kontakt-submit">Ergebnis jetzt ansehen →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUALIFIZIERT -->
+  <div class="step" data-step="qualifiziert">
+    <div class="result-card">
+      <div class="badge">Perfekt — du passt</div>
+      <h2>Buch dir jetzt dein Strategiegespräch mit Albert.</h2>
+      <p class="subtext">Auf Basis deiner Antworten passen wir gut zusammen. Im 60-Minuten-Gespräch klären wir dein konkretes Ziel, rechnen den ROI für dein Geschäft durch und ich zeige dir, wie wir dich planbar an neue Kunden bringen.</p>
+      <div id="mitentscheiderNote" class="mitentscheider-note" style="display:none; margin-bottom: 0">
+        <strong>Wichtig:</strong> Da ihr gemeinsam entscheidet — bitte bring deinen Partner zum Gespräch mit. Nur so können wir in einem Termin zur Entscheidung kommen.
+      </div>
+    </div>
+    <div class="tidycal-label">Wähle deinen Termin</div>
+    <div class="tidycal-wrap">
+      <iframe src="https://tidycal.com/albertipgefer/strategiegespraech-mit-wohlstandsmarketing" loading="lazy" title="Strategiegespräch buchen"></iframe>
+    </div>
+  </div>
+
+  <!-- DISQUALIFIZIERT -->
+  <div class="step" data-step="disqualifiziert">
+    <div class="result-card">
+      <div class="badge" style="background: rgba(22, 99, 222, 0.15); color: var(--accent-light); border-color: var(--accent);">Danke dir</div>
+      <h2>Wir melden uns persönlich bei dir.</h2>
+      <p class="subtext">Auf Basis deiner Antworten ist ein Strategiegespräch aktuell nicht der passende nächste Schritt. Albert meldet sich persönlich telefonisch bei dir, um gemeinsam zu schauen, wie wir dir dennoch weiterhelfen können.</p>
+      <p class="subtext" style="margin-bottom:0">Du musst nichts weiter tun — deine Anfrage ist bei uns eingegangen.</p>
+    </div>
+  </div>
+
+  <div class="foot">
+    Deine Angaben werden vertraulich behandelt. <a href="https://wohlstandsmarketing.de/datenschutz.html">Datenschutz</a><br />
+    © 2026 Wohlstandsmarketing – Albert Ipgefer. Alle Rechte vorbehalten.
+  </div>
+</div>
+
+<script>
+(function () {
+  var answers = {};
+  // Reihenfolge: 1=Branche, 2=Herausforderung, 4=Ziel (Pos 3), 6=Verfügbarkeit (Pos 4),
+  //              3=Entscheider (Pos 5, mit 3a Partner-Folge), 5=Budget (Pos 6, mit 5a), 7=Kontakt
+  var progressMap = { '1': 1, '2': 2, '4': 3, '6': 4, '3': 5, '3a': 5, '5': 6, '5a': 6, '7': 7 };
+  var totalSteps = 7;
+  var buttons = document.querySelectorAll('.option');
+  var progressFill = document.getElementById('progressFill');
+  var progressText = document.getElementById('progressText');
+  var progressWrap = document.querySelector('.progress-wrap');
+  var mitentscheiderNote = document.getElementById('mitentscheiderNote');
+
+  // State
+  var submitted = false;          // Debouncing: Submit nur 1×
+  var lastDisqReason = null;      // Grund der Disqualifikation (aus data-disq)
+  var contactData = { firstName: '', lastName: '', email: '', phone: '' };
+  var history = [];               // Stack für Zurück-Navigation
+  var backButton = document.getElementById('backButton');
+
+  var PIXEL_ID = '1109190438031661';
+  var WEBHOOK_URL = 'https://automatisierung.albertipgefer.de/webhook/wsm-quiz-submit';
+
+  // Budget → Pixel-Value (EUR) für Meta-Optimierung
+  var BUDGET_VALUES = {
+    'Unter 1.500 €':    1000,
+    '1.500 – 2.500 €':  2000,
+    '2.500 – 4.000 €':  3250,
+    '4.000 € und mehr': 5000
+  };
+
+  // Telefonnummer für Meta Enhanced Matching normalisieren:
+  // nur Zahlen, deutsche 0-Vorwahl → 49, internationale 00… → entfernen
+  function normalizePhone(raw) {
+    var digits = (raw || '').replace(/\D/g, '');
+    if (!digits) return '';
+    if (digits.indexOf('00') === 0) return digits.substring(2);
+    if (digits.charAt(0) === '0')   return '49' + digits.substring(1);
+    return digits;
+  }
+
+  function isValidEmail(v) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  }
+
+  function getCurrentStepId() {
+    var active = document.querySelector('.step.active');
+    return active ? active.getAttribute('data-step') : null;
+  }
+
+  function pushHistory() {
+    var currentStepId = getCurrentStepId();
+    if (!currentStepId) return;
+    history.push({
+      stepId:         currentStepId,
+      answers:        JSON.parse(JSON.stringify(answers)),
+      lastDisqReason: lastDisqReason,
+      contactData:    JSON.parse(JSON.stringify(contactData))
+    });
+    renderBackButton();
+  }
+
+  function renderBackButton() {
+    if (!backButton) return;
+    var show = history.length > 0 && !submitted;
+    var activeId = getCurrentStepId();
+    if (activeId === 'qualifiziert' || activeId === 'disqualifiziert') show = false;
+    backButton.style.display = show ? 'inline-flex' : 'none';
+  }
+
+  function goBack() {
+    if (submitted || !history.length) return;
+    var entry = history.pop();
+    answers        = entry.answers;
+    lastDisqReason = entry.lastDisqReason;
+    contactData    = entry.contactData;
+    goTo(entry.stepId);
+    renderBackButton();
+  }
+
+  function showFieldError(inputId, show) {
+    var input = document.getElementById(inputId);
+    var err = document.querySelector('.contact-error[data-error-for="' + inputId + '"]');
+    if (input) { show ? input.classList.add('error') : input.classList.remove('error'); }
+    if (err)   { show ? err.classList.add('show')    : err.classList.remove('show'); }
+  }
+
+  function submitQuizData(status) {
+    if (submitted) return;
+    submitted = true;
+
+    // Alle Buttons lockdown
+    document.querySelectorAll('.option').forEach(function (btn) {
+      btn.disabled = true;
+      btn.style.pointerEvents = 'none';
+      btn.style.opacity = '0.6';
+    });
+
+    var disqReason = status === 'disqualifiziert' ? lastDisqReason : null;
+    var budgetValue = BUDGET_VALUES[answers.budget] || 0;
+    var fullName = (contactData.firstName + ' ' + contactData.lastName).trim();
+    var normalizedPhone = normalizePhone(contactData.phone);
+
+    // Meta Pixel — Enhanced Matching mit echten Quiz-Kontakt-Daten re-initialisieren.
+    // Danach CompleteRegistration feuern, damit der Event die Matching-Daten trägt.
+    try {
+      if (typeof fbq === 'function') {
+        var matching = {};
+        if (contactData.email)     matching.em = contactData.email.toLowerCase();
+        if (contactData.firstName) matching.fn = contactData.firstName.toLowerCase();
+        if (contactData.lastName)  matching.ln = contactData.lastName.toLowerCase();
+        if (normalizedPhone)       matching.ph = normalizedPhone;
+        fbq('init', PIXEL_ID, matching);
+        fbq('track', 'CompleteRegistration', {
+          content_category: status,
+          value: budgetValue,
+          currency: 'EUR'
+        });
+      }
+    } catch (e) { /* silent */ }
+
+    var payload = {
+      status: status,
+      disq_reason: disqReason,
+      timestamp: new Date().toISOString(),
+      lead: {
+        email:             contactData.email     || __wsmEmail || null,
+        name:              fullName              || __wsmName  || null,
+        first_name:        contactData.firstName || null,
+        last_name:         contactData.lastName  || null,
+        phone:             contactData.phone     || null,
+        phone_normalized:  normalizedPhone       || null
+      },
+      answers: {
+        branche:                   answers.branche                   || null,
+        herausforderung:           answers.herausforderung           || null,
+        entscheider:               answers.entscheider               || null,
+        partner_mitbringen:        answers.partner_mitbringen        || null,
+        ziel:                      answers.ziel                      || null,
+        ziel_freitext:             answers.ziel_freitext             || null,
+        budget:                    answers.budget                    || null,
+        budget_folge:              answers.budget_folge              || null,
+        verfuegbarkeit:            answers.verfuegbarkeit            || null,
+        verfuegbarkeit_freitext:   answers.verfuegbarkeit_freitext   || null
+      },
+      meta: {
+        page_url:   window.location.href,
+        user_agent: navigator.userAgent
+      }
+    };
+
+    // n8n-Webhook (silent fail — User sieht nie einen Fehler)
+    try {
+      fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        keepalive: true
+      }).catch(function (err) {
+        console.warn('[Quiz] Webhook unreachable (silent):', err);
+      });
+    } catch (e) { /* silent */ }
+  }
+
+  function goTo(stepId) {
+    document.querySelectorAll('.step').forEach(function (el) { el.classList.remove('active'); });
+    var next = document.querySelector('.step[data-step="' + stepId + '"]');
+    if (next) next.classList.add('active');
+
+    // Pixel Custom Event pro Step — für Drop-Off-Analyse
+    try {
+      if (typeof fbq === 'function' && stepId !== 'qualifiziert' && stepId !== 'disqualifiziert') {
+        fbq('trackCustom', 'QuizStep', {
+          step: String(stepId),
+          step_num: progressMap[stepId] || 0
+        });
+      }
+    } catch (e) { /* silent */ }
+
+    if (stepId === 'qualifiziert' || stepId === 'disqualifiziert') {
+      progressWrap.style.display = 'none';
+      if (stepId === 'qualifiziert' && answers.entscheider === 'Ich und ein Partner gemeinsam') {
+        mitentscheiderNote.style.display = 'block';
+      }
+      submitQuizData(stepId);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      progressWrap.style.display = 'block';
+      var num = progressMap[stepId] || 1;
+      progressFill.style.width = ((num / totalSteps) * 100) + '%';
+      progressText.textContent = 'Schritt ' + num + ' / ' + totalSteps;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    renderBackButton();
+  }
+
+  function handleKontaktSubmit() {
+    if (submitted) return;
+
+    var vorname  = document.getElementById('kontakt-vorname').value.trim();
+    var nachname = document.getElementById('kontakt-nachname').value.trim();
+    var email    = document.getElementById('kontakt-email').value.trim();
+    var telefon  = document.getElementById('kontakt-telefon').value.trim();
+
+    var ok = true;
+    if (vorname.length  < 2)  { showFieldError('kontakt-vorname', true);  ok = false; } else showFieldError('kontakt-vorname', false);
+    if (nachname.length < 2)  { showFieldError('kontakt-nachname', true); ok = false; } else showFieldError('kontakt-nachname', false);
+    if (!isValidEmail(email)) { showFieldError('kontakt-email', true);    ok = false; } else showFieldError('kontakt-email', false);
+    var phoneDigits = telefon.replace(/\D/g, '');
+    if (phoneDigits.length < 6) { showFieldError('kontakt-telefon', true); ok = false; } else showFieldError('kontakt-telefon', false);
+
+    if (!ok) return;
+
+    contactData = {
+      firstName: vorname,
+      lastName:  nachname,
+      email:     email.toLowerCase(),
+      phone:     telefon
+    };
+
+    // Pixel Custom Event — Kontaktdaten valide abgeschickt
+    try {
+      if (typeof fbq === 'function') {
+        fbq('trackCustom', 'QuizContactSubmitted');
+      }
+    } catch (e) { /* silent */ }
+
+    var finalStatus = lastDisqReason ? 'disqualifiziert' : 'qualifiziert';
+    goTo(finalStatus);
+  }
+
+  // Live-Error-Clearing beim Tippen im Kontakt-Step
+  ['kontakt-vorname','kontakt-nachname','kontakt-email','kontakt-telefon'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', function () { showFieldError(id, false); });
+      el.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Enter') {
+          ev.preventDefault();
+          handleKontaktSubmit();
+        }
+      });
+    }
+  });
+
+  buttons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      if (submitted) return;
+
+      // Kontakt-Step-Submit hat eigenen Handler
+      if (btn.id === 'kontakt-submit') {
+        handleKontaktSubmit();
+        return;
+      }
+
+      var field = btn.getAttribute('data-field');
+      var value = btn.getAttribute('data-value');
+      var next = btn.getAttribute('data-next');
+      var freetextId = btn.getAttribute('data-freetext');
+      var freetextField = btn.getAttribute('data-freetext-field');
+      var disqMarker = btn.getAttribute('data-disq');
+
+      // Freitext-Validierung & Einsammeln
+      if (freetextId) {
+        var ta = document.getElementById(freetextId);
+        if (ta) {
+          var txt = ta.value.trim();
+          if (txt.length < 10) {
+            ta.focus();
+            ta.classList.add('error');
+            setTimeout(function () { ta.classList.remove('error'); }, 600);
+            return;
+          }
+          if (freetextField) answers[freetextField] = txt;
+        }
+      }
+
+      // State-Snapshot VOR jeder Mutation in History ablegen,
+      // damit Zurück-Button den Stand vor diesem Click wiederherstellen kann
+      pushHistory();
+
+      if (field && value) answers[field] = value;
+      if (disqMarker) lastDisqReason = disqMarker;
+      goTo(next);
+    });
+  });
+
+  if (backButton) {
+    backButton.addEventListener('click', goBack);
+  }
+
+  goTo('1');
+})();
+</script>
+
+</body>
+</html>

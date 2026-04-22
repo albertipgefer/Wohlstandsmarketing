@@ -1,0 +1,92 @@
+/* Wohlstandsmarketing — animations.css */
+
+/* =====================
+   PRELOADER
+   ===================== */
+
+#preloader {
+  position: fixed;
+  inset: 0;
+  background: #0A0A0A;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+#preloader.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.preloader-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(0.85rem, 4.8vw, 1.5rem);
+  color: #F5F5F5;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: preloader-text-in 0.8s ease 0.3s forwards;
+  max-width: 80vw;
+  text-align: center;
+}
+.preloader-logo-orange {
+  color: var(--gold);
+}
+
+.preloader-line-wrap {
+  margin-top: 2rem;
+  width: min(200px, 80vw);
+  height: 1px;
+  background: rgba(219, 111, 22, 0.2);
+  overflow: hidden;
+  position: relative;
+}
+
+.preloader-line {
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light), #ffc080);
+  animation: preloader-progress 1.5s ease 0.8s forwards;
+  box-shadow: 0 0 8px rgba(219, 111, 22, 0.6);
+}
+
+/* =====================
+   @KEYFRAMES
+   ===================== */
+
+@keyframes preloader-text-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes preloader-progress {
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

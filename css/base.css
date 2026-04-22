@@ -1,0 +1,128 @@
+/* Wohlstandsmarketing — base.css */
+
+/* ─── Body ─── */
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+}
+
+/* ─── Headings ─── */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
+  color: var(--text);
+  line-height: var(--leading-tight);
+  font-weight: 700;
+}
+
+h1 { font-size: var(--text-hero); }
+h2 { font-size: var(--text-3xl); }
+h3 { font-size: var(--text-xl); }
+h4 { font-size: var(--text-lg); }
+
+/* ─── Paragraphen ─── */
+p {
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  color: var(--text-muted);
+}
+
+/* ─── Links ─── */
+a {
+  color: var(--gold);
+  transition: color var(--transition);
+  cursor: pointer;
+}
+
+a:hover {
+  color: var(--gold-light);
+}
+
+/* ─── Cursor: Pointer für alle klickbaren Elemente ─── */
+button,
+[role="button"],
+label[for],
+select,
+summary,
+.btn-primary,
+.btn-secondary,
+.card,
+.faq-question,
+.nav-link,
+.nav-logo,
+.nav-cta,
+.leistung-card,
+.footer-links a,
+.footer-legal a,
+.scroll-indicator,
+.hero-cta-group a,
+.kontakt-btn {
+  cursor: pointer;
+}
+
+/* ─── Sections ─── */
+.section {
+  padding: var(--section-padding-y) var(--section-padding-x);
+}
+
+/* ─── Container ─── */
+.container {
+  max-width: var(--container-max);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-8);
+  padding-right: var(--space-8);
+}
+
+/* ─── Section Label ─── */
+.section-label {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--accent);
+}
+
+/* ─── Gold Divider ─── */
+.divider {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  margin: var(--space-6) 0;
+}
+
+/* ─── Scroll-Animationen ─── */
+.animate-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.animate-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Preloader ─── */
+#preloader {
+  position: fixed;
+  inset: 0;
+  background-color: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-top);
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+#preloader.hidden {
+  opacity: 0;
+  visibility: hidden;
+}

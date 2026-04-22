@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Termin gebucht — Wohlstandsmarketing</title>
+<meta name="robots" content="noindex, nofollow" />
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Meta Pixel Code (mit Enhanced Matching aus TidyCal-Redirect) -->
+<script>
+  // URL-Parameter von TidyCal-Redirect lesen
+  var __wsmUrl = new URLSearchParams(window.location.search);
+  var __wsmEmail = (__wsmUrl.get('email') || '').toLowerCase().trim();
+  var __wsmName = (__wsmUrl.get('name') || '').trim();
+  var __wsmDate = __wsmUrl.get('date') || null;
+
+  // Schutz: literal Platzhalter (nicht ersetzt) als leer behandeln
+  function __wsmIsPlaceholder(v) { return !v || v.indexOf('{{') !== -1 || v.indexOf('}}') !== -1 || v.indexOf('%7B') !== -1; }
+  if (__wsmIsPlaceholder(__wsmEmail)) __wsmEmail = '';
+  if (__wsmIsPlaceholder(__wsmName))  __wsmName = '';
+
+  var __wsmFirstName = __wsmName.split(' ')[0].toLowerCase();
+
+  var __wsmMatching = {};
+  if (__wsmEmail)     __wsmMatching.em = __wsmEmail;
+  if (__wsmFirstName) __wsmMatching.fn = __wsmFirstName;
+
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1109190438031661', __wsmMatching);
+  fbq('track', 'PageView');
+  // Schedule mit Meta-Standard-Wert für gebuchte Strategiegespräche
+  fbq('track', 'Schedule', {
+    value: 2500,
+    currency: 'EUR',
+    content_name: 'Strategiegespräch gebucht'
+  });
+</script>
+<noscript>
+  <img height="1" width="1" style="display:none"
+       src="https://www.facebook.com/tr?id=1109190438031661&ev=PageView&noscript=1"/>
+</noscript>
+<!-- End Meta Pixel Code -->
+
+<style>
+  :root {
+    --bg: #0A0A0A;
+    --surface: #111111;
+    --surface-2: #1A1A1A;
+    --text: #F5F5F5;
+    --text-muted: #999999;
+    --accent: #1663DE;
+    --accent-light: #4D8EF5;
+    --gold: #DB6F16;
+    --gold-light: #F08C3C;
+    --gold-glow: rgba(219, 111, 22, 0.15);
+    --green: #5AD89B;
+    --border: rgba(219, 111, 22, 0.25);
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --font-heading: 'Playfair Display', Georgia, serif;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background:
+      radial-gradient(ellipse at top, rgba(22, 99, 222, 0.08), transparent 55%),
+      radial-gradient(ellipse at bottom, rgba(219, 111, 22, 0.06), transparent 55%),
+      var(--bg);
+  }
+
+  .shell {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 48px 40px;
+    text-align: center;
+    box-shadow:
+      0 0 60px rgba(22, 99, 222, 0.08),
+      0 30px 80px rgba(0, 0, 0, 0.45);
+  }
+
+  .icon-wrap {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: rgba(90, 216, 155, 0.10);
+    border: 1.5px solid rgba(90, 216, 155, 0.45);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 28px;
+    box-shadow: 0 0 40px rgba(90, 216, 155, 0.18);
+  }
+  .icon-wrap svg {
+    width: 42px;
+    height: 42px;
+    color: var(--green);
+  }
+
+  .badge {
+    display: inline-block;
+    background: rgba(90, 216, 155, 0.12);
+    color: var(--green);
+    border: 1px solid rgba(90, 216, 155, 0.35);
+    border-radius: 100px;
+    padding: 7px 18px;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+
+  h1 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: clamp(2rem, 6vw, 3rem);
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+
+  p.lead {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    max-width: 480px;
+    margin: 0 auto 28px;
+  }
+  p.lead strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .next-steps {
+    text-align: left;
+    margin: 40px auto 0;
+    max-width: 440px;
+  }
+  .next-steps-title {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .next-steps ol {
+    list-style: none;
+    counter-reset: step;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .next-steps li {
+    counter-increment: step;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--text);
+  }
+  .next-steps li::before {
+    content: counter(step);
+    flex: 0 0 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(22, 99, 222, 0.15);
+    color: var(--accent-light);
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+  }
+
+  .foot {
+    margin-top: 60px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <div class="card">
+
+    <div class="icon-wrap" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="5 12 10 17 19 7"></polyline>
+      </svg>
+    </div>
+
+    <div class="badge">Termin bestätigt</div>
+
+    <h1>Dein Termin ist <em>fix.</em></h1>
+
+    <p class="lead">
+      Die Bestätigung mit deinem <strong>Google Meet-Link</strong> und allen Details ist gerade in deinem Posteingang unterwegs.
+    </p>
+
+    <div class="next-steps">
+      <div class="next-steps-title">Was als Nächstes passiert</div>
+      <ol>
+        <li>Schau in dein Postfach (ggf. auch im Spam-Ordner).</li>
+        <li>Bestätige deinen Termin über den Link in der Mail.</li>
+        <li>Blocke dir 60 ungestörte Minuten in deinem Kalender.</li>
+      </ol>
+    </div>
+
+  </div>
+
+  <div class="foot">© 2026 Wohlstandsmarketing – Albert Ipgefer. Alle Rechte vorbehalten.</div>
+</div>
+
+</body>
+</html>

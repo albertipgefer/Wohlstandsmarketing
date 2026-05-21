@@ -164,6 +164,45 @@
   display: inline-block;
 }
 
+/* Member-Bereich Link (Desktop) — visuell identisch zu .nav-links-desktop a */
+.nav-member {
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color var(--transition);
+  white-space: nowrap;
+}
+
+.nav-member:hover {
+  color: var(--gold);
+}
+
+/* Synchron mit .nav-links-desktop / .nav-cta: ab Mobile-Breakpoint
+   übernimmt der Burger, der Link verschwindet aus der Navbar. */
+@media (max-width: 768px) {
+  .nav-member {
+    display: none;
+  }
+}
+
+/* Member-Bereich im Mobile-Overlay — leichte Gold-Akzentuierung */
+.nav-links-member {
+  color: var(--gold) !important;
+}
+
+/* CTA-Button im Mobile-Overlay (Erstgespräch buchen) */
+.nav-links-cta-wrap {
+  margin-top: 1rem;
+}
+.nav-links .nav-links-cta {
+  display: inline-block;
+  font-size: 1rem !important;
+  padding: 0.9rem 1.75rem;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+
 .nav-toggle {
   display: none;
   flex-direction: column;

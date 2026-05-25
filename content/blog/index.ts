@@ -1,0 +1,157 @@
+import type { Post } from "./types";
+
+// ── KI-Sichtbarkeit (11) ──────────────────────────────────────────────
+import * as ki2026 from "./posts/ki-sichtbarkeit-chatgpt-2026";
+import * as aeoVsSeo from "./posts/aeo-vs-seo-2026";
+import * as perplexitySeo from "./posts/perplexity-seo-2026";
+import * as googleAiOverviews from "./posts/google-ai-overviews-2026";
+import * as chatgptKonkurrenz from "./posts/chatgpt-konkurrenz-positionierung";
+import * as bingCopilot from "./posts/bing-copilot-seo";
+import * as voiceSearch from "./posts/voice-search-2026";
+import * as ccgVergleich from "./posts/chatgpt-claude-gemini-vergleich";
+import * as kiMessen from "./posts/ki-sichtbarkeit-messen";
+import * as branchenKi from "./posts/branchen-spezifische-ki-seo";
+import * as zeroClick from "./posts/zero-click-seo";
+
+// ── Technisches SEO (11) ──────────────────────────────────────────────
+import * as schemaOrg from "./posts/schema-org-lokale-anbieter";
+import * as robotsTxt from "./posts/robots-txt-ki-crawler";
+import * as coreWebVitals from "./posts/core-web-vitals-2026";
+import * as sitemapXml from "./posts/sitemap-xml-2026";
+import * as hreflangDach from "./posts/hreflang-dach";
+import * as openGraph from "./posts/open-graph-social-previews";
+import * as pageExperience from "./posts/page-experience-2026";
+import * as lighthouse from "./posts/lighthouse-vs-pagespeed";
+import * as internalLinking from "./posts/internal-linking-2026";
+import * as httpsHsts from "./posts/https-hsts-2026";
+import * as jsSeo from "./posts/javascript-seo-spa";
+
+// ── Lokales SEO (9) ───────────────────────────────────────────────────
+import * as lokalesSeo from "./posts/lokales-seo-google-maps-chatgpt";
+import * as gbpOptimierungen from "./posts/gbp-12-optimierungen";
+import * as lokaleBacklinks from "./posts/lokale-backlinks";
+import * as appleBusiness from "./posts/apple-business-connect";
+import * as stadtSeiten from "./posts/stadt-seiten-skalieren";
+import * as yelp from "./posts/yelp-2026";
+import * as lokaleSchemaTricks from "./posts/lokale-schema-tricks";
+import * as multiLocation from "./posts/multi-location-seo";
+import * as saisonalesSeo from "./posts/saisonales-seo";
+
+// ── Webdesign (10) ────────────────────────────────────────────────────
+import * as webdesignTrends from "./posts/webdesign-trends-2026";
+import * as webdesignHandwerker from "./posts/webdesign-fuer-handwerker";
+import * as webdesignAnwaelte from "./posts/webdesign-fuer-anwaelte";
+import * as webdesignBerater from "./posts/webdesign-fuer-berater";
+import * as headlessCms from "./posts/headless-cms-2026";
+import * as darkVsLight from "./posts/dark-vs-light-mode";
+import * as wdRestaurants from "./posts/webdesign-restaurants";
+import * as wdShops from "./posts/webdesign-onlineshops";
+import * as wdCoaches from "./posts/webdesign-coaches";
+import * as multilingual from "./posts/multilingual-webdesign";
+
+// ── Conversion (9) ────────────────────────────────────────────────────
+import * as conversion from "./posts/conversion-webseiten-2026";
+import * as landingpageStruktur from "./posts/landingpage-struktur-2026";
+import * as b2bFunnel from "./posts/b2b-funnel-erstgespraech";
+import * as trustElemente from "./posts/trust-elemente-2026";
+import * as mobileForms from "./posts/mobile-forms-2026";
+import * as abTesting from "./posts/ab-testing-mittelstand";
+import * as pricingSeiten from "./posts/pricing-seiten";
+import * as newsletter from "./posts/newsletter-funnel";
+import * as salesPages from "./posts/sales-pages-2026";
+
+const modules: Array<{
+  meta: Post["meta"];
+  default: () => React.ReactNode;
+}> = [
+  // KI-Sichtbarkeit
+  { meta: { ...ki2026.meta, popularity: 95 }, default: ki2026.default },
+  { meta: { ...aeoVsSeo.meta, popularity: 88 }, default: aeoVsSeo.default },
+  { meta: { ...perplexitySeo.meta, popularity: 82 }, default: perplexitySeo.default },
+  { meta: { ...googleAiOverviews.meta, popularity: 90 }, default: googleAiOverviews.default },
+  { meta: { ...chatgptKonkurrenz.meta, popularity: 75 }, default: chatgptKonkurrenz.default },
+  { meta: { ...bingCopilot.meta, popularity: 50 }, default: bingCopilot.default },
+  { meta: { ...voiceSearch.meta, popularity: 60 }, default: voiceSearch.default },
+  { meta: ccgVergleich.meta, default: ccgVergleich.default },
+  { meta: kiMessen.meta, default: kiMessen.default },
+  { meta: branchenKi.meta, default: branchenKi.default },
+  { meta: zeroClick.meta, default: zeroClick.default },
+  // Technisches SEO
+  { meta: { ...schemaOrg.meta, popularity: 85 }, default: schemaOrg.default },
+  { meta: { ...robotsTxt.meta, popularity: 78 }, default: robotsTxt.default },
+  { meta: { ...coreWebVitals.meta, popularity: 80 }, default: coreWebVitals.default },
+  { meta: { ...sitemapXml.meta, popularity: 55 }, default: sitemapXml.default },
+  { meta: { ...hreflangDach.meta, popularity: 45 }, default: hreflangDach.default },
+  { meta: { ...openGraph.meta, popularity: 50 }, default: openGraph.default },
+  { meta: { ...pageExperience.meta, popularity: 65 }, default: pageExperience.default },
+  { meta: lighthouse.meta, default: lighthouse.default },
+  { meta: internalLinking.meta, default: internalLinking.default },
+  { meta: httpsHsts.meta, default: httpsHsts.default },
+  { meta: jsSeo.meta, default: jsSeo.default },
+  // Lokales SEO
+  { meta: { ...lokalesSeo.meta, popularity: 92 }, default: lokalesSeo.default },
+  { meta: gbpOptimierungen.meta, default: gbpOptimierungen.default },
+  { meta: { ...lokaleBacklinks.meta, popularity: 60 }, default: lokaleBacklinks.default },
+  { meta: { ...appleBusiness.meta, popularity: 48 }, default: appleBusiness.default },
+  { meta: { ...stadtSeiten.meta, popularity: 65 }, default: stadtSeiten.default },
+  { meta: yelp.meta, default: yelp.default },
+  { meta: lokaleSchemaTricks.meta, default: lokaleSchemaTricks.default },
+  { meta: multiLocation.meta, default: multiLocation.default },
+  { meta: saisonalesSeo.meta, default: saisonalesSeo.default },
+  // Webdesign
+  { meta: { ...webdesignTrends.meta, popularity: 70 }, default: webdesignTrends.default },
+  { meta: { ...webdesignHandwerker.meta, popularity: 72 }, default: webdesignHandwerker.default },
+  { meta: { ...webdesignAnwaelte.meta, popularity: 55 }, default: webdesignAnwaelte.default },
+  { meta: { ...webdesignBerater.meta, popularity: 68 }, default: webdesignBerater.default },
+  { meta: { ...headlessCms.meta, popularity: 50 }, default: headlessCms.default },
+  { meta: { ...darkVsLight.meta, popularity: 42 }, default: darkVsLight.default },
+  { meta: wdRestaurants.meta, default: wdRestaurants.default },
+  { meta: wdShops.meta, default: wdShops.default },
+  { meta: wdCoaches.meta, default: wdCoaches.default },
+  { meta: multilingual.meta, default: multilingual.default },
+  // Conversion
+  { meta: { ...conversion.meta, popularity: 85 }, default: conversion.default },
+  { meta: { ...landingpageStruktur.meta, popularity: 78 }, default: landingpageStruktur.default },
+  { meta: { ...b2bFunnel.meta, popularity: 70 }, default: b2bFunnel.default },
+  { meta: { ...trustElemente.meta, popularity: 62 }, default: trustElemente.default },
+  { meta: { ...mobileForms.meta, popularity: 58 }, default: mobileForms.default },
+  { meta: abTesting.meta, default: abTesting.default },
+  { meta: pricingSeiten.meta, default: pricingSeiten.default },
+  { meta: newsletter.meta, default: newsletter.default },
+  { meta: salesPages.meta, default: salesPages.default },
+];
+
+/** Posts sorted by date descending (newest first) */
+export const posts = modules.sort(
+  (a, b) => new Date(b.meta.date).getTime() - new Date(a.meta.date).getTime()
+);
+
+/** Canonical list of blog categories — used for filter UI + routing. */
+export const CATEGORIES = [
+  "Alle",
+  "KI-Sichtbarkeit",
+  "Technisches SEO",
+  "Lokales SEO",
+  "Webdesign",
+  "Conversion",
+] as const;
+export type Category = (typeof CATEGORIES)[number];
+
+export const SORT_OPTIONS = ["Neueste", "Beliebteste", "Lesedauer"] as const;
+export type SortOption = (typeof SORT_OPTIONS)[number];
+
+export function getPost(slug: string) {
+  return posts.find((p) => p.meta.slug === slug) ?? null;
+}
+
+export function getRelatedPosts(currentSlug: string, limit = 2) {
+  const current = getPost(currentSlug);
+  if (!current) return posts.slice(0, limit);
+  const sameCat = posts.filter(
+    (p) => p.meta.slug !== currentSlug && p.meta.category === current.meta.category
+  );
+  const others = posts.filter(
+    (p) => p.meta.slug !== currentSlug && p.meta.category !== current.meta.category
+  );
+  return [...sameCat, ...others].slice(0, limit);
+}

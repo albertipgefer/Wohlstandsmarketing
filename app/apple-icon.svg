@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
+  <rect width="180" height="180" rx="40" fill="#1663de"/>
+  <text x="90" y="122" text-anchor="middle" font-family="'Inter', 'Helvetica Neue', sans-serif" font-weight="900" font-size="100" fill="#ffffff" letter-spacing="-4">W</text>
+  <circle cx="137" cy="137" r="14" fill="#db6f16"/>
+</svg>

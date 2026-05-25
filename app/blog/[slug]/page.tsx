@@ -62,7 +62,7 @@ export default async function BlogPostPage({
       name: "Albert Ipgefer",
       url: "https://wohlstandsmarketing.de",
       sameAs: [
-        "https://www.linkedin.com/in/albert-ipgefer/",
+        "https://www.linkedin.com/in/albertipgefer/",
         "https://www.instagram.com/journeywithalbert/",
         "https://www.tiktok.com/@journeywithalbert",
       ],

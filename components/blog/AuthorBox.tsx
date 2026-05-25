@@ -10,7 +10,7 @@ import Link from "next/link";
  * NOTE: LinkedIn URL is the public profile; verify and adjust the slug if needed.
  */
 
-const LINKEDIN_URL = "https://www.linkedin.com/in/albert-ipgefer/";
+const LINKEDIN_URL = "https://www.linkedin.com/in/albertipgefer/";
 const INSTAGRAM_URL = "https://www.instagram.com/journeywithalbert/";
 const TIKTOK_URL = "https://www.tiktok.com/@journeywithalbert";
 

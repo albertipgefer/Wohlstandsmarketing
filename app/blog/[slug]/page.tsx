@@ -42,7 +42,7 @@ export default async function BlogPostPage({
   if (!post) notFound();
 
   const Body = post.default;
-  const related = getRelatedPosts(slug, 2).map((r) => ({
+  const related = getRelatedPosts(slug, 4).map((r) => ({
     slug: r.meta.slug,
     title: r.meta.title,
     category: r.meta.category,
@@ -58,11 +58,18 @@ export default async function BlogPostPage({
     dateModified: post.meta.date,
     author: {
       "@type": "Person",
+      "@id": "https://wohlstandsmarketing.de#person-albert",
       name: "Albert Ipgefer",
       url: "https://wohlstandsmarketing.de",
+      sameAs: [
+        "https://www.linkedin.com/in/albert-ipgefer/",
+        "https://www.instagram.com/journeywithalbert/",
+        "https://www.tiktok.com/@journeywithalbert",
+      ],
     },
     publisher: {
       "@type": "Organization",
+      "@id": "https://wohlstandsmarketing.de#organization",
       name: "Wohlstandsmarketing",
       logo: {
         "@type": "ImageObject",

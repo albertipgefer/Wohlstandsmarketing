@@ -108,6 +108,11 @@ const personSchema = {
     "Schema.org",
     "Performance-Marketing",
   ],
+  sameAs: [
+    "https://www.linkedin.com/in/albert-ipgefer/",
+    "https://www.instagram.com/journeywithalbert/",
+    "https://www.tiktok.com/@journeywithalbert",
+  ],
 };
 
 export default function RootLayout({

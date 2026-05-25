@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { cities, getCity, getNeighbourCities } from "@/content/cities";
+import { getCityRelevantPosts } from "@/content/blog";
 import BlogNav from "@/components/blog/BlogNav";
 import Footer from "@/components/sections/Footer";
 
@@ -51,11 +52,13 @@ export default async function CityPage({
   const city = getCity(stadt);
   if (!city) notFound();
   const neighbours = getNeighbourCities(city.slug);
+  const cityRelevantPosts = getCityRelevantPosts(3);
 
   /* ── JSON-LD Schemas ────────────────────────────────────────────────── */
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
+    "@id": `${SITE}/webdesign/${city.slug}#business`,
     name: `Wohlstandsmarketing — Webdesign in ${city.name}`,
     image: `${SITE}/icon.svg`,
     url: `${SITE}/webdesign/${city.slug}`,
@@ -70,10 +73,88 @@ export default async function CityPage({
       addressCountry: "DE",
     },
     geo: { "@type": "GeoCoordinates", latitude: city.geo.lat, longitude: city.geo.lng },
-    areaServed: {
-      "@type": "City",
-      name: city.name,
-      address: { "@type": "PostalAddress", addressLocality: city.name, postalCode: city.postalCode, addressCountry: "DE" },
+    areaServed: [
+      {
+        "@type": "City",
+        name: city.name,
+        address: { "@type": "PostalAddress", addressLocality: city.name, postalCode: city.postalCode, addressCountry: "DE" },
+      },
+      { "@type": "AdministrativeArea", name: city.region },
+      { "@type": "AdministrativeArea", name: city.state },
+    ],
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "09:00",
+        closes: "18:00",
+      },
+    ],
+    sameAs: [
+      "https://www.linkedin.com/in/albert-ipgefer/",
+      "https://www.instagram.com/journeywithalbert/",
+      "https://www.tiktok.com/@journeywithalbert",
+    ],
+    founder: { "@id": `${SITE}#person-albert` },
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: `Webdesign + KI-Sichtbarkeit Pakete — ${city.name}`,
+      itemListElement: [
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Landingpage (OnePage)",
+            description: `Konvertierende Landingpage für Mittelstand in ${city.name} — live in 7 Tagen.`,
+          },
+          price: "1500",
+          priceCurrency: "EUR",
+          availability: "https://schema.org/InStock",
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Unternehmenswebseite (bis 3 Unterseiten)",
+            description: `Vollständige Unternehmenswebseite mit KI-Sichtbarkeit für ${city.name}.`,
+          },
+          price: "3000",
+          priceCurrency: "EUR",
+          availability: "https://schema.org/InStock",
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Google Search Ads Betreuung",
+            description: `Performance-Marketing für Kunden in ${city.region}.`,
+          },
+          price: "1500",
+          priceCurrency: "EUR",
+          priceSpecification: {
+            "@type": "UnitPriceSpecification",
+            price: "1500",
+            priceCurrency: "EUR",
+            unitText: "MONTH",
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Meta Ads Betreuung",
+            description: `Meta Ads (Facebook + Instagram) für planbare Anfragen in ${city.name}.`,
+          },
+          price: "1500",
+          priceCurrency: "EUR",
+          priceSpecification: {
+            "@type": "UnitPriceSpecification",
+            price: "1500",
+            priceCurrency: "EUR",
+            unitText: "MONTH",
+          },
+        },
+      ],
     },
   };
   const serviceSchema = {
@@ -105,7 +186,7 @@ export default async function CityPage({
     },
     {
       q: `Was kostet Webdesign in ${city.name}?`,
-      a: `Der konkrete Preis hängt von Branche, Umfang und Wettbewerbsdruck ab. Wir nennen die Investition transparent im 15-Minuten-Erstgespräch — und sagen ehrlich, ob es sich für dich rechnet.`,
+      a: `Eine Landingpage startet bei 1.500 € einmalig, eine vollständige Unternehmenswebseite bei 3.000 €. Laufende KI-Sichtbarkeit + Performance-Marketing ab 1.500 €/Monat (Mindestlaufzeit 3 Monate). Wir nennen die genaue Investition transparent im 15-Minuten-Erstgespräch — und sagen ehrlich, ob es sich für dich rechnet.`,
     },
     {
       q: `Welche Branchen aus ${city.name} passen besonders zur WSM-Methode?`,
@@ -114,6 +195,18 @@ export default async function CityPage({
     {
       q: `Treffen wir uns vor Ort in ${city.name} oder remote?`,
       a: `Beides möglich. Kickoff und Strategie-Workshop gerne vor Ort in ${city.name}, laufende Abstimmung meist remote über Google Meet und WhatsApp — spart Zeit auf beiden Seiten.`,
+    },
+    {
+      q: `Wie schafft ihr es, dass ChatGPT meine Firma in ${city.name} empfiehlt?`,
+      a: `KI-Sichtbarkeit wird nicht zufällig — wir setzen schema.org-Markup, Answer Engine Optimization (AEO), zitierfähige Inhalte und ein lokales Entity-Profil. Die KIs (ChatGPT, Perplexity, Claude, Google AI Overviews) nutzen diese Signale, um regionale Anbieter zu nennen. Plus: optimiertes Google Business Profile für Maps-Sichtbarkeit.`,
+    },
+    {
+      q: `Gibt es eine Garantie auf die Ergebnisse?`,
+      a: `Ja. Wenn die vereinbarten Ziele nach 90 Tagen nicht erreicht sind, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind. Voraussetzung: du hältst dich an die strategischen Empfehlungen und das vereinbarte Werbebudget (typisch 1.000 €/Monat zusätzlich zum Retainer).`,
+    },
+    {
+      q: `Welche Tools nutzt ihr für das Webdesign?`,
+      a: `Wir bauen mit Next.js (React) und Vercel — dem aktuellen Stand der Technik für schnelle, KI-empfehlbare Webseiten. Plus: schema.org-Strukturierung, llms.txt für KI-Crawler, automatisierte Sitemap und LocalBusiness-Markup für ${city.name}. Im Resultat: deine Webseite ist nicht nur hübsch, sondern wird von Suchmaschinen und KI-Systemen verstanden.`,
     },
   ];
   const faqSchema = {
@@ -423,6 +516,51 @@ export default async function CityPage({
                 className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[14px] font-medium text-[var(--text-muted)] hover:text-[var(--text)]"
               >
                 Alle Standorte →
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── INTERNAL LINKING: STADT → BLOG-CLUSTER ────────────── */}
+      {cityRelevantPosts.length > 0 && (
+        <section className="border-t border-[var(--border)] py-16 md:py-20">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
+              Wissensbasis
+            </p>
+            <h2 className="mt-3 font-[family-name:var(--font-display)] text-2xl font-bold tracking-tight text-[var(--text)] sm:text-3xl">
+              Mehr lesen zu Sichtbarkeit in {city.name}
+            </h2>
+            <p className="mt-3 max-w-2xl text-[14px] leading-relaxed text-[var(--text-muted)] sm:text-[15px]">
+              Tiefer einsteigen — wie lokales SEO und KI-Empfehlbarkeit für
+              regionalen Mittelstand wirklich funktionieren:
+            </p>
+            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+              {cityRelevantPosts.map((p) => (
+                <Link
+                  key={p.meta.slug}
+                  href={`/blog/${p.meta.slug}`}
+                  className="group rounded-2xl border border-[var(--border)] bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-[0_14px_40px_-20px_rgba(22,99,222,0.25)]"
+                >
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--text-subtle)]">
+                    {p.meta.category}
+                  </span>
+                  <h3 className="mt-2 font-[family-name:var(--font-display)] text-base font-semibold tracking-tight text-[var(--text)] sm:text-lg">
+                    {p.meta.title}
+                  </h3>
+                  <span className="mt-3 inline-flex items-center gap-1 text-[13px] font-semibold text-[var(--accent)] transition group-hover:gap-2">
+                    Artikel lesen →
+                  </span>
+                </Link>
+              ))}
+            </div>
+            <div className="mt-6">
+              <Link
+                href="/blog"
+                className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--accent)] hover:underline"
+              >
+                Alle Artikel im Blog →
               </Link>
             </div>
           </div>

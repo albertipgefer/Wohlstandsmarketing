@@ -5,6 +5,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import type { PostMeta } from "@/content/blog/types";
 import PostCover from "./PostCover";
+import AuthorBox from "./AuthorBox";
+import RegionLinks from "./RegionLinks";
 
 function formatDate(iso: string) {
   return new Intl.DateTimeFormat("de-DE", {
@@ -73,7 +75,7 @@ export default function ArticleLayout({
           <div className="flex h-11 w-11 shrink-0 overflow-hidden rounded-full border border-[var(--border)] bg-[var(--surface-2)]">
             <img
               src="/albert-portrait.jpg"
-              alt=""
+              alt="Albert Ipgefer — Gründer Wohlstandsmarketing"
               className="h-full w-full object-cover object-[50%_30%]"
             />
           </div>
@@ -180,7 +182,10 @@ export default function ArticleLayout({
         </section>
       )}
 
-      {/* Related */}
+      {/* Author Box — builds E-E-A-T signals before related content + CTA */}
+      <AuthorBox />
+
+      {/* Related — now 4 keyword-matched posts in a 2x2 grid (desktop) */}
       {related.length > 0 && (
         <section className="border-t border-[var(--border)] py-20">
           <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
@@ -190,7 +195,7 @@ export default function ArticleLayout({
             <h2 className="mt-3 font-[family-name:var(--font-display)] text-2xl font-bold tracking-tight text-[var(--text)] sm:text-3xl">
               Weitere Artikel zum Thema
             </h2>
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-2">
               {related.map((r) => (
                 <Link
                   key={r.slug}
@@ -212,6 +217,9 @@ export default function ArticleLayout({
           </div>
         </section>
       )}
+
+      {/* Region links — internal-linking hub to all 6 city money-pages */}
+      <RegionLinks />
 
       {/* Final CTA — Erstgespräch */}
       <section className="relative overflow-hidden border-t border-[var(--border)] py-20 md:py-28">

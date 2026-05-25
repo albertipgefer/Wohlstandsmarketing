@@ -144,14 +144,54 @@ export function getPost(slug: string) {
   return posts.find((p) => p.meta.slug === slug) ?? null;
 }
 
-export function getRelatedPosts(currentSlug: string, limit = 2) {
+/**
+ * Related posts ranked by keyword-overlap (Jaccard-style), category bonus,
+ * and popularity tiebreaker. Replaces the old "same category first" naive logic.
+ * This boosts topical-authority signals for Google and gives readers genuinely
+ * useful next reads instead of random siblings.
+ */
+export function getRelatedPosts(currentSlug: string, limit = 4) {
   const current = getPost(currentSlug);
   if (!current) return posts.slice(0, limit);
-  const sameCat = posts.filter(
-    (p) => p.meta.slug !== currentSlug && p.meta.category === current.meta.category
+
+  const currentKw = new Set(
+    current.meta.keywords.map((k) => k.toLowerCase().trim())
   );
-  const others = posts.filter(
-    (p) => p.meta.slug !== currentSlug && p.meta.category !== current.meta.category
-  );
-  return [...sameCat, ...others].slice(0, limit);
+
+  const scored = posts
+    .filter((p) => p.meta.slug !== currentSlug)
+    .map((p) => {
+      const overlap = p.meta.keywords.filter((k) =>
+        currentKw.has(k.toLowerCase().trim())
+      ).length;
+      const sameCategoryBonus =
+        p.meta.category === current.meta.category ? 2 : 0;
+      const popularityWeight = (p.meta.popularity ?? 0) / 100;
+      // overlap is the primary signal, category secondary, popularity tertiary
+      const score = overlap * 10 + sameCategoryBonus + popularityWeight;
+      return { post: p, score };
+    })
+    .sort((a, b) => b.score - a.score);
+
+  return scored.slice(0, limit).map((s) => s.post);
+}
+
+/**
+ * Returns the top-N posts most relevant for a given city / regional topic.
+ * Used on city landing pages to deep-link into authoritative blog content,
+ * strengthening internal linking from money-pages → content cluster.
+ */
+export function getCityRelevantPosts(limit = 3) {
+  // Cherry-pick the strongest cluster for "local + AI visibility" use cases.
+  const slugs = [
+    "lokales-seo-google-maps-chatgpt",
+    "stadt-seiten-skalieren",
+    "ki-sichtbarkeit-chatgpt-2026",
+    "google-ai-overviews-2026",
+    "gbp-12-optimierungen",
+  ];
+  return slugs
+    .map((s) => getPost(s))
+    .filter((p): p is NonNullable<ReturnType<typeof getPost>> => p !== null)
+    .slice(0, limit);
 }

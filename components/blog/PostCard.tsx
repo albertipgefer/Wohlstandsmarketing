@@ -66,7 +66,7 @@ export default function PostCard({
             {/* Albert avatar */}
             <img
               src="/albert-portrait.jpg"
-              alt=""
+              alt="Albert Ipgefer — Gründer Wohlstandsmarketing"
               className="h-full w-full object-cover object-[50%_30%]"
             />
           </div>

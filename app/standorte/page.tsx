@@ -9,7 +9,7 @@ const SITE = "https://wohlstandsmarketing.de";
 export const metadata: Metadata = {
   title: "Standorte · Wohlstandsmarketing — Webdesign in DACH",
   description:
-    "Wir bauen Webseiten mit KI-Sichtbarkeit für Mittelstand in Bad Ems, Koblenz, Montabaur, Frankfurt, Bonn und Köln. Lokal verankert, remote effizient.",
+    "Wir bauen Webseiten mit KI-Sichtbarkeit für Mittelstand in ganz DACH — von Bad Ems über Koblenz, Frankfurt, Mainz, Wiesbaden bis Köln, Düsseldorf, Aachen und mehr. Online & remote.",
   alternates: { canonical: "/standorte" },
 };
 
@@ -60,10 +60,10 @@ export default function StandortePage() {
             className="mt-6 max-w-4xl font-[family-name:var(--font-display)] font-black leading-[1.05] tracking-[-0.03em] text-[var(--text)]"
             style={{ fontSize: "clamp(2.25rem, 5vw, 3.75rem)" }}
           >
-            Vor Ort{" "}
+            Online &amp; remote{" "}
             <span className="relative inline-block">
               <span className="font-[family-name:var(--font-serif)] font-normal italic text-[var(--accent)]">
-                in deiner Region
+                für ganz DACH
               </span>
               <svg
                 className="absolute -bottom-1 left-0 w-full"
@@ -86,10 +86,10 @@ export default function StandortePage() {
           </h1>
 
           <p className="mt-6 max-w-2xl text-base leading-relaxed text-[var(--text-muted)] sm:text-lg">
-            Unser Sitz ist in Bad Ems. Wir arbeiten mit Mittelstand entlang der
-            Rhein-Lahn-Achse — von Bad Ems über Koblenz und Montabaur bis nach
-            Frankfurt, Bonn und Köln. Kurze Wege, persönliche Betreuung, lokale
-            Marktkenntnis.
+            Unser Sitz ist in Bad Ems — gearbeitet wird ausschließlich online und
+            remote. Klare Prozesse, Google Meet und WhatsApp ersetzen Vor-Ort-Termine.
+            Aktiv für Mittelstand in <strong>{cities.length} Regionen</strong> — von
+            Rheinland-Pfalz und Hessen über NRW bis ins Saarland und Baden-Württemberg.
           </p>
         </div>
       </section>

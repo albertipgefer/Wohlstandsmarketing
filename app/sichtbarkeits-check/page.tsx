@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import BlogNav from "@/components/blog/BlogNav";
 import Footer from "@/components/sections/Footer";
 import KiCheckTool from "@/components/ki-check/KiCheckTool";
+import GoogleReviewsBadge from "@/components/GoogleReviewsBadge";
 
 export const metadata: Metadata = {
   title: "KI-Sichtbarkeits-Check — Wird deine Seite von ChatGPT empfohlen?",
@@ -87,6 +88,11 @@ export default function SichtbarkeitsCheckPage() {
             <span className="flex items-center gap-1.5">
               <span className="text-emerald-500">✓</span> 100 % kostenlos
             </span>
+          </div>
+
+          {/* Google-Bewertungen */}
+          <div className="mt-6 flex justify-center">
+            <GoogleReviewsBadge variant="pill" />
           </div>
         </div>
       </section>

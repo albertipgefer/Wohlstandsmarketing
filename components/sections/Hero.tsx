@@ -4,6 +4,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Logo from "@/components/Logo";
+import GoogleReviewsBadge from "@/components/GoogleReviewsBadge";
 
 const NAV_ITEMS = [
   ["Methode", "#methode"],
@@ -378,6 +379,11 @@ export default function Hero() {
             >
               15-Min Erstgespräch · Kostenfrei · Albert Ipgefer persönlich
             </motion.p>
+
+            {/* Google-Bewertungen Trust-Signal */}
+            <motion.div variants={item} className="mt-5">
+              <GoogleReviewsBadge variant="pill" />
+            </motion.div>
           </motion.div>
         </div>
 

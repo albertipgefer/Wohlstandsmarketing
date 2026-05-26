@@ -22,7 +22,7 @@
 
 - [x] **Microsoft Clarity einbauen** — Heatmaps + Session-Recordings (gratis) ✅ 26.05.2026
 - [ ] **Google Search Console** — laufendes Monitoring, Auswertung Impressionen/Klicks/Queries
-- [ ] **Internal Link Audit** — Verzahnung Blog ↔ Stadt-Pages ↔ Cases enger ziehen
+- [x] **Internal Link Audit** — ✅ 26.05.2026 (Commit `55e2c71`): Hero-Logo-Fix, neue StandorteSektion auf Startseite mit 6 Stadt-Links, Nachbar-Städte auf allen 5 erweitert, BlogTeaser auf 6 Posts
 
 ---
 

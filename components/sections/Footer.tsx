@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Logo from "@/components/Logo";
 
 export default function Footer() {
@@ -8,7 +9,13 @@ export default function Footer() {
         <div className="grid gap-10 sm:grid-cols-2 md:gap-10 lg:grid-cols-[1.5fr_1fr_1fr_1fr_1fr]">
           {/* Brand */}
           <div>
-            <Logo size={36} />
+            <Link
+              href="/"
+              aria-label="Wohlstandsmarketing Startseite"
+              className="inline-flex items-center transition hover:opacity-80"
+            >
+              <Logo size={36} />
+            </Link>
             <p className="mt-4 max-w-xs text-[14px] leading-relaxed text-[var(--text-muted)]">
               Die WSM-Methode: Webdesign &amp; KI-Sichtbarkeit als ein
               untrennbares Paket. Für lokalen Mittelstand in DACH.

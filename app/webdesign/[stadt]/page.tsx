@@ -5,6 +5,7 @@ import Image from "next/image";
 import { cities, getCity, getNeighbourCities } from "@/content/cities";
 import { getCityRelevantPosts } from "@/content/blog";
 import BlogNav from "@/components/blog/BlogNav";
+import InlineCTA from "@/components/blog/InlineCTA";
 import Footer from "@/components/sections/Footer";
 
 const SITE = "https://wohlstandsmarketing.de";
@@ -422,6 +423,26 @@ export default async function CityPage({
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── MITTELSTUFEN-CTA: 15-Min-Erstgespräch ─────────────── */}
+      <section className="border-t border-[var(--border)] py-12 md:py-16">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
+          <InlineCTA
+            variant="erstgespraech"
+            context={`Webdesign in ${city.name} · 15-Min · Kostenfrei`}
+            headline={
+              <>
+                Klingt das nach dem,{" "}
+                <span className="font-[family-name:var(--font-serif)] font-normal italic text-[var(--accent)]">
+                  was du suchst
+                </span>
+                ?
+              </>
+            }
+            subline={`15-Min-Erstgespräch mit Albert — ehrlich, konkret, mit klarem nächsten Schritt für dein Vorhaben in ${city.name}. Auch wenn wir nicht zusammenarbeiten.`}
+          />
         </div>
       </section>
 

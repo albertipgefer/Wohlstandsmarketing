@@ -55,7 +55,7 @@ export default function StickyKiCheckCTA() {
         visible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
       }`}
     >
-      <div className="pointer-events-auto group relative flex items-center gap-3 rounded-full border border-[var(--border)] bg-white py-2 pl-2 pr-3 shadow-[0_14px_40px_-10px_rgba(10,10,10,0.25)] backdrop-blur sm:py-2.5 sm:pl-2.5 sm:pr-4">
+      <div className="pointer-events-auto group relative flex w-[232px] items-center gap-3 rounded-full border border-[var(--border)] bg-white py-2 pl-2 pr-3 shadow-[0_14px_40px_-10px_rgba(10,10,10,0.25)] backdrop-blur sm:w-[262px] sm:py-2.5 sm:pl-2.5 sm:pr-4">
         {/* Pulse-Dot */}
         <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-white sm:h-10 sm:w-10">
           <span className="absolute inset-0 animate-ping rounded-full bg-[var(--accent)] opacity-40" />

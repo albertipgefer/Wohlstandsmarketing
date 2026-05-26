@@ -90,8 +90,10 @@ function KiSichtbarkeitMotif({ isHero }: MotifProps) {
       {/* Orbiting nodes */}
       {[0, 60, 120, 180, 240, 300].map((angle) => {
         const rad = (angle * Math.PI) / 180;
-        const cx = 100 + Math.cos(rad) * 68;
-        const cy = 100 + Math.sin(rad) * 68;
+        // Auf 2 Nachkommastellen runden — sonst weichen SSR-/Client-Float-
+        // Repräsentationen minimal ab und produzieren einen Hydration-Mismatch.
+        const cx = Math.round((100 + Math.cos(rad) * 68) * 100) / 100;
+        const cy = Math.round((100 + Math.sin(rad) * 68) * 100) / 100;
         return (
           <g key={angle}>
             <line

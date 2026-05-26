@@ -12,6 +12,7 @@ import CTABlock from "@/components/sections/CTABlock";
 import BlogTeaser from "@/components/sections/BlogTeaser";
 import StandorteSektion from "@/components/sections/StandorteSektion";
 import KiCheckCTA from "@/components/sections/KiCheckCTA";
+import Testimonials from "@/components/sections/Testimonials";
 import Footer from "@/components/sections/Footer";
 
 export default function Home() {
@@ -25,6 +26,7 @@ export default function Home() {
       <VorherNachher />
       <WasDuBekommst />
       <UeberAlbert />
+      <Testimonials variant="compact" />
       <Vergleich />
       <FAQ />
       <CTABlock />

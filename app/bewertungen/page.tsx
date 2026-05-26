@@ -1,0 +1,28 @@
+import type { Metadata } from "next";
+import BlogNav from "@/components/blog/BlogNav";
+import Testimonials from "@/components/sections/Testimonials";
+import Footer from "@/components/sections/Footer";
+
+export const metadata: Metadata = {
+  title: "Kundenbewertungen · Wohlstandsmarketing",
+  description:
+    "Alle Google-Bewertungen für Wohlstandsmarketing — verifiziert und ungekürzt. Erfahrungen mit der WSM-Methode aus Webdesign, KI-Sichtbarkeit und Performance-Marketing.",
+  alternates: { canonical: "/bewertungen" },
+};
+
+export default function BewertungenPage() {
+  return (
+    <main className="bg-[var(--bg)] text-[var(--text)]">
+      <BlogNav />
+      <div className="pt-24 sm:pt-28">
+        <Testimonials
+          variant="full"
+          eyebrow="Bewertungen"
+          heading="Was unsere Kunden über Wohlstandsmarketing sagen."
+          subline="Alle Google-Bewertungen — ungekürzt, verifiziert, direkt aus dem Google Business Profile. Lies dir in Ruhe durch, was unsere Kunden über die Zusammenarbeit, die Ergebnisse und die WSM-Methode schreiben."
+        />
+      </div>
+      <Footer />
+    </main>
+  );
+}

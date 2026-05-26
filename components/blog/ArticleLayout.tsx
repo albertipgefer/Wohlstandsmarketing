@@ -7,6 +7,7 @@ import type { PostMeta } from "@/content/blog/types";
 import PostCover from "./PostCover";
 import AuthorBox from "./AuthorBox";
 import RegionLinks from "./RegionLinks";
+import InlineCTA from "./InlineCTA";
 
 function formatDate(iso: string) {
   return new Intl.DateTimeFormat("de-DE", {
@@ -149,6 +150,12 @@ export default function ArticleLayout({
             </ol>
           </div>
         </aside>
+      </div>
+
+      {/* Mittelstufen-CTA — direkt nach Body, vor FAQ. AUSSERHALB von prose-blog
+          (sonst überschreibt `.prose-blog a` den Button-Text blau + underline). */}
+      <div className="mx-auto max-w-6xl px-4 pb-4 sm:px-6 md:px-12">
+        <InlineCTA variant="erstgespraech" />
       </div>
 
       {/* FAQ */}

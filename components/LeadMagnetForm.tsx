@@ -86,13 +86,13 @@ export default function LeadMagnetForm({
           className="font-[family-name:var(--font-display)] font-black tracking-tight text-[var(--text)]"
           style={{ fontSize: compact ? "1.25rem" : "1.5rem" }}
         >
-          Check deinen Posteingang.
+          Bitte bestätige noch deine E-Mail-Adresse, um die PDF zu erhalten.
         </h4>
-        <p className="mt-2 text-[14px] leading-relaxed text-[var(--text-muted)]">
-          Ich habe dir eine Bestätigungs-Mail an <strong className="text-[var(--text)] break-all">{submittedEmail}</strong> geschickt. Klicke einmal auf den Button darin, dann ist deine PDF freigeschaltet.
+        <p className="mt-3 text-[14px] leading-relaxed text-[var(--text-muted)]">
+          Ich habe dir gerade eine Bestätigungs-Mail an <strong className="text-[var(--text)] break-all">{submittedEmail}</strong> geschickt. Klick darin auf <strong className="text-[var(--text)]">„E-Mail jetzt bestätigen"</strong> — danach ist deine PDF sofort freigeschaltet.
         </p>
-        <p className="mt-3 text-[12px] leading-relaxed text-[var(--text-subtle)]">
-          Mail nicht angekommen? Schau auch im Spam-Ordner — der Bestätigungs-Link ist 7 Tage gültig.
+        <p className="mt-3 text-[12.5px] leading-relaxed text-[var(--text-muted)]">
+          📥 Mail nicht angekommen? Schau bitte auch in deinem <strong>Spam-Ordner</strong> nach — der Bestätigungs-Link ist 7 Tage gültig.
         </p>
       </div>
     );

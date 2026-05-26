@@ -147,7 +147,15 @@ export function getCity(slug: string) {
 export function getNeighbourCities(slug: string) {
   const city = getCity(slug);
   if (!city) return [];
-  return city.neighbours
+  // Definierte Nachbarn zuerst, dann alle übrigen Städte (außer aktueller).
+  // Resultat: alle 5 anderen Städte werden auf jeder Stadt-Page verlinkt,
+  // mit den direkten Nachbarn vorne — für maximale interne Verlinkung.
+  const direct = city.neighbours
     .map((n) => getCity(n))
     .filter((c): c is City => c !== null);
+  const directSlugs = new Set(direct.map((c) => c.slug));
+  const rest = cities.filter(
+    (c) => c.slug !== slug && !directSlugs.has(c.slug),
+  );
+  return [...direct, ...rest];
 }

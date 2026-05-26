@@ -3,7 +3,16 @@ import { posts } from "@/content/blog";
 import PostCard from "@/components/blog/PostCard";
 
 export default function BlogTeaser() {
-  const latest = posts.slice(0, 3);
+  // 6 Posts statt 3 — verteilt Link-Power von Startseite auf mehr Artikel.
+  // Mix aus Top-Popularität + neuesten, dedupliziert.
+  const byPopularity = [...posts]
+    .sort((a, b) => (b.meta.popularity ?? 0) - (a.meta.popularity ?? 0))
+    .slice(0, 3);
+  const featuredSlugs = new Set(byPopularity.map((p) => p.meta.slug));
+  const latestFill = posts
+    .filter((p) => !featuredSlugs.has(p.meta.slug))
+    .slice(0, 3);
+  const latest = [...byPopularity, ...latestFill];
   return (
     <section
       id="blog"
@@ -67,7 +76,7 @@ export default function BlogTeaser() {
 
         {/* Grid: 1 featured + 2 columns on md+ */}
         <div className="mt-10 grid gap-6 md:mt-14 md:grid-cols-3 md:gap-6">
-          {latest.map((p, i) => (
+          {latest.map((p) => (
             <PostCard key={p.meta.slug} meta={p.meta} featured={false} />
           ))}
         </div>

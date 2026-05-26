@@ -82,7 +82,7 @@ export default function Hero() {
       <header className="fixed inset-x-0 top-4 z-50 px-4 sm:top-5 sm:px-6">
         <div className="mx-auto max-w-6xl">
           <div className="flex items-center justify-between gap-2 rounded-full border border-[var(--border)] bg-white/80 px-3 py-2.5 shadow-[0_10px_40px_-12px_rgba(10,10,10,0.18)] backdrop-blur-xl sm:px-4 sm:py-3">
-            <a href="#" className="flex items-center pl-1">
+            <a href="/" aria-label="Wohlstandsmarketing Startseite" className="flex items-center pl-1">
               <Logo size={36} />
             </a>
 

@@ -185,11 +185,11 @@ export default function PricingConfigurator() {
                           </div>
                         )}
 
-                        {/* Extra-Pages-Picker (Unternehmenswebseite) */}
+                        {/* Unterseiten-Picker (Unternehmenswebseite) — zeigt Gesamtzahl, Untergrenze = inkludierte */}
                         {s.extraPageOption && (
                           <div>
                             <div className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--text-subtle)]">
-                              Zusätzliche Unterseiten (über {s.extraPageOption.included} inkl.)
+                              Anzahl Unterseiten ({s.extraPageOption.included} inklusive)
                             </div>
                             <div className="mt-2 flex items-center gap-3">
                               <div className="inline-flex items-center gap-3 rounded-full border border-[var(--border)] bg-white p-1">
@@ -202,12 +202,12 @@ export default function PricingConfigurator() {
                                   }}
                                   disabled={(sel.extraPages ?? 0) <= 0}
                                   className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--bg)] text-[16px] font-bold text-[var(--text)] transition hover:bg-[var(--accent)] hover:text-white disabled:opacity-30"
-                                  aria-label="Extra-Seiten verringern"
+                                  aria-label="Unterseiten verringern"
                                 >
                                   −
                                 </button>
                                 <span className="min-w-[24px] text-center font-[family-name:var(--font-display)] text-[16px] font-black">
-                                  {sel.extraPages ?? 0}
+                                  {s.extraPageOption.included + (sel.extraPages ?? 0)}
                                 </span>
                                 <button
                                   type="button"
@@ -217,11 +217,16 @@ export default function PricingConfigurator() {
                                     updateSelection(s.id, { extraPages: v });
                                   }}
                                   className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--bg)] text-[16px] font-bold text-[var(--text)] transition hover:bg-[var(--accent)] hover:text-white"
-                                  aria-label="Extra-Seiten erhöhen"
+                                  aria-label="Unterseiten erhöhen"
                                 >
                                   +
                                 </button>
                               </div>
+                              {(sel.extraPages ?? 0) > 0 && (
+                                <span className="text-[12px] text-[var(--text-muted)]">
+                                  +{sel.extraPages} extra · {sel.extraPages! * s.extraPageOption.pricePerExtra} € zusätzlich
+                                </span>
+                              )}
                             </div>
                           </div>
                         )}

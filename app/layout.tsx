@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import CookieBanner from "@/components/CookieBanner";
+import ClarityAnalytics from "@/components/ClarityAnalytics";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -144,6 +145,7 @@ export default function RootLayout({
         />
         {children}
         <CookieBanner />
+        <ClarityAnalytics />
       </body>
     </html>
   );

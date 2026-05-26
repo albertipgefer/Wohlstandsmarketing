@@ -19,26 +19,41 @@ export type Service = {
   note?: string;
   icon: string;
   category: "webdesign" | "optimierung" | "wartung";
+  /** Wenn true: Kunde kann Anzahl wählen, Preis = oneTime × quantity */
+  multiplyByQuantity?: boolean;
+  /** Bei Services mit Inklusiv-Unterseiten + optionalen Extra-Seiten */
+  extraPageOption?: { included: number; pricePerExtra: number };
+  /** Wenn gesetzt: Kunde kann zwischen mehreren Laufzeiten wählen (in Monaten) */
+  durationOptions?: number[];
+};
+
+export type Selection = {
+  id: string;
+  quantity?: number;       // Multiplikator (Landingpage: 1, 2, 3 …)
+  extraPages?: number;     // Zusatz-Unterseiten (Unternehmenswebseite)
+  durationMonths?: number; // Gewählte Laufzeit (SEO/KI Retainer)
 };
 
 export const BUNDLE_DISCOUNT = 0.05; // 5 % ab 2 ausgewählten Items
+export const EXTRA_PAGE_PRICE = 300; // pro zusätzliche Unterseite (Unternehmenswebseite)
 
 export const services: Service[] = [
   {
     id: "unternehmenswebseite",
     name: "Unternehmenswebseite",
-    short: "Mehrseitige Webseite mit allem, was Mittelstand braucht",
+    short: "Mehrseitige Webseite mit 5 Unterseiten inklusive",
     description:
-      "Eine professionelle Mehrseiten-Webseite (Startseite, Über, Leistungen, Kontakt, Impressum, Datenschutz) — konvertierungsoptimiert, mobil perfekt.",
+      "Eine professionelle Mehrseiten-Webseite mit 5 Unterseiten (z. B. Startseite, Über, Leistungen, Kontakt, Impressum/Datenschutz) — konvertierungsoptimiert, mobil perfekt.",
     benefits: [
+      "5 Unterseiten inklusive",
       "Live in 7 Tagen",
       "Mobile + iPad + Desktop optimiert",
-      "Mit Kontaktformular + DSGVO-konform",
       "Schema.org für Google",
     ],
     oneTime: 990,
     icon: "building",
     category: "webdesign",
+    extraPageOption: { included: 5, pricePerExtra: EXTRA_PAGE_PRICE },
   },
   {
     id: "landingpage",
@@ -55,6 +70,7 @@ export const services: Service[] = [
     oneTime: 990,
     icon: "target",
     category: "webdesign",
+    multiplyByQuantity: true,
   },
   {
     id: "relaunch",
@@ -90,10 +106,10 @@ export const services: Service[] = [
   },
   {
     id: "seo-laufend",
-    name: "SEO-Betreuung (3 Monate)",
+    name: "SEO-Betreuung",
     short: "Kontinuierliche SEO-Optimierung mit monatlichem Report",
     description:
-      "Laufende SEO-Betreuung über mindestens 3 Monate: Content-Strategie, Keyword-Recherche, technische Optimierung, Reporting, Wettbewerbs-Monitoring.",
+      "Laufende SEO-Betreuung: Content-Strategie, Keyword-Recherche, technische Optimierung, Reporting, Wettbewerbs-Monitoring.",
     benefits: [
       "Monatlicher Performance-Call",
       "Keyword + Ranking-Tracking",
@@ -102,6 +118,7 @@ export const services: Service[] = [
     ],
     monthly: 1490,
     durationMonths: 3,
+    durationOptions: [3, 6, 9, 12],
     icon: "chart",
     category: "optimierung",
   },
@@ -123,10 +140,10 @@ export const services: Service[] = [
   },
   {
     id: "ki-laufend",
-    name: "KI-Sichtbarkeit (3 Monate)",
+    name: "KI-Sichtbarkeits-Betreuung",
     short: "Kontinuierliche KI-Optimierung mit Erfolgs-Tracking",
     description:
-      "Laufende KI-Sichtbarkeit-Betreuung über 3 Monate: konstante Anpassung an neue KI-Modelle, Monitoring der Erwähnungen in ChatGPT/Perplexity, Content-Tuning.",
+      "Laufende KI-Sichtbarkeit-Betreuung: konstante Anpassung an neue KI-Modelle, Monitoring der Erwähnungen in ChatGPT/Perplexity, Content-Tuning.",
     benefits: [
       "Monitoring KI-Erwähnungen",
       "Content + Schema kontinuierlich erweitern",
@@ -135,6 +152,7 @@ export const services: Service[] = [
     ],
     monthly: 1490,
     durationMonths: 3,
+    durationOptions: [3, 6, 9, 12],
     icon: "trending",
     category: "optimierung",
   },
@@ -158,16 +176,60 @@ export const services: Service[] = [
   },
 ];
 
-export function calcTotals(selectedIds: string[]) {
-  const selected = services.filter((s) => selectedIds.includes(s.id));
-  const oneTimeRaw = selected.reduce((sum, s) => sum + (s.oneTime ?? 0), 0);
-  const monthlyRaw = selected.reduce((sum, s) => sum + (s.monthly ?? 0), 0);
-  const hasBundle = selected.length >= 2;
+export interface ResolvedSelection {
+  service: Service;
+  selection: Selection;
+  /** Berechneter Einmalpreis für diese Auswahl (inkl. Quantity/Extras) */
+  oneTimeSum: number;
+  /** Berechneter Monatspreis für diese Auswahl */
+  monthlySum: number;
+  /** Effektive Laufzeit, wenn monthly */
+  effectiveDuration?: number;
+}
+
+function resolveSelection(s: Selection): ResolvedSelection | null {
+  const service = services.find((x) => x.id === s.id);
+  if (!service) return null;
+
+  let oneTimeSum = 0;
+  let monthlySum = 0;
+
+  // Einmal-Preis × Quantity (oder × 1 wenn nicht multipliziert)
+  if (service.oneTime != null) {
+    const qty = service.multiplyByQuantity ? Math.max(1, s.quantity ?? 1) : 1;
+    oneTimeSum = service.oneTime * qty;
+    // Extra-Unterseiten
+    if (service.extraPageOption && s.extraPages && s.extraPages > 0) {
+      oneTimeSum += s.extraPages * service.extraPageOption.pricePerExtra;
+    }
+  }
+
+  // Monatspreis
+  if (service.monthly != null) {
+    monthlySum = service.monthly;
+  }
+
+  const effectiveDuration =
+    service.monthly != null
+      ? s.durationMonths ?? service.durationMonths ?? undefined
+      : undefined;
+
+  return { service, selection: s, oneTimeSum, monthlySum, effectiveDuration };
+}
+
+export function calcTotals(selections: Selection[]) {
+  const resolved = selections
+    .map(resolveSelection)
+    .filter((r): r is ResolvedSelection => r !== null);
+
+  const oneTimeRaw = resolved.reduce((sum, r) => sum + r.oneTimeSum, 0);
+  const monthlyRaw = resolved.reduce((sum, r) => sum + r.monthlySum, 0);
+  const hasBundle = resolved.length >= 2;
   const discountRate = hasBundle ? BUNDLE_DISCOUNT : 0;
   const oneTime = Math.round(oneTimeRaw * (1 - discountRate));
   const monthly = Math.round(monthlyRaw * (1 - discountRate));
   return {
-    selected,
+    selected: resolved,
     oneTimeRaw,
     monthlyRaw,
     oneTime,
@@ -176,4 +238,42 @@ export function calcTotals(selectedIds: string[]) {
     discountAmount: Math.round((oneTimeRaw + monthlyRaw) * discountRate),
     hasBundle,
   };
+}
+
+/**
+ * URL-Encoding für Selections: kompakt, sicher, sharable.
+ * Format: jeder Eintrag "id" oder "id:qty.extra.dur" — getrennt durch ","
+ * Beispiel: "unternehmenswebseite:1.3.0,landingpage:2.0.0,seo-laufend:1.0.6"
+ */
+export function encodeSelections(sels: Selection[]): string {
+  return sels
+    .map((s) => {
+      const q = s.quantity ?? 1;
+      const e = s.extraPages ?? 0;
+      const d = s.durationMonths ?? 0;
+      // Nur kompaktes Format wenn nötig
+      if (q === 1 && e === 0 && d === 0) return s.id;
+      return `${s.id}:${q}.${e}.${d}`;
+    })
+    .join(",");
+}
+
+export function decodeSelections(encoded: string): Selection[] {
+  if (!encoded) return [];
+  const validIds = new Set(services.map((s) => s.id));
+  return encoded
+    .split(",")
+    .map((part) => {
+      const [id, opts] = part.split(":");
+      if (!validIds.has(id)) return null;
+      const sel: Selection = { id };
+      if (opts) {
+        const [q, e, d] = opts.split(".").map((x) => parseInt(x, 10) || 0);
+        if (q > 1 && q < 50) sel.quantity = q;
+        if (e > 0 && e < 100) sel.extraPages = e;
+        if (d > 0 && d < 60) sel.durationMonths = d;
+      }
+      return sel;
+    })
+    .filter((s): s is Selection => s !== null);
 }

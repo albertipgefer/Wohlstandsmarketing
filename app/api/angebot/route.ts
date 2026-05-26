@@ -3,7 +3,12 @@
  * Sendet das individuelle Angebot per E-Mail an den User + Lead-Notification an Albert.
  */
 import { NextRequest, NextResponse } from "next/server";
-import { calcTotals, BUNDLE_DISCOUNT, services } from "@/content/pricing";
+import {
+  calcTotals,
+  decodeSelections,
+  BUNDLE_DISCOUNT,
+  type ResolvedSelection,
+} from "@/content/pricing";
 
 export const runtime = "nodejs";
 
@@ -27,24 +32,45 @@ function formatEuro(n: number) {
 const TIDYCAL_URL =
   "https://tidycal.com/albertipgefer/strategiegespraech-mit-wohlstandsmarketing";
 
+function describeSelection(r: ResolvedSelection): string {
+  const parts: string[] = [];
+  if (r.service.multiplyByQuantity && r.selection.quantity && r.selection.quantity > 1) {
+    parts.push(`${r.selection.quantity}× Landingpage`);
+  }
+  if (r.service.extraPageOption) {
+    const inc = r.service.extraPageOption.included;
+    const extra = r.selection.extraPages ?? 0;
+    parts.push(extra > 0 ? `${inc} inkl. + ${extra} Extra-Seiten` : `${inc} Unterseiten inkl.`);
+  }
+  if (r.service.monthly && r.effectiveDuration) {
+    parts.push(`${r.effectiveDuration} Monate Laufzeit`);
+  } else if (r.service.monthly) {
+    parts.push("monatlich");
+  } else if (!r.service.multiplyByQuantity && !r.service.extraPageOption) {
+    parts.push("einmalig");
+  }
+  return parts.join(" · ");
+}
+
 function renderAngebotHtml(
   firstName: string,
-  itemIds: string[],
   totals: ReturnType<typeof calcTotals>,
 ): string {
   const items = totals.selected
     .map(
-      (s) => `
+      (r) => `
     <tr>
       <td style="padding:14px 0;border-bottom:1px solid #f0f0f0;">
-        <div style="font-weight:600;color:#0A0A0A;font-size:15px;">${escapeHtml(s.name)}</div>
-        <div style="color:#737373;font-size:12px;margin-top:3px;">${
-          s.monthly ? `monatlich · ab ${s.durationMonths} Monaten` : "einmalig"
-        }</div>
-        <div style="color:#525252;font-size:13px;margin-top:8px;line-height:1.5;">${escapeHtml(s.short)}</div>
+        <div style="font-weight:600;color:#0A0A0A;font-size:15px;">${escapeHtml(r.service.name)}</div>
+        <div style="color:#737373;font-size:12px;margin-top:3px;">${escapeHtml(describeSelection(r))}</div>
+        <div style="color:#525252;font-size:13px;margin-top:8px;line-height:1.5;">${escapeHtml(r.service.short)}</div>
       </td>
       <td style="padding:14px 0;border-bottom:1px solid #f0f0f0;text-align:right;vertical-align:top;">
-        <div style="font-weight:700;font-size:15px;color:#0A0A0A;">${formatEuro(s.monthly ?? s.oneTime ?? 0)}${s.monthly ? '<span style="font-size:11px;color:#737373;">/Mo</span>' : ""}</div>
+        <div style="font-weight:700;font-size:15px;color:#0A0A0A;">${
+          r.oneTimeSum > 0
+            ? formatEuro(r.oneTimeSum)
+            : `${formatEuro(r.monthlySum)}<span style="font-size:11px;color:#737373;">/Mo</span>`
+        }</div>
       </td>
     </tr>`,
     )
@@ -105,7 +131,7 @@ function renderAngebotHtml(
       </div>`
           : ""
       }
-      <p style="margin:20px 0 0;font-size:11px;color:#a3a3a3;line-height:1.5;">Alle Preise zzgl. der gesetzlichen MwSt. Endgültige Konditionen werden im persönlichen Erstgespräch besprochen.</p>
+      <p style="margin:20px 0 0;font-size:11px;color:#a3a3a3;line-height:1.5;">Alle Preise zzgl. der gesetzlichen MwSt. Endgültige Konditionen werden im persönlichen Strategiegespräch besprochen.</p>
     </div>
 
     <div style="margin:40px 0 24px;padding:32px;background:linear-gradient(135deg,#1663DE,#0a4bb8);border-radius:24px;color:#fff;text-align:center;">
@@ -134,7 +160,7 @@ export async function POST(req: NextRequest) {
     email?: string;
     phone?: string;
     consent?: boolean;
-    itemIds?: string[];
+    selections?: string;
   };
   try {
     body = await req.json();
@@ -147,9 +173,9 @@ export async function POST(req: NextRequest) {
   const email = (body.email || "").trim().slice(0, 160);
   const phone = (body.phone || "").trim().slice(0, 40);
   const consent = !!body.consent;
-  const itemIds = Array.isArray(body.itemIds) ? body.itemIds.slice(0, 20) : [];
+  const encoded = (body.selections || "").slice(0, 2000);
 
-  if (!firstName || !lastName || !email || !phone || !consent) {
+  if (!firstName || !lastName || !email || !phone || !consent || !encoded) {
     return NextResponse.json({ ok: false, error: "missing_fields" }, { status: 400 });
   }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -159,14 +185,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "invalid_phone" }, { status: 400 });
   }
 
-  // IDs gegen Whitelist validieren
-  const validIds = new Set(services.map((s) => s.id));
-  const cleanIds = itemIds.filter((id) => validIds.has(id));
-  if (cleanIds.length === 0) {
+  const selections = decodeSelections(encoded);
+  if (selections.length === 0) {
     return NextResponse.json({ ok: false, error: "no_items" }, { status: 400 });
   }
 
-  const totals = calcTotals(cleanIds);
+  const totals = calcTotals(selections);
 
   const apiKey = process.env.RESEND_API_KEY;
   const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
@@ -175,7 +199,7 @@ export async function POST(req: NextRequest) {
   }
 
   // 1) Angebot an User
-  const html = renderAngebotHtml(firstName, cleanIds, totals);
+  const html = renderAngebotHtml(firstName, totals);
   const userMail = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
@@ -199,11 +223,15 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // 2) Lead-Notification an Albert
+  // 2) Lead-Notification an Albert (mit Detail-Auswahl)
   const itemList = totals.selected
     .map(
-      (s) =>
-        `<li><strong>${escapeHtml(s.name)}</strong> — ${formatEuro(s.monthly ?? s.oneTime ?? 0)}${s.monthly ? "/Mo" : " einmalig"}</li>`,
+      (r) =>
+        `<li><strong>${escapeHtml(r.service.name)}</strong> — ${escapeHtml(describeSelection(r))} — ${
+          r.oneTimeSum > 0
+            ? formatEuro(r.oneTimeSum)
+            : `${formatEuro(r.monthlySum)}/Mo`
+        }</li>`,
     )
     .join("");
 
@@ -223,7 +251,7 @@ export async function POST(req: NextRequest) {
         <p><strong>E-Mail:</strong> <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></p>
         <p><strong>Telefon:</strong> <a href="tel:${escapeHtml(phone.replace(/\s/g, ""))}">${escapeHtml(phone)}</a></p>
         <hr/>
-        <p><strong>Ausgewählte Leistungen (${cleanIds.length}):</strong></p>
+        <p><strong>Ausgewählte Leistungen (${selections.length}):</strong></p>
         <ul>${itemList}</ul>
         <hr/>
         <p><strong>Einmalig:</strong> ${formatEuro(totals.oneTime)}${totals.hasBundle ? ` <span style="color:#a3a3a3;text-decoration:line-through;">${formatEuro(totals.oneTimeRaw)}</span>` : ""}</p>

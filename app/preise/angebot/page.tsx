@@ -12,15 +12,13 @@ export const metadata: Metadata = {
 };
 
 type PageProps = {
-  searchParams: Promise<{ items?: string }>;
+  searchParams: Promise<{ s?: string; items?: string }>;
 };
 
 export default async function AngebotPage({ searchParams }: PageProps) {
   const params = await searchParams;
-  const itemIds = (params.items || "")
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
+  // Neues Format: s=encoded selections; Fallback auf altes items=
+  const encoded = params.s || params.items || "";
 
   return (
     <main className="bg-[var(--bg)] text-[var(--text)]">
@@ -32,7 +30,7 @@ export default async function AngebotPage({ searchParams }: PageProps) {
           className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[420px] bg-[radial-gradient(50%_60%_at_50%_0%,rgba(22,99,222,0.12)_0%,rgba(22,99,222,0)_70%)]"
         />
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
-          <AngebotView itemIds={itemIds} />
+          <AngebotView encoded={encoded} />
         </div>
       </section>
 

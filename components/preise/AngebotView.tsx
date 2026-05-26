@@ -3,11 +3,16 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { calcTotals, BUNDLE_DISCOUNT } from "@/content/pricing";
+import {
+  calcTotals,
+  decodeSelections,
+  BUNDLE_DISCOUNT,
+  type ResolvedSelection,
+} from "@/content/pricing";
 import ServiceIcon from "./ServiceIcon";
 
 const TIDYCAL_URL =
-  "https://tidycal.com/albertipgefer/erstgespraech-mit-wohlstandsmarketing-2";
+  "https://tidycal.com/albertipgefer/strategiegespraech-mit-wohlstandsmarketing";
 
 function formatEuro(n: number) {
   return new Intl.NumberFormat("de-DE", {
@@ -17,7 +22,27 @@ function formatEuro(n: number) {
   }).format(n);
 }
 
-// Loading-Phasen — laufen ~7 Sekunden, damit es seriös wirkt
+function describeSelection(r: ResolvedSelection): string {
+  const parts: string[] = [];
+  if (r.service.multiplyByQuantity && r.selection.quantity && r.selection.quantity > 1) {
+    parts.push(`${r.selection.quantity}× Landingpage`);
+  }
+  if (r.service.extraPageOption) {
+    const inc = r.service.extraPageOption.included;
+    const extra = r.selection.extraPages ?? 0;
+    parts.push(extra > 0 ? `${inc} inkl. + ${extra} Extra-Seiten` : `${inc} Unterseiten inkl.`);
+  }
+  if (r.service.monthly && r.effectiveDuration) {
+    parts.push(`${r.effectiveDuration} Monate Laufzeit`);
+  } else if (r.service.monthly) {
+    parts.push("monatlich");
+  } else if (!r.service.multiplyByQuantity && !r.service.extraPageOption) {
+    parts.push("einmalig");
+  }
+  return parts.join(" · ");
+}
+
+// Loading-Phasen — ~7 s
 const LOADING_PHASES = [
   { label: "Wir prüfen deine Auswahl …", detail: "Leistungen werden analysiert", duration: 1500 },
   { label: "Investitions-Plan wird zusammengestellt …", detail: "Einmalige + monatliche Kosten", duration: 1800 },
@@ -97,9 +122,10 @@ function LoadingView() {
   );
 }
 
-export default function AngebotView({ itemIds }: { itemIds: string[] }) {
+export default function AngebotView({ encoded }: { encoded: string }) {
   const router = useRouter();
-  const totals = calcTotals(itemIds);
+  const selections = decodeSelections(encoded);
+  const totals = calcTotals(selections);
 
   const [step, setStep] = useState<"loading" | "gate">("loading");
   const [firstName, setFirstName] = useState("");
@@ -113,13 +139,13 @@ export default function AngebotView({ itemIds }: { itemIds: string[] }) {
   const MIN_LOADING_MS = LOADING_PHASES.reduce((s, p) => s + p.duration, 0);
 
   useEffect(() => {
-    if (itemIds.length === 0) return;
+    if (selections.length === 0) return;
     const t = setTimeout(() => {
       setStep("gate");
       setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 100);
     }, MIN_LOADING_MS);
     return () => clearTimeout(t);
-  }, [itemIds.length, MIN_LOADING_MS]);
+  }, [selections.length, MIN_LOADING_MS]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -136,7 +162,7 @@ export default function AngebotView({ itemIds }: { itemIds: string[] }) {
           email,
           phone,
           consent,
-          itemIds,
+          selections: encoded,
         }),
       });
       if (!res.ok) {
@@ -153,7 +179,7 @@ export default function AngebotView({ itemIds }: { itemIds: string[] }) {
     }
   }
 
-  if (itemIds.length === 0 || totals.selected.length === 0) {
+  if (selections.length === 0 || totals.selected.length === 0) {
     return (
       <div className="mx-auto max-w-2xl rounded-3xl border border-[var(--border)] bg-white p-8 text-center">
         <h2 className="font-[family-name:var(--font-display)] text-2xl font-black">
@@ -196,24 +222,25 @@ export default function AngebotView({ itemIds }: { itemIds: string[] }) {
           <p className="mt-1 text-[13px] text-[var(--text-muted)]">
             {totals.selected.length}{" "}
             {totals.selected.length === 1 ? "Leistung" : "Leistungen"}
-            {totals.hasBundle && ` · ${Math.round(BUNDLE_DISCOUNT * 100)} % Bundle-Rabatt aktiv`}
+            {totals.hasBundle &&
+              ` · ${Math.round(BUNDLE_DISCOUNT * 100)} % Bundle-Rabatt aktiv`}
           </p>
 
           <ul className="mt-5 space-y-3">
-            {totals.selected.map((s) => (
+            {totals.selected.map((r) => (
               <li
-                key={s.id}
+                key={r.service.id}
                 className="flex items-start gap-3 border-b border-[var(--border)] pb-3 last:border-b-0 last:pb-0"
               >
                 <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--bg)] text-[var(--text)]">
-                  <ServiceIcon name={s.icon} size={18} />
+                  <ServiceIcon name={r.service.icon} size={18} />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <div className="font-semibold text-[var(--text)]">{s.name}</div>
+                  <div className="font-semibold text-[var(--text)]">
+                    {r.service.name}
+                  </div>
                   <div className="text-[12px] text-[var(--text-muted)]">
-                    {s.monthly
-                      ? `monatlich · ab ${s.durationMonths} Monaten`
-                      : "einmalig"}
+                    {describeSelection(r)}
                   </div>
                 </div>
                 <span className="shrink-0 text-[12px] font-semibold uppercase tracking-[0.12em] text-emerald-600">
@@ -239,7 +266,6 @@ export default function AngebotView({ itemIds }: { itemIds: string[] }) {
             </h2>
 
             <div className="relative mt-6">
-              {/* Blurred Preise */}
               <div className="space-y-4 select-none blur-[8px]">
                 {totals.oneTimeRaw > 0 && (
                   <div className="flex items-baseline justify-between border-b border-[var(--border)] pb-4">
@@ -268,7 +294,6 @@ export default function AngebotView({ itemIds }: { itemIds: string[] }) {
                 )}
               </div>
 
-              {/* Lock-Overlay */}
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
                 <div className="rounded-full bg-[var(--text)] px-5 py-2.5 text-[13px] font-semibold uppercase tracking-[0.14em] text-white shadow-xl">
                   🔒 Preis freischalten

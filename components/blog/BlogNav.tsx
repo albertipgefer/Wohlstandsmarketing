@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   ["Startseite", "/"],
   ["Methode", "/#methode"],
   ["Standorte", "/standorte"],
+  ["KI-Check", "/sichtbarkeits-check"],
   ["Blog", "/blog"],
   ["FAQ", "/#faq"],
 ] as const;

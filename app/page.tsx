@@ -11,6 +11,7 @@ import FAQ from "@/components/sections/FAQ";
 import CTABlock from "@/components/sections/CTABlock";
 import BlogTeaser from "@/components/sections/BlogTeaser";
 import StandorteSektion from "@/components/sections/StandorteSektion";
+import KiCheckCTA from "@/components/sections/KiCheckCTA";
 import Footer from "@/components/sections/Footer";
 
 export default function Home() {
@@ -27,6 +28,7 @@ export default function Home() {
       <Vergleich />
       <FAQ />
       <CTABlock />
+      <KiCheckCTA />
       <StandorteSektion />
       <BlogTeaser />
       <Footer />

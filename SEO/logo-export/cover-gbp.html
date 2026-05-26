@@ -1,0 +1,47 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;background:#FAFAFA;font-family:'Inter',sans-serif;}
+  .canvas{
+    width:1200px;height:675px;position:relative;overflow:hidden;
+    background:
+      radial-gradient(55% 55% at 30% 0%, rgba(22,99,222,0.18) 0%, rgba(22,99,222,0) 70%),
+      radial-gradient(circle at 90% 65%, rgba(219,111,22,0.14) 0%, rgba(219,111,22,0) 60%),
+      #FAFAFA;
+    padding:72px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;
+  }
+  .top{display:flex;align-items:center;gap:18px;}
+  .logo{width:72px;height:72px;}
+  .brand{font-weight:700;font-size:22px;color:#0A0A0A;letter-spacing:-0.01em;}
+  h1{font-weight:900;font-size:62px;line-height:1.08;letter-spacing:-0.035em;color:#0A0A0A;margin:0;max-width:1100px;white-space:nowrap;}
+  .accent{font-family:'Playfair Display',serif;font-style:italic;font-weight:400;color:#1663DE;position:relative;}
+  .accent::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:6px;background:#DB6F16;border-radius:3px;opacity:0.9;}
+  .sub{font-size:24px;color:#555;font-weight:500;margin-top:24px;max-width:900px;line-height:1.4;}
+  .footer{display:flex;align-items:center;justify-content:space-between;font-size:18px;color:#0A0A0A;font-weight:600;}
+  .pill{background:#0A0A0A;color:#fff;padding:14px 28px;border-radius:999px;font-size:18px;font-weight:600;}
+</style></head>
+<body>
+<div class="canvas">
+  <div class="top">
+    <svg class="logo" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <rect width="64" height="64" rx="14" fill="#1663de"/>
+      <text x="32" y="44" text-anchor="middle" font-family="Inter,sans-serif" font-weight="900" font-size="36" fill="#fff" letter-spacing="-1.5">W</text>
+      <circle cx="49" cy="49" r="5.5" fill="#db6f16"/>
+    </svg>
+    <span class="brand">Wohlstandsmarketing</span>
+  </div>
+
+  <div>
+    <h1>Von unsichtbar zu <span class="accent">Nummer 1</span><br/>innerhalb von 90 Tagen.</h1>
+    <p class="sub">Webdesign + SEO + KI-Sichtbarkeit für Unternehmen aus dem Raum Koblenz, Bad Ems, Frankfurt, Bonn und Köln.</p>
+  </div>
+
+  <div class="footer">
+    <span>wohlstandsmarketing.de</span>
+    <span class="pill">Erstgespräch buchen →</span>
+  </div>
+</div>
+</body></html>

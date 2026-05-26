@@ -1,0 +1,70 @@
+GOOGLE BUSINESS PROFILE — LEISTUNGEN
+Copy-Paste-Vorlage für GBP-Backend → "Bearbeiten" → Tab "Leistungen"
+Reihenfolge bewusst gewählt (wichtigste Leistung zuerst).
+
+====================================================================
+
+1. Unternehmenswebseite
+
+Professionelle Unternehmenswebseite mit bis zu 3 Unterseiten — Webdesign + SEO + AEO aus einer Hand. In 90 Tagen von unsichtbar zu Nummer 1 in deiner Region bei Google und in KI-Suchen. Inkl. Impressum, Datenschutz, mobiler Optimierung und Performance-Tuning.
+
+(266 Zeichen)
+
+--------------------------------------------------------------------
+
+2. Landingpage-Erstellung
+
+Konvertierende Landingpage in 90 Tagen — modernes Design, SEO- und AEO-optimiert für Google, ChatGPT, Perplexity und Claude. Mobil-optimiert, schnelle Ladezeit, klare Call-to-Actions. Ideal für eine fokussierte Kampagne oder ein einzelnes Angebot.
+
+(273 Zeichen)
+
+--------------------------------------------------------------------
+
+3. SEO-Optimierung
+
+Suchmaschinen-Optimierung für nachhaltige Sichtbarkeit bei Google. Technisches SEO, Keyword-Architektur, OnPage- und Lokales SEO. Klares Ziel: in 90 Tagen auf Position 1 für deine wichtigsten Suchbegriffe in deiner Region.
+
+(226 Zeichen)
+
+--------------------------------------------------------------------
+
+4. KI-Sichtbarkeit / AEO-Optimierung
+
+Answer Engine Optimization (AEO): Deine Webseite wird so aufgebaut, dass ChatGPT, Perplexity, Claude und Google AI Overviews dein Unternehmen als Antwort empfehlen. Schema-Markup, llms.txt, semantische Struktur und KI-Crawler-Freigabe.
+
+(240 Zeichen)
+
+--------------------------------------------------------------------
+
+5. Lokales SEO
+
+Lokale Sichtbarkeit für deine Region — Google Business Profile Optimierung, Stadt-Landingpages, lokale Schema-Daten und Bewertungs-Strategie. Werde Nummer 1 in deiner Stadt: Bad Ems, Koblenz, Montabaur, Frankfurt, Bonn oder Köln.
+
+(232 Zeichen)
+
+--------------------------------------------------------------------
+
+6. Webdesign
+
+Modernes, schnelles Webdesign mit klarer Conversion-Logik. Mobil-first, Tailwind- und Next.js-basiert, vollständig anpassbar. Kein Baukasten, kein Template — sondern ein individueller Auftritt, der dein Unternehmen als Premium-Anbieter positioniert.
+
+(252 Zeichen)
+
+--------------------------------------------------------------------
+
+7. Webseiten-Relaunch
+
+Komplette Überarbeitung deiner bestehenden Webseite — modernes Design, technisches SEO-Fundament, AEO-Optimierung für KI-Suchen. Inklusive sauberer Weiterleitungen, damit dein bestehendes Google-Ranking erhalten bleibt und wächst.
+
+(232 Zeichen)
+
+--------------------------------------------------------------------
+
+8. Webseiten-Wartung
+
+Laufende Wartung deiner Webseite: Sicherheitsupdates, Performance-Monitoring, Backups, kleinere Inhaltsanpassungen. Ab 50 €/Monat. Damit deine Webseite langfristig schnell, sicher und Google-konform bleibt.
+
+(203 Zeichen)
+
+====================================================================
+ENDE

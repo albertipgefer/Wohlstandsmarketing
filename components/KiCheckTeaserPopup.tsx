@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import PopupModal from "./PopupModal";
+import { isFormActive } from "@/lib/form-active";
 
 const HIDDEN_PATHS = [
   "/sichtbarkeits-check",
@@ -44,7 +45,18 @@ export default function KiCheckTeaserPopup() {
     if (typeof window === "undefined") return;
     if (sessionStorage.getItem(STORAGE_KEY) === "1") return;
 
-    const t = window.setTimeout(() => setOpen(true), DELAY_MS);
+    // Wenn der User gerade in einer Form tippt, NICHT triggern — stattdessen
+    // alle 2 Sekunden nochmal probieren, bis Form-Focus weg ist.
+    function tryOpen() {
+      if (isFormActive()) {
+        window.setTimeout(tryOpen, 2000);
+        return;
+      }
+      if (sessionStorage.getItem(STORAGE_KEY) === "1") return;
+      setOpen(true);
+    }
+
+    const t = window.setTimeout(tryOpen, DELAY_MS);
     return () => window.clearTimeout(t);
   }, [hidden, pathname]);
 

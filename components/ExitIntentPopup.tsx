@@ -24,6 +24,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import PopupModal from "./PopupModal";
 import LeadMagnetForm from "./LeadMagnetForm";
+import { isFormActive } from "@/lib/form-active";
 
 const HIDDEN_PATHS = [
   "/sichtbarkeits-check",
@@ -53,6 +54,9 @@ export default function ExitIntentPopup() {
       if (dismissed) return;
       if (Date.now() - ts < MIN_DWELL_MS) return;
       if (sessionStorage.getItem(STORAGE_KEY) === "1") return;
+      // Wenn der User gerade in einer Form tippt, NICHT triggern —
+      // er hat die Seite ja noch nicht wirklich verlassen.
+      if (isFormActive()) return;
       dismissed = true;
       sessionStorage.setItem(STORAGE_KEY, "1");
       setOpen(true);

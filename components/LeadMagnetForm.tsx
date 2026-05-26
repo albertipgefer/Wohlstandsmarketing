@@ -137,21 +137,27 @@ export default function LeadMagnetForm({
         />
       </div>
 
-      {/* Newsletter-Opt-In — separat von PDF-Anforderung */}
+      {/* Newsletter-Opt-In — Pflicht, no-brainer formuliert */}
       <label
         htmlFor="lm-newsletter"
-        className="flex cursor-pointer items-start gap-2.5 rounded-2xl border border-[var(--border)] bg-white/60 p-3.5 text-left transition hover:border-[var(--accent)]/40 hover:bg-white"
+        className={`flex cursor-pointer items-start gap-2.5 rounded-2xl border bg-white p-3.5 text-left transition ${
+          newsletter
+            ? "border-[var(--accent)]/40 ring-1 ring-[var(--accent)]/15"
+            : "border-[var(--border)] hover:border-[var(--accent)]/40"
+        }`}
       >
         <input
           id="lm-newsletter"
           name="newsletter"
           type="checkbox"
+          required
           checked={newsletter}
           onChange={(e) => setNewsletter(e.target.checked)}
           className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-[var(--accent)]"
         />
         <span className="text-[12.5px] leading-relaxed text-[var(--text)]">
-          Ja, ich möchte zusätzlich <strong>Marketing-Mails von Albert</strong> erhalten — mit Vertiefungen zu den 11 Fehlern, Beispielen aus dem Mittelstand und konkreten Hebeln. Abmelden jederzeit per Klick.
+          <strong>Ja, ich will die PDF + die kostenlosen Vertiefungen.</strong>{" "}
+          <span className="text-[var(--text-muted)]">Ich bekomme die 12-Seiten-PDF plus in den nächsten 14 Tagen konkrete Hebel und Praxis-Beispiele von Albert per Mail. Abmelden jederzeit per Klick — kein Risiko.</span>
         </span>
       </label>
 

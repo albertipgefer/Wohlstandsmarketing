@@ -3,6 +3,7 @@ import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import CookieBanner from "@/components/CookieBanner";
 import ClarityAnalytics from "@/components/ClarityAnalytics";
+import StickyKiCheckCTA from "@/components/StickyKiCheckCTA";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -152,6 +153,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
         />
         {children}
+        <StickyKiCheckCTA />
         <CookieBanner />
         <ClarityAnalytics />
       </body>

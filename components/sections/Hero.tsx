@@ -358,10 +358,23 @@ export default function Hero() {
               </a>
             </motion.div>
 
+            {/* Sekundärer CTA: KI-Check als Lead-Magnet */}
+            <motion.a
+              variants={item}
+              href="/sichtbarkeits-check"
+              className="group mx-auto mt-5 inline-flex items-center gap-2 text-[13px] font-semibold text-[var(--text-muted)] transition hover:text-[var(--accent)] lg:mx-0"
+            >
+              <span aria-hidden className="text-[var(--accent)]">⚡</span>
+              <span className="underline-offset-4 group-hover:underline">
+                Oder mach den kostenlosen KI-Sichtbarkeits-Check
+              </span>
+              <span className="transition-transform group-hover:translate-x-0.5">→</span>
+            </motion.a>
+
             {/* Hint */}
             <motion.p
               variants={item}
-              className="mt-7 text-[11px] uppercase tracking-[0.22em] text-[var(--text-subtle)] sm:text-[12px]"
+              className="mt-5 text-[11px] uppercase tracking-[0.22em] text-[var(--text-subtle)] sm:text-[12px]"
             >
               15-Min Erstgespräch · Kostenfrei · Albert Ipgefer persönlich
             </motion.p>

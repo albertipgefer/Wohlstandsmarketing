@@ -185,6 +185,45 @@ export default function ArticleLayout({
       {/* Author Box — builds E-E-A-T signals before related content + CTA */}
       <AuthorBox />
 
+      {/* Lead-Magnet-Banner: KI-Check direkt nach Author-Box im engagement-Peak */}
+      <section className="border-t border-[var(--border)] py-12 md:py-16">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 md:px-12">
+          <div className="relative overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--bg)] p-6 md:p-10">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -right-16 -top-8 h-[260px] w-[260px] bg-[radial-gradient(circle,rgba(22,99,222,0.14)_0%,rgba(22,99,222,0)_70%)]"
+            />
+            <div className="relative grid items-center gap-6 md:grid-cols-[1fr_auto]">
+              <div>
+                <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-3 py-1 text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--accent)]">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
+                  Free Tool · 60 Sekunden
+                </span>
+                <h3 className="mt-3 font-[family-name:var(--font-display)] text-xl font-black leading-tight tracking-tight md:text-2xl">
+                  Wird deine eigene Seite von{" "}
+                  <span className="font-[family-name:var(--font-serif)] font-normal italic text-[var(--accent)]">
+                    ChatGPT
+                  </span>{" "}
+                  empfohlen?
+                </h3>
+                <p className="mt-2 text-[13px] leading-relaxed text-[var(--text-muted)] md:text-[14px]">
+                  Mach den kostenlosen KI-Sichtbarkeits-Check und erhalte Score
+                  + die 3 wichtigsten Hebel direkt per Mail.
+                </p>
+              </div>
+              <Link
+                href="/sichtbarkeits-check"
+                className="group relative inline-flex shrink-0 items-center gap-2 overflow-hidden rounded-full bg-[var(--text)] px-6 py-3.5 text-[14px] font-semibold text-white transition"
+              >
+                <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-dark,_#0a4bb8)] transition-transform duration-500 ease-out group-hover:translate-y-0" />
+                <span className="relative z-10">Kostenlos checken</span>
+                <span className="relative z-10 transition-transform group-hover:translate-x-0.5">→</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Related — now 4 keyword-matched posts in a 2x2 grid (desktop) */}
       {related.length > 0 && (
         <section className="border-t border-[var(--border)] py-20">

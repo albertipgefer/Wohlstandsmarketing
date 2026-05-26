@@ -91,56 +91,9 @@ export default function SichtbarkeitsCheckPage() {
         </div>
       </section>
 
-      {/* TOOL */}
+      {/* TOOL + HOW IT WORKS (How-It-Works ist im Tool integriert, verschwindet nach Check) */}
       <section className="relative px-4 pb-24 sm:px-6 md:px-12 md:pb-32">
         <KiCheckTool />
-      </section>
-
-      {/* HOW IT WORKS */}
-      <section className="border-t border-[var(--border)] bg-white py-20">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 md:px-12">
-          <div className="text-center">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--text-subtle)]">
-              So funktioniert der Check
-            </p>
-            <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl font-black tracking-tight md:text-4xl">
-              4 Säulen · 20+ Prüfpunkte · 1 Score
-            </h2>
-          </div>
-          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {[
-              {
-                title: "KI-Crawler & Auffindbarkeit",
-                body: "Dürfen GPTBot, ClaudeBot, PerplexityBot deine Seite lesen? Gibt es eine llms.txt mit Hints?",
-              },
-              {
-                title: "Schema.org",
-                body: "Strukturierte Daten (Organization, Person, FAQ, Article) — die KI versteht, was du bist.",
-              },
-              {
-                title: "SEO-Fundament",
-                body: "Title, Meta, OG-Image, Canonical, Sitemap — die Grundlage, damit du überhaupt indexiert wirst.",
-              },
-              {
-                title: "Performance & Trust",
-                body: "Core Web Vitals via Lighthouse, Impressum, About-Seite, Social-Profile (E-E-A-T).",
-              },
-            ].map((p, i) => (
-              <div
-                key={i}
-                className="rounded-3xl border border-[var(--border)] bg-[var(--bg)] p-6"
-              >
-                <div className="font-[family-name:var(--font-display)] text-[28px] font-black text-[var(--accent)]">
-                  0{i + 1}
-                </div>
-                <div className="mt-3 font-semibold text-[var(--text)]">{p.title}</div>
-                <div className="mt-2 text-[13px] leading-relaxed text-[var(--text-muted)]">
-                  {p.body}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
       </section>
 
       <Footer />

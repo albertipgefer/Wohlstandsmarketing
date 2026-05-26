@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { KiCheckResult, UserAnswers, PillarResult } from "@/lib/ki-check/types";
 
@@ -11,6 +11,17 @@ const GOAL_OPTIONS: Array<{ value: NonNullable<UserAnswers["goal"]>; label: stri
   { value: "lokal", label: "Lokale Sichtbarkeit", hint: "In Google Maps + lokal gefunden werden" },
   { value: "ki", label: "KI-Empfehlung", hint: "Von ChatGPT, Claude, Perplexity empfohlen werden" },
   { value: "alle", label: "Alles zusammen", hint: "Das volle Programm" },
+];
+
+// Loading-Phasen — laufen mind. ~12s damit der Check seriös wirkt
+const LOADING_PHASES = [
+  { label: "Webseite wird geladen…", detail: "HTTP-Request + Redirect-Auflösung", duration: 2200 },
+  { label: "robots.txt + llms.txt werden geprüft…", detail: "KI-Crawler-Zugang analysieren", duration: 2400 },
+  { label: "Schema.org JSON-LD wird ausgewertet…", detail: "Organization, Person, FAQ, Article …", duration: 2400 },
+  { label: "Meta-Tags & SEO-Basics werden gescannt…", detail: "Title, Description, OG, Canonical, Sitemap", duration: 2200 },
+  { label: "Lighthouse-Performance wird ermittelt…", detail: "Core Web Vitals via Google PageSpeed Insights", duration: 3400 },
+  { label: "Trust-Signale werden geprüft…", detail: "Impressum, About, Social-Profile, HTTPS", duration: 1800 },
+  { label: "Score wird berechnet…", detail: "Gewichtung über 4 Säulen", duration: 1400 },
 ];
 
 function StatusDot({ status }: { status: "pass" | "warn" | "fail" }) {
@@ -45,13 +56,119 @@ function ScoreRing({ score }: { score: number }) {
         strokeDasharray={c}
         initial={{ strokeDashoffset: c }}
         animate={{ strokeDashoffset: offset }}
-        transition={{ duration: 1.2, ease: "easeOut" }}
+        transition={{ duration: 1.4, ease: "easeOut" }}
         strokeLinecap="round"
       />
     </svg>
   );
 }
 
+// ─────────────────────────────────────────────────────────────
+// Loading-View mit echten Phasen + Progress-Bar
+// ─────────────────────────────────────────────────────────────
+function LoadingView() {
+  const [phase, setPhase] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const totalDuration = LOADING_PHASES.reduce((s, p) => s + p.duration, 0);
+
+  useEffect(() => {
+    let elapsed = 0;
+    const timers: number[] = [];
+    LOADING_PHASES.forEach((p, idx) => {
+      elapsed += p.duration;
+      timers.push(
+        window.setTimeout(() => setPhase(idx + 1), elapsed - p.duration + 50),
+      );
+    });
+    // Progress-Bar smooth über totalDuration
+    const start = performance.now();
+    const tick = () => {
+      const t = performance.now() - start;
+      const pct = Math.min(99, (t / totalDuration) * 100);
+      setProgress(pct);
+      if (pct < 99) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+    return () => timers.forEach(clearTimeout);
+  }, [totalDuration]);
+
+  const current = LOADING_PHASES[Math.min(phase, LOADING_PHASES.length - 1)];
+
+  return (
+    <div className="rounded-3xl border border-[var(--border)] bg-white p-8 shadow-[0_10px_40px_-12px_rgba(10,10,10,0.12)] md:p-12">
+      {/* Spinner + Phase-Label */}
+      <div className="flex flex-col items-center gap-6 text-center">
+        <div className="relative h-16 w-16">
+          <div className="absolute inset-0 animate-spin rounded-full border-4 border-[var(--border)] border-t-[var(--accent)]" />
+        </div>
+        <div>
+          <h2 className="font-[family-name:var(--font-display)] text-2xl font-black tracking-tight md:text-3xl">
+            Wir scannen deine Seite …
+          </h2>
+          <div className="mt-2 text-[13px] text-[var(--text-subtle)]">
+            Schritt {Math.min(phase + 1, LOADING_PHASES.length)} von {LOADING_PHASES.length}
+          </div>
+        </div>
+      </div>
+
+      {/* Progress-Bar */}
+      <div className="mt-8 h-1.5 w-full overflow-hidden rounded-full bg-[var(--border)]">
+        <div
+          className="h-full bg-[var(--accent)] transition-[width] duration-200 ease-out"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+
+      {/* Aktuelle Phase */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={phase}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.3 }}
+          className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--bg)] p-5 text-center"
+        >
+          <div className="text-[15px] font-semibold text-[var(--text)]">{current.label}</div>
+          <div className="mt-1 text-[12px] text-[var(--text-muted)]">{current.detail}</div>
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Mini-Checkliste */}
+      <ul className="mt-6 space-y-2">
+        {LOADING_PHASES.map((p, i) => {
+          const done = i < phase;
+          const active = i === phase;
+          return (
+            <li
+              key={i}
+              className={`flex items-center gap-3 rounded-xl px-3 py-2 text-[12px] transition ${
+                active ? "bg-[var(--accent)]/5" : ""
+              }`}
+            >
+              <span className="flex h-5 w-5 items-center justify-center">
+                {done ? (
+                  <span className="text-emerald-500">✓</span>
+                ) : active ? (
+                  <span className="h-2 w-2 animate-pulse rounded-full bg-[var(--accent)]" />
+                ) : (
+                  <span className="h-2 w-2 rounded-full bg-[var(--border)]" />
+                )}
+              </span>
+              <span className={done ? "text-[var(--text-muted)] line-through" : active ? "font-medium text-[var(--text)]" : "text-[var(--text-subtle)]"}>
+                {p.label}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Hauptkomponente
+// ─────────────────────────────────────────────────────────────
 export default function KiCheckTool() {
   const [step, setStep] = useState<Step>("wizard");
   const [wizardStep, setWizardStep] = useState(0);
@@ -59,27 +176,39 @@ export default function KiCheckTool() {
   const [result, setResult] = useState<KiCheckResult | null>(null);
   const [error, setError] = useState<string>("");
 
-  // Lead-Capture-State
   const [email, setEmail] = useState("");
   const [consent, setConsent] = useState(false);
   const [mailState, setMailState] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [mailError, setMailError] = useState<string>("");
+
+  const resultRef = useRef<HTMLDivElement>(null);
+
+  // Min-Loading-Zeit für Glaubwürdigkeit
+  const MIN_LOADING_MS = LOADING_PHASES.reduce((s, p) => s + p.duration, 0);
 
   async function runCheck() {
     setStep("loading");
     setError("");
+    const started = Date.now();
     try {
-      const res = await fetch("/api/ki-check", {
+      const apiPromise = fetch("/api/ki-check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(answers),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data?.error || "Etwas ist schiefgelaufen.");
+      }).then((r) => r.json().then((d) => ({ ok: r.ok, d })));
+
+      const [apiRes] = await Promise.all([apiPromise]);
+      // Warten bis die Loading-Animation fertig ist
+      const elapsed = Date.now() - started;
+      if (elapsed < MIN_LOADING_MS) {
+        await new Promise((res) => setTimeout(res, MIN_LOADING_MS - elapsed));
+      }
+      if (!apiRes.ok) {
+        setError(apiRes.d?.error || "Etwas ist schiefgelaufen.");
         setStep("error");
         return;
       }
-      setResult(data as KiCheckResult);
+      setResult(apiRes.d as KiCheckResult);
       setStep("result");
     } catch {
       setError("Netzwerk-Fehler. Bitte später erneut versuchen.");
@@ -87,22 +216,35 @@ export default function KiCheckTool() {
     }
   }
 
+  // Auto-scroll zum Result wenn fertig
+  useEffect(() => {
+    if (step === "result" && resultRef.current) {
+      setTimeout(() => {
+        resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 200);
+    }
+  }, [step]);
+
   async function sendReport(e: React.FormEvent) {
     e.preventDefault();
     if (!result || !email || !consent) return;
     setMailState("sending");
+    setMailError("");
     try {
       const res = await fetch("/api/ki-check/report", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ resultId: result.id, email, consent }),
+        body: JSON.stringify({ result, email, consent }),
       });
       if (!res.ok) {
+        const d = await res.json().catch(() => null);
+        setMailError(d?.error ?? "Versand fehlgeschlagen.");
         setMailState("error");
         return;
       }
       setMailState("sent");
     } catch {
+      setMailError("Netzwerk-Fehler beim Versand.");
       setMailState("error");
     }
   }
@@ -120,7 +262,6 @@ export default function KiCheckTool() {
             transition={{ duration: 0.35 }}
             className="rounded-3xl border border-[var(--border)] bg-white p-6 shadow-[0_10px_40px_-12px_rgba(10,10,10,0.12)] md:p-10"
           >
-            {/* Progress */}
             <div className="mb-8 flex items-center gap-2">
               {[0, 1, 2].map((i) => (
                 <div
@@ -240,7 +381,7 @@ export default function KiCheckTool() {
                     type="button"
                     disabled={!answers.goal}
                     onClick={runCheck}
-                    className="group inline-flex items-center gap-2 overflow-hidden rounded-full bg-[var(--accent)] px-7 py-3.5 text-[14px] font-semibold text-white transition hover:bg-[var(--accent-dark,_#0a4bb8)] disabled:opacity-30"
+                    className="group inline-flex items-center gap-2 overflow-hidden rounded-full bg-[var(--accent)] px-7 py-3.5 text-[14px] font-semibold text-white transition hover:opacity-90 disabled:opacity-30"
                   >
                     Check starten
                     <span className="transition-transform group-hover:translate-x-0.5">→</span>
@@ -258,21 +399,8 @@ export default function KiCheckTool() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex min-h-[400px] flex-col items-center justify-center gap-6 rounded-3xl border border-[var(--border)] bg-white p-10 text-center shadow-[0_10px_40px_-12px_rgba(10,10,10,0.12)]"
           >
-            <div className="relative h-16 w-16">
-              <div className="absolute inset-0 animate-spin rounded-full border-4 border-[var(--border)] border-t-[var(--accent)]" />
-            </div>
-            <div>
-              <h2 className="font-[family-name:var(--font-display)] text-2xl font-black tracking-tight">
-                Wir prüfen deine Seite …
-              </h2>
-              <p className="mt-2 text-[14px] text-[var(--text-muted)]">
-                robots.txt · llms.txt · Schema.org · Meta · Sitemap · Performance · E-E-A-T
-                <br />
-                Das dauert 10–25 Sekunden — wir checken auch echte Lighthouse-Werte.
-              </p>
-            </div>
+            <LoadingView />
           </motion.div>
         )}
 
@@ -301,16 +429,17 @@ export default function KiCheckTool() {
           </motion.div>
         )}
 
-        {/* RESULT */}
+        {/* RESULT — Reihenfolge: Score → Säulen → Top-3 → Mail-Soft-Gate → Hard-CTA */}
         {step === "result" && result && (
           <motion.div
+            ref={resultRef}
             key="result"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
             className="space-y-8"
           >
-            {/* Score-Hero */}
+            {/* ─── 1. SCORE-HERO ─── */}
             <div className="relative overflow-hidden rounded-3xl border border-[var(--border)] bg-white p-8 text-center shadow-[0_10px_40px_-12px_rgba(10,10,10,0.12)] md:p-12">
               <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--text-subtle)]">
                 Dein KI-Sichtbarkeits-Score
@@ -334,7 +463,7 @@ export default function KiCheckTool() {
               </div>
             </div>
 
-            {/* 4 Säulen */}
+            {/* ─── 2. 4 SÄULEN ─── */}
             <div className="grid gap-4 md:grid-cols-2">
               {result.pillars.map((p: PillarResult) => (
                 <div
@@ -373,7 +502,7 @@ export default function KiCheckTool() {
               ))}
             </div>
 
-            {/* Top-Empfehlungen */}
+            {/* ─── 3. TOP-3 HEBEL ─── */}
             <div className="rounded-3xl border border-[var(--border)] bg-white p-6 md:p-10">
               <h3 className="font-[family-name:var(--font-display)] text-xl font-black tracking-tight md:text-2xl">
                 Deine 3 wichtigsten Hebel
@@ -395,26 +524,7 @@ export default function KiCheckTool() {
               </div>
             </div>
 
-            {/* Hard CTA */}
-            <div className="overflow-hidden rounded-3xl bg-[var(--text)] p-8 text-center text-white md:p-12">
-              <h3 className="font-[family-name:var(--font-display)] text-2xl font-black tracking-tight md:text-3xl">
-                Du willst diese Hebel <span className="font-[family-name:var(--font-serif)] italic text-[var(--gold)]">umgesetzt</span> sehen?
-              </h3>
-              <p className="mx-auto mt-3 max-w-xl text-[14px] text-white/70 md:text-[15px]">
-                In 15 Minuten zeige ich dir persönlich, wie wir deine Webseite in 90 Tagen
-                auf Google, ChatGPT und Perplexity nach vorne bringen.
-              </p>
-              <a
-                href="https://tidycal.com/albertipgefer/erstgespraech-mit-wohlstandsmarketing-2"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-[14px] font-semibold text-[var(--text)] transition hover:bg-[var(--accent)] hover:text-white"
-              >
-                Erstgespräch buchen → 15 Min mit Albert
-              </a>
-            </div>
-
-            {/* Soft-Gate: PDF-/Mail-Report */}
+            {/* ─── 4. SOFT-GATE: MAIL-REPORT ─── */}
             <div className="rounded-3xl border border-[var(--border)] bg-[var(--bg)] p-6 md:p-10">
               <div className="grid items-center gap-6 md:grid-cols-[1fr_1.2fr]">
                 <div>
@@ -472,11 +582,79 @@ export default function KiCheckTool() {
                     </button>
                     {mailState === "error" && (
                       <p className="text-[12px] text-red-600">
-                        Versand fehlgeschlagen. Bitte später erneut.
+                        Versand fehlgeschlagen{mailError ? ` (${mailError})` : ""}. Bitte später erneut.
                       </p>
                     )}
                   </form>
                 )}
+              </div>
+            </div>
+
+            {/* ─── 5. HARD CTA — CI-Design ─── */}
+            <div className="relative overflow-hidden rounded-3xl border border-[var(--border)] bg-white p-8 text-center md:p-14">
+              {/* Atmosphäre */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -left-24 top-0 h-[320px] w-[320px] bg-[radial-gradient(circle,rgba(22,99,222,0.12)_0%,rgba(22,99,222,0)_70%)]"
+              />
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -right-20 bottom-0 h-[280px] w-[280px] bg-[radial-gradient(circle,rgba(219,111,22,0.10)_0%,rgba(219,111,22,0)_70%)]"
+              />
+
+              <div className="relative">
+                <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--text-muted)] shadow-[0_4px_20px_-6px_rgba(10,10,10,0.08)]">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
+                  <span className="font-semibold text-[var(--accent)]">Nächster Schritt</span>
+                </span>
+
+                <h3
+                  className="mx-auto mt-6 max-w-2xl font-[family-name:var(--font-display)] font-black leading-[1.05] tracking-[-0.03em] text-[var(--text)]"
+                  style={{ fontSize: "clamp(1.85rem, 4.2vw, 3rem)" }}
+                >
+                  Du willst diese Hebel{" "}
+                  <span className="relative inline-block">
+                    <span className="font-[family-name:var(--font-serif)] font-normal italic text-[var(--accent)]">
+                      umgesetzt
+                    </span>
+                    <svg
+                      className="absolute -bottom-1 left-0 w-full"
+                      height="12"
+                      viewBox="0 0 200 12"
+                      fill="none"
+                      preserveAspectRatio="none"
+                      aria-hidden
+                    >
+                      <path
+                        d="M2 8C 50 2, 100 10, 150 5 S 195 7, 198 4"
+                        stroke="#db6f16"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        opacity="0.9"
+                      />
+                    </svg>
+                  </span>{" "}
+                  sehen?
+                </h3>
+
+                <p className="mx-auto mt-5 max-w-xl text-[14px] leading-relaxed text-[var(--text-muted)] md:text-[15px]">
+                  In 15 Minuten zeige ich dir persönlich, wie wir deine Webseite in 90 Tagen
+                  auf Google, ChatGPT und Perplexity nach vorne bringen.
+                </p>
+
+                <a
+                  href="https://tidycal.com/albertipgefer/erstgespraech-mit-wohlstandsmarketing-2"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative mt-8 inline-flex items-center gap-2 overflow-hidden rounded-full bg-[var(--text)] px-7 py-4 text-[14px] font-semibold text-white transition"
+                >
+                  <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-dark,_#0a4bb8)] transition-transform duration-500 ease-out group-hover:translate-y-0" />
+                  <span className="relative z-10">Erstgespräch buchen → 15 Min mit Albert</span>
+                </a>
+
+                <div className="mt-4 text-[12px] text-[var(--text-subtle)]">
+                  Kostenfrei · Unverbindlich · Persönlich
+                </div>
               </div>
             </div>
 
@@ -492,6 +670,7 @@ export default function KiCheckTool() {
                   setEmail("");
                   setConsent(false);
                   setMailState("idle");
+                  setMailError("");
                 }}
                 className="text-[13px] font-medium text-[var(--text-muted)] underline hover:text-[var(--text)]"
               >
@@ -501,6 +680,53 @@ export default function KiCheckTool() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* HOW IT WORKS — nur sichtbar, solange noch kein Ergebnis da ist */}
+      {(step === "wizard" || step === "error") && (
+        <section className="mt-24 border-t border-[var(--border)] pt-20">
+          <div className="text-center">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--text-subtle)]">
+              So funktioniert der Check
+            </p>
+            <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl font-black tracking-tight md:text-4xl">
+              4 Säulen · 20+ Prüfpunkte · 1 Score
+            </h2>
+          </div>
+          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {[
+              {
+                title: "KI-Crawler & Auffindbarkeit",
+                body: "Dürfen GPTBot, ClaudeBot, PerplexityBot deine Seite lesen? Gibt es eine llms.txt mit Hints?",
+              },
+              {
+                title: "Schema.org",
+                body: "Strukturierte Daten (Organization, Person, FAQ, Article) — die KI versteht, was du bist.",
+              },
+              {
+                title: "SEO-Fundament",
+                body: "Title, Meta, OG-Image, Canonical, Sitemap — die Grundlage, damit du überhaupt indexiert wirst.",
+              },
+              {
+                title: "Performance & Trust",
+                body: "Core Web Vitals via Lighthouse, Impressum, About-Seite, Social-Profile (E-E-A-T).",
+              },
+            ].map((p, i) => (
+              <div
+                key={i}
+                className="rounded-3xl border border-[var(--border)] bg-[var(--bg)] p-6"
+              >
+                <div className="font-[family-name:var(--font-display)] text-[28px] font-black text-[var(--accent)]">
+                  0{i + 1}
+                </div>
+                <div className="mt-3 font-semibold text-[var(--text)]">{p.title}</div>
+                <div className="mt-2 text-[13px] leading-relaxed text-[var(--text-muted)]">
+                  {p.body}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

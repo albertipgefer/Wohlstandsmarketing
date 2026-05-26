@@ -20,17 +20,41 @@ function topRecommendations(
   answers: UserAnswers,
 ): Array<{ title: string; body: string }> {
   // Sammle alle Fail/Warn-Items, gewichtet nach Status + Säulen-Schwäche.
-  type Cand = { item: PillarResult["items"][number]; weight: number };
+  type Cand = { title: string; body: string; weight: number };
   const cands: Cand[] = [];
   for (const p of pillars) {
     for (const it of p.items) {
       if (!it.fix) continue;
       const w = (it.status === "fail" ? 2 : 1) + (p.score < 12 ? 1 : 0);
-      cands.push({ item: it, weight: w });
+      cands.push({ title: it.label, body: it.fix, weight: w });
     }
   }
   cands.sort((a, b) => b.weight - a.weight);
-  const picked = cands.slice(0, 3);
+
+  // Ziel-spezifische Strategische Bonus-Empfehlungen — werden ergänzt,
+  // wenn die Seite bereits sehr stark ist (<3 echte Fixes da).
+  const strategicByGoal: Record<NonNullable<UserAnswers["goal"]>, Array<{ title: string; body: string }>> = {
+    leads: [
+      { title: "Lead-Magnet platzieren", body: "Free Tool, PDF-Guide oder Mini-Audit als Lead-Magnet auf jeder Seite anbieten — verwandelt Traffic in Anfragen." },
+      { title: "Conversion-Pfade testen", body: "A/B-Tests auf Hero-CTA, Form-Position und Above-the-Fold-Botschaft starten." },
+      { title: "Social Proof verstärken", body: "Mindestens 5 Google-Bewertungen + Kunden-Logos prominent platzieren." },
+    ],
+    lokal: [
+      { title: "Stadt-Seiten skalieren", body: "Pro Region eine eigene Landingpage mit lokalem Bezug, Schema und Branchen-Fokus aufbauen." },
+      { title: "Google Business Profile pflegen", body: "Wöchentliche Posts, 10+ Fotos, Reviews aktiv einsammeln — bringt sofort lokale Sichtbarkeit." },
+      { title: "Lokale Backlinks aufbauen", body: "Branchenverzeichnisse, lokale Presse und Partner-Webseiten gezielt für Backlinks anfragen." },
+    ],
+    ki: [
+      { title: "FAQ-Cluster ausbauen", body: "Pro Hauptthema 5–10 strukturierte FAQs mit FAQPage-Schema — KI liebt strukturierte Antworten." },
+      { title: "Blog-Frequenz erhöhen", body: "1 Artikel/Woche zu KI-relevanten Themen — Frische signalisiert Relevanz für KI-Crawler." },
+      { title: "Author-Entity stärken", body: "Person-Schema mit sameAs zu LinkedIn/Wikipedia/Branchenmedien — KI verknüpft dich als Experten." },
+    ],
+    alle: [
+      { title: "Content-Cluster aufbauen", body: "Pro Hauptthema einen Pillar-Artikel + 5–10 Cluster-Artikel mit interner Verlinkung." },
+      { title: "Newsletter-Funnel starten", body: "E-Mail-Liste aufbauen mit klarem Lead-Magnet — der einzige Kanal, den du selbst besitzt." },
+      { title: "Backlink-Outreach aktivieren", body: "5–10 hochwertige Backlinks aus Branche/lokal pro Quartal — der dritte SEO-Hebel nach Content + Technik." },
+    ],
+  };
 
   // Ziel-spezifischer Intro-Hint
   const goalIntro: Record<NonNullable<UserAnswers["goal"]>, string> = {
@@ -41,9 +65,32 @@ function topRecommendations(
   };
   const intro = answers.goal ? goalIntro[answers.goal] : "Top-Empfehlung";
 
-  return picked.map((c, idx) => ({
-    title: idx === 0 ? `${intro}: ${c.item.label}` : c.item.label,
-    body: c.item.fix ?? c.item.detail,
+  // Erst echte Fixes, dann mit strategischen Bonus-Empfehlungen auffüllen
+  const picked = cands.slice(0, 3).map((c) => ({ title: c.title, body: c.body }));
+  if (picked.length < 3 && answers.goal) {
+    const strategic = strategicByGoal[answers.goal];
+    const existingTitles = new Set(picked.map((p) => p.title));
+    for (const s of strategic) {
+      if (picked.length >= 3) break;
+      if (!existingTitles.has(s.title)) picked.push(s);
+    }
+  }
+  // Falls immer noch <3 (kein goal gesetzt + sehr starke Seite), Default-Pool nutzen
+  while (picked.length < 3) {
+    const fallback = [
+      { title: "Content-Cluster aufbauen", body: "Pro Hauptthema einen Pillar-Artikel + Cluster-Artikel mit interner Verlinkung." },
+      { title: "Backlink-Aufbau starten", body: "5–10 hochwertige Backlinks pro Quartal aus Branche/lokal." },
+      { title: "Frische signalisieren", body: "Regelmäßig (mind. 1x/Woche) neuen Content veröffentlichen." },
+    ];
+    for (const f of fallback) {
+      if (picked.length >= 3) break;
+      if (!picked.some((p) => p.title === f.title)) picked.push(f);
+    }
+  }
+
+  return picked.map((p, idx) => ({
+    title: idx === 0 ? `${intro}: ${p.title}` : p.title,
+    body: p.body,
   }));
 }
 

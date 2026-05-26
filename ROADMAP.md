@@ -28,10 +28,12 @@
 
 ## 🟦 Block 3 — Neue Routes & Bereiche (Code-Arbeit)
 
-- [ ] **KI-Sichtbarkeits-Check (Free Tool)** ← Albert-Wunsch-Item
-  - Eigene Subroute (z. B. `/ki-check`)
-  - 3 Fragen → Score → Lead-Capture (Resend Audience)
-  - Lead Magnet + Backlink-Köder + Long-Tail-Keyword-Magnet
+- [x] **KI-Sichtbarkeits-Check (Free Tool)** ✅ 26.05.2026 (Commit `00d0ee0`)
+  - Live unter `/sichtbarkeits-check`
+  - Echter URL-Crawler mit 4 Säulen (KI-Crawler, Schema, SEO, Performance/Trust)
+  - 3-Step Wizard (URL/Stadt/Ziel), Score-Ring, Inline-Bericht, harter CTA
+  - Soft-Gate Lead-Capture mit Resend-HTML-Mail (Bericht an User + Lead-Notif an Albert)
+  - Navbar-Punkt + eigene CTA-Sektion auf Startseite eingebaut
 - [ ] **Lead Magnet prominent auf der Seite platzieren** — Hero, Sidebar im Blog, Exit-Intent
 - [ ] **5–10 weitere Stadt-Pages** — Mainz, Wiesbaden, Düsseldorf, Trier, Saarbrücken, Mannheim, Aachen …
 - [ ] **Pricing-Page** als eigene Route (`/preise`)

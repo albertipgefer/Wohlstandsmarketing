@@ -4,7 +4,6 @@
  * Body: { resultId, email, consent }
  */
 import { NextRequest, NextResponse } from "next/server";
-import { getResult, updateResult } from "@/lib/ki-check/score";
 import type { KiCheckResult, PillarResult } from "@/lib/ki-check/types";
 
 export const runtime = "nodejs";
@@ -121,15 +120,19 @@ function renderReportHtml(r: KiCheckResult): string {
 }
 
 export async function POST(req: NextRequest) {
-  let body: { resultId?: string; email?: string; consent?: boolean };
+  let body: {
+    email?: string;
+    consent?: boolean;
+    result?: KiCheckResult;
+  };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ ok: false, error: "bad_request" }, { status: 400 });
   }
 
-  const { resultId, email, consent } = body;
-  if (!resultId || !email || !consent) {
+  const { email, consent, result } = body;
+  if (!email || !consent || !result) {
     return NextResponse.json(
       { ok: false, error: "missing_fields" },
       { status: 400 },
@@ -141,12 +144,15 @@ export async function POST(req: NextRequest) {
       { status: 400 },
     );
   }
-
-  const result = getResult(resultId);
-  if (!result) {
+  // Minimale Validierung des Result-Objekts (Vertrauen okay — kommt aus eigenem API-Call)
+  if (
+    typeof result.score !== "number" ||
+    !Array.isArray(result.pillars) ||
+    !result.normalizedUrl
+  ) {
     return NextResponse.json(
-      { ok: false, error: "result_expired" },
-      { status: 404 },
+      { ok: false, error: "invalid_result" },
+      { status: 400 },
     );
   }
 
@@ -208,6 +214,5 @@ export async function POST(req: NextRequest) {
     }),
   });
 
-  updateResult(resultId, { reportEmailSent: true });
   return NextResponse.json({ ok: true });
 }

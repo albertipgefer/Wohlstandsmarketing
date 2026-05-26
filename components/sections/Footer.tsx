@@ -58,6 +58,11 @@ export default function Footer() {
                 </a>
               </li>
               <li>
+                <a href="/bewertungen" className="transition hover:text-[var(--text)]">
+                  Bewertungen
+                </a>
+              </li>
+              <li>
                 <a href="/#faq" className="transition hover:text-[var(--text)]">
                   FAQ
                 </a>

@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   ["Standorte", "/standorte"],
   ["KI-Check", "/sichtbarkeits-check"],
   ["Blog", "/blog"],
+  ["Bewertungen", "/bewertungen"],
 ] as const;
 
 /**

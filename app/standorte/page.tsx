@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { cities } from "@/content/cities";
 import BlogNav from "@/components/blog/BlogNav";
+import PreFooterCTA from "@/components/PreFooterCTA";
 import Footer from "@/components/sections/Footer";
 
 const SITE = "https://wohlstandsmarketing.de";
@@ -154,39 +155,16 @@ export default function StandortePage() {
         </div>
       </section>
 
-      {/* ── CTA ────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden border-t border-[var(--border)] bg-[var(--surface-2)]/40 py-20 md:py-24">
-        <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 md:px-12">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
-            Nächster Schritt
-          </p>
-          <h2
-            className="mt-4 font-[family-name:var(--font-display)] font-black leading-[1.05] tracking-[-0.03em] text-[var(--text)]"
-            style={{ fontSize: "clamp(1.75rem, 4vw, 2.5rem)" }}
-          >
-            Lass uns über deine{" "}
-            <span className="font-[family-name:var(--font-serif)] font-normal italic text-[var(--accent)]">
-              Sichtbarkeit
-            </span>{" "}
-            sprechen.
-          </h2>
-          <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-[var(--text-muted)] sm:text-lg">
-            Egal ob deine Stadt oben aufgeführt ist oder nicht — wir prüfen
-            gemeinsam die Passung. 15 Minuten Erstgespräch, kostenfrei,
-            mit konkretem Plan.
-          </p>
-          <Link
-            href="/#strategie"
-            className="group relative mt-8 inline-flex w-full max-w-md items-center justify-center gap-2 overflow-hidden rounded-full bg-[var(--text)] px-9 py-5 text-base font-semibold text-white shadow-[0_14px_40px_-10px_rgba(22,99,222,0.55)] transition hover:shadow-[0_18px_50px_-10px_rgba(22,99,222,0.8)] sm:w-auto"
-          >
-            <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-dark)] transition-transform duration-500 ease-out group-hover:translate-y-0" />
-            <span className="relative z-10">Erstgespräch sichern</span>
-            <span className="relative z-10 transition-transform group-hover:translate-x-1">
-              →
-            </span>
-          </Link>
-        </div>
-      </section>
+      {/* Pre-Footer-CTA — konsistenter Stil mit Blog-Artikeln und Stadt-Pages */}
+      <PreFooterCTA
+        variant="erstgespraech"
+        headline={
+          <>
+            Lass uns über deine <span className="font-[family-name:var(--font-serif)] font-normal italic text-[var(--accent)]">Sichtbarkeit</span> sprechen.
+          </>
+        }
+        subline="Egal ob deine Stadt oben aufgeführt ist oder nicht — wir prüfen gemeinsam die Passung. 15-Minuten-Erstgespräch, kostenfrei, mit konkretem Plan."
+      />
 
       <Footer />
     </main>

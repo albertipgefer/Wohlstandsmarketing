@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import BlogNav from "@/components/blog/BlogNav";
 import Testimonials from "@/components/sections/Testimonials";
+import PreFooterCTA from "@/components/PreFooterCTA";
 import Footer from "@/components/sections/Footer";
 
 export const metadata: Metadata = {
@@ -22,6 +23,15 @@ export default function BewertungenPage() {
           subline="Alle Google-Bewertungen — ungekürzt, verifiziert, direkt aus dem Google Business Profile. Lies dir in Ruhe durch, was unsere Kunden über die Zusammenarbeit, die Ergebnisse und die WSM-Methode schreiben."
         />
       </div>
+      <PreFooterCTA
+        variant="erstgespraech"
+        headline={
+          <>
+            Klingt das nach jemandem, mit dem du <span className="font-[family-name:var(--font-serif)] font-normal italic text-[var(--accent)]">arbeiten</span> willst?
+          </>
+        }
+        subline="15-Minuten-Erstgespräch mit Albert. Kostenfrei, ehrlich, mit konkretem nächsten Schritt — auch wenn wir nicht zusammenarbeiten."
+      />
       <Footer />
     </main>
   );

@@ -8,6 +8,7 @@ import PostCover from "./PostCover";
 import AuthorBox from "./AuthorBox";
 import RegionLinks from "./RegionLinks";
 import InlineCTA from "./InlineCTA";
+import PreFooterCTA from "@/components/PreFooterCTA";
 
 function formatDate(iso: string) {
   return new Intl.DateTimeFormat("de-DE", {
@@ -267,47 +268,17 @@ export default function ArticleLayout({
       {/* Region links — internal-linking hub to all 6 city money-pages */}
       <RegionLinks />
 
-      {/* Final CTA — Erstgespräch */}
-      <section className="relative overflow-hidden border-t border-[var(--border)] py-20 md:py-28">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-[480px] bg-[radial-gradient(55%_60%_at_50%_0%,rgba(22,99,222,0.16)_0%,rgba(22,99,222,0)_70%)]"
-        />
-        <div className="relative mx-auto max-w-6xl px-4 text-center sm:px-6 md:px-12">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
-            Nächster Schritt
-          </p>
-          <h2
-            className="mt-4 font-[family-name:var(--font-display)] font-black leading-[1.05] tracking-[-0.03em] text-[var(--text)]"
-            style={{ fontSize: "clamp(1.75rem, 4vw, 3rem)" }}
-          >
-            Bereit für deine{" "}
-            <span className="font-[family-name:var(--font-serif)] font-normal italic text-[var(--accent)]">
-              KI-Sichtbarkeit
-            </span>
-            ?
-          </h2>
-          <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-[var(--text-muted)] sm:text-lg">
-            15-Minuten-Erstgespräch mit Albert. Kostenfrei, ehrlich, mit
-            konkretem Plan — auch wenn wir nicht zusammenarbeiten.
-          </p>
-          <div className="mt-8 flex flex-col items-center gap-3">
-            <Link
-              href="/#strategie"
-              className="group relative inline-flex w-full max-w-md items-center justify-center gap-2 overflow-hidden rounded-full bg-[var(--text)] px-9 py-5 text-base font-semibold text-white shadow-[0_14px_40px_-10px_rgba(22,99,222,0.55)] transition hover:shadow-[0_18px_50px_-10px_rgba(22,99,222,0.8)] sm:w-auto"
-            >
-              <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-dark)] transition-transform duration-500 ease-out group-hover:translate-y-0" />
-              <span className="relative z-10">Erstgespräch sichern</span>
-              <span className="relative z-10 transition-transform group-hover:translate-x-1">
-                →
-              </span>
-            </Link>
-            <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-subtle)]">
-              15-Min · Kostenfrei · Albert Ipgefer persönlich
-            </p>
-          </div>
-        </div>
-      </section>
+      {/* Final CTA vor dem Footer — identisch zur Inline-CTA mittendrin,
+          damit der Stil konsistent ist (Akzent-Border, Gradient, gleicher Button). */}
+      <PreFooterCTA
+        variant="erstgespraech"
+        headline={
+          <>
+            Bereit für deine <span className="font-[family-name:var(--font-serif)] font-normal italic text-[var(--accent)]">KI-Sichtbarkeit</span>?
+          </>
+        }
+        subline="15-Minuten-Erstgespräch mit Albert. Kostenfrei, ehrlich, mit konkretem Plan — auch wenn wir nicht zusammenarbeiten."
+      />
     </article>
   );
 }

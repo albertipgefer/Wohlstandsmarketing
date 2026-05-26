@@ -158,18 +158,22 @@ export default function StandortePage() {
       <section className="relative overflow-hidden border-t border-[var(--border)] bg-[var(--surface-2)]/40 py-20 md:py-24">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 md:px-12">
           <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
-            Dein Standort fehlt?
+            Nächster Schritt
           </p>
           <h2
             className="mt-4 font-[family-name:var(--font-display)] font-black leading-[1.05] tracking-[-0.03em] text-[var(--text)]"
             style={{ fontSize: "clamp(1.75rem, 4vw, 2.5rem)" }}
           >
-            Wir arbeiten auch remote — DACH-weit.
+            Lass uns über deine{" "}
+            <span className="font-[family-name:var(--font-serif)] font-normal italic text-[var(--accent)]">
+              Sichtbarkeit
+            </span>{" "}
+            sprechen.
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-[var(--text-muted)] sm:text-lg">
-            Wenn deine Stadt hier nicht aufgeführt ist: kein Problem. Wir
-            bedienen Kunden in DACH remote über klare Prozesse, Google Meet und
-            WhatsApp. Erstgespräch buchen, wir prüfen die Passung.
+            Egal ob deine Stadt oben aufgeführt ist oder nicht — wir prüfen
+            gemeinsam die Passung. 15 Minuten Erstgespräch, kostenfrei,
+            mit konkretem Plan.
           </p>
           <Link
             href="/#strategie"

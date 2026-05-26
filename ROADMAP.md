@@ -38,7 +38,11 @@
   - StickyKiCheckCTA global (floating bottom-right, dismissable, erscheint nach 600px Scroll)
   - In-Article-Banner im Blog (zwischen AuthorBox und Related-Posts)
   - Sekundärer CTA im Hero unter den Haupt-Buttons
-- [ ] **5–10 weitere Stadt-Pages** — Mainz, Wiesbaden, Düsseldorf, Trier, Saarbrücken, Mannheim, Aachen …
+- [x] **5–10 weitere Stadt-Pages** ✅ 26.05.2026 (Commit `630239f`)
+  - 7 neue Städte: Mainz, Wiesbaden, Düsseldorf, Trier, Saarbrücken, Mannheim, Aachen
+  - Total jetzt **13 Stadt-Pages**, alle in Sitemap + /standorte Hub
+  - Inkl. Headline-Fix „Online & remote für ganz DACH" (Albert arbeitet remote)
+  - **Bonus**: Google-Reviews-Badge im Hero (Startseite + /sichtbarkeits-check)
 - [ ] **Pricing-Page** als eigene Route (`/preise`)
 - [ ] **Über-mich-Seite** als eigene Route (`/ueber-albert` o. ä.)
   - Ziel: Vertrauen aufbauen, dem Namen Albert Ipgefer einen guten Ruf geben, Expertise sichtbar machen

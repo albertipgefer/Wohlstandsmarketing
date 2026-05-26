@@ -78,9 +78,10 @@ export default function StandorteSektion() {
           </Link>
         </div>
 
-        {/* Grid */}
+        {/* Grid — auf der Startseite nur die ersten 6 Städte (HQ-Region).
+            Alle 13 Standorte sieht der User auf /standorte. */}
         <ul className="mt-10 grid gap-4 sm:grid-cols-2 md:mt-14 md:gap-5 lg:grid-cols-3">
-          {cities.map((c) => (
+          {cities.slice(0, 6).map((c) => (
             <li key={c.slug}>
               <Link
                 href={`/webdesign/${c.slug}`}

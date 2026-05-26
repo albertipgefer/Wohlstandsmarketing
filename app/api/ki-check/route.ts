@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { performKiCheck } from "@/lib/ki-check/score";
 import type { UserAnswers } from "@/lib/ki-check/types";
 
-// Längere Crawl-Zeit für PageSpeed Insights API
-export const maxDuration = 30;
+// Multi-Page-Crawl + PageSpeed Insights — kann bis ~50 s dauern
+export const maxDuration = 60;
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {

@@ -1,11 +1,7 @@
 // Score-Aggregation + Top-Empfehlungen + In-Memory-Cache.
 
 import { randomUUID } from "crypto";
-import type {
-  KiCheckResult,
-  PillarResult,
-  UserAnswers,
-} from "./types";
+import type { KiCheckResult, PillarResult, UserAnswers } from "./types";
 import { runAllChecks } from "./checks";
 
 function scoreLabelFor(score: number): KiCheckResult["scoreLabel"] {
@@ -19,7 +15,6 @@ function topRecommendations(
   pillars: PillarResult[],
   answers: UserAnswers,
 ): Array<{ title: string; body: string }> {
-  // Sammle alle Fail/Warn-Items, gewichtet nach Status + Säulen-Schwäche.
   type Cand = { title: string; body: string; weight: number };
   const cands: Cand[] = [];
   for (const p of pillars) {
@@ -31,8 +26,6 @@ function topRecommendations(
   }
   cands.sort((a, b) => b.weight - a.weight);
 
-  // Ziel-spezifische Strategische Bonus-Empfehlungen — werden ergänzt,
-  // wenn die Seite bereits sehr stark ist (<3 echte Fixes da).
   const strategicByGoal: Record<NonNullable<UserAnswers["goal"]>, Array<{ title: string; body: string }>> = {
     leads: [
       { title: "Lead-Magnet platzieren", body: "Free Tool, PDF-Guide oder Mini-Audit als Lead-Magnet auf jeder Seite anbieten — verwandelt Traffic in Anfragen." },
@@ -56,7 +49,6 @@ function topRecommendations(
     ],
   };
 
-  // Ziel-spezifischer Intro-Hint
   const goalIntro: Record<NonNullable<UserAnswers["goal"]>, string> = {
     leads: "Für mehr Leads",
     lokal: "Für lokale Sichtbarkeit",
@@ -65,7 +57,6 @@ function topRecommendations(
   };
   const intro = answers.goal ? goalIntro[answers.goal] : "Top-Empfehlung";
 
-  // Erst echte Fixes, dann mit strategischen Bonus-Empfehlungen auffüllen
   const picked = cands.slice(0, 3).map((c) => ({ title: c.title, body: c.body }));
   if (picked.length < 3 && answers.goal) {
     const strategic = strategicByGoal[answers.goal];
@@ -75,7 +66,6 @@ function topRecommendations(
       if (!existingTitles.has(s.title)) picked.push(s);
     }
   }
-  // Falls immer noch <3 (kein goal gesetzt + sehr starke Seite), Default-Pool nutzen
   while (picked.length < 3) {
     const fallback = [
       { title: "Content-Cluster aufbauen", body: "Pro Hauptthema einen Pillar-Artikel + Cluster-Artikel mit interner Verlinkung." },
@@ -94,8 +84,6 @@ function topRecommendations(
   }));
 }
 
-// In-Memory-Cache mit TTL 24h.
-// Reicht für ein gratis Tool — Restart leert den Cache, das ist okay.
 interface CacheEntry {
   data: KiCheckResult;
   expiresAt: number;
@@ -132,6 +120,14 @@ export async function performKiCheck(
     };
   }
 
+  // Logs für Vercel — Fehler werden gesammelt, nicht-fatale Crawl-Issues
+  if (raw.errors.length > 0) {
+    console.warn(
+      `[ki-check] ${raw.errors.length} non-fatal errors during crawl of ${raw.origin}:`,
+      raw.errors.slice(0, 10),
+    );
+  }
+
   const totalScore = raw.pillars.reduce((sum, p) => sum + p.score, 0);
   const id = randomUUID();
   const result: KiCheckResult = {
@@ -145,6 +141,9 @@ export async function performKiCheck(
     pillars: raw.pillars,
     topRecommendations: topRecommendations(raw.pillars, answers),
     meta: raw.meta,
+    pages: raw.pages,
+    stats: raw.stats,
+    errors: raw.errors,
   };
 
   cache.set(id, { data: result, expiresAt: Date.now() + TTL_MS });

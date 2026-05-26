@@ -18,15 +18,18 @@ const GOAL_OPTIONS: Array<{
   { value: "alle", label: "Alles zusammen", hint: "Das volle Programm" },
 ];
 
-// Loading-Phasen für die Lade-Animation
+// Loading-Phasen für die Multi-Page-Tiefen-Analyse (~50 s)
 const LOADING_PHASES = [
-  { label: "Webseite wird geladen…", detail: "HTTP-Request + Redirect-Auflösung", duration: 2200 },
-  { label: "robots.txt + llms.txt werden geprüft…", detail: "KI-Crawler-Zugang analysieren", duration: 2400 },
-  { label: "Schema.org JSON-LD wird ausgewertet…", detail: "Organization, Person, FAQ, Article …", duration: 2400 },
-  { label: "Meta-Tags & SEO-Basics werden gescannt…", detail: "Title, Description, OG, Canonical, Sitemap", duration: 2200 },
-  { label: "Lighthouse-Performance wird ermittelt…", detail: "Core Web Vitals via Google PageSpeed Insights", duration: 3400 },
-  { label: "Trust-Signale werden geprüft…", detail: "Impressum, About, Social-Profile, HTTPS", duration: 1800 },
-  { label: "Score wird berechnet…", detail: "Gewichtung über 4 Säulen", duration: 1400 },
+  { label: "Webseite wird geladen…", detail: "HTTP-Request + Redirect-Auflösung", duration: 2500 },
+  { label: "Sitemap wird analysiert…", detail: "Alle relevanten Unterseiten werden ermittelt", duration: 3000 },
+  { label: "robots.txt + llms.txt werden geprüft…", detail: "KI-Crawler-Zugang für GPTBot, ClaudeBot, PerplexityBot …", duration: 3500 },
+  { label: "Unterseiten werden parallel gescannt…", detail: "Bis zu 20 Seiten gleichzeitig — kann etwas dauern", duration: 12000 },
+  { label: "Schema.org JSON-LD wird ausgewertet…", detail: "Organization, Person, FAQ, Article, BreadcrumbList …", duration: 4500 },
+  { label: "Meta-Tags & SEO-Basics werden konsolidiert…", detail: "Title, Description, OG, Canonical, Alt-Texte über alle Seiten", duration: 5000 },
+  { label: "Lighthouse-Performance wird ermittelt…", detail: "Core Web Vitals für die 3 wichtigsten Seiten via PageSpeed", duration: 14000 },
+  { label: "Trust- & E-E-A-T-Signale werden geprüft…", detail: "Impressum, About, Social-Profile, HTTPS, NAP", duration: 4000 },
+  { label: "Aggregierte Statistik wird erstellt…", detail: "Findings über alle Seiten zusammenführen", duration: 3500 },
+  { label: "Top-3-Hebel werden priorisiert…", detail: "Gewichtung nach Ziel + Schwere", duration: 2500 },
 ];
 
 function ScoreRing({ score, blurred }: { score: number; blurred?: boolean }) {

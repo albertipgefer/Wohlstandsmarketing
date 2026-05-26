@@ -63,6 +63,54 @@ function renderPillarHtml(p: PillarResult): string {
   `;
 }
 
+function renderPagesTable(r: KiCheckResult): string {
+  if (r.pages.length === 0) return "";
+  const rows = r.pages
+    .slice(0, 30)
+    .map((p) => {
+      const short = p.url.replace(r.normalizedUrl, "") || "/";
+      const status =
+        p.status === "ok"
+          ? `<span style="color:#16a34a;font-weight:700;">${p.pageScore ?? "—"}</span>`
+          : `<span style="color:#dc2626;font-weight:700;">${p.status === "timeout" ? "Timeout" : "Fehler"}</span>`;
+      const issuesText =
+        p.issues.length === 0
+          ? '<span style="color:#16a34a;">✓ ok</span>'
+          : p.issues
+              .slice(0, 3)
+              .map(
+                (i) =>
+                  `<span style="color:${i.status === "fail" ? "#dc2626" : "#db6f16"};">${escapeHtml(i.message)}</span>`,
+              )
+              .join("<br/>");
+      const perf = p.performance != null ? `${p.performance}` : "—";
+      return `
+        <tr>
+          <td style="padding:10px 0;border-bottom:1px solid #f0f0f0;font-family:monospace;font-size:12px;color:#0A0A0A;word-break:break-all;">${escapeHtml(short)}</td>
+          <td style="padding:10px 0;border-bottom:1px solid #f0f0f0;text-align:center;font-size:13px;">${status}</td>
+          <td style="padding:10px 0;border-bottom:1px solid #f0f0f0;text-align:center;font-size:13px;color:#525252;">${perf}</td>
+          <td style="padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:12px;line-height:1.5;">${issuesText}</td>
+        </tr>`;
+    })
+    .join("");
+
+  return `
+    <div style="margin:14px 0 0;padding:20px;border:1px solid #e5e5e5;border-radius:16px;background:#fff;overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead>
+          <tr>
+            <th style="text-align:left;padding:8px 0;border-bottom:2px solid #0A0A0A;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#737373;">URL</th>
+            <th style="text-align:center;padding:8px 0;border-bottom:2px solid #0A0A0A;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#737373;">Score</th>
+            <th style="text-align:center;padding:8px 0;border-bottom:2px solid #0A0A0A;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#737373;">Speed</th>
+            <th style="text-align:left;padding:8px 0;border-bottom:2px solid #0A0A0A;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#737373;">Findings</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+      ${r.pages.length > 30 ? `<p style="color:#737373;font-size:11px;margin:12px 0 0;">+ weitere ${r.pages.length - 30} Seiten geprüft</p>` : ""}
+    </div>`;
+}
+
 function renderReportHtml(r: KiCheckResult, firstName: string): string {
   const recs = r.topRecommendations
     .map(
@@ -126,8 +174,12 @@ function renderReportHtml(r: KiCheckResult, firstName: string): string {
     <p style="color:#525252;font-size:14px;margin:0;">Wenn du diese drei Punkte anpackst, springt dein Score am stärksten nach oben.</p>
     ${recs}
 
+    <h2 style="margin:40px 0 8px;font-size:22px;font-weight:800;">Geprüfte Seiten — Übersicht</h2>
+    <p style="color:#525252;font-size:14px;margin:0 0 12px;">Wir haben <strong>${r.stats.pagesScanned} URLs</strong> deiner Seite analysiert (${r.stats.pagesOk} erfolgreich, ${r.stats.pagesFailed} nicht erreichbar) und <strong>${r.stats.totalCheckpoints} Einzel-Checkpoints</strong> ausgewertet.</p>
+    ${renderPagesTable(r)}
+
     <h2 style="margin:40px 0 8px;font-size:22px;font-weight:800;">Detailbericht — 4 Säulen</h2>
-    <p style="color:#525252;font-size:14px;margin:0 0 8px;">Alle ${r.pillars.reduce((s, p) => s + p.items.length, 0)} geprüften Punkte im Detail:</p>
+    <p style="color:#525252;font-size:14px;margin:0 0 8px;">Alle ${r.pillars.reduce((s, p) => s + p.items.length, 0)} geprüften Säulen-Punkte im Detail:</p>
     ${r.pillars.map(renderPillarHtml).join("")}
 
     <div style="margin:48px 0 24px;padding:32px;background:linear-gradient(135deg,#1663DE,#0a4bb8);border-radius:24px;color:#fff;text-align:center;">

@@ -1,14 +1,25 @@
-// 4-Säulen-Checks für den KI-Sichtbarkeits-Check.
-// Alle Checks sind defensiv: Netzwerk-Fehler -> "fail" mit Hinweis, niemals Crash.
+// Erweiterte Multi-Page-Crawls mit Error-Aggregation.
+// Max 20 URLs aus der Sitemap, sequentiell parallel mit Concurrency 5.
+// Alle Sub-Checks defensiv (try/catch + Promise.allSettled).
 
 import * as cheerio from "cheerio";
-import type { CheckItem, PillarResult } from "./types";
+import type {
+  CheckItem,
+  PillarResult,
+  PageReport,
+  PageIssue,
+  CrawlError,
+} from "./types";
 
-const FETCH_TIMEOUT_MS = 10_000;
+const FETCH_TIMEOUT_MS = 8_000;
+const PAGESPEED_TIMEOUT_MS = 14_000;
+const MAX_PAGES = 20;
+const CONCURRENCY = 5;
+const PAGESPEED_TOP_N = 3;
+
 const USER_AGENT =
-  "Mozilla/5.0 (compatible; WSM-Sichtbarkeitscheck/1.0; +https://wohlstandsmarketing.de/sichtbarkeits-check)";
+  "Mozilla/5.0 (compatible; WSM-Sichtbarkeitscheck/2.0; +https://wohlstandsmarketing.de/sichtbarkeits-check)";
 
-// KI-Crawler, die wir prüfen
 const KI_BOTS = [
   "GPTBot",
   "ClaudeBot",
@@ -17,20 +28,29 @@ const KI_BOTS = [
   "OAI-SearchBot",
 ] as const;
 
-async function fetchText(url: string): Promise<string | null> {
+// ─────────────────────────────────────────────────────────────
+// Fetch-Helpers (defensiv)
+// ─────────────────────────────────────────────────────────────
+async function fetchText(
+  url: string,
+  timeoutMs = FETCH_TIMEOUT_MS,
+): Promise<{ text: string | null; error?: string }> {
   try {
     const controller = new AbortController();
-    const t = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+    const t = setTimeout(() => controller.abort(), timeoutMs);
     const res = await fetch(url, {
       headers: { "User-Agent": USER_AGENT },
       signal: controller.signal,
       redirect: "follow",
     });
     clearTimeout(t);
-    if (!res.ok) return null;
-    return await res.text();
-  } catch {
-    return null;
+    if (!res.ok) {
+      return { text: null, error: `HTTP ${res.status}` };
+    }
+    return { text: await res.text() };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "unknown_fetch_error";
+    return { text: null, error: msg.includes("abort") ? "timeout" : msg };
   }
 }
 
@@ -42,580 +62,960 @@ function statusFromScore(score: number, max: number): "pass" | "warn" | "fail" {
 }
 
 // ─────────────────────────────────────────────────────────────
-// SÄULE 1: KI-Crawler-Zugang + llms.txt
+// Sitemap-Discovery (max 20 URLs)
 // ─────────────────────────────────────────────────────────────
-export async function checkCrawler(origin: string): Promise<PillarResult> {
-  const items: CheckItem[] = [];
-  let score = 0;
+async function discoverPages(
+  origin: string,
+  errors: CrawlError[],
+): Promise<string[]> {
+  const found = new Set<string>([origin]);
 
-  // 1a) robots.txt
-  const robots = await fetchText(`${origin}/robots.txt`);
-  if (!robots) {
-    items.push({
-      id: "robots-exists",
-      label: "robots.txt",
-      status: "fail",
-      detail: "Keine robots.txt gefunden.",
-      fix: "Lege eine /robots.txt an, die KI-Bots ausdrücklich erlaubt.",
-    });
-  } else {
-    items.push({
-      id: "robots-exists",
-      label: "robots.txt",
-      status: "pass",
-      detail: "robots.txt vorhanden und erreichbar.",
-    });
-    score += 5;
-
-    // 1b) Welche KI-Bots sind erlaubt?
-    const lower = robots.toLowerCase();
-    const allowedBots = KI_BOTS.filter((bot) => {
-      const re = new RegExp(`user-agent:\\s*${bot.toLowerCase()}`, "i");
-      if (!re.test(lower)) return true; // nicht explizit gesperrt = erlaubt
-      // Block extrahieren
-      const idx = lower.search(re);
-      const block = lower.slice(idx, idx + 400);
-      const disallowAll = /disallow:\s*\/(\s|$)/.test(block);
-      return !disallowAll;
-    });
-    const blockedCount = KI_BOTS.length - allowedBots.length;
-    if (blockedCount === 0) {
-      items.push({
-        id: "ki-bots-allowed",
-        label: "KI-Crawler erlaubt",
-        status: "pass",
-        detail: `Alle ${KI_BOTS.length} relevanten KI-Bots (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, OAI-SearchBot) dürfen deine Seite crawlen.`,
-      });
-      score += 10;
+  // 1) Versuche Sitemap zu laden
+  const { text: sitemap, error } = await fetchText(`${origin}/sitemap.xml`);
+  if (sitemap) {
+    // Sitemap-Index oder normales urlset?
+    const isIndex = /<sitemapindex/i.test(sitemap);
+    if (isIndex) {
+      // Sub-Sitemaps fetchen
+      const subSitemaps = Array.from(sitemap.matchAll(/<loc>([^<]+)<\/loc>/g))
+        .map((m) => m[1])
+        .slice(0, 3);
+      for (const sub of subSitemaps) {
+        const r = await fetchText(sub);
+        if (r.text) {
+          for (const m of r.text.matchAll(/<loc>([^<]+)<\/loc>/g)) {
+            try {
+              const u = new URL(m[1]);
+              if (u.origin === origin) found.add(m[1]);
+            } catch {
+              /* ignore invalid url */
+            }
+            if (found.size >= MAX_PAGES) break;
+          }
+        }
+        if (found.size >= MAX_PAGES) break;
+      }
     } else {
-      items.push({
-        id: "ki-bots-allowed",
-        label: "KI-Crawler erlaubt",
-        status: "fail",
-        detail: `${blockedCount} von ${KI_BOTS.length} KI-Bots sind in robots.txt blockiert.`,
-        fix: "Entferne Disallow-Regeln für GPTBot, ClaudeBot, PerplexityBot, Google-Extended, OAI-SearchBot.",
+      for (const m of sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)) {
+        try {
+          const u = new URL(m[1]);
+          if (u.origin === origin) found.add(m[1]);
+        } catch {
+          /* ignore */
+        }
+        if (found.size >= MAX_PAGES) break;
+      }
+    }
+  } else {
+    errors.push({
+      context: "sitemap-discovery",
+      message: `Sitemap nicht geladen: ${error ?? "unbekannt"} — verwende nur Startseite + interne Links`,
+    });
+  }
+
+  // 2) Fallback / Ergänzung: interne Links der Startseite
+  if (found.size < 5) {
+    const r = await fetchText(origin);
+    if (r.text) {
+      const $ = cheerio.load(r.text);
+      $("a[href]").each((_, el) => {
+        const href = $(el).attr("href");
+        if (!href) return;
+        try {
+          const abs = new URL(href, origin).href.split("#")[0];
+          const u = new URL(abs);
+          if (u.origin === origin) found.add(abs);
+        } catch {
+          /* ignore */
+        }
+        if (found.size >= MAX_PAGES) return false;
       });
     }
   }
 
-  // 1c) llms.txt
-  const llms = await fetchText(`${origin}/llms.txt`);
-  if (llms && llms.trim().length > 50) {
+  // Startseite immer zuerst, Rest aus Sitemap-Reihenfolge
+  const all = Array.from(found);
+  return [origin, ...all.filter((u) => u !== origin)].slice(0, MAX_PAGES);
+}
+
+// ─────────────────────────────────────────────────────────────
+// Pro-Seite-Check
+// ─────────────────────────────────────────────────────────────
+async function checkOnePage(url: string): Promise<PageReport> {
+  const { text, error } = await fetchText(url);
+  if (!text) {
+    return {
+      url,
+      status: error === "timeout" ? "timeout" : "error",
+      errorMessage: error ?? "unbekannter Fehler",
+      issues: [],
+    };
+  }
+
+  const issues: PageIssue[] = [];
+  try {
+    const $ = cheerio.load(text);
+
+    // Title
+    const title = $("title").first().text().trim();
+    if (!title) {
+      issues.push({ category: "title", status: "fail", message: "Kein Title-Tag" });
+    } else if (title.length < 30 || title.length > 65) {
+      issues.push({
+        category: "title",
+        status: "warn",
+        message: `Title ${title.length} Zeichen (optimal 30–65)`,
+      });
+    }
+
+    // Meta-Description
+    const desc = $('meta[name="description"]').attr("content")?.trim();
+    if (!desc) {
+      issues.push({ category: "description", status: "fail", message: "Keine Meta-Description" });
+    } else if (desc.length < 120 || desc.length > 170) {
+      issues.push({
+        category: "description",
+        status: "warn",
+        message: `Description ${desc.length} Zeichen (optimal 120–170)`,
+      });
+    }
+
+    // H1
+    const h1Count = $("h1").length;
+    const h1Text = $("h1").first().text().trim();
+    if (h1Count === 0) {
+      issues.push({ category: "h1", status: "fail", message: "Keine H1" });
+    } else if (h1Count > 1) {
+      issues.push({
+        category: "h1",
+        status: "warn",
+        message: `${h1Count} H1-Tags (sollte nur 1 sein)`,
+      });
+    }
+
+    // OG-Image
+    const ogImage = $('meta[property="og:image"]').attr("content");
+    if (!ogImage) {
+      issues.push({ category: "og", status: "warn", message: "Kein og:image" });
+    }
+
+    // Canonical
+    const canonical = $('link[rel="canonical"]').attr("href");
+    if (!canonical) {
+      issues.push({ category: "canonical", status: "warn", message: "Kein Canonical-Tag" });
+    }
+
+    // Schema.org
+    const schemaTypes: string[] = [];
+    $('script[type="application/ld+json"]').each((_, el) => {
+      try {
+        const parsed = JSON.parse($(el).text());
+        const collect = (obj: unknown) => {
+          if (!obj || typeof obj !== "object") return;
+          if (Array.isArray(obj)) return obj.forEach(collect);
+          const o = obj as Record<string, unknown>;
+          const t = o["@type"];
+          if (typeof t === "string") schemaTypes.push(t);
+          if (Array.isArray(t)) t.forEach((x) => typeof x === "string" && schemaTypes.push(x));
+          if (o["@graph"]) collect(o["@graph"]);
+        };
+        collect(parsed);
+      } catch {
+        /* parse error pro script ignorieren */
+      }
+    });
+    if (schemaTypes.length === 0) {
+      issues.push({ category: "schema", status: "fail", message: "Keine Schema.org-Daten" });
+    }
+
+    // Images
+    const imgs = $("img");
+    const imagesTotal = imgs.length;
+    let imagesWithAlt = 0;
+    imgs.each((_, el) => {
+      const alt = $(el).attr("alt");
+      if (alt && alt.trim().length > 0) imagesWithAlt++;
+    });
+    if (imagesTotal > 0 && imagesWithAlt / imagesTotal < 0.7) {
+      issues.push({
+        category: "alt",
+        status: "warn",
+        message: `${imagesWithAlt}/${imagesTotal} Bilder mit alt-Text`,
+      });
+    }
+
+    // Page-Score
+    const failCount = issues.filter((i) => i.status === "fail").length;
+    const warnCount = issues.filter((i) => i.status === "warn").length;
+    const pageScore = Math.max(0, 100 - failCount * 15 - warnCount * 7);
+
+    return {
+      url,
+      status: "ok",
+      pageScore,
+      title,
+      metaDescription: desc,
+      h1: h1Text,
+      h1Count,
+      schemaTypes,
+      hasOgImage: !!ogImage,
+      hasCanonical: !!canonical,
+      imagesTotal,
+      imagesWithAlt,
+      issues,
+    };
+  } catch (e) {
+    return {
+      url,
+      status: "error",
+      errorMessage: e instanceof Error ? e.message : "parse_error",
+      issues,
+    };
+  }
+}
+
+// Parallel mit Concurrency-Limit
+async function crawlPages(
+  urls: string[],
+  errors: CrawlError[],
+): Promise<PageReport[]> {
+  const results: PageReport[] = [];
+  for (let i = 0; i < urls.length; i += CONCURRENCY) {
+    const batch = urls.slice(i, i + CONCURRENCY);
+    const settled = await Promise.allSettled(batch.map((u) => checkOnePage(u)));
+    settled.forEach((r, idx) => {
+      if (r.status === "fulfilled") {
+        results.push(r.value);
+      } else {
+        errors.push({
+          context: `page-crawl:${batch[idx]}`,
+          message: r.reason instanceof Error ? r.reason.message : "unknown",
+        });
+        results.push({
+          url: batch[idx],
+          status: "error",
+          errorMessage: "Crawl-Fehler",
+          issues: [],
+        });
+      }
+    });
+  }
+  return results;
+}
+
+// ─────────────────────────────────────────────────────────────
+// PageSpeed Insights (Top-N URLs)
+// ─────────────────────────────────────────────────────────────
+async function getPageSpeed(url: string): Promise<number | null> {
+  try {
+    const psUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&strategy=mobile&category=performance`;
+    const controller = new AbortController();
+    const t = setTimeout(() => controller.abort(), PAGESPEED_TIMEOUT_MS);
+    const res = await fetch(psUrl, { signal: controller.signal });
+    clearTimeout(t);
+    if (!res.ok) return null;
+    const data = (await res.json()) as {
+      lighthouseResult?: { categories?: { performance?: { score?: number } } };
+    };
+    const psScore = data.lighthouseResult?.categories?.performance?.score;
+    return typeof psScore === "number" ? Math.round(psScore * 100) : null;
+  } catch {
+    return null;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// Säulen-Berechnung (aggregiert)
+// ─────────────────────────────────────────────────────────────
+
+// SÄULE 1: KI-Crawler & Auffindbarkeit
+async function pillarCrawler(
+  origin: string,
+  pages: PageReport[],
+  errors: CrawlError[],
+): Promise<PillarResult> {
+  const items: CheckItem[] = [];
+  let score = 0;
+
+  // robots.txt
+  const robotsRes = await fetchText(`${origin}/robots.txt`);
+  const robots = robotsRes.text;
+  if (!robots) {
+    items.push({
+      id: "robots-exists",
+      label: "robots.txt vorhanden",
+      status: "fail",
+      detail: "Keine robots.txt gefunden.",
+      fix: "Lege /robots.txt an, die KI-Bots erlaubt.",
+    });
+    if (robotsRes.error && robotsRes.error !== "HTTP 404") {
+      errors.push({ context: "robots.txt", message: robotsRes.error });
+    }
+  } else {
+    items.push({
+      id: "robots-exists",
+      label: "robots.txt vorhanden",
+      status: "pass",
+      detail: "robots.txt erreichbar.",
+    });
+    score += 3;
+
+    // Pro Bot einzeln prüfen (jeder = 1 Item)
+    const lower = robots.toLowerCase();
+    for (const bot of KI_BOTS) {
+      const re = new RegExp(`user-agent:\\s*${bot.toLowerCase()}`, "i");
+      let allowed = true;
+      if (re.test(lower)) {
+        const idx = lower.search(re);
+        const block = lower.slice(idx, idx + 400);
+        if (/disallow:\s*\/(\s|$)/.test(block)) allowed = false;
+      }
+      items.push({
+        id: `bot-${bot}`,
+        label: `${bot} erlaubt`,
+        status: allowed ? "pass" : "fail",
+        detail: allowed
+          ? `${bot} darf crawlen.`
+          : `${bot} ist in robots.txt blockiert.`,
+        fix: allowed
+          ? undefined
+          : `Entferne Disallow für ${bot} in robots.txt.`,
+      });
+      if (allowed) score += 1.5;
+    }
+
+    // Sitemap-Verweis in robots.txt?
+    if (/sitemap:/i.test(robots)) {
+      items.push({
+        id: "robots-sitemap-ref",
+        label: "Sitemap in robots.txt referenziert",
+        status: "pass",
+        detail: "Sitemap-URL in robots.txt eingetragen — gut für Crawler.",
+      });
+      score += 1.5;
+    } else {
+      items.push({
+        id: "robots-sitemap-ref",
+        label: "Sitemap in robots.txt referenziert",
+        status: "warn",
+        detail: "Keine Sitemap-Referenz in robots.txt.",
+        fix: 'Füge "Sitemap: https://.../sitemap.xml" in robots.txt ein.',
+      });
+    }
+  }
+
+  // llms.txt
+  const llmsRes = await fetchText(`${origin}/llms.txt`);
+  if (llmsRes.text && llmsRes.text.trim().length > 50) {
     items.push({
       id: "llms-txt",
       label: "llms.txt vorhanden",
       status: "pass",
-      detail: "Du hast eine llms.txt mit Inhalt — KI-Crawler bekommen Hints, wie sie deine Seite verstehen sollen.",
+      detail: `llms.txt mit Inhalt (${llmsRes.text.length} Zeichen).`,
     });
-    score += 10;
+    score += 5;
   } else {
     items.push({
       id: "llms-txt",
       label: "llms.txt vorhanden",
       status: "fail",
-      detail: "Keine llms.txt gefunden (neuer Standard für KI-Crawler).",
-      fix: "Lege eine /llms.txt an mit kurzer Selbstbeschreibung deines Angebots in 200–500 Wörtern.",
+      detail: "Keine llms.txt gefunden.",
+      fix: "Lege /llms.txt mit Selbstbeschreibung deines Angebots an.",
     });
   }
 
-  const status = statusFromScore(score, 25);
+  // Sitemap
+  const sitemapRes = await fetchText(`${origin}/sitemap.xml`);
+  if (sitemapRes.text && sitemapRes.text.includes("<urlset")) {
+    const urlCount = (sitemapRes.text.match(/<loc>/g) || []).length;
+    items.push({
+      id: "sitemap-exists",
+      label: "Sitemap.xml vorhanden",
+      status: "pass",
+      detail: `Sitemap mit ${urlCount} URLs gefunden.`,
+    });
+    score += 4;
+  } else if (sitemapRes.text && sitemapRes.text.includes("<sitemapindex")) {
+    items.push({
+      id: "sitemap-exists",
+      label: "Sitemap.xml vorhanden",
+      status: "pass",
+      detail: "Sitemap-Index gefunden.",
+    });
+    score += 4;
+  } else {
+    items.push({
+      id: "sitemap-exists",
+      label: "Sitemap.xml vorhanden",
+      status: "fail",
+      detail: "Keine Sitemap.xml gefunden.",
+      fix: "Generiere /sitemap.xml und reiche sie in Google Search Console ein.",
+    });
+  }
+
+  // Crawl-Coverage
+  const okPages = pages.filter((p) => p.status === "ok").length;
+  if (okPages >= 10) {
+    items.push({
+      id: "crawl-coverage",
+      label: "Seiten erreichbar",
+      status: "pass",
+      detail: `${okPages} Seiten erfolgreich gecrawlt — gute Site-Architektur.`,
+    });
+    score += 2;
+  } else if (okPages >= 3) {
+    items.push({
+      id: "crawl-coverage",
+      label: "Seiten erreichbar",
+      status: "warn",
+      detail: `Nur ${okPages} Seiten erfolgreich gecrawlt.`,
+      fix: "Sitemap erweitern, damit mehr Seiten erfasst werden.",
+    });
+    score += 1;
+  } else {
+    items.push({
+      id: "crawl-coverage",
+      label: "Seiten erreichbar",
+      status: "fail",
+      detail: `Nur ${okPages} Seite(n) erfolgreich gecrawlt.`,
+      fix: "Sitemap + interne Verlinkung dringend ausbauen.",
+    });
+  }
+
+  const finalScore = Math.min(Math.round(score), 25);
   return {
     id: "crawler",
     title: "KI-Crawler & Auffindbarkeit",
-    score,
-    status,
+    score: finalScore,
+    status: statusFromScore(finalScore, 25),
     summary:
-      score >= 20
-        ? "KI-Bots dürfen deine Seite lesen und finden Hints. Sehr gut."
-        : score >= 10
-          ? "Teilweise offen für KI-Bots, aber wichtige Hebel fehlen noch."
+      finalScore >= 20
+        ? "Sehr gute KI-Crawler-Konfiguration. Bots dürfen lesen und finden Hints."
+        : finalScore >= 12
+          ? "Teilweise offen für KI-Bots, einige Hebel fehlen noch."
           : "KI-Bots werden deine Seite kaum verstehen — größter Hebel.",
     items,
   };
 }
 
-// ─────────────────────────────────────────────────────────────
-// SÄULE 2: Schema.org JSON-LD
-// ─────────────────────────────────────────────────────────────
-export function checkSchema($: cheerio.CheerioAPI): PillarResult {
+// SÄULE 2: Schema.org (aggregiert über alle Seiten)
+function pillarSchema(pages: PageReport[]): PillarResult {
   const items: CheckItem[] = [];
   let score = 0;
+  const okPages = pages.filter((p) => p.status === "ok");
 
-  const ldScripts = $('script[type="application/ld+json"]');
-  const schemas: string[] = [];
-  ldScripts.each((_, el) => {
-    try {
-      const raw = $(el).text();
-      const parsed = JSON.parse(raw);
-      const collect = (obj: unknown) => {
-        if (!obj || typeof obj !== "object") return;
-        if (Array.isArray(obj)) {
-          obj.forEach(collect);
-          return;
-        }
-        const o = obj as Record<string, unknown>;
-        const t = o["@type"];
-        if (typeof t === "string") schemas.push(t);
-        if (Array.isArray(t)) t.forEach((x) => typeof x === "string" && schemas.push(x));
-        if (o["@graph"]) collect(o["@graph"]);
-      };
-      collect(parsed);
-    } catch {
-      // ignore parse errors per script
-    }
-  });
-
-  const has = (name: string) =>
-    schemas.some((s) => s.toLowerCase() === name.toLowerCase());
-
-  // 2a) Organisation/Business
-  const hasOrg =
-    has("Organization") ||
-    has("LocalBusiness") ||
-    has("ProfessionalService") ||
-    has("Corporation");
-  if (hasOrg) {
-    items.push({
-      id: "schema-org",
-      label: "Organization-Schema",
-      status: "pass",
-      detail: "Organization/LocalBusiness-Schema gefunden — Google + KI verstehen dein Unternehmen.",
-    });
-    score += 8;
-  } else {
-    items.push({
-      id: "schema-org",
-      label: "Organization-Schema",
-      status: "fail",
-      detail: "Kein Organization- oder LocalBusiness-Schema gefunden.",
-      fix: "Füge JSON-LD mit Organization/LocalBusiness in deinen <head> ein.",
-    });
+  // Aggregierte Schema-Typen über alle Seiten
+  const allTypes = new Set<string>();
+  for (const p of okPages) {
+    p.schemaTypes?.forEach((t) => allTypes.add(t));
   }
+  const has = (t: string) =>
+    Array.from(allTypes).some((x) => x.toLowerCase() === t.toLowerCase());
 
-  // 2b) Person/Author
-  if (has("Person")) {
-    items.push({
-      id: "schema-person",
-      label: "Person-Schema",
-      status: "pass",
-      detail: "Person-Schema vorhanden — KI ordnet Author/Founder einer realen Person zu.",
-    });
-    score += 6;
-  } else {
-    items.push({
-      id: "schema-person",
-      label: "Person-Schema",
-      status: "warn",
-      detail: "Kein Person-Schema gefunden — Author-Verknüpfung fehlt.",
-      fix: "Füge Person-Schema mit sameAs zu LinkedIn/Social-Profilen ein.",
-    });
-  }
-
-  // 2c) FAQ-Schema (KI liebt strukturierte Fragen)
-  if (has("FAQPage")) {
-    items.push({
-      id: "schema-faq",
+  // Pro relevantem Schema-Typ ein Item
+  const schemaChecks: Array<{ types: string[]; label: string; weight: number; fix?: string }> = [
+    {
+      types: ["Organization", "LocalBusiness", "ProfessionalService", "Corporation"],
+      label: "Organization / LocalBusiness",
+      weight: 4,
+      fix: "Füge Organization- oder LocalBusiness-Schema in <head> ein.",
+    },
+    {
+      types: ["Person"],
+      label: "Person (Author)",
+      weight: 3,
+      fix: "Person-Schema mit sameAs zu LinkedIn/Social ergänzen.",
+    },
+    {
+      types: ["FAQPage"],
       label: "FAQ-Schema",
-      status: "pass",
-      detail: "FAQ-Schema gefunden — perfekt für Featured Snippets + KI-Antworten.",
-    });
-    score += 6;
-  } else {
+      weight: 3,
+      fix: "FAQ-Sektion mit FAQPage-Schema für KI-Antworten ergänzen.",
+    },
+    {
+      types: ["WebSite"],
+      label: "WebSite-Schema",
+      weight: 2,
+      fix: "WebSite-Schema mit potentialAction (SearchAction) hinzufügen.",
+    },
+    {
+      types: ["BreadcrumbList"],
+      label: "Breadcrumb-Schema",
+      weight: 2,
+      fix: "BreadcrumbList-Schema auf Sub-Seiten.",
+    },
+    {
+      types: ["Service"],
+      label: "Service-Schema",
+      weight: 2,
+      fix: "Service-Schema für deine Hauptleistungen ergänzen.",
+    },
+    {
+      types: ["Article", "BlogPosting"],
+      label: "Article / BlogPosting",
+      weight: 2,
+      fix: "Article-Schema für Blog-Posts.",
+    },
+    {
+      types: ["Offer", "OfferCatalog"],
+      label: "Offer / OfferCatalog",
+      weight: 2,
+      fix: "Offer-Schema für deine Angebote.",
+    },
+  ];
+
+  for (const check of schemaChecks) {
+    const found = check.types.some((t) => has(t));
     items.push({
-      id: "schema-faq",
-      label: "FAQ-Schema",
-      status: "warn",
-      detail: "Keine strukturierten FAQs (FAQPage) — verschenktes Potenzial für KI-Antworten.",
-      fix: "Baue eine FAQ-Sektion mit FAQPage-Schema (Frage+Antwort als JSON-LD).",
+      id: `schema-${check.label.toLowerCase().replace(/[^a-z]/g, "")}`,
+      label: check.label,
+      status: found ? "pass" : "warn",
+      detail: found
+        ? `${check.label}-Schema gefunden.`
+        : `${check.label}-Schema fehlt.`,
+      fix: found ? undefined : check.fix,
     });
+    if (found) score += check.weight;
   }
 
-  // 2d) Mind. 1 weiteres relevantes Schema
-  const richTypes = ["Service", "Product", "BreadcrumbList", "Article", "BlogPosting", "WebSite"];
-  const hasRich = richTypes.some((t) => has(t));
-  if (hasRich) {
+  // Coverage: wie viele Seiten haben überhaupt Schema?
+  const pagesWithSchema = okPages.filter((p) => (p.schemaTypes?.length ?? 0) > 0).length;
+  const coverage = okPages.length > 0 ? pagesWithSchema / okPages.length : 0;
+  if (coverage >= 0.9) {
     items.push({
-      id: "schema-extra",
-      label: "Weitere Rich-Schemas",
+      id: "schema-coverage",
+      label: "Schema-Coverage über Seiten",
       status: "pass",
-      detail: "Zusätzliche Schemas (Service/Article/Breadcrumb) gefunden — gutes Schema-Profil.",
+      detail: `${pagesWithSchema}/${okPages.length} Seiten haben Schema.org-Daten.`,
     });
     score += 5;
+  } else if (coverage >= 0.5) {
+    items.push({
+      id: "schema-coverage",
+      label: "Schema-Coverage über Seiten",
+      status: "warn",
+      detail: `Nur ${pagesWithSchema}/${okPages.length} Seiten mit Schema.`,
+      fix: "Schema.org auf allen Hauptseiten ausrollen.",
+    });
+    score += 2;
   } else {
     items.push({
-      id: "schema-extra",
-      label: "Weitere Rich-Schemas",
-      status: "warn",
-      detail: "Kaum weitere Schema.org-Typen erkannt.",
-      fix: "Ergänze Service- und/oder BreadcrumbList-Schema je nach Seitentyp.",
+      id: "schema-coverage",
+      label: "Schema-Coverage über Seiten",
+      status: "fail",
+      detail: `Kaum Seiten mit Schema (${pagesWithSchema}/${okPages.length}).`,
+      fix: "Schema.org strategisch auf allen wichtigen Seiten einbauen.",
     });
   }
 
-  const status = statusFromScore(score, 25);
+  const finalScore = Math.min(Math.round(score), 25);
   return {
     id: "schema",
     title: "Schema.org & strukturierte Daten",
-    score,
-    status,
+    score: finalScore,
+    status: statusFromScore(finalScore, 25),
     summary:
-      score >= 20
-        ? "Sehr starke strukturierte Daten — KI versteht dich klar."
-        : score >= 10
-          ? "Schema teilweise vorhanden, aber Lücken bei Person/FAQ."
-          : "Strukturierte Daten fehlen weitgehend — KI rät nur.",
+      finalScore >= 20
+        ? "Sehr starkes Schema-Profil — KI versteht dich klar."
+        : finalScore >= 12
+          ? "Grundlagen vorhanden, aber Schema-Lücken auf vielen Seiten."
+          : "Strukturierte Daten fehlen weitgehend.",
     items,
   };
 }
 
-// ─────────────────────────────────────────────────────────────
-// SÄULE 3: SEO-Basics (Sitemap, Meta, OG)
-// ─────────────────────────────────────────────────────────────
-export async function checkSeoBasics(
-  $: cheerio.CheerioAPI,
+// SÄULE 3: SEO-Fundament (aggregiert)
+async function pillarSeo(
   origin: string,
+  pages: PageReport[],
 ): Promise<PillarResult> {
   const items: CheckItem[] = [];
   let score = 0;
+  const okPages = pages.filter((p) => p.status === "ok");
 
-  // 3a) Title
-  const title = $("title").first().text().trim();
-  if (title && title.length >= 30 && title.length <= 65) {
+  // Titles
+  const pagesWithTitle = okPages.filter((p) => p.title && p.title.length > 0).length;
+  const pagesGoodTitle = okPages.filter(
+    (p) => p.title && p.title.length >= 30 && p.title.length <= 65,
+  ).length;
+  if (okPages.length > 0 && pagesWithTitle === okPages.length) {
     items.push({
-      id: "seo-title",
-      label: "Title-Tag",
+      id: "titles-all",
+      label: "Title-Tags auf allen Seiten",
       status: "pass",
-      detail: `Title-Tag (${title.length} Zeichen) ist im optimalen Bereich.`,
+      detail: `Alle ${okPages.length} Seiten haben einen Title.`,
     });
-    score += 5;
-  } else if (title) {
-    items.push({
-      id: "seo-title",
-      label: "Title-Tag",
-      status: "warn",
-      detail: `Title-Tag vorhanden, aber ${title.length < 30 ? "zu kurz" : "zu lang"} (${title.length} Zeichen).`,
-      fix: "Optimiere Title auf 30–65 Zeichen mit Haupt-Keyword vorne.",
-    });
-    score += 2;
+    score += 3;
   } else {
     items.push({
-      id: "seo-title",
-      label: "Title-Tag",
+      id: "titles-all",
+      label: "Title-Tags auf allen Seiten",
       status: "fail",
-      detail: "Kein Title-Tag gefunden.",
-      fix: "Pflicht: <title>-Tag im <head> setzen.",
+      detail: `${okPages.length - pagesWithTitle} Seite(n) ohne Title.`,
+      fix: "Pflicht-Title auf jeder Seite setzen.",
     });
   }
-
-  // 3b) Meta-Description
-  const desc = $('meta[name="description"]').attr("content")?.trim();
-  if (desc && desc.length >= 120 && desc.length <= 170) {
+  if (okPages.length > 0) {
+    const ratio = pagesGoodTitle / okPages.length;
     items.push({
-      id: "seo-desc",
-      label: "Meta-Description",
-      status: "pass",
-      detail: `Meta-Description (${desc.length} Zeichen) ist im optimalen Bereich.`,
+      id: "titles-length",
+      label: "Title-Länge optimal",
+      status: ratio >= 0.8 ? "pass" : ratio >= 0.5 ? "warn" : "fail",
+      detail: `${pagesGoodTitle}/${okPages.length} Seiten mit Title 30–65 Zeichen.`,
+      fix:
+        ratio < 0.8
+          ? "Titles auf 30–65 Zeichen mit Haupt-Keyword optimieren."
+          : undefined,
     });
-    score += 5;
-  } else if (desc) {
-    items.push({
-      id: "seo-desc",
-      label: "Meta-Description",
-      status: "warn",
-      detail: `Meta-Description vorhanden, aber ${desc.length < 120 ? "zu kurz" : "zu lang"} (${desc.length} Zeichen).`,
-      fix: "Optimiere auf 120–170 Zeichen mit klarem Nutzenversprechen + CTA.",
-    });
-    score += 2;
-  } else {
-    items.push({
-      id: "seo-desc",
-      label: "Meta-Description",
-      status: "fail",
-      detail: "Keine Meta-Description gefunden.",
-      fix: "Setze <meta name=\"description\"> mit prägnantem Pitch (120–170 Zeichen).",
-    });
+    if (ratio >= 0.8) score += 2;
+    else if (ratio >= 0.5) score += 1;
   }
 
-  // 3c) OG-Image
-  const ogImage = $('meta[property="og:image"]').attr("content");
-  if (ogImage) {
+  // Meta-Descriptions
+  const pagesWithDesc = okPages.filter(
+    (p) => p.metaDescription && p.metaDescription.length > 0,
+  ).length;
+  const pagesGoodDesc = okPages.filter(
+    (p) =>
+      p.metaDescription &&
+      p.metaDescription.length >= 120 &&
+      p.metaDescription.length <= 170,
+  ).length;
+  if (okPages.length > 0) {
     items.push({
-      id: "seo-og",
+      id: "desc-all",
+      label: "Meta-Descriptions auf allen Seiten",
+      status: pagesWithDesc === okPages.length ? "pass" : "warn",
+      detail: `${pagesWithDesc}/${okPages.length} Seiten mit Description.`,
+      fix:
+        pagesWithDesc < okPages.length
+          ? "Meta-Description auf jeder Seite setzen."
+          : undefined,
+    });
+    if (pagesWithDesc === okPages.length) score += 2;
+    else if (pagesWithDesc / okPages.length >= 0.7) score += 1;
+
+    const ratio = pagesGoodDesc / okPages.length;
+    items.push({
+      id: "desc-length",
+      label: "Description-Länge optimal",
+      status: ratio >= 0.7 ? "pass" : ratio >= 0.4 ? "warn" : "fail",
+      detail: `${pagesGoodDesc}/${okPages.length} Seiten mit Description 120–170 Zeichen.`,
+      fix:
+        ratio < 0.7
+          ? "Descriptions auf 120–170 Zeichen optimieren."
+          : undefined,
+    });
+    if (ratio >= 0.7) score += 2;
+    else if (ratio >= 0.4) score += 1;
+  }
+
+  // H1 pro Seite
+  if (okPages.length > 0) {
+    const pagesOneH1 = okPages.filter((p) => p.h1Count === 1).length;
+    items.push({
+      id: "h1-unique",
+      label: "Genau eine H1 pro Seite",
+      status:
+        pagesOneH1 === okPages.length ? "pass" : pagesOneH1 / okPages.length >= 0.7 ? "warn" : "fail",
+      detail: `${pagesOneH1}/${okPages.length} Seiten mit genau einer H1.`,
+      fix:
+        pagesOneH1 < okPages.length
+          ? "Pro Seite genau eine H1 — keine, keine 2."
+          : undefined,
+    });
+    if (pagesOneH1 === okPages.length) score += 2;
+    else if (pagesOneH1 / okPages.length >= 0.7) score += 1;
+  }
+
+  // OG-Image
+  if (okPages.length > 0) {
+    const pagesWithOg = okPages.filter((p) => p.hasOgImage).length;
+    const ratio = pagesWithOg / okPages.length;
+    items.push({
+      id: "og-image",
       label: "Open-Graph-Image",
-      status: "pass",
-      detail: "OG-Image gesetzt — Social-Shares + LinkedIn-Posts sehen sauber aus.",
+      status: ratio >= 0.8 ? "pass" : ratio >= 0.4 ? "warn" : "fail",
+      detail: `${pagesWithOg}/${okPages.length} Seiten mit og:image.`,
+      fix:
+        ratio < 0.8 ? "OG-Image (1200×630px) auf jeder Seite setzen." : undefined,
     });
-    score += 5;
+    if (ratio >= 0.8) score += 2;
+    else if (ratio >= 0.4) score += 1;
+  }
+
+  // Canonical
+  if (okPages.length > 0) {
+    const pagesWithCanonical = okPages.filter((p) => p.hasCanonical).length;
+    const ratio = pagesWithCanonical / okPages.length;
+    items.push({
+      id: "canonical",
+      label: "Canonical-Tags",
+      status: ratio >= 0.8 ? "pass" : ratio >= 0.4 ? "warn" : "fail",
+      detail: `${pagesWithCanonical}/${okPages.length} Seiten mit Canonical.`,
+      fix: ratio < 0.8 ? "Canonical-Tag auf jeder Seite setzen." : undefined,
+    });
+    if (ratio >= 0.8) score += 2;
+    else if (ratio >= 0.4) score += 1;
+  }
+
+  // Sitemap geprüft (1 Wert, aus pillarCrawler-Daten dupliziert für Übersicht)
+  const { text: sitemap } = await fetchText(`${origin}/sitemap.xml`);
+  if (sitemap) {
+    items.push({
+      id: "sitemap-seo",
+      label: "Sitemap auffindbar",
+      status: "pass",
+      detail: "Sitemap.xml vorhanden.",
+    });
+    score += 3;
   } else {
     items.push({
-      id: "seo-og",
-      label: "Open-Graph-Image",
+      id: "sitemap-seo",
+      label: "Sitemap auffindbar",
       status: "fail",
-      detail: "Kein og:image gesetzt.",
-      fix: "Erzeuge ein 1200×630px OG-Image und setze <meta property=\"og:image\">.",
+      detail: "Keine Sitemap gefunden.",
+      fix: "Sitemap generieren + bei Google einreichen.",
     });
   }
 
-  // 3d) Canonical
-  const canonical = $('link[rel="canonical"]').attr("href");
-  if (canonical) {
+  // Alt-Texte
+  if (okPages.length > 0) {
+    let totalImages = 0;
+    let totalWithAlt = 0;
+    for (const p of okPages) {
+      totalImages += p.imagesTotal ?? 0;
+      totalWithAlt += p.imagesWithAlt ?? 0;
+    }
+    const ratio = totalImages > 0 ? totalWithAlt / totalImages : 1;
     items.push({
-      id: "seo-canonical",
-      label: "Canonical-Tag",
-      status: "pass",
-      detail: "Canonical-Tag gesetzt — Duplicate-Content-Schutz aktiv.",
+      id: "alt-texts",
+      label: "Bilder mit Alt-Text",
+      status: ratio >= 0.8 ? "pass" : ratio >= 0.5 ? "warn" : "fail",
+      detail: `${totalWithAlt}/${totalImages} Bilder mit Alt-Text (${Math.round(ratio * 100)} %).`,
+      fix:
+        ratio < 0.8
+          ? "Alt-Texte für alle relevanten Bilder hinzufügen."
+          : undefined,
     });
-    score += 4;
-  } else {
-    items.push({
-      id: "seo-canonical",
-      label: "Canonical-Tag",
-      status: "warn",
-      detail: "Kein Canonical-Tag gesetzt.",
-      fix: "Füge <link rel=\"canonical\"> auf jeder Seite hinzu.",
-    });
+    if (ratio >= 0.8) score += 2;
+    else if (ratio >= 0.5) score += 1;
   }
 
-  // 3e) Sitemap
-  const sitemap = await fetchText(`${origin}/sitemap.xml`);
-  if (sitemap && sitemap.includes("<urlset")) {
-    items.push({
-      id: "seo-sitemap",
-      label: "Sitemap.xml",
-      status: "pass",
-      detail: "Sitemap.xml vorhanden und gültig.",
-    });
-    score += 6;
-  } else {
-    items.push({
-      id: "seo-sitemap",
-      label: "Sitemap.xml",
-      status: "fail",
-      detail: "Keine sitemap.xml gefunden.",
-      fix: "Generiere automatisch eine /sitemap.xml und reiche sie in Google Search Console ein.",
-    });
-  }
-
-  const status = statusFromScore(score, 25);
+  const finalScore = Math.min(Math.round(score), 25);
   return {
     id: "seo",
     title: "SEO-Fundament",
-    score,
-    status,
+    score: finalScore,
+    status: statusFromScore(finalScore, 25),
     summary:
-      score >= 20
-        ? "Solides SEO-Fundament — Suchmaschinen verstehen die Basics."
-        : score >= 10
-          ? "Wesentliche SEO-Elemente da, aber Lücken bei Title/Desc/Sitemap."
-          : "SEO-Basics fehlen — selbst Google hat Mühe, dich einzuordnen.",
+      finalScore >= 20
+        ? "Solides SEO-Fundament über alle Seiten hinweg."
+        : finalScore >= 12
+          ? "SEO-Basics da, aber Inkonsistenzen über die Seiten."
+          : "SEO-Fundament wackelt — viele Seiten betroffen.",
     items,
   };
 }
 
-// ─────────────────────────────────────────────────────────────
 // SÄULE 4: Performance + E-E-A-T
-// ─────────────────────────────────────────────────────────────
-export async function checkPerformanceTrust(
-  $: cheerio.CheerioAPI,
+async function pillarPerformance(
   origin: string,
+  pages: PageReport[],
+  errors: CrawlError[],
 ): Promise<PillarResult> {
   const items: CheckItem[] = [];
   let score = 0;
 
-  // 4a) Impressum (Pflicht in DE)
-  const impressumLinks = $('a[href*="impressum"]').length;
-  if (impressumLinks > 0) {
-    items.push({
-      id: "trust-impressum",
-      label: "Impressum",
-      status: "pass",
-      detail: "Impressum verlinkt — Pflicht-Trust-Signal vorhanden.",
-    });
-    score += 5;
-  } else {
-    items.push({
-      id: "trust-impressum",
-      label: "Impressum",
-      status: "fail",
-      detail: "Kein Impressum-Link gefunden.",
-      fix: "Impressum ist in Deutschland Pflicht — verlinke es im Footer.",
-    });
-  }
-
-  // 4b) About / Über-Seite
-  const aboutLinks = $(
-    'a[href*="ueber"],a[href*="about"],a[href*="team"],a[href*="albert"]',
-  ).length;
-  if (aboutLinks > 0) {
-    items.push({
-      id: "trust-about",
-      label: "Über-/Author-Seite",
-      status: "pass",
-      detail: "Über-/Author-Seite gefunden — wichtig für E-E-A-T.",
-    });
-    score += 5;
-  } else {
-    items.push({
-      id: "trust-about",
-      label: "Über-/Author-Seite",
-      status: "warn",
-      detail: "Keine 'Über'- oder Author-Seite verlinkt.",
-      fix: "Baue eine Über-mich-Seite mit Foto, Werdegang, Expertise (E-E-A-T-Signal).",
-    });
-  }
-
-  // 4c) sameAs / Social-Profile (im HTML oder Schema)
-  const html = $.html();
-  const socialPlatforms = [
-    "linkedin.com",
-    "instagram.com",
-    "tiktok.com",
-    "youtube.com",
-    "facebook.com",
-    "twitter.com",
-    "x.com",
-  ];
-  const foundSocials = socialPlatforms.filter((p) => html.includes(p));
-  if (foundSocials.length >= 3) {
-    items.push({
-      id: "trust-social",
-      label: "Social-Profile (sameAs)",
-      status: "pass",
-      detail: `${foundSocials.length} Social-Profile verlinkt — KI kann dich auf mehreren Plattformen wiedererkennen.`,
-    });
-    score += 5;
-  } else if (foundSocials.length >= 1) {
-    items.push({
-      id: "trust-social",
-      label: "Social-Profile (sameAs)",
-      status: "warn",
-      detail: `Nur ${foundSocials.length} Social-Profil(e) verlinkt.`,
-      fix: "Verlinke mindestens 3 Social-Profile (LinkedIn, Instagram, TikTok o.ä.) im Footer oder Author-Box.",
-    });
-    score += 2;
-  } else {
-    items.push({
-      id: "trust-social",
-      label: "Social-Profile (sameAs)",
-      status: "fail",
-      detail: "Keine Social-Profile auf der Seite gefunden.",
-      fix: "Verlinke deine wichtigsten Social-Profile — wichtig für KI-Entity-Erkennung.",
-    });
-  }
-
-  // 4d) Mobile Viewport
-  const viewport = $('meta[name="viewport"]').attr("content");
-  if (viewport && viewport.includes("width=device-width")) {
-    items.push({
-      id: "perf-viewport",
-      label: "Mobile Viewport",
-      status: "pass",
-      detail: "Mobile Viewport korrekt gesetzt.",
-    });
-    score += 3;
-  } else {
-    items.push({
-      id: "perf-viewport",
-      label: "Mobile Viewport",
-      status: "fail",
-      detail: "Kein korrekter Viewport-Meta-Tag.",
-      fix: "Setze <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">.",
-    });
-  }
-
-  // 4e) HTTPS
+  // HTTPS
   if (origin.startsWith("https://")) {
     items.push({
-      id: "perf-https",
+      id: "https",
       label: "HTTPS aktiv",
       status: "pass",
-      detail: "HTTPS aktiv — Pflicht für Ranking + Trust.",
+      detail: "Seite über HTTPS verfügbar.",
     });
-    score += 3;
+    score += 2;
   } else {
     items.push({
-      id: "perf-https",
+      id: "https",
       label: "HTTPS aktiv",
       status: "fail",
-      detail: "Seite läuft noch über HTTP.",
-      fix: "Stelle dringend auf HTTPS um (gratis via Let's Encrypt/Vercel).",
+      detail: "Seite läuft über HTTP.",
+      fix: "Dringend auf HTTPS umstellen (gratis via Let's Encrypt / Vercel).",
     });
   }
 
-  // 4f) PageSpeed (optional, nur wenn Limit nicht erreicht)
-  // Wir nutzen die gratis PageSpeed Insights API ohne Key (Rate-Limited).
-  // Bei Fehler überspringen wir den Punkt und verteilen den Score auf die anderen.
-  try {
-    const psUrl = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(origin)}&strategy=mobile&category=performance`;
-    const controller = new AbortController();
-    const t = setTimeout(() => controller.abort(), 8000);
-    const res = await fetch(psUrl, { signal: controller.signal });
-    clearTimeout(t);
-    if (res.ok) {
-      const data = (await res.json()) as {
-        lighthouseResult?: { categories?: { performance?: { score?: number } } };
-      };
-      const psScore = data.lighthouseResult?.categories?.performance?.score;
-      if (typeof psScore === "number") {
-        const pct = Math.round(psScore * 100);
-        if (pct >= 75) {
-          items.push({
-            id: "perf-lighthouse",
-            label: "Core Web Vitals (Mobile)",
-            status: "pass",
-            detail: `Lighthouse-Performance ${pct}/100 — schnell und stabil.`,
-          });
-          score += 4;
-        } else if (pct >= 50) {
-          items.push({
-            id: "perf-lighthouse",
-            label: "Core Web Vitals (Mobile)",
-            status: "warn",
-            detail: `Lighthouse-Performance ${pct}/100 — verbesserungsfähig.`,
-            fix: "Optimiere LCP-Element + Bildgrößen + ungenutztes JavaScript.",
-          });
-          score += 2;
-        } else {
-          items.push({
-            id: "perf-lighthouse",
-            label: "Core Web Vitals (Mobile)",
-            status: "fail",
-            detail: `Lighthouse-Performance ${pct}/100 — kritisch.`,
-            fix: "Mobile-Performance dringend optimieren (LCP, CLS, INP).",
-          });
-        }
-      }
+  // Trust-Links (Impressum, Datenschutz, About, Kontakt) — aus Startseite
+  const homeRes = await fetchText(origin);
+  if (homeRes.text) {
+    const html = homeRes.text.toLowerCase();
+    const trustChecks = [
+      { id: "impressum", label: "Impressum verlinkt", patterns: ["impressum"], weight: 2 },
+      { id: "datenschutz", label: "Datenschutz verlinkt", patterns: ["datenschutz", "privacy"], weight: 2 },
+      { id: "about", label: "Über-/About-Seite verlinkt", patterns: ["ueber", "about", "team"], weight: 2 },
+      { id: "kontakt", label: "Kontakt verlinkt", patterns: ["kontakt", "contact"], weight: 1 },
+    ];
+    for (const t of trustChecks) {
+      const found = t.patterns.some((p) => html.includes(p));
+      items.push({
+        id: `trust-${t.id}`,
+        label: t.label,
+        status: found ? "pass" : "warn",
+        detail: found ? `${t.label}.` : `${t.label} nicht gefunden.`,
+        fix: found ? undefined : `${t.label} im Footer ergänzen.`,
+      });
+      if (found) score += t.weight;
     }
-  } catch {
-    // PageSpeed nicht verfügbar — wir vergeben Bonus-Punkte aus den anderen Checks
-    score += 2;
+
+    // Social-Profile
+    const socials = ["linkedin.com", "instagram.com", "tiktok.com", "youtube.com", "facebook.com", "twitter.com", "x.com"];
+    const foundSocials = socials.filter((s) => html.includes(s));
+    if (foundSocials.length >= 3) {
+      items.push({
+        id: "trust-social",
+        label: "Social-Profile (sameAs)",
+        status: "pass",
+        detail: `${foundSocials.length} Social-Profile verlinkt.`,
+      });
+      score += 3;
+    } else if (foundSocials.length >= 1) {
+      items.push({
+        id: "trust-social",
+        label: "Social-Profile (sameAs)",
+        status: "warn",
+        detail: `Nur ${foundSocials.length} Social-Profil(e).`,
+        fix: "Mindestens 3 Social-Profile verlinken.",
+      });
+      score += 1;
+    } else {
+      items.push({
+        id: "trust-social",
+        label: "Social-Profile (sameAs)",
+        status: "fail",
+        detail: "Keine Social-Profile gefunden.",
+        fix: "LinkedIn, Instagram, TikTok etc. im Footer/Author-Box verlinken.",
+      });
+    }
+
+    // Viewport
+    if (/<meta\s+name=["']viewport["'][^>]*width=device-width/i.test(homeRes.text)) {
+      items.push({
+        id: "viewport",
+        label: "Mobile Viewport",
+        status: "pass",
+        detail: "Viewport korrekt gesetzt.",
+      });
+      score += 1;
+    } else {
+      items.push({
+        id: "viewport",
+        label: "Mobile Viewport",
+        status: "fail",
+        detail: "Kein korrekter Viewport-Meta-Tag.",
+        fix: 'Setze <meta name="viewport" content="width=device-width, initial-scale=1">.',
+      });
+    }
   }
 
-  const status = statusFromScore(score, 25);
+  // PageSpeed (Top-3 URLs parallel mit allSettled)
+  const top = pages
+    .filter((p) => p.status === "ok")
+    .slice(0, PAGESPEED_TOP_N)
+    .map((p) => p.url);
+  if (top.length > 0) {
+    const psResults = await Promise.allSettled(top.map((u) => getPageSpeed(u)));
+    const scores: number[] = [];
+    psResults.forEach((r, idx) => {
+      if (r.status === "fulfilled" && r.value !== null) {
+        scores.push(r.value);
+        // Score im PageReport speichern (mutate)
+        const page = pages.find((p) => p.url === top[idx]);
+        if (page) page.performance = r.value;
+      } else {
+        if (r.status === "rejected") {
+          errors.push({ context: `pagespeed:${top[idx]}`, message: "PageSpeed-Fehler" });
+        }
+        const page = pages.find((p) => p.url === top[idx]);
+        if (page) page.performance = null;
+      }
+    });
+    if (scores.length > 0) {
+      const avg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+      if (avg >= 75) {
+        items.push({
+          id: "perf-lighthouse",
+          label: "Core Web Vitals (Ø Mobile)",
+          status: "pass",
+          detail: `Ø Lighthouse-Performance ${avg}/100 über ${scores.length} Seiten.`,
+        });
+        score += 5;
+      } else if (avg >= 50) {
+        items.push({
+          id: "perf-lighthouse",
+          label: "Core Web Vitals (Ø Mobile)",
+          status: "warn",
+          detail: `Ø Lighthouse-Performance ${avg}/100 — verbesserungsfähig.`,
+          fix: "LCP, CLS, INP optimieren — Bilder + Skripte schlanker machen.",
+        });
+        score += 2;
+      } else {
+        items.push({
+          id: "perf-lighthouse",
+          label: "Core Web Vitals (Ø Mobile)",
+          status: "fail",
+          detail: `Ø Lighthouse-Performance ${avg}/100 — kritisch.`,
+          fix: "Mobile-Performance dringend optimieren.",
+        });
+      }
+    } else {
+      items.push({
+        id: "perf-lighthouse",
+        label: "Core Web Vitals (Ø Mobile)",
+        status: "warn",
+        detail: "PageSpeed konnte nicht ermittelt werden (API-Limit?).",
+      });
+      score += 2;
+    }
+  }
+
+  const finalScore = Math.min(Math.round(score), 25);
   return {
     id: "performance",
     title: "Performance & Vertrauen (E-E-A-T)",
-    score,
-    status,
+    score: finalScore,
+    status: statusFromScore(finalScore, 25),
     summary:
-      score >= 20
+      finalScore >= 20
         ? "Starkes Trust- und Performance-Profil."
-        : score >= 10
-          ? "Solide Basis, aber Lücken bei Trust-Signalen oder Speed."
-          : "Wenig Trust-Signale + möglicherweise Performance-Probleme.",
+        : finalScore >= 12
+          ? "Solide Basis, einige Lücken bei Trust oder Speed."
+          : "Wenig Trust-Signale oder Performance-Probleme.",
     items,
   };
 }
 
 // ─────────────────────────────────────────────────────────────
-// Master: alles laufen lassen
+// Master-Funktion
 // ─────────────────────────────────────────────────────────────
 export interface RawCheckOutput {
   origin: string;
   pillars: PillarResult[];
   meta: { title: string | null; description: string | null };
+  pages: PageReport[];
+  stats: {
+    pagesScanned: number;
+    pagesOk: number;
+    pagesFailed: number;
+    totalCheckpoints: number;
+    pagesWithIssues: number;
+  };
+  errors: CrawlError[];
 }
 
 export async function runAllChecks(rawUrl: string): Promise<RawCheckOutput | null> {
+  const errors: CrawlError[] = [];
+
   // URL normalisieren
   let normalized = rawUrl.trim();
   if (!/^https?:\/\//i.test(normalized)) normalized = `https://${normalized}`;
@@ -627,27 +1027,76 @@ export async function runAllChecks(rawUrl: string): Promise<RawCheckOutput | nul
   }
   const origin = `${parsed.protocol}//${parsed.host}`;
 
-  // HTML laden
-  const html = await fetchText(origin);
-  if (!html) return null;
-  const $ = cheerio.load(html);
-
+  // 1) Startseite laden (für Meta + Smoke-Test)
+  const homeRes = await fetchText(origin);
+  if (!homeRes.text) {
+    return null;
+  }
+  const $home = cheerio.load(homeRes.text);
   const meta = {
-    title: $("title").first().text().trim() || null,
-    description: $('meta[name="description"]').attr("content")?.trim() || null,
+    title: $home("title").first().text().trim() || null,
+    description: $home('meta[name="description"]').attr("content")?.trim() || null,
   };
 
-  // Säulen parallel
-  const [crawler, seo, performance] = await Promise.all([
-    checkCrawler(origin),
-    checkSeoBasics($, origin),
-    checkPerformanceTrust($, origin),
+  // 2) Seiten entdecken (Sitemap → Links)
+  const urls = await discoverPages(origin, errors);
+
+  // 3) Pro-Seite-Crawl (parallel)
+  const pages = await crawlPages(urls, errors);
+
+  // 4) Säulen parallel berechnen (Promise.allSettled für Resilienz)
+  const settled = await Promise.allSettled([
+    pillarCrawler(origin, pages, errors),
+    Promise.resolve(pillarSchema(pages)),
+    pillarSeo(origin, pages),
+    pillarPerformance(origin, pages, errors),
   ]);
-  const schema = checkSchema($);
+  const pillars: PillarResult[] = [];
+  const pillarIds: Array<PillarResult["id"]> = ["crawler", "schema", "seo", "performance"];
+  const pillarTitles: Record<string, string> = {
+    crawler: "KI-Crawler & Auffindbarkeit",
+    schema: "Schema.org & strukturierte Daten",
+    seo: "SEO-Fundament",
+    performance: "Performance & Vertrauen (E-E-A-T)",
+  };
+  settled.forEach((r, idx) => {
+    if (r.status === "fulfilled") {
+      pillars.push(r.value);
+    } else {
+      errors.push({
+        context: `pillar:${pillarIds[idx]}`,
+        message: r.reason instanceof Error ? r.reason.message : "unknown",
+      });
+      pillars.push({
+        id: pillarIds[idx],
+        title: pillarTitles[pillarIds[idx]],
+        score: 0,
+        status: "fail",
+        summary: "Säule konnte nicht ausgewertet werden.",
+        items: [],
+      });
+    }
+  });
+
+  // 5) Stats
+  const okPages = pages.filter((p) => p.status === "ok");
+  const totalCheckpoints =
+    pillars.reduce((s, p) => s + p.items.length, 0) +
+    pages.reduce((s, p) => s + p.issues.length, 0);
+  const pagesWithIssues = okPages.filter((p) => p.issues.length > 0).length;
 
   return {
     origin,
-    pillars: [crawler, schema, seo, performance],
+    pillars,
     meta,
+    pages,
+    stats: {
+      pagesScanned: pages.length,
+      pagesOk: okPages.length,
+      pagesFailed: pages.length - okPages.length,
+      totalCheckpoints,
+      pagesWithIssues,
+    },
+    errors,
   };
 }

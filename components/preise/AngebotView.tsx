@@ -21,7 +21,7 @@ function formatEuro(n: number) {
 const LOADING_PHASES = [
   { label: "Wir prüfen deine Auswahl …", detail: "Leistungen werden analysiert", duration: 1500 },
   { label: "Investitions-Plan wird zusammengestellt …", detail: "Einmalige + monatliche Kosten", duration: 1800 },
-  { label: "Bundle-Rabatt wird berechnet …", detail: "15 % bei 2+ Leistungen", duration: 1500 },
+  { label: "Bundle-Rabatt wird berechnet …", detail: "5 % bei 2+ Leistungen", duration: 1500 },
   { label: "Dein individuelles Angebot wird vorbereitet …", detail: "Finale Übersicht generieren", duration: 2200 },
 ];
 
@@ -196,7 +196,7 @@ export default function AngebotView({ itemIds }: { itemIds: string[] }) {
           <p className="mt-1 text-[13px] text-[var(--text-muted)]">
             {totals.selected.length}{" "}
             {totals.selected.length === 1 ? "Leistung" : "Leistungen"}
-            {totals.hasBundle && " · 15 % Bundle-Rabatt aktiv"}
+            {totals.hasBundle && ` · ${Math.round(BUNDLE_DISCOUNT * 100)} % Bundle-Rabatt aktiv`}
           </p>
 
           <ul className="mt-5 space-y-3">

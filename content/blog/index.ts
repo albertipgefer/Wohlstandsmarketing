@@ -60,6 +60,23 @@ import * as pricingSeiten from "./posts/pricing-seiten";
 import * as newsletter from "./posts/newsletter-funnel";
 import * as salesPages from "./posts/sales-pages-2026";
 
+// ── Transaktionale Kauf-Intention (15 — Mai 2026) ─────────────────────
+import * as webdesignKosten from "./posts/webdesign-kosten-2026";
+import * as webseiteErstellenLassen from "./posts/webseite-erstellen-lassen-mittelstand";
+import * as seoHandwerker from "./posts/seo-agentur-fuer-handwerker";
+import * as kiAgenturVergleich from "./posts/ki-sichtbarkeit-agentur-vergleich";
+import * as chatgptAgentur from "./posts/chatgpt-optimierung-agentur";
+import * as landingpageKosten from "./posts/landingpage-erstellen-lassen-kosten";
+import * as relaunchKosten from "./posts/webseiten-relaunch-kosten";
+import * as wdCoaches2 from "./posts/webdesigner-fuer-coaches";
+import * as hochzeitsfotografen from "./posts/webseite-fuer-hochzeitsfotografen";
+import * as eventlocations from "./posts/webdesigner-fuer-eventlocations";
+import * as caterer from "./posts/webdesigner-fuer-caterer";
+import * as gbpAgentur from "./posts/google-business-profile-agentur";
+import * as metaAdsAgentur from "./posts/meta-ads-agentur-mittelstand";
+import * as googleAdsAgentur from "./posts/google-ads-agentur-mittelstand";
+import * as aeoAgentur from "./posts/aeo-agentur-deutschland";
+
 const modules: Array<{
   meta: Post["meta"];
   default: () => React.ReactNode;
@@ -119,6 +136,22 @@ const modules: Array<{
   { meta: pricingSeiten.meta, default: pricingSeiten.default },
   { meta: newsletter.meta, default: newsletter.default },
   { meta: salesPages.meta, default: salesPages.default },
+  // Transaktionale Kauf-Intention (15 — Mai 2026)
+  { meta: { ...webdesignKosten.meta, popularity: 95 }, default: webdesignKosten.default },
+  { meta: { ...webseiteErstellenLassen.meta, popularity: 88 }, default: webseiteErstellenLassen.default },
+  { meta: { ...seoHandwerker.meta, popularity: 82 }, default: seoHandwerker.default },
+  { meta: { ...kiAgenturVergleich.meta, popularity: 90 }, default: kiAgenturVergleich.default },
+  { meta: { ...chatgptAgentur.meta, popularity: 92 }, default: chatgptAgentur.default },
+  { meta: { ...landingpageKosten.meta, popularity: 85 }, default: landingpageKosten.default },
+  { meta: { ...relaunchKosten.meta, popularity: 80 }, default: relaunchKosten.default },
+  { meta: { ...wdCoaches2.meta, popularity: 78 }, default: wdCoaches2.default },
+  { meta: { ...hochzeitsfotografen.meta, popularity: 76 }, default: hochzeitsfotografen.default },
+  { meta: { ...eventlocations.meta, popularity: 80 }, default: eventlocations.default },
+  { meta: { ...caterer.meta, popularity: 75 }, default: caterer.default },
+  { meta: { ...gbpAgentur.meta, popularity: 78 }, default: gbpAgentur.default },
+  { meta: { ...metaAdsAgentur.meta, popularity: 84 }, default: metaAdsAgentur.default },
+  { meta: { ...googleAdsAgentur.meta, popularity: 82 }, default: googleAdsAgentur.default },
+  { meta: { ...aeoAgentur.meta, popularity: 88 }, default: aeoAgentur.default },
 ];
 
 /** Posts sorted by date descending (newest first) */

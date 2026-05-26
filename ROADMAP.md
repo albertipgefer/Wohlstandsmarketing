@@ -43,7 +43,13 @@
   - Total jetzt **13 Stadt-Pages**, alle in Sitemap + /standorte Hub
   - Inkl. Headline-Fix „Online & remote für ganz DACH" (Albert arbeitet remote)
   - **Bonus**: Google-Reviews-Badge im Hero (Startseite + /sichtbarkeits-check)
-- [ ] **Pricing-Page** als eigene Route (`/preise`)
+- [x] **Pricing-Page** ✅ 26.05.2026 (Commit `5bcc95f`)
+  - Interaktiver Konfigurator unter `/preise`
+  - 8 Service-Optionen modulare Auswahl
+  - 15 % Bundle-Rabatt ab 2 Leistungen
+  - Live-Summary mit getrennten Totalen (einmalig + monatlich)
+  - FAQPage- + OfferCatalog-Schema
+  - Navbar-Punkt eingebaut
 - [ ] **Über-mich-Seite** als eigene Route (`/ueber-albert` o. ä.)
   - Ziel: Vertrauen aufbauen, dem Namen Albert Ipgefer einen guten Ruf geben, Expertise sichtbar machen
   - Inhalte: Werdegang, Werte, Methodik, Kunden-Logos, Cases, Zertifikate/Auszeichnungen, persönliche Story

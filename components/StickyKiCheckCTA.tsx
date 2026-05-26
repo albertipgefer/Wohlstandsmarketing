@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 const HIDDEN_PATHS = [
   "/sichtbarkeits-check",
   "/sichtbarkeits-check/danke",
+  "/preise",
 ];
 
 export default function StickyKiCheckCTA() {

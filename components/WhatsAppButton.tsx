@@ -36,6 +36,14 @@ const KI_CHECK_HIDDEN_PATHS = [
   "/preise",
 ];
 
+/** Pfade, auf denen der WhatsApp-Button KOMPLETT ausgeblendet wird (auf allen
+ *  Geräten) — auf diesen Seiten will Albert keine WhatsApp-Ablenkung neben
+ *  dem dort vorhandenen Hauptangebot (KI-Check-Tool / Preise-CTA). */
+const WHATSAPP_HIDDEN_PATHS = [
+  "/sichtbarkeits-check",
+  "/preise",
+];
+
 function buildMessage(pathname: string, articleTitle: string | null): string {
   // City-Pages
   const cityMatch = pathname.match(/^\/webdesign\/([^/]+)/);
@@ -129,6 +137,8 @@ export default function WhatsAppButton() {
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
   }, [pathname, articleTitle]);
 
+  // Komplettes Ausblenden auf bestimmten Pfaden (alle Geräte)
+  if (WHATSAPP_HIDDEN_PATHS.some((p) => pathname.startsWith(p))) return null;
   if (dismissed) return null;
 
   function dismiss(e: React.MouseEvent) {

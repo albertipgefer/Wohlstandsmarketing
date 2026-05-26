@@ -11,8 +11,6 @@ const NAV_ITEMS = [
   ["Preise", "/preise"],
   ["Standorte", "/standorte"],
   ["KI-Check", "/sichtbarkeits-check"],
-  ["Blog", "/blog"],
-  ["Bewertungen", "/bewertungen"],
 ] as const;
 
 export default function Hero() {

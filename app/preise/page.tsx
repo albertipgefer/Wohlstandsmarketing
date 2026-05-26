@@ -17,8 +17,8 @@ export const metadata: Metadata = {
 
 const FAQS = [
   {
-    q: "Warum gibt es 15 % Bundle-Rabatt?",
-    a: "Sobald du zwei oder mehr Leistungen kombinierst, sparen wir auf der gemeinsamen Abstimmung und können effizienter arbeiten. Den Effizienzgewinn geben wir 1:1 an dich weiter — automatisch 15 % auf alle ausgewählten Leistungen.",
+    q: "Warum gibt es 5 % Bundle-Rabatt?",
+    a: "Sobald du zwei oder mehr Leistungen kombinierst, sparen wir auf der gemeinsamen Abstimmung und können effizienter arbeiten. Den Effizienzgewinn geben wir 1:1 an dich weiter — automatisch 5 % auf alle ausgewählten Leistungen.",
   },
   {
     q: "Gibt es eine Mindestlaufzeit?",
@@ -128,7 +128,7 @@ export default function PreisePage() {
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" />
             <span className="font-semibold text-[var(--gold)]">Preise</span>
             <span className="text-[var(--text-subtle)]">·</span>
-            Transparent · Modular · 15 % Bundle-Rabatt
+            Transparent · Modular · {Math.round(BUNDLE_DISCOUNT * 100)} % Bundle-Rabatt
           </div>
 
           <h1
@@ -175,7 +175,7 @@ export default function PreisePage() {
               <span className="text-emerald-500">✓</span> Transparente Preise
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="text-emerald-500">✓</span> 15 % Bundle-Rabatt
+              <span className="text-emerald-500">✓</span> {Math.round(BUNDLE_DISCOUNT * 100)} % Bundle-Rabatt
             </span>
             <span className="flex items-center gap-1.5">
               <span className="text-emerald-500">✓</span> Ergebnis-Garantie

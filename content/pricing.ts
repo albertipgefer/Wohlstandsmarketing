@@ -21,7 +21,7 @@ export type Service = {
   category: "webdesign" | "optimierung" | "wartung";
 };
 
-export const BUNDLE_DISCOUNT = 0.15; // 15 % ab 2 ausgewählten Items
+export const BUNDLE_DISCOUNT = 0.05; // 5 % ab 2 ausgewählten Items
 
 export const services: Service[] = [
   {

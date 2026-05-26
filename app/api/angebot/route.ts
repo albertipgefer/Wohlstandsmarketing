@@ -25,7 +25,7 @@ function formatEuro(n: number) {
 }
 
 const TIDYCAL_URL =
-  "https://tidycal.com/albertipgefer/erstgespraech-mit-wohlstandsmarketing-2";
+  "https://tidycal.com/albertipgefer/strategiegespraech-mit-wohlstandsmarketing";
 
 function renderAngebotHtml(
   firstName: string,
@@ -109,12 +109,12 @@ function renderAngebotHtml(
     </div>
 
     <div style="margin:40px 0 24px;padding:32px;background:linear-gradient(135deg,#1663DE,#0a4bb8);border-radius:24px;color:#fff;text-align:center;">
-      <h2 style="margin:0;font-size:22px;font-weight:800;color:#fff;">Bereit, gemeinsam zu starten?</h2>
+      <h2 style="margin:0;font-size:22px;font-weight:800;color:#fff;">Lass uns dein Angebot durchsprechen</h2>
       <p style="margin:12px 0 20px;font-size:14px;opacity:0.9;line-height:1.6;">
-        Buche dir jetzt dein kostenloses 15-Min-Erstgespräch. Ich bespreche persönlich
-        mit dir den Zeitplan, die Umsetzung und beantworte alle deine Fragen.
+        Buche dir jetzt dein Strategiegespräch zu deinem Angebot. Ich bespreche persönlich
+        mit dir Zeitplan, Umsetzung und beantworte alle deine offenen Fragen.
       </p>
-      <a href="${TIDYCAL_URL}" style="display:inline-block;background:#fff;color:#1663DE;font-weight:700;padding:14px 28px;border-radius:999px;text-decoration:none;font-size:14px;">Erstgespräch buchen → 15 Min mit Albert</a>
+      <a href="${TIDYCAL_URL}" style="display:inline-block;background:#fff;color:#1663DE;font-weight:700;padding:14px 28px;border-radius:999px;text-decoration:none;font-size:14px;">Strategiegespräch zum Angebot buchen</a>
     </div>
 
     <div style="text-align:center;color:#a3a3a3;font-size:12px;line-height:1.6;padding:24px 0;border-top:1px solid #e5e5e5;">

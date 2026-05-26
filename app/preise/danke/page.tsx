@@ -147,19 +147,19 @@ export default async function PreiseDankePage({ searchParams }: PageProps) {
               </h2>
 
               <p className="mx-auto mt-5 max-w-xl text-[14px] leading-relaxed text-[var(--text-muted)] md:text-[15px]">
-                In 15 Minuten klären wir Zeitplan, Umsetzung und alle offenen
-                Fragen — persönlich mit Albert.
+                In einem Strategiegespräch klären wir alles Offene zu deinem
+                Angebot — Zeitplan, Umsetzung, Fragen — persönlich mit Albert.
               </p>
 
               <a
-                href="https://tidycal.com/albertipgefer/erstgespraech-mit-wohlstandsmarketing-2"
+                href="https://tidycal.com/albertipgefer/strategiegespraech-mit-wohlstandsmarketing"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group relative mt-8 inline-flex items-center gap-2 overflow-hidden rounded-full bg-[var(--text)] px-7 py-4 text-[14px] font-semibold text-white transition"
               >
                 <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-dark,_#0a4bb8)] transition-transform duration-500 ease-out group-hover:translate-y-0" />
                 <span className="relative z-10">
-                  Erstgespräch buchen → 15 Min mit Albert
+                  Strategiegespräch zum Angebot buchen
                 </span>
               </a>
 

@@ -8,10 +8,10 @@ import GoogleReviewsBadge from "@/components/GoogleReviewsBadge";
 
 const NAV_ITEMS = [
   ["Methode", "#methode"],
+  ["Preise", "/preise"],
   ["Standorte", "/standorte"],
   ["KI-Check", "/sichtbarkeits-check"],
   ["Blog", "/blog"],
-  ["FAQ", "#faq"],
 ] as const;
 
 export default function Hero() {

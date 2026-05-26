@@ -8,10 +8,10 @@ import Logo from "@/components/Logo";
 const NAV_ITEMS = [
   ["Startseite", "/"],
   ["Methode", "/#methode"],
+  ["Preise", "/preise"],
   ["Standorte", "/standorte"],
   ["KI-Check", "/sichtbarkeits-check"],
   ["Blog", "/blog"],
-  ["FAQ", "/#faq"],
 ] as const;
 
 /**

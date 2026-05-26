@@ -34,7 +34,10 @@
   - 3-Step Wizard (URL/Stadt/Ziel), Score-Ring, Inline-Bericht, harter CTA
   - Soft-Gate Lead-Capture mit Resend-HTML-Mail (Bericht an User + Lead-Notif an Albert)
   - Navbar-Punkt + eigene CTA-Sektion auf Startseite eingebaut
-- [ ] **Lead Magnet prominent auf der Seite platzieren** — Hero, Sidebar im Blog, Exit-Intent
+- [x] **Lead Magnet prominent auf der Seite platzieren** ✅ 26.05.2026 (Commit `c79340f`)
+  - StickyKiCheckCTA global (floating bottom-right, dismissable, erscheint nach 600px Scroll)
+  - In-Article-Banner im Blog (zwischen AuthorBox und Related-Posts)
+  - Sekundärer CTA im Hero unter den Haupt-Buttons
 - [ ] **5–10 weitere Stadt-Pages** — Mainz, Wiesbaden, Düsseldorf, Trier, Saarbrücken, Mannheim, Aachen …
 - [ ] **Pricing-Page** als eigene Route (`/preise`)
 - [ ] **Über-mich-Seite** als eigene Route (`/ueber-albert` o. ä.)

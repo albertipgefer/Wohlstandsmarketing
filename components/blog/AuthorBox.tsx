@@ -23,7 +23,7 @@ export default function AuthorBox() {
       itemScope
       itemType="https://schema.org/Person"
     >
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 md:px-12">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
         <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
           Über den Autor
         </p>

@@ -187,7 +187,7 @@ export default function ArticleLayout({
 
       {/* Lead-Magnet-Banner: KI-Check direkt nach Author-Box im engagement-Peak */}
       <section className="border-t border-[var(--border)] py-12 md:py-16">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 md:px-12">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
           <div className="relative overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--bg)] p-6 md:p-10">
             <div
               aria-hidden

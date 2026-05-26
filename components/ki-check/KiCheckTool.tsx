@@ -503,6 +503,33 @@ export default function KiCheckTool() {
                 <div className="mt-6 text-[12px] text-[var(--text-muted)]">
                   Geprüft: <span className="font-mono text-[var(--text)]">{result.normalizedUrl}</span>
                 </div>
+
+                {/* Urgency-Hinweis bei Score < 80 */}
+                {result.score < 80 && (
+                  <div className="mx-auto mt-7 max-w-xl rounded-2xl border-l-4 border-red-500 bg-red-50 p-5 text-left">
+                    <div className="flex items-start gap-3">
+                      <div className="text-2xl leading-none" aria-hidden>
+                        ⚠️
+                      </div>
+                      <div>
+                        <div className="text-[13px] font-semibold uppercase tracking-[0.12em] text-red-700">
+                          Handlungsbedarf erkannt
+                        </div>
+                        <p className="mt-1.5 text-[13px] leading-relaxed text-red-900 md:text-[14px]">
+                          Wir haben{" "}
+                          {result.score < 35
+                            ? "kritische Schwachstellen"
+                            : result.score < 60
+                              ? "deutliche Lücken"
+                              : "klare Optimierungs-Hebel"}{" "}
+                          gefunden. <strong>Wir empfehlen dringend, dieses Thema
+                          gemeinsam mit einem Experten anzugehen</strong> — KI-Crawler
+                          und Google verlieren sonst Vertrauen in deine Seite.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

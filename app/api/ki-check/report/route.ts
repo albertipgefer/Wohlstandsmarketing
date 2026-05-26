@@ -94,6 +94,34 @@ function renderReportHtml(r: KiCheckResult, firstName: string): string {
       <div style="font-size:13px;color:#737373;margin-top:14px;">Geprüfte URL: <strong style="color:#0A0A0A;">${escapeHtml(r.normalizedUrl)}</strong></div>
     </div>
 
+    ${
+      r.score < 80
+        ? `
+    <div style="margin:24px 0 0;padding:24px;background:#fef2f2;border-left:4px solid #dc2626;border-radius:16px;">
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div style="font-size:24px;line-height:1;">⚠️</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#b91c1c;">Handlungsbedarf erkannt</div>
+          <p style="margin:8px 0 0;font-size:14px;line-height:1.6;color:#7f1d1d;">
+            Wir haben ${
+              r.score < 35
+                ? "<strong>kritische Schwachstellen</strong>"
+                : r.score < 60
+                  ? "<strong>deutliche Lücken</strong>"
+                  : "<strong>klare Optimierungs-Hebel</strong>"
+            } gefunden. <strong>Wir empfehlen dringend, dieses Thema gemeinsam mit einem Experten anzugehen</strong> —
+            KI-Crawler und Google verlieren sonst Vertrauen in deine Seite, und du verschenkst Reichweite
+            an Wettbewerber, die diese Punkte bereits umgesetzt haben.
+          </p>
+          <p style="margin:14px 0 0;font-size:13px;color:#7f1d1d;">
+            👉 Buche dir ein <a href="https://tidycal.com/albertipgefer/erstgespraech-mit-wohlstandsmarketing-2" style="color:#b91c1c;font-weight:700;">kostenloses 15-Min-Erstgespräch mit Albert</a> — wir zeigen dir, wie du diese Lücken am schnellsten schließt.
+          </p>
+        </div>
+      </div>
+    </div>`
+        : ""
+    }
+
     <h2 style="margin:40px 0 8px;font-size:22px;font-weight:800;">Deine 3 wichtigsten Hebel</h2>
     <p style="color:#525252;font-size:14px;margin:0;">Wenn du diese drei Punkte anpackst, springt dein Score am stärksten nach oben.</p>
     ${recs}

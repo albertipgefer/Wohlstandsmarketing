@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import CookieBanner from "@/components/CookieBanner";
@@ -28,6 +28,14 @@ export const metadata: Metadata = {
   description:
     "Die WSM-Methode: Webdesign und KI-Sichtbarkeit als ein untrennbares Paket. Dein neuer Auftritt — gebaut, um auf Google, ChatGPT, Perplexity und Claude als Nummer 1 in deiner Region empfohlen zu werden.",
   alternates: { canonical: "/" },
+};
+
+// Zoom global deaktiviert (Pinch-Zoom + iOS-Auto-Zoom auf Inputs)
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 const orgSchema = {

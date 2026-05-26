@@ -62,7 +62,7 @@ export default function PopupModal({ open, onClose, children, label }: Props) {
       role="dialog"
       aria-modal="true"
       aria-label={label}
-      className="fixed inset-0 z-[70] flex items-end justify-center sm:items-center"
+      className="fixed inset-0 z-[70] flex items-center justify-center"
       onClick={onClose}
     >
       {/* Backdrop */}
@@ -76,7 +76,7 @@ export default function PopupModal({ open, onClose, children, label }: Props) {
         ref={dialogRef}
         tabIndex={-1}
         onClick={(e) => e.stopPropagation()}
-        className="relative z-[71] w-full max-w-md transform px-4 pb-4 outline-none sm:p-0 sm:px-4 sm:pb-0 animate-[popIn_.32s_cubic-bezier(.22,1,.36,1)_forwards]"
+        className="relative z-[71] w-full max-w-md transform px-4 outline-none animate-[popIn_.32s_cubic-bezier(.22,1,.36,1)_forwards]"
         style={{ opacity: 0 }}
       >
         <div className="relative overflow-hidden rounded-3xl border border-[var(--accent)]/25 bg-gradient-to-br from-white via-white to-[var(--accent-glow-soft)] shadow-[0_30px_80px_-20px_rgba(10,10,10,0.45)] ring-1 ring-[var(--accent)]/5">

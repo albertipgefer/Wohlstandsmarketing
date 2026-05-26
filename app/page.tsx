@@ -13,6 +13,8 @@ import BlogTeaser from "@/components/sections/BlogTeaser";
 import StandorteSektion from "@/components/sections/StandorteSektion";
 import KiCheckCTA from "@/components/sections/KiCheckCTA";
 import Testimonials from "@/components/sections/Testimonials";
+import LeadMagnetSection from "@/components/sections/LeadMagnetSection";
+import PreFooterCTA from "@/components/PreFooterCTA";
 import Footer from "@/components/sections/Footer";
 
 export default function Home() {
@@ -28,11 +30,21 @@ export default function Home() {
       <UeberAlbert />
       <Testimonials variant="compact" />
       <Vergleich />
-      <FAQ />
       <CTABlock />
       <KiCheckCTA />
       <StandorteSektion />
       <BlogTeaser />
+      <LeadMagnetSection />
+      <FAQ />
+      <PreFooterCTA
+        variant="erstgespraech"
+        headline={
+          <>
+            Bereit für deine <span className="font-[family-name:var(--font-serif)] font-normal italic text-[var(--accent)]">KI-Sichtbarkeit</span>?
+          </>
+        }
+        subline="15-Minuten-Erstgespräch mit Albert. Kostenfrei, ehrlich, mit konkretem Plan — auch wenn wir nicht zusammenarbeiten."
+      />
       <Footer />
     </main>
   );

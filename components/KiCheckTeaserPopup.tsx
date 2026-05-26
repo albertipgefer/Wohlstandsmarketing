@@ -94,7 +94,7 @@ export default function KiCheckTeaserPopup() {
           <button
             type="button"
             onClick={close}
-            className="text-[12px] font-medium text-[var(--text-subtle)] transition hover:text-[var(--text-muted)]"
+            className="text-[13px] font-semibold text-[var(--text-muted)] underline-offset-4 transition hover:text-[var(--text)] hover:underline"
           >
             Vielleicht später
           </button>

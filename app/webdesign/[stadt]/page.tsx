@@ -447,38 +447,6 @@ export default async function CityPage({
         </div>
       </section>
 
-      {/* ── FAQ ──────────────────────────────────────────────── */}
-      <section className="border-t border-[var(--border)] py-20 md:py-28">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
-            Häufige Fragen
-          </p>
-          <h2
-            className="mt-4 max-w-3xl font-[family-name:var(--font-display)] font-black leading-[1.1] tracking-[-0.03em] text-[var(--text)]"
-            style={{ fontSize: "clamp(1.75rem, 4vw, 3rem)" }}
-          >
-            Webdesign in {city.name} — was du wissen willst
-          </h2>
-          <div className="mt-10 divide-y divide-[var(--border)] overflow-hidden rounded-3xl border border-[var(--border)] bg-white">
-            {faqs.map((f, i) => (
-              <details key={f.q} className="group p-6" open={i === 0}>
-                <summary className="flex cursor-pointer list-none items-start justify-between gap-4">
-                  <span className="font-[family-name:var(--font-display)] text-[16px] font-semibold tracking-tight text-[var(--text)] sm:text-lg">
-                    {f.q}
-                  </span>
-                  <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[var(--border)] text-[12px] text-[var(--text)] transition group-open:rotate-45 group-open:bg-[var(--text)] group-open:text-white">
-                    +
-                  </span>
-                </summary>
-                <p className="mt-3 pr-10 text-[14px] leading-relaxed text-[var(--text-muted)] sm:text-[15px]">
-                  {f.a}
-                </p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ── NACHBAR-STÄDTE ────────────────────────────────────── */}
       {neighbours.length > 0 && (
         <section className="border-t border-[var(--border)] bg-[var(--surface-2)]/40 py-16">
@@ -552,6 +520,38 @@ export default async function CityPage({
           </div>
         </section>
       )}
+
+      {/* ── FAQ als vorletzte Sektion vor PreFooterCTA + Footer ── */}
+      <section className="border-t border-[var(--border)] py-20 md:py-28">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
+            Häufige Fragen
+          </p>
+          <h2
+            className="mt-4 max-w-3xl font-[family-name:var(--font-display)] font-black leading-[1.1] tracking-[-0.03em] text-[var(--text)]"
+            style={{ fontSize: "clamp(1.75rem, 4vw, 3rem)" }}
+          >
+            Webdesign in {city.name} — was du wissen willst
+          </h2>
+          <div className="mt-10 divide-y divide-[var(--border)] overflow-hidden rounded-3xl border border-[var(--border)] bg-white">
+            {faqs.map((f, i) => (
+              <details key={f.q} className="group p-6" open={i === 0}>
+                <summary className="flex cursor-pointer list-none items-start justify-between gap-4">
+                  <span className="font-[family-name:var(--font-display)] text-[16px] font-semibold tracking-tight text-[var(--text)] sm:text-lg">
+                    {f.q}
+                  </span>
+                  <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[var(--border)] text-[12px] text-[var(--text)] transition group-open:rotate-45 group-open:bg-[var(--text)] group-open:text-white">
+                    +
+                  </span>
+                </summary>
+                <p className="mt-3 pr-10 text-[14px] leading-relaxed text-[var(--text-muted)] sm:text-[15px]">
+                  {f.a}
+                </p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* ── PRE-FOOTER-CTA — konsistent mit Inline-CTA-Stil ────── */}
       <PreFooterCTA

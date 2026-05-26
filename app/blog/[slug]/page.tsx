@@ -9,6 +9,21 @@ export async function generateStaticParams() {
   return posts.map((p) => ({ slug: p.meta.slug }));
 }
 
+/**
+ * Erzeugt einen SEO-optimierten Title (30–65 Zeichen).
+ * - Hängt ` · WSM Blog` (12 Zeichen) an, wenn Platz ist
+ * - Sonst wird nur der Title genutzt
+ * - Wenn der Title selbst > 65 Zeichen: smart truncieren am letzten Wortende
+ */
+function formatSeoTitle(title: string, maxLen = 65): string {
+  const suffix = " · WSM Blog";
+  if (title.length + suffix.length <= maxLen) return title + suffix;
+  if (title.length <= maxLen) return title;
+  // Truncate am letzten Wortende vor maxLen
+  const cut = title.slice(0, maxLen).replace(/[\s,;:—-]+\S*$/, "");
+  return cut.trim();
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -17,14 +32,19 @@ export async function generateMetadata({
   const { slug } = await params;
   const post = getPost(slug);
   if (!post) return {};
+  // Description auf 120–170 Zeichen begrenzen
+  let desc = post.meta.description;
+  if (desc.length > 170) {
+    desc = desc.slice(0, 167).replace(/[\s,;:—-]+\S*$/, "") + "…";
+  }
   return {
-    title: `${post.meta.title} · Wohlstandsmarketing Blog`,
-    description: post.meta.description,
+    title: formatSeoTitle(post.meta.title),
+    description: desc,
     keywords: post.meta.keywords,
     alternates: { canonical: `/blog/${post.meta.slug}` },
     openGraph: {
       title: post.meta.title,
-      description: post.meta.description,
+      description: desc,
       type: "article",
       publishedTime: post.meta.date,
       authors: ["Albert Ipgefer"],

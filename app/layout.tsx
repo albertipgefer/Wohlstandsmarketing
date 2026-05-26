@@ -24,10 +24,11 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: {
     default: "Wohlstandsmarketing — In 90 Tagen auf Google & ChatGPT gefunden",
-    template: "%s · Wohlstandsmarketing",
+    // Kein Template — Pages setzen ihre Titles selbst (inkl. Branding wo gewünscht)
+    template: "%s",
   },
   description:
-    "Die WSM-Methode: Webdesign und KI-Sichtbarkeit als ein untrennbares Paket. Dein neuer Auftritt — gebaut, um auf Google, ChatGPT, Perplexity und Claude als Nummer 1 in deiner Region empfohlen zu werden.",
+    "Webdesign + KI-Sichtbarkeit als untrennbares Paket. In 90 Tagen auf Google, ChatGPT, Perplexity und Claude als erste Wahl deiner Region empfohlen.",
   alternates: { canonical: "/" },
 };
 

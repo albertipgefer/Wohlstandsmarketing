@@ -5,15 +5,16 @@ import KiCheckTool from "@/components/ki-check/KiCheckTool";
 import GoogleReviewsBadge from "@/components/GoogleReviewsBadge";
 
 export const metadata: Metadata = {
-  title: "KI-Sichtbarkeits-Check — Wird deine Seite von ChatGPT empfohlen?",
+  title: "KI-Sichtbarkeits-Check — kostenlos prüfen",
   description:
-    "Kostenloser 60-Sekunden-Check: Erfahre, wie sichtbar deine Webseite für ChatGPT, Claude, Perplexity und Google ist — inkl. 3 konkreter Hebel.",
+    "Kostenloser Check: Wie sichtbar ist deine Webseite für ChatGPT, Claude und Perplexity? Score 0–100 + die 3 wichtigsten Hebel direkt per Mail.",
   alternates: { canonical: "/sichtbarkeits-check" },
   openGraph: {
     title: "KI-Sichtbarkeits-Check — Wohlstandsmarketing",
     description:
-      "Wird deine Webseite von ChatGPT, Claude & Perplexity empfohlen? Mach den kostenlosen 60-Sekunden-Check.",
+      "Wird deine Webseite von ChatGPT, Claude & Perplexity empfohlen? Mach den kostenlosen Check.",
     type: "website",
+    images: ["/opengraph-image.png"],
   },
 };
 

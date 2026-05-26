@@ -6,7 +6,7 @@ import Footer from "@/components/sections/Footer";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Blog · Wohlstandsmarketing — KI-Sichtbarkeit, GEO &amp; AEO",
+  title: "Blog — KI-Sichtbarkeit, GEO & AEO · Wohlstandsmarketing",
   description:
     "Praxisartikel zu Webdesign, KI-Sichtbarkeit (GEO/AEO), ChatGPT-SEO und lokalem Marketing für DACH-Mittelstand. Von Albert Ipgefer.",
   alternates: { canonical: "/blog" },

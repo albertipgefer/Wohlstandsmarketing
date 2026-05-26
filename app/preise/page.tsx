@@ -9,9 +9,9 @@ import { services, BUNDLE_DISCOUNT } from "@/content/pricing";
 const SITE = "https://wohlstandsmarketing.de";
 
 export const metadata: Metadata = {
-  title: "Preise & Pakete — Webdesign, SEO und KI-Sichtbarkeit",
+  title: "Preise & Pakete · Wohlstandsmarketing",
   description:
-    "Transparente Preise für Webdesign, Landingpages, SEO, KI-Sichtbarkeit und Wartung. Stelle dir dein Paket selbst zusammen — mit 5 % Bundle-Rabatt.",
+    "Transparente Preise für Webdesign, Landingpages, SEO, KI-Sichtbarkeit und Wartung. Stell dir dein Paket selbst zusammen — mit 5 % Bundle-Rabatt.",
   alternates: { canonical: "/preise" },
 };
 

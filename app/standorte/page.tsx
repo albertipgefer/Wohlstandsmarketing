@@ -7,9 +7,9 @@ import Footer from "@/components/sections/Footer";
 const SITE = "https://wohlstandsmarketing.de";
 
 export const metadata: Metadata = {
-  title: "Standorte · Wohlstandsmarketing — Webdesign in DACH",
+  title: "Standorte — Webdesign + KI-Sichtbarkeit für DACH",
   description:
-    "Wir bauen Webseiten mit KI-Sichtbarkeit für Mittelstand in ganz DACH — von Bad Ems über Koblenz, Frankfurt, Mainz, Wiesbaden bis Köln, Düsseldorf, Aachen und mehr. Online & remote.",
+    "Webseiten mit KI-Sichtbarkeit für Mittelstand in DACH — Bad Ems, Koblenz, Frankfurt, Mainz, Wiesbaden, Köln, Düsseldorf, Aachen und mehr. Online & remote.",
   alternates: { canonical: "/standorte" },
 };
 

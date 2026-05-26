@@ -63,7 +63,7 @@ function renderPillarHtml(p: PillarResult): string {
   `;
 }
 
-function renderReportHtml(r: KiCheckResult): string {
+function renderReportHtml(r: KiCheckResult, firstName: string): string {
   const recs = r.topRecommendations
     .map(
       (rec, i) => `
@@ -83,7 +83,8 @@ function renderReportHtml(r: KiCheckResult): string {
   <div style="max-width:640px;margin:0 auto;padding:40px 24px;">
     <div style="text-align:center;margin-bottom:32px;">
       <div style="font-size:12px;color:#737373;letter-spacing:0.22em;text-transform:uppercase;font-weight:600;">Wohlstandsmarketing</div>
-      <h1 style="margin:8px 0 0;font-size:28px;font-weight:900;letter-spacing:-0.02em;">Dein KI-Sichtbarkeits-Bericht</h1>
+      <h1 style="margin:8px 0 4px;font-size:28px;font-weight:900;letter-spacing:-0.02em;">Hallo ${escapeHtml(firstName)},</h1>
+      <p style="margin:0;font-size:16px;color:#525252;">hier ist dein KI-Sichtbarkeits-Bericht.</p>
     </div>
 
     <div style="background:#fff;border:1px solid #e5e5e5;border-radius:24px;padding:32px;text-align:center;">
@@ -121,7 +122,10 @@ function renderReportHtml(r: KiCheckResult): string {
 
 export async function POST(req: NextRequest) {
   let body: {
+    firstName?: string;
+    lastName?: string;
     email?: string;
+    phone?: string;
     consent?: boolean;
     result?: KiCheckResult;
   };
@@ -131,8 +135,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "bad_request" }, { status: 400 });
   }
 
-  const { email, consent, result } = body;
-  if (!email || !consent || !result) {
+  const firstName = (body.firstName || "").trim().slice(0, 80);
+  const lastName = (body.lastName || "").trim().slice(0, 80);
+  const email = (body.email || "").trim().slice(0, 160);
+  const phone = (body.phone || "").trim().slice(0, 40);
+  const { consent, result } = body;
+
+  if (!firstName || !lastName || !email || !phone || !consent || !result) {
     return NextResponse.json(
       { ok: false, error: "missing_fields" },
       { status: 400 },
@@ -144,7 +153,13 @@ export async function POST(req: NextRequest) {
       { status: 400 },
     );
   }
-  // Minimale Validierung des Result-Objekts (Vertrauen okay — kommt aus eigenem API-Call)
+  // Telefon-Mini-Validierung: mind. 5 Zeichen, erlaubte Zeichen
+  if (!/^[+\d][\d\s()/-]{4,}$/.test(phone)) {
+    return NextResponse.json(
+      { ok: false, error: "invalid_phone" },
+      { status: 400 },
+    );
+  }
   if (
     typeof result.score !== "number" ||
     !Array.isArray(result.pillars) ||
@@ -165,7 +180,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const html = renderReportHtml(result);
+  const html = renderReportHtml(result, firstName);
 
   // 1) Bericht an User
   const userMail = await fetch("https://api.resend.com/emails", {
@@ -178,7 +193,7 @@ export async function POST(req: NextRequest) {
       from: `Wohlstandsmarketing <${fromEmail}>`,
       to: [email],
       reply_to: "info@wohlstandsmarketing.de",
-      subject: `Dein KI-Sichtbarkeits-Bericht — Score ${result.score}/100`,
+      subject: `${firstName}, dein KI-Sichtbarkeits-Bericht — Score ${result.score}/100`,
       html,
     }),
   });
@@ -201,11 +216,14 @@ export async function POST(req: NextRequest) {
     body: JSON.stringify({
       from: `WSM Lead-Bot <${fromEmail}>`,
       to: ["info@wohlstandsmarketing.de"],
-      subject: `🎯 Neuer KI-Check-Lead: ${email} (Score ${result.score})`,
+      subject: `🎯 Neuer KI-Check-Lead: ${firstName} ${lastName} (Score ${result.score})`,
       html: `
         <h2>Neuer Lead über KI-Sichtbarkeits-Check</h2>
-        <p><strong>E-Mail:</strong> ${escapeHtml(email)}</p>
-        <p><strong>Geprüfte URL:</strong> ${escapeHtml(result.normalizedUrl)}</p>
+        <p><strong>Name:</strong> ${escapeHtml(firstName)} ${escapeHtml(lastName)}</p>
+        <p><strong>E-Mail:</strong> <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></p>
+        <p><strong>Telefon:</strong> <a href="tel:${escapeHtml(phone.replace(/\s/g, ""))}">${escapeHtml(phone)}</a></p>
+        <hr/>
+        <p><strong>Geprüfte URL:</strong> <a href="${escapeHtml(result.normalizedUrl)}">${escapeHtml(result.normalizedUrl)}</a></p>
         <p><strong>Score:</strong> ${result.score}/100 (${result.scoreLabel})</p>
         <p><strong>Stadt:</strong> ${escapeHtml(result.answers.city || "—")}</p>
         <p><strong>Hauptziel:</strong> ${escapeHtml(result.answers.goal || "—")}</p>

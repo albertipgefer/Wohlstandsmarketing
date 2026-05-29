@@ -5,7 +5,7 @@
  *   "Erhalte X, mit dem du Y" oder "Wie du Z" — psychologisch wirksam,
  *   beschreibend, mit klarem Nutzen-Verweis.
  *
- * `digistoreUrl` ist aktuell null — wird gefüllt, sobald Digistore-Setup steht.
+ * `digistoreUrl` ist aktuell null — wird gefüllt, sobald CopeCart-Setup steht.
  */
 
 export type Product = {
@@ -52,7 +52,7 @@ export const PRODUCTS: Product[] = [
       "Du bist bereit, 6–12 Monate ehrlich zu arbeiten, um danach ortsunabhängig zu leben.",
     ],
     steps: [
-      { title: "Kauf", body: "Du zahlst 5 € via Digistore (Stripe, PayPal, SEPA)." },
+      { title: "Kauf", body: "Du zahlst 5 € via CopeCart (Kreditkarte, PayPal, SEPA)." },
       { title: "Mail", body: "Du bekommst sofort dein PDF zum Download." },
       { title: "Lesen", body: "Du nimmst dir ca. 45 Min Zeit und gehst den Plan einmal durch." },
       { title: "Umsetzen", body: "Du entscheidest, ob dieser Weg deiner ist — und gehst den ersten Schritt." },
@@ -107,7 +107,7 @@ export const PRODUCTS: Product[] = [
       "Du willst keine Wix-/Squarespace-Baukasten-Optik, sondern professionellen Code, der skaliert.",
     ],
     steps: [
-      { title: "Kauf", body: "Du zahlst 19 € via Digistore." },
+      { title: "Kauf", body: "Du zahlst 19 € via CopeCart." },
       { title: "Mail", body: "Du bekommst sofort den Notion-Workspace-Link." },
       { title: "Duplizieren", body: "Ein Klick — der Workspace landet in deinem eigenen Notion." },
       { title: "Arbeiten", body: "Du gehst die 7 Schritte durch, in deinem Tempo." },
@@ -163,7 +163,7 @@ export const PRODUCTS: Product[] = [
       "Du willst nie wieder als Anfänger durchgehen, wenn du den nächsten Inhaber ansprichst.",
     ],
     steps: [
-      { title: "Kauf", body: "27 € via Digistore." },
+      { title: "Kauf", body: "27 € via CopeCart." },
       { title: "Mail", body: "Sofort PDF + Notion-Link in deiner Mailbox." },
       { title: "Vorbereiten", body: "Branche wählen, 3 Geschäfte recherchieren, Webseiten vorab bauen." },
       { title: "Vor Ort", body: "Skript anwenden, Deal machen, Hand schütteln." },
@@ -221,7 +221,7 @@ export const PRODUCTS: Product[] = [
       "Du bist bereit, 2–3 Stunden täglich Akquise zu machen.",
     ],
     steps: [
-      { title: "Kauf", body: "49 € via Digistore." },
+      { title: "Kauf", body: "49 € via CopeCart." },
       { title: "Mail", body: "Sofort PDF + Notion-Link." },
       { title: "Lead-Liste", body: "100+ Leads in 30 Min mit Apify aufgebaut." },
       { title: "Akquise", body: "Telefon, E-Mail, LinkedIn oder Vor Ort — du wählst." },
@@ -279,7 +279,7 @@ export const PRODUCTS: Product[] = [
       "Du willst den Upsell auf KI-Sichtbarkeit + SEO sicher landen — und damit deinen ersten monatlich wiederkehrenden Umsatz aufbauen.",
     ],
     steps: [
-      { title: "Kauf", body: "97 € via Digistore." },
+      { title: "Kauf", body: "97 € via CopeCart." },
       { title: "Mail", body: "Sofort PDF + Notion-Link." },
       { title: "Onboarding", body: "Mail-Template raus, Standing aufbauen." },
       { title: "Kick-Off", body: "30-Min-Call, Inhalte einsammeln." },
@@ -443,7 +443,7 @@ export const BUNDLE: Bundle = {
     "Du bist nicht bereit, in den ersten Monaten 2–3 Stunden pro Tag zu investieren.",
   ],
   steps: [
-    { title: "Kauf", body: "Du zahlst 197 € via Digistore (Stripe, PayPal, SEPA, Klarna)." },
+    { title: "Kauf", body: "Du zahlst 197 € via CopeCart (Kreditkarte, PayPal, SEPA, Klarna)." },
     { title: "Mail", body: "Du bekommst sofort eine E-Mail mit allen 5 Phasen-Links (PDFs + Notion-Duplicate-Links)." },
     { title: "Loslegen", body: "Du startest mit Phase 1 (45 Min Lesen), gehst dann in deinem Tempo durch Phase 2–5." },
     { title: "Umsetzen", body: "Du baust deine Webseite, sammelst Testkunden, gewinnst deinen ersten zahlenden Kunden, lieferst sauber — und landest den ersten Retainer-Upsell." },

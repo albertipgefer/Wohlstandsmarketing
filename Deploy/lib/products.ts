@@ -344,7 +344,6 @@ export type Bundle = {
   forWhom: string[];
   forWhomNot: string[];
   steps: { title: string; body: string }[];
-  guarantee: string;
   faq: { q: string; a: string }[];
   digistoreUrl: string | null;
 };
@@ -428,7 +427,6 @@ export const BUNDLE: Bundle = {
     "Spare 234 € (-54 %) gegenüber dem Einzelkauf der 5 Phasen.",
     "5 PDFs + 4 Notion-Workspaces + über 25 Copy-Paste-Assets (Skripte, Vorlagen, Vereinbarungen, Cheat-Sheets) — direkt einsetzbar.",
     "Lebenslanger Zugang zu allen Inhalten. Updates der Notion-Workspaces bekommst du automatisch mit, ohne nachzukaufen.",
-    `14-Tage-Geld-zurück-Garantie — wenn du nach 2 Wochen sagst „das ist nichts für mich", schreib mir eine DM und du bekommst die 197 € voll zurück.`,
     "Du sparst dir Wochen an Recherche, Google-Suchen und Fehlentscheidungen — der Plan ist erprobt, jeder Schritt sitzt.",
   ],
   forWhom: [
@@ -448,8 +446,6 @@ export const BUNDLE: Bundle = {
     { title: "Loslegen", body: "Du startest mit Phase 1 (45 Min Lesen), gehst dann in deinem Tempo durch Phase 2–5." },
     { title: "Umsetzen", body: "Du baust deine Webseite, sammelst Testkunden, gewinnst deinen ersten zahlenden Kunden, lieferst sauber — und landest den ersten Retainer-Upsell." },
   ],
-  guarantee:
-    "Wenn du nach 14 Tagen ehrlich sagst, dass dir das Paket nichts bringt — schreib mir eine DM an @journeywithalbert und ich überweise dir die 197 € voll zurück. Ohne Wenn und Aber, ohne Fragen.",
   faq: [
     {
       q: "Warum so günstig? 197 € statt 431 € klingt fast zu gut.",
@@ -474,10 +470,6 @@ export const BUNDLE: Bundle = {
     {
       q: "Wie lange habe ich Zugang?",
       a: "Lebenslang. PDFs lädst du runter und sie gehören dir. Notion-Workspaces duplizierst du in deinen eigenen Account und sie gehören dir komplett — auch wenn ich morgen die Original-Workspaces lösche.",
-    },
-    {
-      q: "Geld-zurück-Garantie?",
-      a: "Ja, 14 Tage. Wenn dir das Paket nichts bringt, schreib mir eine DM an @journeywithalbert und ich überweise dir die 197 € voll zurück. Ohne Wenn und Aber.",
     },
     {
       q: "Bekomme ich auch das 49-€-Strategiegespräch oder das kostenlose Skalierungs-Erstgespräch?",

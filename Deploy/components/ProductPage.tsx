@@ -21,19 +21,19 @@ function CTAButton({ href, label, size = "md" }: {
   label: string;
   size?: "md" | "lg";
 }) {
-  const padCls = size === "lg" ? "px-7 py-4 text-[15px] sm:text-base" : "px-6 py-3.5 text-sm sm:text-[15px]";
+  const padCls = size === "lg" ? "px-7 py-4 text-sm sm:text-[15px]" : "px-6 py-3.5 text-[13px] sm:text-sm";
   return (
     <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className={`group relative inline-flex w-full items-center justify-center overflow-hidden rounded-full bg-[var(--text)] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(22,99,222,0.5)] transition hover:shadow-[0_14px_40px_-10px_rgba(22,99,222,0.75)] ${padCls}`}
+      className={`group relative inline-flex w-full items-center justify-center overflow-hidden rounded-full bg-[#1663de] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(22,99,222,0.55)] transition hover:shadow-[0_14px_40px_-10px_rgba(22,99,222,0.8)] ${padCls}`}
     >
       <span
         aria-hidden
-        className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-[#1663de] to-[#0f4cb3] transition-transform duration-500 ease-out group-hover:translate-y-0"
+        className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-[#0f4cb3] to-[#0a3a82] transition-transform duration-500 ease-out group-hover:translate-y-0"
       />
-      <span className="relative z-10 inline-flex items-center gap-2">
+      <span className="relative z-10 inline-flex items-center gap-2 whitespace-nowrap">
         {label}
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden>
           <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -45,7 +45,7 @@ function CTAButton({ href, label, size = "md" }: {
 
 function PriceBox({ product, large = false }: { product: Product; large?: boolean }) {
   const ctaHref = product.digistoreUrl ?? "#";
-  const ctaLabel = "Jetzt zum Einführungspreis sichern!";
+  const ctaLabel = "Jetzt sichern";
 
   return (
     <div className={`rounded-2xl border border-[var(--border)] bg-[var(--surface)] ${large ? "p-5 sm:p-6" : "p-4 sm:p-5"}`}>

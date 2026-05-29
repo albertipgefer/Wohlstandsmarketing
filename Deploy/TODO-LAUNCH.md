@@ -14,8 +14,16 @@ Datei: `lib/products.ts` — Feld `digistoreUrl` (aktuell `null`) pro Produkt se
 | Erste 3 Testkunden | `3-testkunden` | 27 € | TODO |
 | Erster 1.000-€-Kunde | `1000-euro-kunde` | 49 € | TODO |
 | Onboarding & Delivery | `onboarding-delivery` | 97 € | TODO |
+| **Komplettpaket (Bundle)** | `komplettpaket` | **197 €** | TODO |
 
-Sobald gesetzt → alle 3 CTAs pro Produktseite (Hero, Mid, Final) gehen automatisch live.
+Sobald gesetzt → alle CTAs (Bio-Page Bundle-Card, /komplettpaket Hero+Mid+Final, 5 Einzel-Produktseiten) gehen automatisch live.
+
+**Komplettpaket-spezifisch:**
+- Digistore-Verkaufstext: `../../Personal Brand/monetization/digistore-verkaufstexte.md` → Sektion „Produkt 6"
+- Digistore-Auto-Mail: `../../Personal Brand/monetization/digistore-auto-mails.md` → Sektion „Produkt 6"
+- Cover (OG): `digistore-covers/cover-bundle-komplettpaket.png` (1280×720)
+- Mockup (Hero): `digistore-covers/mockup-bundle-komplettpaket.png` (1600×1200)
+- PDF-Anhänge: alle 5 Phase-PDFs aus den jeweiligen `phase-X-*/`-Ordnern
 
 ## 2. Phase 1 PDF: Folgeprodukte-Links umstellen
 

@@ -316,3 +316,167 @@ export const STRATEGIEGESPRAECH_URL =
 
 export const SKALIERUNGS_ERSTGESPRAECH_URL =
   "https://tidycal.com/albertipgefer/erstgespraech-mit-wohlstandsmarketing-2";
+
+// ───────────── BUNDLE — KOMPLETTPAKET (alle 5 Phasen) ─────────────
+
+export type BundleIncludedPhase = {
+  phase: string;
+  shortName: string;
+  originalPrice: string;
+  cover: string;
+  bullets: string[];
+};
+
+export type Bundle = {
+  slug: string;
+  shortName: string;
+  longTitle: string;
+  subtitle: string;
+  priceNow: string;
+  priceStrike: string;
+  savings: string;
+  savingsPercent: string;
+  cover: string;
+  mockup: string;
+  includedPhases: BundleIncludedPhase[];
+  bullets: string[];
+  forWhom: string[];
+  forWhomNot: string[];
+  steps: { title: string; body: string }[];
+  guarantee: string;
+  faq: { q: string; a: string }[];
+  digistoreUrl: string | null;
+};
+
+export const BUNDLE: Bundle = {
+  slug: "komplettpaket",
+  shortName: "Das Wohlstandsmarketing-Treppe Komplettpaket",
+  longTitle: "Der gesamte Weg von 0 bis zum ersten Retainer-Kunden — alle 5 Phasen in einem Paket",
+  subtitle:
+    "Alle 5 Phasen der Wohlstandsmarketing-Treppe in einem Schlag. Statt 431 € einzeln zahlst du nur 197 € — und hast sofort den kompletten Fahrplan vom ersten Tag bis zum ersten monatlich wiederkehrenden Retainer-Umsatz.",
+  priceNow: "197 €",
+  priceStrike: "431 €",
+  savings: "234 €",
+  savingsPercent: "-54 %",
+  cover: "/images/cover-bundle-komplettpaket.png",
+  mockup: "/images/mockup-bundle-komplettpaket.png",
+  includedPhases: [
+    {
+      phase: "Phase 1",
+      shortName: "Dein Wohlstands-Guide 2026",
+      originalPrice: "19 €",
+      cover: "/images/cover-phase-1-wohlstands-guide.png",
+      bullets: [
+        "18-Seiten-PDF mit dem kompletten Fahrplan, den ich heute gehen würde, wenn ich bei Null wäre",
+        "Die 10 typischen Sackgassen, in denen 95 % aller Anfänger landen — und wie du sie meidest",
+        "8 klare Stationen vom ersten Schritt bis zum ersten zahlenden Kunden",
+      ],
+    },
+    {
+      phase: "Phase 2",
+      shortName: "Deine erste KI-Webseite in unter 7 Tagen",
+      originalPrice: "49 €",
+      cover: "/images/cover-phase-2-erste-ki-webseite.png",
+      bullets: [
+        "Kompletter Notion-Workspace zum Duplizieren — landet in 3 Klicks in deinem eigenen Notion",
+        "7 klare Schritte vom leeren Laptop bis zur live geschalteten Webseite (Claude Code, GitHub, Vercel, SEO)",
+        "SEO-Mega-Prompt + Cheat-Sheet mit allen Befehlen + Fehler-Lexikon mit 20 Stolpersteinen",
+      ],
+    },
+    {
+      phase: "Phase 3",
+      shortName: "Deine ersten 3 Testkunden in 4 Wochen",
+      originalPrice: "67 €",
+      cover: "/images/cover-phase-3-erste-3-testkunden.png",
+      bullets: [
+        "PDF-Strategie + Notion-Workspace mit 6 Copy-Paste-Assets für deinen Beweis-Stack",
+        "Wortwörtliches Vor-Ort-Skript zum Copy-Paste — Satz für Satz, was du beim Inhaber sagst",
+        "Unterschriftsreife Testkunden-Vereinbarung + Portfolio-Seiten-Anleitung",
+      ],
+    },
+    {
+      phase: "Phase 4",
+      shortName: "Dein erster 1.000-€-Kunde",
+      originalPrice: "99 €",
+      cover: "/images/cover-phase-4-erster-1000-kunde.png",
+      bullets: [
+        "Akquise- und Sales-Stack als PDF + Notion-Workspace mit 8 Copy-Paste-Assets",
+        "100+ qualifizierte Leads aus Google Maps in 30 Min (Apify + Claude Code)",
+        "Setting + Closing-Frameworks 1:1 aus meiner Praxis + Einwand-Cheat-Sheet (ABC-Technik)",
+      ],
+    },
+    {
+      phase: "Phase 5",
+      shortName: "Onboarding, Umsetzung & Delivery",
+      originalPrice: "197 €",
+      cover: "/images/cover-phase-5-onboarding-delivery.png",
+      bullets: [
+        "14-Tage-Liefer-Playbook als PDF + Notion-Workspace mit 8 Copy-Paste-Assets",
+        "Aufstockungs-Angebots-Vorlage für KI-Sichtbarkeit + SEO (500 € einmalig oder 500 €/Monat Retainer)",
+        "Übergabe-Pitch zum Copy-Paste — Referenz UND Upsell auf monatlich wiederkehrenden Umsatz in einem Call",
+      ],
+    },
+  ],
+  bullets: [
+    "Erhalte alle 5 Phasen sofort nach Kauf — keine Drip-Kampagne, keine Wartezeit. Du bekommst den kompletten Fahrplan auf einmal.",
+    "Spare 234 € (-54 %) gegenüber dem Einzelkauf der 5 Phasen.",
+    "5 PDFs + 4 Notion-Workspaces + über 25 Copy-Paste-Assets (Skripte, Vorlagen, Vereinbarungen, Cheat-Sheets) — direkt einsetzbar.",
+    "Lebenslanger Zugang zu allen Inhalten. Updates der Notion-Workspaces bekommst du automatisch mit, ohne nachzukaufen.",
+    `14-Tage-Geld-zurück-Garantie — wenn du nach 2 Wochen sagst „das ist nichts für mich", schreib mir eine DM und du bekommst die 197 € voll zurück.`,
+    "Du sparst dir Wochen an Recherche, Google-Suchen und Fehlentscheidungen — der Plan ist erprobt, jeder Schritt sitzt.",
+  ],
+  forWhom: [
+    "Du willst nicht in Häppchen kaufen, sondern den kompletten Fahrplan auf einmal — und sofort loslegen.",
+    "Du bist bereit, in den nächsten 3–6 Monaten ehrlich zu arbeiten, um danach ortsunabhängig zu leben.",
+    "Du hast 0 Programmier-Erfahrung — aber bist bereit, mit KI zu arbeiten.",
+    `Du willst nicht 5× separat denken („soll ich jetzt Phase 3 kaufen?"), sondern den Weg in der Hand haben.`,
+  ],
+  forWhomNot: [
+    `Du suchst eine Geheimformel oder „passives Einkommen in 7 Tagen". Den Weg gibt's nicht — hier auch nicht.`,
+    "Du willst nur Theorie konsumieren, aber nichts umsetzen. Dann brauchst du das Paket nicht.",
+    "Du bist nicht bereit, in den ersten Monaten 2–3 Stunden pro Tag zu investieren.",
+  ],
+  steps: [
+    { title: "Kauf", body: "Du zahlst 197 € via Digistore (Stripe, PayPal, SEPA, Klarna)." },
+    { title: "Mail", body: "Du bekommst sofort eine E-Mail mit allen 5 Phasen-Links (PDFs + Notion-Duplicate-Links)." },
+    { title: "Loslegen", body: "Du startest mit Phase 1 (45 Min Lesen), gehst dann in deinem Tempo durch Phase 2–5." },
+    { title: "Umsetzen", body: "Du baust deine Webseite, sammelst Testkunden, gewinnst deinen ersten zahlenden Kunden, lieferst sauber — und landest den ersten Retainer-Upsell." },
+  ],
+  guarantee:
+    "Wenn du nach 14 Tagen ehrlich sagst, dass dir das Paket nichts bringt — schreib mir eine DM an @journeywithalbert und ich überweise dir die 197 € voll zurück. Ohne Wenn und Aber, ohne Fragen.",
+  faq: [
+    {
+      q: "Warum so günstig? 197 € statt 431 € klingt fast zu gut.",
+      a: "Weil ich will, dass du dich für den kompletten Weg entscheidest — nicht nur die ersten 1–2 Phasen kaufst und dann steckenbleibst. Mein Ziel: dass du nach 6 Monaten deinen ersten 1.000-€-Kunden hast UND den 500 €/Monat-Retainer landest. Dafür brauchst du alle 5 Phasen — nicht 2. Der Bundle-Rabatt ist mein Anreiz, damit du den ganzen Weg gehst.",
+    },
+    {
+      q: "Was unterscheidet das Paket vom Einzelkauf?",
+      a: `Inhaltlich nichts — du bekommst genau dieselben PDFs + Notion-Workspaces. Der Unterschied: 234 € Ersparnis und eine einzige E-Mail mit allen 5 Links. Kein „später nachkaufen", kein Suchen, keine Entscheidung mehr.`,
+    },
+    {
+      q: "Wie schnell sollte ich das durcharbeiten?",
+      a: "Realistisch 3–6 Monate, wenn du 2–3 Stunden pro Tag investierst. Vollzeit-Sprint: 6–8 Wochen. Du hast lebenslangen Zugang, also kein Zeitdruck.",
+    },
+    {
+      q: "Brauche ich Vorerfahrung?",
+      a: "Nein. Das Paket ist explizit für Anfänger geschrieben. Wenn du E-Mails schreiben kannst und bereit bist, mit KI zu arbeiten, kannst du loslegen.",
+    },
+    {
+      q: "Was kostet mich der Bau einer Webseite zusätzlich?",
+      a: "~20 € einmalig (Claude Code Pro-Abo + eine Domain). Hosting auf Vercel ist kostenlos. Mehr Tool-Kosten kommen erst in Phase 4 dazu (Apify Free-Tier reicht für die ersten 100–200 Leads).",
+    },
+    {
+      q: "Wie lange habe ich Zugang?",
+      a: "Lebenslang. PDFs lädst du runter und sie gehören dir. Notion-Workspaces duplizierst du in deinen eigenen Account und sie gehören dir komplett — auch wenn ich morgen die Original-Workspaces lösche.",
+    },
+    {
+      q: "Geld-zurück-Garantie?",
+      a: "Ja, 14 Tage. Wenn dir das Paket nichts bringt, schreib mir eine DM an @journeywithalbert und ich überweise dir die 197 € voll zurück. Ohne Wenn und Aber.",
+    },
+    {
+      q: "Bekomme ich auch das 49-€-Strategiegespräch oder das kostenlose Skalierungs-Erstgespräch?",
+      a: "Beide Termine kannst du jederzeit zusätzlich buchen — die sind nicht im Paket enthalten. Aber: ehrlich gesagt, wenn du das Paket durcharbeitest, brauchst du das 49-€-Strategiegespräch wahrscheinlich nicht. Das kostenlose Skalierungs-Gespräch macht erst Sinn, wenn du Phase 4 + 5 abgeschlossen hast und konkret skalieren willst.",
+    },
+  ],
+  digistoreUrl: null,
+};

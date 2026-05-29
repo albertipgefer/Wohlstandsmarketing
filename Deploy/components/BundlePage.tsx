@@ -17,21 +17,21 @@ const stagger = {
 };
 
 function CTAButton({ size = "md" }: { size?: "md" | "lg" }) {
-  const padCls = size === "lg" ? "px-7 py-4 text-[15px] sm:text-base" : "px-6 py-3.5 text-sm sm:text-[15px]";
+  const padCls = size === "lg" ? "px-7 py-4 text-sm sm:text-[15px]" : "px-6 py-3.5 text-[13px] sm:text-sm";
   const ctaHref = BUNDLE.digistoreUrl ?? "#";
-  const ctaLabel = "Jetzt zum Einführungspreis sichern!";
+  const ctaLabel = "Jetzt sichern";
   return (
     <a
       href={ctaHref}
       target="_blank"
       rel="noopener noreferrer"
-      className={`group relative inline-flex w-full items-center justify-center overflow-hidden rounded-full bg-[var(--text)] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(22,99,222,0.5)] transition hover:shadow-[0_14px_40px_-10px_rgba(22,99,222,0.75)] ${padCls}`}
+      className={`group relative inline-flex w-full items-center justify-center overflow-hidden rounded-full bg-[#1663de] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(22,99,222,0.55)] transition hover:shadow-[0_14px_40px_-10px_rgba(22,99,222,0.8)] ${padCls}`}
     >
       <span
         aria-hidden
-        className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-[#1663de] to-[#0f4cb3] transition-transform duration-500 ease-out group-hover:translate-y-0"
+        className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-[#0f4cb3] to-[#0a3a82] transition-transform duration-500 ease-out group-hover:translate-y-0"
       />
-      <span className="relative z-10 inline-flex items-center gap-2">
+      <span className="relative z-10 inline-flex items-center gap-2 whitespace-nowrap">
         {ctaLabel}
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden>
           <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -64,7 +64,7 @@ function PriceBox({ large = false }: { large?: boolean }) {
         <CTAButton size={large ? "lg" : "md"} />
       </div>
       <p className="mt-3 text-center text-xs text-[var(--text-subtle)]">
-        Sofort-Auslieferung per E-Mail · Lebenslanger Zugang · 14-Tage Geld-zurück
+        Sofort-Auslieferung per E-Mail · Lebenslanger Zugang
       </p>
     </div>
   );
@@ -365,31 +365,6 @@ export default function BundlePage() {
         </ol>
       </motion.section>
 
-      {/* ───── 14-TAGE GARANTIE ───── */}
-      <motion.section
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-80px" }}
-        variants={fadeUp}
-        className="mx-auto w-full max-w-[760px] px-5 pb-10 sm:pb-14"
-      >
-        <div className="flex flex-col gap-4 rounded-2xl border-2 border-emerald-500/30 bg-emerald-500/[0.05] p-5 sm:flex-row sm:items-center sm:gap-5 sm:p-6">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white shadow-[0_8px_20px_-6px_rgba(16,185,129,0.5)] sm:h-16 sm:w-16">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden>
-              <path d="M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
-          <div className="flex-1">
-            <div className="text-[11px] font-black uppercase tracking-[1.8px] text-emerald-600">
-              14-Tage Geld-zurück-Garantie
-            </div>
-            <p className="mt-1 text-[14px] leading-relaxed text-[var(--text)] sm:text-[15px]">
-              {BUNDLE.guarantee}
-            </p>
-          </div>
-        </div>
-      </motion.section>
-
       {/* ───── FÜR WEN / FÜR WEN NICHT ───── */}
       <motion.section
         initial="hidden"
@@ -485,7 +460,7 @@ export default function BundlePage() {
             <PriceBox large />
           </div>
           <p className="mt-3 text-center text-xs text-[var(--text-subtle)]">
-            Sichere Zahlung über CopeCart · MwSt automatisch · 14-Tage Geld-zurück
+            Sichere Zahlung über CopeCart · MwSt automatisch
           </p>
         </div>
       </motion.section>

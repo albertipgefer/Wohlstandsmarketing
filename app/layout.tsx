@@ -4,6 +4,9 @@ import "./globals.css";
 import CookieBanner from "@/components/CookieBanner";
 import ClarityAnalytics from "@/components/ClarityAnalytics";
 import StickyKiCheckCTA from "@/components/StickyKiCheckCTA";
+import WhatsAppButton from "@/components/WhatsAppButton";
+import KiCheckTeaserPopup from "@/components/KiCheckTeaserPopup";
+import ExitIntentPopup from "@/components/ExitIntentPopup";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -155,6 +158,9 @@ export default function RootLayout({
         />
         {children}
         <StickyKiCheckCTA />
+        <WhatsAppButton />
+        <KiCheckTeaserPopup />
+        <ExitIntentPopup />
         <CookieBanner />
         <ClarityAnalytics />
       </body>

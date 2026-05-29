@@ -7,6 +7,9 @@ import type { PostMeta } from "@/content/blog/types";
 import PostCover from "./PostCover";
 import AuthorBox from "./AuthorBox";
 import RegionLinks from "./RegionLinks";
+import InlineCTA from "./InlineCTA";
+import PreFooterCTA from "@/components/PreFooterCTA";
+import LeadMagnetForm from "@/components/LeadMagnetForm";
 
 function formatDate(iso: string) {
   return new Intl.DateTimeFormat("de-DE", {
@@ -151,74 +154,52 @@ export default function ArticleLayout({
         </aside>
       </div>
 
-      {/* FAQ */}
-      {meta.faq.length > 0 && (
-        <section className="border-t border-[var(--border)] bg-[var(--surface-2)]/40 py-20">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
-              FAQ
-            </p>
-            <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl font-black tracking-tight text-[var(--text)] sm:text-4xl">
-              Häufige Fragen zu diesem Thema
-            </h2>
-            <div className="mt-10 divide-y divide-[var(--border)] overflow-hidden rounded-3xl border border-[var(--border)] bg-white">
-              {meta.faq.map((f) => (
-                <details key={f.q} className="group p-6">
-                  <summary className="flex cursor-pointer list-none items-start justify-between gap-4">
-                    <span className="font-[family-name:var(--font-display)] text-[16px] font-semibold tracking-tight text-[var(--text)] sm:text-lg">
-                      {f.q}
-                    </span>
-                    <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[var(--border)] text-[12px] text-[var(--text)] transition group-open:rotate-45 group-open:bg-[var(--text)] group-open:text-white">
-                      +
-                    </span>
-                  </summary>
-                  <p className="mt-3 pr-10 text-[14px] leading-relaxed text-[var(--text-muted)] sm:text-[15px]">
-                    {f.a}
-                  </p>
-                </details>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+      {/* Mittelstufen-CTA — direkt nach Body, vor FAQ. AUSSERHALB von prose-blog
+          (sonst überschreibt `.prose-blog a` den Button-Text blau + underline). */}
+      <div className="mx-auto max-w-6xl px-4 pb-4 sm:px-6 md:px-12">
+        <InlineCTA variant="erstgespraech" />
+      </div>
 
       {/* Author Box — builds E-E-A-T signals before related content + CTA */}
       <AuthorBox />
 
-      {/* Lead-Magnet-Banner: KI-Check direkt nach Author-Box im engagement-Peak */}
+      {/* Inline-Lead-Magnet-Box: PDF-Anmeldung mit eingebettetem Form,
+          direkt nach Author-Box im engagement-Peak. Stil identisch zu den
+          anderen CTA-Boxen (Akzent-Border, Gradient, Pulse-Dot). */}
       <section className="border-t border-[var(--border)] py-12 md:py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
-          <div className="relative overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--bg)] p-6 md:p-10">
+          <div className="relative overflow-hidden rounded-3xl border border-[var(--accent)]/25 bg-gradient-to-br from-white via-white to-[var(--accent-glow-soft)] p-7 shadow-[0_18px_50px_-22px_rgba(22,99,222,0.28)] ring-1 ring-[var(--accent)]/5 sm:p-10 md:p-12">
             <div
               aria-hidden
-              className="pointer-events-none absolute -right-16 -top-8 h-[260px] w-[260px] bg-[radial-gradient(circle,rgba(22,99,222,0.14)_0%,rgba(22,99,222,0)_70%)]"
+              className="pointer-events-none absolute inset-y-6 left-0 w-1 rounded-r-full bg-gradient-to-b from-[var(--accent)] via-[var(--accent)] to-[var(--gold)] opacity-80"
             />
-            <div className="relative grid items-center gap-6 md:grid-cols-[1fr_auto]">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -right-20 -top-16 h-[280px] w-[280px] bg-[radial-gradient(circle,rgba(22,99,222,0.16)_0%,rgba(22,99,222,0)_65%)]"
+            />
+            <div className="relative grid items-center gap-8 md:grid-cols-[1.1fr_1fr] md:gap-12">
               <div>
-                <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-3 py-1 text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--accent)]">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
-                  Free Tool · 60 Sekunden
+                <span className="inline-flex items-center gap-2 rounded-full border border-[var(--gold)]/40 bg-white px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--gold)] shadow-[0_4px_14px_-6px_rgba(219,111,22,0.25)]">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" />
+                  Gratis PDF · 12 Seiten
                 </span>
-                <h3 className="mt-3 font-[family-name:var(--font-display)] text-xl font-black leading-tight tracking-tight md:text-2xl">
-                  Wird deine eigene Seite von{" "}
+                <h3
+                  className="mt-5 font-[family-name:var(--font-display)] font-black leading-[1.1] tracking-[-0.025em] text-[var(--text)]"
+                  style={{ fontSize: "clamp(1.5rem, 3.2vw, 2.125rem)" }}
+                >
+                  Die{" "}
                   <span className="font-[family-name:var(--font-serif)] font-normal italic text-[var(--accent)]">
-                    ChatGPT
+                    11 teuersten
                   </span>{" "}
-                  empfohlen?
+                  Marketing-Fehler im Mittelstand
                 </h3>
-                <p className="mt-2 text-[13px] leading-relaxed text-[var(--text-muted)] md:text-[14px]">
-                  Mach den kostenlosen KI-Sichtbarkeits-Check und erhalte Score
-                  + die 3 wichtigsten Hebel direkt per Mail.
+                <p className="mt-4 text-[14.5px] leading-relaxed text-[var(--text-muted)] sm:text-[15.5px]">
+                  Konkrete Lösung pro Fehler + eine 30-Tage-Profi-Checkliste am Ende. Direkt nach Anmeldung in deinem Postfach.
                 </p>
               </div>
-              <Link
-                href="/sichtbarkeits-check"
-                className="group relative inline-flex shrink-0 items-center gap-2 overflow-hidden rounded-full bg-[var(--text)] px-6 py-3.5 text-[14px] font-semibold text-white transition"
-              >
-                <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-dark,_#0a4bb8)] transition-transform duration-500 ease-out group-hover:translate-y-0" />
-                <span className="relative z-10">Kostenlos checken</span>
-                <span className="relative z-10 transition-transform group-hover:translate-x-0.5">→</span>
-              </Link>
+              <div>
+                <LeadMagnetForm source={`blog:${meta.slug}`} />
+              </div>
             </div>
           </div>
         </div>
@@ -260,47 +241,48 @@ export default function ArticleLayout({
       {/* Region links — internal-linking hub to all 6 city money-pages */}
       <RegionLinks />
 
-      {/* Final CTA — Erstgespräch */}
-      <section className="relative overflow-hidden border-t border-[var(--border)] py-20 md:py-28">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-[480px] bg-[radial-gradient(55%_60%_at_50%_0%,rgba(22,99,222,0.16)_0%,rgba(22,99,222,0)_70%)]"
-        />
-        <div className="relative mx-auto max-w-6xl px-4 text-center sm:px-6 md:px-12">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
-            Nächster Schritt
-          </p>
-          <h2
-            className="mt-4 font-[family-name:var(--font-display)] font-black leading-[1.05] tracking-[-0.03em] text-[var(--text)]"
-            style={{ fontSize: "clamp(1.75rem, 4vw, 3rem)" }}
-          >
-            Bereit für deine{" "}
-            <span className="font-[family-name:var(--font-serif)] font-normal italic text-[var(--accent)]">
-              KI-Sichtbarkeit
-            </span>
-            ?
-          </h2>
-          <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-[var(--text-muted)] sm:text-lg">
-            15-Minuten-Erstgespräch mit Albert. Kostenfrei, ehrlich, mit
-            konkretem Plan — auch wenn wir nicht zusammenarbeiten.
-          </p>
-          <div className="mt-8 flex flex-col items-center gap-3">
-            <Link
-              href="/#strategie"
-              className="group relative inline-flex w-full max-w-md items-center justify-center gap-2 overflow-hidden rounded-full bg-[var(--text)] px-9 py-5 text-base font-semibold text-white shadow-[0_14px_40px_-10px_rgba(22,99,222,0.55)] transition hover:shadow-[0_18px_50px_-10px_rgba(22,99,222,0.8)] sm:w-auto"
-            >
-              <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-dark)] transition-transform duration-500 ease-out group-hover:translate-y-0" />
-              <span className="relative z-10">Erstgespräch sichern</span>
-              <span className="relative z-10 transition-transform group-hover:translate-x-1">
-                →
-              </span>
-            </Link>
-            <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-subtle)]">
-              15-Min · Kostenfrei · Albert Ipgefer persönlich
+      {/* FAQ — als vorletzte Sektion vor PreFooterCTA + Footer */}
+      {meta.faq.length > 0 && (
+        <section className="border-t border-[var(--border)] bg-[var(--surface-2)]/40 py-20">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
+              FAQ
             </p>
+            <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl font-black tracking-tight text-[var(--text)] sm:text-4xl">
+              Häufige Fragen zu diesem Thema
+            </h2>
+            <div className="mt-10 divide-y divide-[var(--border)] overflow-hidden rounded-3xl border border-[var(--border)] bg-white">
+              {meta.faq.map((f) => (
+                <details key={f.q} className="group p-6">
+                  <summary className="flex cursor-pointer list-none items-start justify-between gap-4">
+                    <span className="font-[family-name:var(--font-display)] text-[16px] font-semibold tracking-tight text-[var(--text)] sm:text-lg">
+                      {f.q}
+                    </span>
+                    <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[var(--border)] text-[12px] text-[var(--text)] transition group-open:rotate-45 group-open:bg-[var(--text)] group-open:text-white">
+                      +
+                    </span>
+                  </summary>
+                  <p className="mt-3 pr-10 text-[14px] leading-relaxed text-[var(--text-muted)] sm:text-[15px]">
+                    {f.a}
+                  </p>
+                </details>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
+
+      {/* Final CTA vor dem Footer — identisch zur Inline-CTA mittendrin,
+          damit der Stil konsistent ist (Akzent-Border, Gradient, gleicher Button). */}
+      <PreFooterCTA
+        variant="erstgespraech"
+        headline={
+          <>
+            Bereit für deine <span className="font-[family-name:var(--font-serif)] font-normal italic text-[var(--accent)]">KI-Sichtbarkeit</span>?
+          </>
+        }
+        subline="15-Minuten-Erstgespräch mit Albert. Kostenfrei, ehrlich, mit konkretem Plan — auch wenn wir nicht zusammenarbeiten."
+      />
     </article>
   );
 }

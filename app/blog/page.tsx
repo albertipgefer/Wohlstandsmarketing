@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { posts, CATEGORIES } from "@/content/blog";
 import CategoryFilter from "@/components/blog/CategoryFilter";
 import BlogNav from "@/components/blog/BlogNav";
+import PreFooterCTA from "@/components/PreFooterCTA";
 import Footer from "@/components/sections/Footer";
 import Link from "next/link";
 
@@ -75,34 +76,16 @@ export default function BlogIndex() {
         </div>
       </section>
 
-      {/* Newsletter / CTA strip */}
-      <section className="relative overflow-hidden border-t border-[var(--border)] bg-[var(--surface-2)]/40 py-20 md:py-28">
-        <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 md:px-12">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--gold)]">
-            Du willst nichts verpassen?
-          </p>
-          <h2
-            className="mt-4 font-[family-name:var(--font-display)] font-black leading-[1.05] tracking-[-0.03em] text-[var(--text)]"
-            style={{ fontSize: "clamp(1.75rem, 4vw, 3rem)" }}
-          >
-            Lieber direkt mit Albert sprechen?
-          </h2>
-          <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-[var(--text-muted)] sm:text-lg">
-            In 15 Minuten zeigen wir dir, wo du bei Google und KI heute
-            stehst — und was die nächsten Schritte sind. Kostenfrei.
-          </p>
-          <Link
-            href="/#strategie"
-            className="group relative mt-8 inline-flex w-full max-w-md items-center justify-center gap-2 overflow-hidden rounded-full bg-[var(--text)] px-9 py-5 text-base font-semibold text-white shadow-[0_14px_40px_-10px_rgba(22,99,222,0.55)] transition hover:shadow-[0_18px_50px_-10px_rgba(22,99,222,0.8)] sm:w-auto"
-          >
-            <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-dark)] transition-transform duration-500 ease-out group-hover:translate-y-0" />
-            <span className="relative z-10">Erstgespräch sichern</span>
-            <span className="relative z-10 transition-transform group-hover:translate-x-1">
-              →
-            </span>
-          </Link>
-        </div>
-      </section>
+      {/* Pre-Footer-CTA — konsistent mit Inline-CTA-Stil auf Blog-Artikeln + Stadt-Pages */}
+      <PreFooterCTA
+        variant="erstgespraech"
+        headline={
+          <>
+            Lieber direkt mit Albert <span className="font-[family-name:var(--font-serif)] font-normal italic text-[var(--accent)]">sprechen</span>?
+          </>
+        }
+        subline="In 15 Minuten zeigen wir dir, wo du bei Google und KI heute stehst — und was die nächsten Schritte sind. Kostenfrei."
+      />
 
       <Footer />
     </main>

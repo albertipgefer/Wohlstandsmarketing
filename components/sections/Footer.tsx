@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <footer className="relative border-t border-[var(--border)] bg-[var(--surface-2)]/40">
       <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:px-12 md:py-20">
-        <div className="grid gap-10 sm:grid-cols-2 md:gap-10 lg:grid-cols-[1.5fr_1fr_1fr_1fr_1fr]">
+        <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-3 md:gap-10 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr_1fr]">
           {/* Brand */}
           <div>
             <Link
@@ -58,8 +58,48 @@ export default function Footer() {
                 </a>
               </li>
               <li>
+                <a href="/bewertungen" className="transition hover:text-[var(--text)]">
+                  Bewertungen
+                </a>
+              </li>
+              <li>
                 <a href="/#faq" className="transition hover:text-[var(--text)]">
                   FAQ
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Assets — kostenlose Tools + Lead-Magnets */}
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--text-subtle)]">
+              Assets
+            </p>
+            <ul className="mt-4 space-y-2.5 text-[14px] text-[var(--text-muted)]">
+              <li>
+                <a
+                  href="/sichtbarkeits-check"
+                  className="transition hover:text-[var(--text)]"
+                >
+                  KI-Sichtbarkeits-Check
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/lead-magnet/11-marketing-fehler-mittelstand.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition hover:text-[var(--text)]"
+                >
+                  11 Marketing-Fehler (PDF) ↗
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/blog"
+                  className="transition hover:text-[var(--text)]"
+                >
+                  Blog
                 </a>
               </li>
             </ul>

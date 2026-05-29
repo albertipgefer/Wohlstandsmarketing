@@ -161,7 +161,7 @@ export default function Methode() {
             <span>Tag 0 · Kickoff</span>
             <span>Tag 3 · Fundament steht</span>
             <span>Tag 7 · Website live</span>
-            <span className="text-[var(--gold)]">Tag 90 · KI-Sichtbar</span>
+            <span className="text-[var(--gold-text)]">Tag 90 · KI-Sichtbar</span>
           </div>
         </motion.div>
       </div>

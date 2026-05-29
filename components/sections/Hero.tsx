@@ -1,22 +1,13 @@
 "use client";
 
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import Logo from "@/components/Logo";
-import GoogleReviewsBadge from "@/components/GoogleReviewsBadge";
-
-const NAV_ITEMS = [
-  ["Methode", "#methode"],
-  ["Preise", "/preise"],
-  ["Standorte", "/standorte"],
-  ["KI-Check", "/sichtbarkeits-check"],
-  ["Blog", "/blog"],
-] as const;
+import ReviewBadges from "@/components/ReviewBadges";
+import BlogNav from "@/components/blog/BlogNav";
 
 export default function Hero() {
   const reduce = useReducedMotion();
-  const [menuOpen, setMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [cursor, setCursor] = useState({ x: 0, y: 0, visible: false });
 
@@ -31,13 +22,6 @@ export default function Hero() {
     window.addEventListener("mousemove", onMove);
     return () => window.removeEventListener("mousemove", onMove);
   }, [reduce]);
-
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [menuOpen]);
 
   const container = {
     hidden: { opacity: 0 },
@@ -80,121 +64,7 @@ export default function Hero() {
         />
       )}
 
-      {/* Sticky Pill Nav */}
-      <header className="fixed inset-x-0 top-4 z-50 px-4 sm:top-5 sm:px-6">
-        <div className="mx-auto max-w-6xl">
-          <div className="flex items-center justify-between gap-2 rounded-full border border-[var(--border)] bg-white/80 px-3 py-2.5 shadow-[0_10px_40px_-12px_rgba(10,10,10,0.18)] backdrop-blur-xl sm:px-4 sm:py-3">
-            <a href="/" aria-label="Wohlstandsmarketing Startseite" className="flex items-center pl-1">
-              <Logo size={36} />
-            </a>
-
-            <nav className="hidden items-center gap-1 md:flex">
-              {NAV_ITEMS.map(([label, href]) => (
-                <a
-                  key={label}
-                  href={href}
-                  className="rounded-full px-4 py-2 text-[13px] font-medium text-[var(--text-muted)] transition hover:bg-[var(--surface-2)] hover:text-[var(--text)]"
-                >
-                  {label}
-                </a>
-              ))}
-            </nav>
-
-            <div className="flex items-center gap-2">
-              <a
-                href="https://kundenbereich.wohlstandsmarketing.de/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hidden rounded-full px-3 py-2 text-[13px] font-medium text-[var(--text-muted)] transition hover:text-[var(--text)] md:inline-flex"
-              >
-                Kundenbereich ↗
-              </a>
-              <a
-                href="#strategie"
-                className="group relative hidden items-center gap-1.5 overflow-hidden rounded-full bg-[var(--text)] px-5 py-2.5 text-[13px] font-semibold text-white md:inline-flex"
-              >
-                <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-dark)] transition-transform duration-500 ease-out group-hover:translate-y-0" />
-                <span className="relative z-10">Erstgespräch</span>
-                <span className="relative z-10 transition-transform group-hover:translate-x-0.5">
-                  →
-                </span>
-              </a>
-              <button
-                onClick={() => setMenuOpen((o) => !o)}
-                aria-label={menuOpen ? "Menü schließen" : "Menü öffnen"}
-                className="relative flex h-10 w-10 items-center justify-center rounded-full bg-[var(--text)] text-white md:hidden"
-              >
-                <span
-                  className={`absolute h-[1.5px] w-4 bg-white transition-transform ${
-                    menuOpen ? "rotate-45" : "-translate-y-1.5"
-                  }`}
-                />
-                <span
-                  className={`absolute h-[1.5px] w-4 bg-white transition-opacity ${
-                    menuOpen ? "opacity-0" : ""
-                  }`}
-                />
-                <span
-                  className={`absolute h-[1.5px] w-4 bg-white transition-transform ${
-                    menuOpen ? "-rotate-45" : "translate-y-1.5"
-                  }`}
-                />
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Mobile Menu Overlay */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-40 bg-white/95 backdrop-blur-xl md:hidden"
-          >
-            <div className="flex h-full flex-col items-center justify-center gap-5 px-6 pt-16">
-              {NAV_ITEMS.map(([label, href], i) => (
-                <motion.a
-                  key={label}
-                  href={href}
-                  onClick={() => setMenuOpen(false)}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.05 + i * 0.06 }}
-                  className="font-[family-name:var(--font-display)] text-3xl font-bold tracking-tight text-[var(--text)]"
-                >
-                  {label}
-                </motion.a>
-              ))}
-              <motion.a
-                href="https://kundenbereich.wohlstandsmarketing.de/"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setMenuOpen(false)}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="text-base font-medium text-[var(--text-muted)]"
-              >
-                Kundenbereich ↗
-              </motion.a>
-              <motion.a
-                href="#strategie"
-                onClick={() => setMenuOpen(false)}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.36 }}
-                className="mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--text)] px-8 py-4 text-base font-semibold text-white shadow-[0_14px_40px_-10px_rgba(22,99,222,0.5)]"
-              >
-                Erstgespräch sichern →
-              </motion.a>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <BlogNav />
 
       {/* ═══════════════════════════════════════════════════════
           HERO LAYOUT — Akquise-Style
@@ -216,7 +86,8 @@ export default function Hero() {
               alt="Albert Ipgefer, Gründer von Wohlstandsmarketing"
               fill
               priority
-              quality={88}
+              fetchPriority="high"
+              quality={85}
               sizes="480px"
               className="object-cover object-[50%_35%]"
             />
@@ -256,7 +127,7 @@ export default function Hero() {
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--gold)]" />
               </span>
               <span className="truncate text-[10.5px] font-medium tracking-wide text-[var(--text-muted)] sm:text-[12px]">
-                <span className="font-semibold text-[var(--gold)]">Neu</span>
+                <span className="font-semibold text-[var(--gold-text)]">Neu</span>
                 <span className="mx-1.5 text-[var(--text-subtle)] sm:mx-2">·</span>
                 <span className="hidden sm:inline">
                   Die WSM-Methode: Webdesign &amp; KI-Sichtbarkeit
@@ -308,12 +179,11 @@ export default function Hero() {
               variants={item}
               className="mt-6 max-w-xl text-base leading-relaxed text-[var(--text-muted)] sm:mt-8 sm:text-lg"
             >
-              Ein neuer Auftritt für dein Unternehmen, der nicht nur gut aussieht
-              — sondern von Google, ChatGPT, Perplexity und Claude als{" "}
+              Wir holen dich aus der Unsichtbarkeit und machen dich{" "}
               <span className="font-semibold text-[var(--text)]">
-                erste Wahl in deiner Region
+                innerhalb von 90 Tagen zur Nummer 1 in deiner Region
               </span>{" "}
-              empfohlen wird.
+              — empfohlen von Google, ChatGPT, Perplexity und Claude.
             </motion.p>
 
             {/* MOBILE / iPad ONLY: portrait photo (different crop), centered, no fade */}
@@ -327,8 +197,9 @@ export default function Hero() {
                 width={1226}
                 height={1300}
                 priority
-                quality={85}
-                sizes="(max-width: 768px) 100vw, 540px"
+                fetchPriority="high"
+                quality={75}
+                sizes="(max-width: 640px) 360px, 480px"
                 className="h-auto w-full"
               />
             </motion.div>
@@ -340,6 +211,7 @@ export default function Hero() {
             >
               <a
                 href="#strategie"
+                aria-label="Zum Strategie-Abschnitt springen und Erstgespräch sichern"
                 className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-[var(--text)] px-7 py-4 text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(22,99,222,0.5)] transition hover:shadow-[0_14px_40px_-10px_rgba(22,99,222,0.75)]"
               >
                 <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-dark)] transition-transform duration-500 ease-out group-hover:translate-y-0" />
@@ -359,11 +231,11 @@ export default function Hero() {
               </a>
             </motion.div>
 
-            {/* Sekundärer CTA: KI-Check als Lead-Magnet */}
+            {/* Sekundärer CTA: KI-Check als Lead-Magnet — nur Desktop (auf Mobile/iPad versteckt) */}
             <motion.a
               variants={item}
               href="/sichtbarkeits-check"
-              className="group mx-auto mt-5 inline-flex items-center gap-2 text-[13px] font-semibold text-[var(--text-muted)] transition hover:text-[var(--accent)] lg:mx-0"
+              className="group mx-auto mt-5 hidden items-center gap-2 text-[13px] font-semibold text-[var(--text-muted)] transition hover:text-[var(--accent)] lg:mx-0 lg:inline-flex"
             >
               <span aria-hidden className="text-[var(--accent)]">⚡</span>
               <span className="underline-offset-4 group-hover:underline">
@@ -380,9 +252,68 @@ export default function Hero() {
               15-Min Erstgespräch · Kostenfrei · Albert Ipgefer persönlich
             </motion.p>
 
-            {/* Google-Bewertungen Trust-Signal */}
-            <motion.div variants={item} className="mt-5">
-              <GoogleReviewsBadge variant="pill" />
+            {/* Bewertungen Trust-Signal: Google + Trustpilot — Mobile/iPad zentriert, Desktop links */}
+            <motion.div variants={item} className="mt-5 w-full">
+              <ReviewBadges variant="pill" centerOnMobile />
+            </motion.div>
+
+            {/* USP-Bullets im Baulig-Stil — nur Mobile/iPad, vertikal, linksbündig im zentrierten Block */}
+            <motion.ul
+              variants={item}
+              className="mx-auto mt-7 flex w-full max-w-md flex-col gap-3 text-left text-[13.5px] leading-relaxed text-[var(--text)] sm:text-[14.5px] lg:hidden"
+            >
+              <li className="flex items-start gap-2.5">
+                <span aria-hidden className="mt-[3px] flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-[12px] font-bold text-emerald-600">
+                  ✓
+                </span>
+                <span>
+                  <strong className="font-semibold">Erhalte Klarheit</strong>, wie du als lokaler Experte in deinem Markt sichtbar wirst — auf Google und in ChatGPT.
+                </span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <span aria-hidden className="mt-[3px] flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-[12px] font-bold text-emerald-600">
+                  ✓
+                </span>
+                <span>
+                  <strong className="font-semibold">Nutze die WSM-Methode</strong>, um planbar qualifizierte Anfragen zu gewinnen — statt auf Empfehlungen zu hoffen.
+                </span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <span aria-hidden className="mt-[3px] flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-[12px] font-bold text-emerald-600">
+                  ✓
+                </span>
+                <span>
+                  <strong className="font-semibold">Erfahre</strong>, wie deine Webseite zur echten Lead-Maschine wird — und nicht nur digitale Visitenkarte bleibt.
+                </span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <span aria-hidden className="mt-[3px] flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-[12px] font-bold text-emerald-600">
+                  ✓
+                </span>
+                <span>
+                  <strong className="font-semibold">Verstehe</strong>, wieso du kein riesiges Werbebudget brauchst, um nachhaltig planbar zu wachsen.
+                </span>
+              </li>
+            </motion.ul>
+
+            {/* CTA-Wiederholung — nur Mobile/iPad, nach den Bullets */}
+            <motion.div
+              variants={item}
+              className="mx-auto mt-7 flex w-full max-w-sm flex-col items-stretch gap-3 lg:hidden"
+            >
+              <a
+                href="#strategie"
+                className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-[var(--text)] px-7 py-4 text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(22,99,222,0.5)] transition hover:shadow-[0_14px_40px_-10px_rgba(22,99,222,0.75)]"
+              >
+                <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-dark)] transition-transform duration-500 ease-out group-hover:translate-y-0" />
+                <span className="relative z-10">Jetzt unverbindliches Erstgespräch sichern</span>
+                <span className="relative z-10 transition-transform group-hover:translate-x-1">
+                  →
+                </span>
+              </a>
+              <p className="text-center text-[11px] uppercase tracking-[0.22em] text-[var(--text-subtle)]">
+                15-Min · Kostenfrei · Albert persönlich
+              </p>
             </motion.div>
           </motion.div>
         </div>

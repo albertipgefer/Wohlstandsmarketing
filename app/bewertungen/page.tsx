@@ -7,7 +7,7 @@ import Footer from "@/components/sections/Footer";
 export const metadata: Metadata = {
   title: "Kundenbewertungen · Wohlstandsmarketing",
   description:
-    "Alle Google-Bewertungen für Wohlstandsmarketing — verifiziert und ungekürzt. Erfahrungen mit der WSM-Methode aus Webdesign, KI-Sichtbarkeit und Performance-Marketing.",
+    "Alle Bewertungen für Wohlstandsmarketing — verifiziert und ungekürzt aus Google und Trustpilot. Erfahrungen mit der WSM-Methode aus Webdesign, KI-Sichtbarkeit und Performance-Marketing.",
   alternates: { canonical: "/bewertungen" },
 };
 
@@ -20,7 +20,7 @@ export default function BewertungenPage() {
           variant="full"
           eyebrow="Bewertungen"
           heading="Was unsere Kunden über Wohlstandsmarketing sagen."
-          subline="Alle Google-Bewertungen — ungekürzt, verifiziert, direkt aus dem Google Business Profile. Lies dir in Ruhe durch, was unsere Kunden über die Zusammenarbeit, die Ergebnisse und die WSM-Methode schreiben."
+          subline="Alle Bewertungen — ungekürzt, verifiziert, direkt aus dem Google Business Profile und Trustpilot. Lies dir in Ruhe durch, was unsere Kunden über die Zusammenarbeit, die Ergebnisse und die WSM-Methode schreiben."
         />
       </div>
       <PreFooterCTA

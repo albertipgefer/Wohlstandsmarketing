@@ -5,10 +5,13 @@
  * - `short`: gekürztes Zitat für Above-the-Fold / Cards (max ~140 Zeichen)
  * - `full`: kompletter Review-Text (für ausführliche Bewertungs-Sektion)
  * - `featured: true` = wird in der kurzen Variante (Hero/Trust-Row) angezeigt
+ * - `source`: "google" oder "trustpilot" — bestimmt Logo, Badge-Label und Link-Ziel
  *
- * Wenn neue Google-Reviews kommen → einfach hier eintragen, Komponenten ziehen
- * sich automatisch die Daten.
+ * Wenn neue Reviews kommen → einfach hier eintragen, Komponenten ziehen
+ * sich automatisch die Daten + zeigen das passende Plattform-Badge.
  */
+
+export type TestimonialSource = "google" | "trustpilot";
 
 export interface Testimonial {
   id: string;
@@ -18,20 +21,31 @@ export interface Testimonial {
   date: string; // ISO oder freier Text
   short: string;
   full: string;
-  source: "google";
+  source: TestimonialSource;
   featured?: boolean;
 }
 
 export const testimonials: Testimonial[] = [
+  {
+    id: "maximilian-grabsch",
+    name: "Maximilian Grabsch",
+    rating: 5,
+    date: "2026-05-27",
+    short:
+      "Innerhalb von 30 Sekunden hatte ich eine ausführliche Auswertung meiner Seite — kann ich jedem für einen kostenlosen Quick-Check empfehlen.",
+    full: "Ich habe das Kostenlose Website Tool von Albert getestet und bin überrascht wie gut es mich überzeugt hat.\n\nInnerhalb von 30 Sekunden wurde meine Seite aktualisiert und es wurde mir sofort angezeigt, wo ich Verbesserungspotenzial habe.\n\nKann ich nur jedem empfehlen, der mal einen kurzen kostenlosen Quick-Check möchte.",
+    source: "trustpilot",
+    featured: true,
+  },
   {
     id: "anton-akulenko",
     name: "Anton Akulenko",
     rating: 5,
     date: "2026-05-26",
     short:
-      "Top Zusammenarbeit – Albert weiß, was er tut. Komplettes Paket auf hohem Niveau. Mein Umsatz ist seit der Zusammenarbeit deutlich gestiegen.",
-    full: "Top Zusammenarbeit – danke, Albert!\n\nWenn ich eines über Albert sagen kann, dann: Der Mann weiß, was er tut. Von SEO über Webdesign bis hin zum Performance-Marketing – bei ihm bekommt man das komplette Paket, und zwar auf einem richtig hohen Niveau.\n\nWas mich besonders überzeugt hat: Es bleibt nicht bei schönen Worten oder hübschen Webseiten (die übrigens wirklich gut aussehen und einwandfrei laufen). Die Ergebnisse sprechen für sich – mein Umsatz ist seit der Zusammenarbeit deutlich gestiegen, und gerade das Performance-Marketing hat sich für mich richtig ausgezahlt.\n\nDanke dir, Albert, für dein Know-how, dein Engagement und die angenehme Zusammenarbeit. Wer einen Marketing-Profi sucht, der nicht nur redet, sondern liefert, ist bei dir und Wohlstandsmarketing genau richtig!",
-    source: "google",
+      "Die Zusammenarbeit hat mein Unternehmen wirklich nach vorne gebracht — mein Umsatz hat sich spürbar erhöht, klare Weiterempfehlung.",
+    full: "Absolute Empfehlung für Albert und Wohlstands-Marketing!\n\nDie Zusammenarbeit mit Albert hat mein Unternehmen wirklich nach vorne gebracht – dafür möchte ich mich an dieser Stelle herzlich bedanken. Man merkt sofort, dass er in Sachen Marketing und SEO-Optimierung richtig tief drinsteckt und weiß, wovon er spricht.\n\nSeit wir zusammenarbeiten, hat sich mein Umsatz spürbar erhöht. Die Webseiten, die Albert erstellt, sehen nicht nur klasse aus, sondern funktionieren auch technisch einwandfrei. Besonders sein Performance-Marketing kann ich uneingeschränkt weiterempfehlen – hier zeigt sich, dass er nicht nur Ahnung hat, sondern auch echte Ergebnisse liefert.\n\nDanke, Albert, für deine Expertise und die super Zusammenarbeit! Klare Weiterempfehlung.",
+    source: "trustpilot",
     featured: true,
   },
   {
@@ -54,7 +68,7 @@ export const testimonials: Testimonial[] = [
       "Klare, praxisnahe Tipps ohne Technik-Gelaber. 1–2 Wochen nach Fertigstellung deutlich mehr qualifizierte Leads, Umsatz spürbar gestiegen.",
     full: "Ich hab mich bei Albert von Wohlstandsmarketing beraten lassen, weil mein Marketing ausbaufähig war. Er hat mir in 2 Calls klare, praxisnahe Tipps gegeben ohne kompliziertes Technik Gelaber. 1-2 Wochen nach Fertigstellung seiner Arbeit hab ich deutlich mehr qualifizierte Leads gekriegt, und der Umsatz ist spürbar gestiegen. Die Kommunikation war locker und unkompliziert, er ist genau auf meine Situation eingegangen. Kein Verkaufsdruck, nur echte Hilfe. Kann ich jedem Selbstständigen empfehlen, der sein Online-Marketing pushen will. Danke, Albert!",
     source: "google",
-    featured: true,
+    featured: false,
   },
   {
     id: "ernest-weber",
@@ -69,3 +83,18 @@ export const testimonials: Testimonial[] = [
 ];
 
 export const featuredTestimonials = testimonials.filter((t) => t.featured);
+
+/**
+ * Öffentliche Profil-URLs der Bewertungsplattformen.
+ * Werden in Source-Badges und Trust-Headern verlinkt.
+ */
+export const REVIEW_PROFILE_URLS: Record<TestimonialSource, string> = {
+  google:
+    "https://www.google.com/search?sca_esv=68cd59949303f16d&q=Wohlstandsmarketing&stick=H4sIAAAAAAAAAONgU1I1qDAxMk9ONU20MDE3TDa0SE6yMqhIS002SklJNk4zTE5KMbNMXMQqHJ6fkVNckpiXUpybWJSdWpKZlw4AkM2PtD8AAAA&mat=Cae5S3-sIDvp&ved=2ahUKEwiD16vGqdaUAxV2ffUHHXyqDGYQrMcEegQIBxAC#mpd=~16806062359705270695/customers/reviews",
+  trustpilot: "https://de.trustpilot.com/review/ipgefer-performance.de",
+};
+
+export const SOURCE_LABELS: Record<TestimonialSource, string> = {
+  google: "Google",
+  trustpilot: "Trustpilot",
+};

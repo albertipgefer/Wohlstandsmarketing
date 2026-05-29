@@ -26,21 +26,25 @@ const SITE = "https://wohlstandsmarketing.de";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: {
-    default: "Wohlstandsmarketing — In 90 Tagen auf Google & ChatGPT gefunden",
-    // Kein Template — Pages setzen ihre Titles selbst (inkl. Branding wo gewünscht)
+    default: "Wohlstandsmarketing — In 90 Tagen auf Google & ChatGPT",
     template: "%s",
   },
   description:
     "Webdesign + KI-Sichtbarkeit als untrennbares Paket. In 90 Tagen auf Google, ChatGPT, Perplexity und Claude als erste Wahl deiner Region empfohlen.",
   alternates: { canonical: "/" },
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon.png", type: "image/png", sizes: "512x512" },
+    ],
+    shortcut: "/icon.png",
+    apple: "/apple-touch-icon.png",
+  },
 };
 
-// Zoom global deaktiviert (Pinch-Zoom + iOS-Auto-Zoom auf Inputs)
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 };
 
 const orgSchema = {
@@ -140,6 +144,8 @@ export default function RootLayout({
       className={`${inter.variable} ${playfair.variable} antialiased`}
     >
       <body className="bg-[var(--bg)] text-[var(--text)]">
+        <link rel="preconnect" href="https://scripts.clarity.ms" />
+        <link rel="dns-prefetch" href="https://scripts.clarity.ms" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}

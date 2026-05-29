@@ -1,12 +1,14 @@
 import Link from "next/link";
 import Logo from "@/components/Logo";
+import ReviewBadges from "@/components/ReviewBadges";
+import LeadMagnetTrigger from "@/components/LeadMagnetTrigger";
 
 export default function Footer() {
   const year = new Date().getFullYear();
   return (
     <footer className="relative border-t border-[var(--border)] bg-[var(--surface-2)]/40">
       <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:px-12 md:py-20">
-        <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-3 md:gap-10 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr_1fr]">
+        <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-3 md:gap-10 lg:grid-cols-[1.3fr_1fr_1fr_1fr_1fr_1fr_1fr]">
           {/* Brand */}
           <div>
             <Link
@@ -23,6 +25,11 @@ export default function Footer() {
             <p className="mt-5 text-[11px] uppercase tracking-[0.22em] text-[var(--text-subtle)]">
               Albert Ipgefer · Raum Koblenz
             </p>
+
+            {/* Bewertungen Trust-Signal: Google + Trustpilot */}
+            <div className="mt-5">
+              <ReviewBadges variant="compact" />
+            </div>
           </div>
 
           {/* Nav */}
@@ -70,6 +77,72 @@ export default function Footer() {
             </ul>
           </div>
 
+          {/* Leistungen — Service-Hubs */}
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--text-subtle)]">
+              Leistungen
+            </p>
+            <ul className="mt-4 space-y-2.5 text-[14px] text-[var(--text-muted)]">
+              <li>
+                <a href="/webdesign" className="transition hover:text-[var(--text)]">
+                  Webdesign
+                </a>
+              </li>
+              <li>
+                <a href="/ki-sichtbarkeit" className="transition hover:text-[var(--text)]">
+                  KI-Sichtbarkeit
+                </a>
+              </li>
+              <li>
+                <a href="/seo" className="transition hover:text-[var(--text)]">
+                  SEO-Optimierung
+                </a>
+              </li>
+              <li>
+                <a href="/relaunch" className="transition hover:text-[var(--text)]">
+                  Webseiten-Relaunch
+                </a>
+              </li>
+              <li>
+                <a href="/preise" className="transition hover:text-[var(--text)]">
+                  Preise & Pakete
+                </a>
+              </li>
+              <li>
+                <a href="/standorte" className="transition hover:text-[var(--text)]">
+                  Standorte
+                </a>
+              </li>
+            </ul>
+
+            {/* Vergleiche — Bottom-of-Funnel-Entscheidungshilfen */}
+            <p className="mt-8 text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--text-subtle)]">
+              Vergleiche
+            </p>
+            <ul className="mt-4 space-y-2.5 text-[14px] text-[var(--text-muted)]">
+              <li>
+                <a href="/vergleich/seo-vs-ki-sichtbarkeit" className="transition hover:text-[var(--text)]">
+                  SEO vs. KI-Sichtbarkeit
+                </a>
+              </li>
+              <li>
+                <a href="/vergleich/landingpage-vs-unternehmenswebsite" className="transition hover:text-[var(--text)]">
+                  Landingpage vs. Website
+                </a>
+              </li>
+              <li>
+                <a href="/vergleich/relaunch-vs-neue-webseite" className="transition hover:text-[var(--text)]">
+                  Relaunch vs. Neubau
+                </a>
+              </li>
+              <li>
+                <a href="/vergleich/agentur-vs-inhouse-seo" className="transition hover:text-[var(--text)]">
+                  SEO: selbst vs. Agentur
+                </a>
+              </li>
+            </ul>
+          </div>
+
           {/* Assets — kostenlose Tools + Lead-Magnets */}
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--text-subtle)]">
@@ -85,14 +158,12 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a
-                  href="/lead-magnet/11-marketing-fehler-mittelstand.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition hover:text-[var(--text)]"
+                <LeadMagnetTrigger
+                  source="footer"
+                  className="cursor-pointer text-left transition hover:text-[var(--text)]"
                 >
-                  11 Marketing-Fehler (PDF) ↗
-                </a>
+                  11 Marketing-Fehler (PDF) →
+                </LeadMagnetTrigger>
               </li>
               <li>
                 <a

@@ -4,6 +4,7 @@ import { cities } from "@/content/cities";
 import BlogNav from "@/components/blog/BlogNav";
 import PreFooterCTA from "@/components/PreFooterCTA";
 import Footer from "@/components/sections/Footer";
+import ReviewBadges from "@/components/ReviewBadges";
 
 const SITE = "https://wohlstandsmarketing.de";
 
@@ -38,7 +39,7 @@ export default function StandortePage() {
           aria-hidden
           className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(50%_60%_at_50%_0%,rgba(22,99,222,0.14)_0%,rgba(22,99,222,0)_70%)]"
         />
-        <div className="relative mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
+        <div className="relative mx-auto flex max-w-6xl flex-col items-center px-4 text-center sm:px-6 md:px-12 lg:items-start lg:text-left">
           <nav
             aria-label="Breadcrumb"
             className="mb-6 flex items-center gap-2 text-[12px] text-[var(--text-subtle)]"
@@ -52,7 +53,7 @@ export default function StandortePage() {
 
           <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-4 py-1.5 text-[11px] font-medium tracking-wide text-[var(--text-muted)] shadow-[0_4px_20px_-6px_rgba(10,10,10,0.08)]">
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" />
-            <span className="font-semibold text-[var(--gold)]">Standorte</span>
+            <span className="font-semibold text-[var(--gold-text)]">Standorte</span>
             <span className="text-[var(--text-subtle)]">·</span>
             Webdesign + KI-Sichtbarkeit in DACH
           </div>
@@ -92,6 +93,11 @@ export default function StandortePage() {
             Aktiv für Mittelstand in <strong>{cities.length} Regionen</strong> — von
             Rheinland-Pfalz und Hessen über NRW bis ins Saarland und Baden-Württemberg.
           </p>
+
+          {/* Bewertungen: Google + Trustpilot */}
+          <div className="mt-6 w-full">
+            <ReviewBadges variant="pill" centerOnMobile />
+          </div>
         </div>
       </section>
 
@@ -149,6 +155,62 @@ export default function StandortePage() {
                     →
                   </span>
                 </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── KI-SICHTBARKEIT × STADT — Cross-Link-Cluster ───────── */}
+      <section className="border-t border-[var(--border)] bg-[var(--surface-2)]/40 py-16 md:py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
+            KI-Sichtbarkeit × Stadt
+          </p>
+          <h2 className="mt-3 font-[family-name:var(--font-display)] text-2xl font-bold tracking-tight text-[var(--text)] sm:text-3xl">
+            Auf ChatGPT, Perplexity & Claude empfohlen — lokal verankert
+          </h2>
+          <p className="mt-3 max-w-2xl text-[14px] leading-relaxed text-[var(--text-muted)] sm:text-[15px]">
+            Für jeden Standort baust du nicht nur eine Webseite — sondern direkt KI-Sichtbarkeit
+            obendrauf. Wähle deine Stadt:
+          </p>
+          <div className="mt-6 flex flex-wrap gap-2.5">
+            {cities.map((city) => (
+              <Link
+                key={`ki-${city.slug}`}
+                href={`/ki-sichtbarkeit/${city.slug}`}
+                className="group inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-4 py-2 text-[13px] font-medium text-[var(--text)] transition hover:border-transparent hover:bg-[var(--text)] hover:text-white"
+              >
+                KI-Sichtbarkeit in {city.name}
+                <span className="transition-transform group-hover:translate-x-0.5">→</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── SEO × STADT — Cross-Link-Cluster ─────────────────── */}
+      <section className="border-t border-[var(--border)] py-16 md:py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--gold-text)]">
+            SEO × Stadt
+          </p>
+          <h2 className="mt-3 font-[family-name:var(--font-display)] text-2xl font-bold tracking-tight text-[var(--text)] sm:text-3xl">
+            Auf Google ranken — lokal für deine Region
+          </h2>
+          <p className="mt-3 max-w-2xl text-[14px] leading-relaxed text-[var(--text-muted)] sm:text-[15px]">
+            Technisches SEO, lokales SEO und Content-Cluster für jeden Standort. In 90 Tagen
+            sichtbar für die Money-Keywords deiner Region:
+          </p>
+          <div className="mt-6 flex flex-wrap gap-2.5">
+            {cities.map((city) => (
+              <Link
+                key={`seo-${city.slug}`}
+                href={`/seo/${city.slug}`}
+                className="group inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-4 py-2 text-[13px] font-medium text-[var(--text)] transition hover:border-transparent hover:bg-[var(--text)] hover:text-white"
+              >
+                SEO in {city.name}
+                <span className="transition-transform group-hover:translate-x-0.5">→</span>
               </Link>
             ))}
           </div>

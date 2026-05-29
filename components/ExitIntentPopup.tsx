@@ -25,6 +25,7 @@ import { usePathname } from "next/navigation";
 import PopupModal from "./PopupModal";
 import LeadMagnetForm from "./LeadMagnetForm";
 import { isFormActive } from "@/lib/form-active";
+import { tryOpenPopup, markPopupClosed } from "@/lib/popupCoordinator";
 
 const HIDDEN_PATHS = [
   "/sichtbarkeits-check",
@@ -33,7 +34,7 @@ const HIDDEN_PATHS = [
   "/datenschutz",
 ];
 
-const MIN_DWELL_MS = 30_000;
+const MIN_DWELL_MS = 60_000;
 const STORAGE_KEY = "exit-intent-shown";
 
 export default function ExitIntentPopup() {
@@ -57,6 +58,8 @@ export default function ExitIntentPopup() {
       // Wenn der User gerade in einer Form tippt, NICHT triggern —
       // er hat die Seite ja noch nicht wirklich verlassen.
       if (isFormActive()) return;
+      // Popup-Coordinator: nicht öffnen wenn anderer Popup offen / Cooldown läuft
+      if (!tryOpenPopup("exit-intent")) return;
       dismissed = true;
       sessionStorage.setItem(STORAGE_KEY, "1");
       setOpen(true);
@@ -93,6 +96,7 @@ export default function ExitIntentPopup() {
   }, [hidden, pathname]);
 
   function close() {
+    markPopupClosed("exit-intent");
     setOpen(false);
   }
 
@@ -101,7 +105,7 @@ export default function ExitIntentPopup() {
   return (
     <PopupModal open={open} onClose={close} label="Lead-Magnet beim Verlassen anbieten">
       <div className="text-center">
-        <span className="inline-flex items-center gap-2 rounded-full border border-[var(--gold)]/40 bg-white px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--gold)] shadow-[0_4px_14px_-6px_rgba(219,111,22,0.25)]">
+        <span className="inline-flex items-center gap-2 rounded-full border border-[var(--gold)]/40 bg-white px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--gold-text)] shadow-[0_4px_14px_-6px_rgba(219,111,22,0.25)]">
           <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" />
           Bevor du gehst
         </span>

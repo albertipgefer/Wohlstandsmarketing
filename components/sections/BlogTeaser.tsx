@@ -35,8 +35,8 @@ export default function BlogTeaser() {
               Wissen für planbare Sichtbarkeit
             </span>
             <h2
-              className="mt-6 max-w-3xl font-[family-name:var(--font-display)] font-black leading-[1.05] tracking-[-0.03em] text-[var(--text)]"
-              style={{ fontSize: "clamp(1.85rem, 4.5vw, 3.25rem)" }}
+              className="mt-6 max-w-3xl whitespace-nowrap font-[family-name:var(--font-display)] font-black leading-[1.05] tracking-[-0.03em] text-[var(--text)]"
+              style={{ fontSize: "clamp(1.4rem, 4.8vw, 3.25rem)" }}
             >
               Lerne, wie KI dich{" "}
               <span className="relative inline-block">

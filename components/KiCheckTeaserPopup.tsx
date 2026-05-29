@@ -23,6 +23,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import PopupModal from "./PopupModal";
 import { isFormActive } from "@/lib/form-active";
+import { tryOpenPopup, markPopupClosed, remainingCooldownMs } from "@/lib/popupCoordinator";
 
 const HIDDEN_PATHS = [
   "/sichtbarkeits-check",
@@ -31,7 +32,7 @@ const HIDDEN_PATHS = [
   "/datenschutz",
 ];
 
-const DELAY_MS = 10_000;
+const DELAY_MS = 35_000;
 const STORAGE_KEY = "ki-check-popup-shown";
 
 export default function KiCheckTeaserPopup() {
@@ -53,6 +54,15 @@ export default function KiCheckTeaserPopup() {
         return;
       }
       if (sessionStorage.getItem(STORAGE_KEY) === "1") return;
+      // Popup-Coordinator: nicht öffnen wenn anderer Popup offen / Cooldown läuft
+      if (!tryOpenPopup("ki-check-teaser")) {
+        const wait = Math.max(remainingCooldownMs() + 500, 2000);
+        window.setTimeout(tryOpen, wait);
+        return;
+      }
+      // Flag SOFORT setzen, damit das Popup nicht bei jedem Seitenwechsel
+      // erneut feuert, wenn der User es nicht aktiv geschlossen hat.
+      sessionStorage.setItem(STORAGE_KEY, "1");
       setOpen(true);
     }
 
@@ -62,6 +72,7 @@ export default function KiCheckTeaserPopup() {
 
   function close() {
     sessionStorage.setItem(STORAGE_KEY, "1");
+    markPopupClosed("ki-check-teaser");
     setOpen(false);
   }
 

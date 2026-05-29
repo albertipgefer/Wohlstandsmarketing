@@ -41,7 +41,7 @@ export default function LeadMagnetSection() {
 
             <div className="relative grid items-center gap-8 md:grid-cols-[1.1fr_1fr] md:gap-14">
               <div>
-                <span className="inline-flex items-center gap-2 rounded-full border border-[var(--gold)]/40 bg-white px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--gold)] shadow-[0_4px_14px_-6px_rgba(219,111,22,0.25)]">
+                <span className="inline-flex items-center gap-2 rounded-full border border-[var(--gold)]/40 bg-white px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--gold-text)] shadow-[0_4px_14px_-6px_rgba(219,111,22,0.25)]">
                   <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" />
                   Gratis PDF · 12 Seiten
                 </span>

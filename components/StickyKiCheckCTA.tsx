@@ -50,7 +50,7 @@ export default function StickyKiCheckCTA() {
 
   return (
     <div
-      aria-hidden={!visible}
+      inert={!visible}
       className={`pointer-events-none fixed bottom-4 right-4 z-40 transition-all duration-500 sm:bottom-6 sm:right-6 ${
         visible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
       }`}
@@ -78,7 +78,7 @@ export default function StickyKiCheckCTA() {
           type="button"
           aria-label="Hinweis schließen"
           onClick={dismiss}
-          className="ml-1 hidden h-6 w-6 items-center justify-center rounded-full text-[var(--text-subtle)] transition hover:bg-[var(--bg)] hover:text-[var(--text)] sm:flex"
+          className="ml-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[var(--text-subtle)] transition hover:bg-[var(--bg)] hover:text-[var(--text)]"
         >
           <span className="text-base leading-none">×</span>
         </button>

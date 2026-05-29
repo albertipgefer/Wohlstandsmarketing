@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import BlogNav from "@/components/blog/BlogNav";
 import Footer from "@/components/sections/Footer";
 import KiCheckTool from "@/components/ki-check/KiCheckTool";
-import GoogleReviewsBadge from "@/components/GoogleReviewsBadge";
+import ReviewBadges from "@/components/ReviewBadges";
 
 export const metadata: Metadata = {
   title: "KI-Sichtbarkeits-Check — kostenlos prüfen",
@@ -91,9 +91,9 @@ export default function SichtbarkeitsCheckPage() {
             </span>
           </div>
 
-          {/* Google-Bewertungen */}
-          <div className="mt-6 flex justify-center">
-            <GoogleReviewsBadge variant="pill" />
+          {/* Bewertungen: Google + Trustpilot */}
+          <div className="mt-6 w-full">
+            <ReviewBadges variant="pill" align="center" />
           </div>
         </div>
       </section>

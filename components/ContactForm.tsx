@@ -50,7 +50,7 @@ export default function ContactForm() {
       transition={{ duration: 0.7 }}
       className="rounded-3xl border border-[var(--border)] bg-white p-6 shadow-[0_20px_60px_-30px_rgba(10,10,10,0.15)] sm:p-8"
     >
-      <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--gold)]">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--gold-text)]">
         Lieber per E-Mail?
       </p>
       <h3 className="mt-3 font-[family-name:var(--font-display)] text-2xl font-bold tracking-tight text-[var(--text)] sm:text-3xl">
@@ -139,7 +139,7 @@ export default function ContactForm() {
 
       {status === "error" && (
         <div className="mt-5 rounded-2xl border border-[var(--gold)]/30 bg-[var(--gold-glow-soft)] p-4">
-          <p className="text-[14px] font-semibold text-[var(--gold)]">
+          <p className="text-[14px] font-semibold text-[var(--gold-text)]">
             Hat nicht funktioniert — schreib uns direkt:
           </p>
           <p className="mt-2 text-[13px] text-[var(--text-muted)]">
@@ -217,7 +217,7 @@ function Field({
     <label className={`flex flex-col gap-1.5 ${containerClass}`}>
       <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--text-subtle)]">
         {label}
-        {required && <span className="ml-1 text-[var(--gold)]">*</span>}
+        {required && <span className="ml-1 text-[var(--gold-text)]">*</span>}
       </span>
       <input
         type={type}
@@ -245,7 +245,7 @@ function Textarea({
     <label className="flex flex-col gap-1.5 sm:col-span-2">
       <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--text-subtle)]">
         {label}
-        {required && <span className="ml-1 text-[var(--gold)]">*</span>}
+        {required && <span className="ml-1 text-[var(--gold-text)]">*</span>}
       </span>
       <textarea
         name={name}

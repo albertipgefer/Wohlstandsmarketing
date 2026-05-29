@@ -4,6 +4,7 @@ import CategoryFilter from "@/components/blog/CategoryFilter";
 import BlogNav from "@/components/blog/BlogNav";
 import PreFooterCTA from "@/components/PreFooterCTA";
 import Footer from "@/components/sections/Footer";
+import ReviewBadges from "@/components/ReviewBadges";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -26,10 +27,10 @@ export default function BlogIndex() {
           aria-hidden
           className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(50%_60%_at_50%_0%,rgba(22,99,222,0.14)_0%,rgba(22,99,222,0)_70%)]"
         />
-        <div className="relative mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
+        <div className="relative mx-auto flex max-w-6xl flex-col items-center px-4 text-center sm:px-6 md:px-12 lg:items-start lg:text-left">
           <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-4 py-1.5 text-[11px] font-medium tracking-wide text-[var(--text-muted)] shadow-[0_4px_20px_-6px_rgba(10,10,10,0.08)]">
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" />
-            <span className="font-semibold text-[var(--gold)]">Blog</span>
+            <span className="font-semibold text-[var(--gold-text)]">Blog</span>
             <span className="text-[var(--text-subtle)]">·</span>
             Insights zu Webdesign &amp; KI-Sichtbarkeit
           </span>
@@ -66,6 +67,11 @@ export default function BlogIndex() {
             lokalen Mittelstand. Ohne Marketing-Bullshit, mit konkreten
             Hebeln und Beispielen.
           </p>
+
+          {/* Bewertungen: Google + Trustpilot */}
+          <div className="mt-6 w-full">
+            <ReviewBadges variant="pill" centerOnMobile />
+          </div>
         </div>
       </section>
 

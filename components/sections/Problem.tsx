@@ -99,7 +99,7 @@ export default function Problem() {
               transition={{ duration: 0.6, delay: i * 0.1 }}
               className="rounded-3xl border border-[var(--border)] bg-white p-6 shadow-[0_10px_40px_-20px_rgba(10,10,10,0.1)] sm:p-7"
             >
-              <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--gold)]/30 bg-[var(--gold-glow-soft)] text-base font-bold text-[var(--gold)]">
+              <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--gold)]/30 bg-[var(--gold-glow-soft)] text-base font-bold text-[var(--gold-text)]">
                 {p.icon}
               </span>
               <h3

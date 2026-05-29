@@ -34,7 +34,7 @@ export default function PostCard({
       >
         <div className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--text-subtle)]">
           {featured && (
-            <span className="rounded-full bg-[var(--gold-glow-soft)] px-2.5 py-1 text-[var(--gold)]">
+            <span className="rounded-full bg-[var(--gold-glow-soft)] px-2.5 py-1 text-[var(--gold-text)]">
               Beliebter Artikel
             </span>
           )}

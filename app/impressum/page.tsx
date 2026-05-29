@@ -4,7 +4,7 @@ import BlogNav from "@/components/blog/BlogNav";
 export const metadata = {
   title: "Impressum · Wohlstandsmarketing",
   description:
-    "Impressum und rechtliche Angaben — Albert Ipgefer, Wohlstandsmarketing, Vor der Loos 4e, 56130 Bad Ems.",
+    "Impressum und rechtliche Angaben von Wohlstandsmarketing — Albert Ipgefer, Vor der Loos 4e, 56130 Bad Ems. Kontakt, verantwortliche Person und Pflichtangaben nach TMG.",
 };
 
 export default function Impressum() {

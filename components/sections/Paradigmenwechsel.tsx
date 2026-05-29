@@ -164,7 +164,7 @@ export default function Paradigmenwechsel() {
           transition={{ duration: 0.7, delay: 0.3 }}
           className="mt-10 flex flex-col items-start gap-2 rounded-2xl border-l-2 border-[var(--gold)] bg-[var(--gold-glow-soft)] px-5 py-4 sm:flex-row sm:items-center sm:gap-4"
         >
-          <span className="font-[family-name:var(--font-display)] text-2xl font-bold tracking-tight text-[var(--gold)] sm:text-3xl">
+          <span className="font-[family-name:var(--font-display)] text-2xl font-bold tracking-tight text-[var(--gold-text)] sm:text-3xl">
             65 %
           </span>
           <span className="text-[13px] leading-snug text-[var(--text-muted)] sm:text-sm">

@@ -10,7 +10,7 @@
 
   --text: #0a0a0a;
   --text-muted: #52525b;
-  --text-subtle: #a1a1aa;
+  --text-subtle: #71717a;
 
   /* Akzente — direkt aus CI */
   --accent: #1663de;
@@ -18,6 +18,8 @@
   --accent-dark: #0f4cb3;
   --gold: #db6f16;
   --gold-light: #f08c3c;
+  /* Dunklere Gold-Variante für Text auf hellem Hintergrund (WCAG AA ≥ 4,5:1) */
+  --gold-text: #a85108;
 
   /* Glows & Borders */
   --accent-glow: rgba(22, 99, 222, 0.22);

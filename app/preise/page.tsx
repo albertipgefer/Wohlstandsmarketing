@@ -3,7 +3,8 @@ import Link from "next/link";
 import BlogNav from "@/components/blog/BlogNav";
 import Footer from "@/components/sections/Footer";
 import PricingConfigurator from "@/components/preise/PricingConfigurator";
-import GoogleReviewsBadge from "@/components/GoogleReviewsBadge";
+import PreFooterCTA from "@/components/PreFooterCTA";
+import ReviewBadges from "@/components/ReviewBadges";
 import { services, BUNDLE_DISCOUNT } from "@/content/pricing";
 
 const SITE = "https://wohlstandsmarketing.de";
@@ -112,7 +113,7 @@ export default function PreisePage() {
           aria-hidden
           className="pointer-events-none absolute -right-32 top-1/3 h-[420px] w-[420px] bg-[radial-gradient(circle,rgba(219,111,22,0.08)_0%,rgba(219,111,22,0)_70%)]"
         />
-        <div className="relative mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
+        <div className="relative mx-auto flex max-w-6xl flex-col items-center px-4 text-center sm:px-6 md:px-12 lg:items-start lg:text-left">
           <nav
             aria-label="Breadcrumb"
             className="mb-6 flex items-center gap-2 text-[12px] text-[var(--text-subtle)]"
@@ -126,7 +127,7 @@ export default function PreisePage() {
 
           <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-4 py-1.5 text-[11px] font-medium tracking-wide text-[var(--text-muted)] shadow-[0_4px_20px_-6px_rgba(10,10,10,0.08)]">
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" />
-            <span className="font-semibold text-[var(--gold)]">Preise</span>
+            <span className="font-semibold text-[var(--gold-text)]">Preise</span>
             <span className="text-[var(--text-subtle)]">·</span>
             Transparent · Modular · {Math.round(BUNDLE_DISCOUNT * 100)} % Bundle-Rabatt
           </div>
@@ -170,7 +171,7 @@ export default function PreisePage() {
           </p>
 
           {/* Trust-Row */}
-          <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 text-[12px] text-[var(--text-muted)]">
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[12px] text-[var(--text-muted)] lg:justify-start">
             <span className="flex items-center gap-1.5">
               <span className="text-emerald-500">✓</span> Transparente Preise
             </span>
@@ -185,8 +186,8 @@ export default function PreisePage() {
             </span>
           </div>
 
-          <div className="mt-5">
-            <GoogleReviewsBadge variant="pill" />
+          <div className="mt-5 w-full">
+            <ReviewBadges variant="pill" centerOnMobile />
           </div>
         </div>
       </section>
@@ -233,47 +234,19 @@ export default function PreisePage() {
       </section>
 
       {/* ── FINAL CTA ──────────────────────────────────────────── */}
-      <section className="relative overflow-hidden border-t border-[var(--border)] bg-[var(--surface-2)]/40 py-20 md:py-28">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(50%_60%_at_50%_0%,rgba(22,99,222,0.14)_0%,rgba(22,99,222,0)_70%)]"
-        />
-        <div className="relative mx-auto max-w-3xl px-4 text-center sm:px-6 md:px-12">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
-            Noch unsicher, was du brauchst?
-          </p>
-          <h2
-            className="mt-4 font-[family-name:var(--font-display)] font-black leading-[1.05] tracking-[-0.03em] text-[var(--text)]"
-            style={{ fontSize: "clamp(1.75rem, 4vw, 2.75rem)" }}
-          >
-            15 Minuten,{" "}
+      <PreFooterCTA
+        context="Noch unsicher? · 15 Min · Albert persönlich"
+        headline={
+          <>
+            Du musst nicht selbst zusammenstellen — lass dich{" "}
             <span className="font-[family-name:var(--font-serif)] font-normal italic text-[var(--accent)]">
-              ehrlich
-            </span>{" "}
-            beraten.
-          </h2>
-          <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-[var(--text-muted)] sm:text-lg">
-            Du musst nicht selbst zusammenstellen. Buche dir ein kostenfreies
-            Erstgespräch — wir besprechen deine Situation und ich sage dir
-            ehrlich, was Sinn macht und was nicht.
-          </p>
-          <a
-            href="https://tidycal.com/albertipgefer/erstgespraech-mit-wohlstandsmarketing-2"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative mt-8 inline-flex w-full max-w-md items-center justify-center gap-2 overflow-hidden rounded-full bg-[var(--text)] px-9 py-5 text-base font-semibold text-white shadow-[0_14px_40px_-10px_rgba(22,99,222,0.55)] transition hover:shadow-[0_18px_50px_-10px_rgba(22,99,222,0.8)] sm:w-auto"
-          >
-            <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-dark)] transition-transform duration-500 ease-out group-hover:translate-y-0" />
-            <span className="relative z-10">Erstgespräch sichern</span>
-            <span className="relative z-10 transition-transform group-hover:translate-x-1">
-              →
+              ehrlich beraten
             </span>
-          </a>
-          <p className="mt-4 text-[11px] uppercase tracking-[0.22em] text-[var(--text-subtle)]">
-            Kostenfrei · 15 Min · Albert persönlich
-          </p>
-        </div>
-      </section>
+            .
+          </>
+        }
+        subline="15-Minuten-Erstgespräch. Wir besprechen deine Situation und ich sage dir ehrlich, was Sinn macht und was nicht — auch wenn wir nicht zusammenarbeiten."
+      />
 
       <Footer />
     </main>

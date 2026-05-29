@@ -113,7 +113,7 @@ export default function Angebot() {
 
           {/* Multiplier */}
           <div className="flex items-center justify-center md:flex-col">
-            <span className="font-[family-name:var(--font-serif)] text-5xl font-bold italic text-[var(--gold)] md:text-6xl">
+            <span className="font-[family-name:var(--font-serif)] text-5xl font-bold italic text-[var(--gold-text)] md:text-6xl">
               ×
             </span>
           </div>
@@ -175,7 +175,7 @@ export default function Angebot() {
           className="mt-14 md:mt-20"
         >
           <div className="mb-6 flex flex-col items-center gap-2 text-center sm:mb-8">
-            <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--gold)]">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--gold-text)]">
               Der Film
             </span>
             <p className="max-w-xl text-[14px] text-[var(--text-muted)] sm:text-[15px]">

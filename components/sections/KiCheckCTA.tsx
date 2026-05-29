@@ -24,7 +24,7 @@ export default function KiCheckCTA() {
       <div className="relative mx-auto max-w-5xl px-4 text-center sm:px-6 md:px-12">
         <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[11px] font-medium tracking-wide text-white/70 backdrop-blur">
           <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" />
-          <span className="font-semibold text-[var(--gold)]">Free Tool</span>
+          <span className="font-semibold text-[var(--gold-text)]">Free Tool</span>
           <span className="text-white/40">·</span>
           Kostenlos · Keine Anmeldung
         </span>
@@ -35,7 +35,7 @@ export default function KiCheckCTA() {
         >
           Wird deine Webseite von{" "}
           <span className="relative inline-block">
-            <span className="font-[family-name:var(--font-serif)] font-normal italic text-[var(--gold)]">
+            <span className="font-[family-name:var(--font-serif)] font-normal italic text-[var(--gold-text)]">
               ChatGPT
             </span>
             <svg

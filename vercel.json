@@ -9,5 +9,18 @@
       "path": "/api/cron/lead-magnet-drip",
       "schedule": "0 9 * * *"
     }
+  ],
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.wohlstandsmarketing.de"
+        }
+      ],
+      "destination": "https://wohlstandsmarketing.de/:path*",
+      "permanent": true
+    }
   ]
 }

@@ -4,7 +4,7 @@ import BlogNav from "@/components/blog/BlogNav";
 export const metadata = {
   title: "Datenschutz · Wohlstandsmarketing",
   description:
-    "Datenschutzerklärung von Wohlstandsmarketing — wie wir personenbezogene Daten verarbeiten und schützen.",
+    "Datenschutzerklärung von Wohlstandsmarketing — transparente Informationen, wie wir personenbezogene Daten gemäß DSGVO verarbeiten, speichern und schützen.",
 };
 
 export default function Datenschutz() {

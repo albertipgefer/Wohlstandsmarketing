@@ -11,6 +11,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE}/standorte`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
     { url: `${SITE}/sichtbarkeits-check`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.95 },
     { url: `${SITE}/preise`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
+    { url: `${SITE}/webdesign`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
+    { url: `${SITE}/ki-sichtbarkeit`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
+    { url: `${SITE}/seo`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
+    { url: `${SITE}/relaunch`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.85 },
+    { url: `${SITE}/vergleich/seo-vs-ki-sichtbarkeit`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.85 },
+    { url: `${SITE}/vergleich/landingpage-vs-unternehmenswebsite`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.85 },
+    { url: `${SITE}/vergleich/relaunch-vs-neue-webseite`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.85 },
+    { url: `${SITE}/vergleich/agentur-vs-inhouse-seo`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.85 },
     { url: `${SITE}/impressum`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
     { url: `${SITE}/datenschutz`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
   ];
@@ -29,5 +37,25 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.85,
   }));
 
-  return [...staticRoutes, ...postRoutes, ...cityRoutes];
+  const kiVisibilityCityRoutes: MetadataRoute.Sitemap = cities.map((c) => ({
+    url: `${SITE}/ki-sichtbarkeit/${c.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly",
+    priority: 0.85,
+  }));
+
+  const seoCityRoutes: MetadataRoute.Sitemap = cities.map((c) => ({
+    url: `${SITE}/seo/${c.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly",
+    priority: 0.85,
+  }));
+
+  return [
+    ...staticRoutes,
+    ...postRoutes,
+    ...cityRoutes,
+    ...kiVisibilityCityRoutes,
+    ...seoCityRoutes,
+  ];
 }

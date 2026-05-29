@@ -62,7 +62,7 @@ export default async function BlogPostPage({
   if (!post) notFound();
 
   const Body = post.default;
-  const related = getRelatedPosts(slug, 4).map((r) => ({
+  const related = getRelatedPosts(slug, 6).map((r) => ({
     slug: r.meta.slug,
     title: r.meta.title,
     category: r.meta.category,

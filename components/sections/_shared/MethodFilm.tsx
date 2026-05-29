@@ -241,7 +241,7 @@ function Frame2() {
               ease: "easeInOut",
             },
           }}
-          className={`absolute inline-flex items-center gap-1 rounded-full border border-[var(--gold)]/30 bg-white px-2.5 py-1 text-[10px] font-semibold text-[var(--gold)] shadow-[0_4px_12px_-4px_rgba(219,111,22,0.3)] ${c.pos}`}
+          className={`absolute inline-flex items-center gap-1 rounded-full border border-[var(--gold)]/30 bg-white px-2.5 py-1 text-[10px] font-semibold text-[var(--gold-text)] shadow-[0_4px_12px_-4px_rgba(219,111,22,0.3)] ${c.pos}`}
         >
           <span>⌕</span>
           {c.label}

@@ -229,17 +229,54 @@ export async function GET(req: Request) {
   const list = (await listRes.json()) as { data: ResendContact[] };
   const contacts = list.data ?? [];
 
+  // catchup=1 (nur mit gültigem CRON_SECRET): sendet pro Contact die HÖCHSTE
+  // fällige Stufe (day <= elapsedDays) — holt Bestandskontakte / verpasste
+  // Läufe einmalig nach. Default (Vercel-Cron) bleibt exakter Tages-Match,
+  // damit im Normalbetrieb pro Stufe genau eine Mail rausgeht (kein Spam).
+  const params = new URL(req.url).searchParams;
+  const catchup = params.get("catchup") === "1";
+  const dryrun = params.get("dryrun") === "1";
+  // Optional: Versand auf eine einzige E-Mail beschränken (gezielter Test)
+  const only = (params.get("only") || "").trim().toLowerCase();
+
   const now = Date.now();
   const sent: Array<{ email: string; day: number; status: number }> = [];
+  const diag: Array<{
+    email: string;
+    created_at: string;
+    elapsedDays: number;
+    matchedDay: number | null;
+    unsubscribed: boolean;
+  }> = [];
 
   for (const c of contacts) {
-    if (c.unsubscribed) continue;
-    if (!c.created_at) continue;
-    const elapsedDays = Math.floor(
-      (now - new Date(c.created_at).getTime()) / 86_400_000
-    );
-    const drip = DRIP.find((d) => d.day === elapsedDays);
+    const elapsedDays = c.created_at
+      ? Math.floor((now - new Date(c.created_at).getTime()) / 86_400_000)
+      : -1;
+
+    const drip =
+      c.unsubscribed || elapsedDays < 0
+        ? undefined
+        : catchup
+          ? [...DRIP].reverse().find((d) => d.day <= elapsedDays)
+          : DRIP.find((d) => d.day === elapsedDays);
+
+    diag.push({
+      email: c.email,
+      created_at: c.created_at,
+      elapsedDays,
+      matchedDay: drip?.day ?? null,
+      unsubscribed: !!c.unsubscribed,
+    });
+
     if (!drip) continue;
+    // Versand auf eine Adresse beschränken, falls only= gesetzt
+    if (only && c.email.toLowerCase() !== only) continue;
+    // Dry-Run: nur diagnostizieren, keine Mail senden
+    if (dryrun) {
+      sent.push({ email: c.email, day: drip.day, status: 0 });
+      continue;
+    }
 
     const firstName = (c.first_name || "").trim() || "Hallo";
     const idempotencyKey = `lm-drip-${drip.day}-${c.email.toLowerCase()}`;
@@ -264,13 +301,18 @@ export async function GET(req: Request) {
       }),
     });
     sent.push({ email: c.email, day: drip.day, status: r.status });
+    // Resend-Rate-Limit (2 Requests/Sek) respektieren — kleiner Abstand zwischen Sends
+    await new Promise((resolve) => setTimeout(resolve, 600));
   }
 
   return Response.json({
     ok: true,
+    mode: dryrun ? "dryrun" : catchup ? "catchup" : "daily",
+    fromEmail,
     checked: contacts.length,
     sent: sent.length,
-    details: sent,
+    sentDetails: sent,
+    contacts: diag,
   });
 }
 

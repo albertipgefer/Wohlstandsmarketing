@@ -19,9 +19,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 
-const TIDYCAL_15MIN =
-  "https://tidycal.com/albertipgefer/erstgespraech-mit-wohlstandsmarketing-2";
-
 interface Props {
   variant?: "erstgespraech" | "leadmagnet";
   context?: string;
@@ -80,7 +77,7 @@ export default function InlineCTA({
   subline,
 }: Props) {
   const isLeadMagnet = variant === "leadmagnet";
-  const href = isLeadMagnet ? "#leadmagnet" : TIDYCAL_15MIN;
+  const href = isLeadMagnet ? "#leadmagnet" : "/#strategie";
   const buttonLabel = isLeadMagnet ? "Jetzt PDF holen" : "Erstgespräch sichern";
   const eyebrow = context ?? (isLeadMagnet ? "Gratis PDF · 12 Seiten" : "15 Min · Kostenfrei · Albert persönlich");
 
@@ -137,15 +134,9 @@ export default function InlineCTA({
             </p>
           </div>
           <div className="flex shrink-0 flex-col items-center gap-2 md:items-end">
-            {isLeadMagnet ? (
-              <Link href={href} className={BUTTON_CLS}>
-                <ButtonInner label={buttonLabel} />
-              </Link>
-            ) : (
-              <a href={href} target="_blank" rel="noopener noreferrer" className={BUTTON_CLS}>
-                <ButtonInner label={buttonLabel} />
-              </a>
-            )}
+            <Link href={href} className={BUTTON_CLS}>
+              <ButtonInner label={buttonLabel} />
+            </Link>
             <span className="text-[10.5px] font-semibold uppercase tracking-[0.18em] text-[var(--text-subtle)]">
               {isLeadMagnet ? "PDF · Sofort-Download" : "Antwort < 24 h"}
             </span>

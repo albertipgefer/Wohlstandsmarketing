@@ -8,6 +8,7 @@ import BlogNav from "@/components/blog/BlogNav";
 import InlineCTA from "@/components/blog/InlineCTA";
 import PreFooterCTA from "@/components/PreFooterCTA";
 import Footer from "@/components/sections/Footer";
+import ReviewBadges from "@/components/ReviewBadges";
 
 const SITE = "https://wohlstandsmarketing.de";
 
@@ -106,54 +107,48 @@ export default async function CityPage({
           "@type": "Offer",
           itemOffered: {
             "@type": "Service",
-            name: "Landingpage (OnePage)",
-            description: `Konvertierende Landingpage für Mittelstand in ${city.name} — live in 7 Tagen.`,
-          },
-          price: "1500",
-          priceCurrency: "EUR",
-          availability: "https://schema.org/InStock",
-        },
-        {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Service",
-            name: "Unternehmenswebseite (bis 3 Unterseiten)",
-            description: `Vollständige Unternehmenswebseite mit KI-Sichtbarkeit für ${city.name}.`,
-          },
-          price: "3000",
-          priceCurrency: "EUR",
-          availability: "https://schema.org/InStock",
-        },
-        {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Service",
-            name: "Google Search Ads Betreuung",
-            description: `Performance-Marketing für Kunden in ${city.region}.`,
-          },
-          price: "1500",
-          priceCurrency: "EUR",
-          priceSpecification: {
-            "@type": "UnitPriceSpecification",
-            price: "1500",
-            priceCurrency: "EUR",
-            unitText: "MONTH",
+            name: "Unternehmenswebsite",
+            description: `Vollständige Unternehmenswebsite mit KI-Sichtbarkeit für Mittelstand in ${city.name}.`,
           },
         },
         {
           "@type": "Offer",
           itemOffered: {
             "@type": "Service",
-            name: "Meta Ads Betreuung",
-            description: `Meta Ads (Facebook + Instagram) für planbare Anfragen in ${city.name}.`,
+            name: "Landingpage",
+            description: `Konvertierende OnePage-Landingpage für ${city.name} — live in 7 Tagen.`,
           },
-          price: "1500",
-          priceCurrency: "EUR",
-          priceSpecification: {
-            "@type": "UnitPriceSpecification",
-            price: "1500",
-            priceCurrency: "EUR",
-            unitText: "MONTH",
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Webseiten-Relaunch",
+            description: `Vollständiger Relaunch bestehender Webseiten für Mittelstand in ${city.region}.`,
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "KI-Sichtbarkeit (Generative Engine Optimization)",
+            description: `Auf ChatGPT, Perplexity, Claude und Google AI Overviews als erste Wahl in ${city.name} empfohlen — einmalig oder als Retainer (3 / 6 / 9 / 12 Monate).`,
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "SEO-Optimierung",
+            description: `Technisches, lokales und On-Page-SEO für ${city.name} — einmalig oder als Retainer (6 / 9 / 12 Monate).`,
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Webseiten-Wartung",
+            description: `Laufende technische Wartung, Sicherheit und Inhalts-Updates.`,
           },
         },
       ],
@@ -188,7 +183,7 @@ export default async function CityPage({
     },
     {
       q: `Was kostet Webdesign in ${city.name}?`,
-      a: `Eine Landingpage startet bei 1.500 € einmalig, eine vollständige Unternehmenswebseite bei 3.000 €. Laufende KI-Sichtbarkeit + Performance-Marketing ab 1.500 €/Monat (Mindestlaufzeit 3 Monate). Wir nennen die genaue Investition transparent im 15-Minuten-Erstgespräch — und sagen ehrlich, ob es sich für dich rechnet.`,
+      a: `Wir bieten Unternehmenswebsite, Landingpage und Relaunch als einmalige Leistungen — laufende KI-Sichtbarkeit und SEO als einmalige Optimierung oder als Retainer (3 / 6 / 9 / 12 Monate). Komplette Preisübersicht im Konfigurator auf der Preise-Seite. Die genaue Investition stimmen wir transparent im 15-Minuten-Erstgespräch ab — und sagen ehrlich, ob es sich für dich rechnet.`,
     },
     {
       q: `Welche Branchen aus ${city.name} passen besonders zur WSM-Methode?`,
@@ -204,7 +199,7 @@ export default async function CityPage({
     },
     {
       q: `Gibt es eine Garantie auf die Ergebnisse?`,
-      a: `Ja. Wenn die vereinbarten Ziele nach 90 Tagen nicht erreicht sind, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind. Voraussetzung: du hältst dich an die strategischen Empfehlungen und das vereinbarte Werbebudget (typisch 1.000 €/Monat zusätzlich zum Retainer).`,
+      a: `Ja. Wenn die vereinbarten Ziele nach 90 Tagen nicht erreicht sind, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind. Voraussetzung: du hältst dich an die strategischen Empfehlungen und das im Erstgespräch vereinbarte Setup.`,
     },
     {
       q: `Welche Tools nutzt ihr für das Webdesign?`,
@@ -311,6 +306,53 @@ export default async function CityPage({
               <p className="mt-7 text-[11px] uppercase tracking-[0.22em] text-[var(--text-subtle)] sm:text-[12px]">
                 15-Min Erstgespräch · Kostenfrei · Albert Ipgefer persönlich
               </p>
+
+              {/* ── MOBILE/IPAD ONLY: ReviewBadges + Bullets + CTA-Wiederholung ── */}
+              <div className="mt-5 w-full lg:hidden">
+                <ReviewBadges variant="pill" centerOnMobile />
+              </div>
+
+              <ul className="mx-auto mt-7 flex w-full max-w-md flex-col gap-3 text-left text-[13.5px] leading-relaxed text-[var(--text)] sm:text-[14.5px] lg:hidden">
+                <li className="flex items-start gap-2.5">
+                  <span aria-hidden className="mt-[3px] flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-[12px] font-bold text-emerald-600">✓</span>
+                  <span>
+                    <strong className="font-semibold">Bekomme eine Webseite</strong>, die in 7 Tagen live geht — keine Agentur-Hängepartien, kein Lehrgeld für falsche Anbieter in {city.name}.
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span aria-hidden className="mt-[3px] flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-[12px] font-bold text-emerald-600">✓</span>
+                  <span>
+                    <strong className="font-semibold">Werde lokal gefunden</strong>, wenn jemand in {city.region} nach deinem Service sucht — auf Google Maps und direkt in der KI-Antwort.
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span aria-hidden className="mt-[3px] flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-[12px] font-bold text-emerald-600">✓</span>
+                  <span>
+                    <strong className="font-semibold">Erfahre</strong>, wie deine Webseite zur Lead-Maschine wird — statt nur eine teure digitale Visitenkarte zu sein.
+                  </span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span aria-hidden className="mt-[3px] flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-[12px] font-bold text-emerald-600">✓</span>
+                  <span>
+                    <strong className="font-semibold">Nutze die WSM-Methode</strong>, um planbar Anfragen aus {city.name} zu gewinnen — statt auf Empfehlungen und Mundpropaganda zu hoffen.
+                  </span>
+                </li>
+              </ul>
+
+              <div className="mx-auto mt-7 flex w-full max-w-sm flex-col items-stretch gap-3 lg:hidden">
+                <Link
+                  href="/#strategie"
+                  aria-label={`Webdesign in ${city.name} — unverbindliches Erstgespräch sichern`}
+                  className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-[var(--text)] px-7 py-4 text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(22,99,222,0.5)] transition hover:shadow-[0_14px_40px_-10px_rgba(22,99,222,0.75)]"
+                >
+                  <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-dark)] transition-transform duration-500 ease-out group-hover:translate-y-0" />
+                  <span className="relative z-10">Jetzt unverbindliches Erstgespräch sichern</span>
+                  <span className="relative z-10 transition-transform group-hover:translate-x-1">→</span>
+                </Link>
+                <p className="text-center text-[11px] uppercase tracking-[0.22em] text-[var(--text-subtle)]">
+                  15-Min · Kostenfrei · Albert persönlich
+                </p>
+              </div>
             </div>
 
             {/* Right column: Albert portrait — Desktop only */}
@@ -366,7 +408,7 @@ export default async function CityPage({
       {/* ── FÜR WEN WIR BAUEN (Lokale Branchen) ───────────────── */}
       <section className="border-t border-[var(--border)] py-20 md:py-28">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--gold)]">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--gold-text)]">
             Für wen wir bauen
           </p>
           <h2
@@ -447,11 +489,57 @@ export default async function CityPage({
         </div>
       </section>
 
+      {/* ── CROSS-LINK: Andere Services in derselben Stadt ───────── */}
+      <section className="border-t border-[var(--border)] bg-[var(--surface-2)]/40 py-16">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--gold-text)]">
+            Weitere Services in {city.name}
+          </p>
+          <h2 className="mt-3 font-[family-name:var(--font-display)] text-2xl font-bold tracking-tight text-[var(--text)] sm:text-3xl">
+            Webseite + KI-Sichtbarkeit aus einer Hand
+          </h2>
+          <p className="mt-3 max-w-2xl text-[14px] leading-relaxed text-[var(--text-muted)] sm:text-[15px]">
+            Eine neue Webseite ohne KI-Sichtbarkeit ist halbes Geschäft. Wir verzahnen
+            beides direkt ab Tag 1:
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              href={`/ki-sichtbarkeit/${city.slug}`}
+              className="group inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-5 py-2.5 text-[14px] font-medium text-[var(--text)] transition hover:border-transparent hover:bg-[var(--text)] hover:text-white"
+            >
+              KI-Sichtbarkeit in {city.name}
+              <span className="transition-transform group-hover:translate-x-0.5">→</span>
+            </Link>
+            <Link
+              href={`/seo/${city.slug}`}
+              className="group inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-5 py-2.5 text-[14px] font-medium text-[var(--text)] transition hover:border-transparent hover:bg-[var(--text)] hover:text-white"
+            >
+              SEO in {city.name}
+              <span className="transition-transform group-hover:translate-x-0.5">→</span>
+            </Link>
+            <Link
+              href="/preise"
+              className="group inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-5 py-2.5 text-[14px] font-medium text-[var(--text)] transition hover:border-transparent hover:bg-[var(--text)] hover:text-white"
+            >
+              Preise & Pakete
+              <span className="transition-transform group-hover:translate-x-0.5">→</span>
+            </Link>
+            <Link
+              href="/sichtbarkeits-check"
+              className="group inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-5 py-2.5 text-[14px] font-medium text-[var(--text)] transition hover:border-transparent hover:bg-[var(--text)] hover:text-white"
+            >
+              Kostenlosen KI-Check starten
+              <span className="transition-transform group-hover:translate-x-0.5">→</span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* ── NACHBAR-STÄDTE ────────────────────────────────────── */}
       {neighbours.length > 0 && (
-        <section className="border-t border-[var(--border)] bg-[var(--surface-2)]/40 py-16">
+        <section className="border-t border-[var(--border)] py-16">
           <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--gold)]">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--gold-text)]">
               Auch aktiv in
             </p>
             <div className="mt-5 flex flex-wrap gap-3">

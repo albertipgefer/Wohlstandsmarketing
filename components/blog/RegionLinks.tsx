@@ -14,7 +14,7 @@ export default function RegionLinks() {
       className="border-t border-[var(--border)] py-16"
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--gold)]">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--gold-text)]">
           Webdesign + KI-Sichtbarkeit in deiner Region
         </p>
         <h2
@@ -28,7 +28,7 @@ export default function RegionLinks() {
           oder remote.
         </p>
 
-        <div className="mt-7 flex flex-wrap gap-2.5">
+        <div className="mt-7 flex flex-col items-start gap-2.5 lg:flex-row lg:flex-wrap lg:items-center">
           {cities.map((c) => (
             <Link
               key={c.slug}

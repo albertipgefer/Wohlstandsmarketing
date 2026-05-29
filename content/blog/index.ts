@@ -217,11 +217,88 @@ export function getRelatedPosts(currentSlug: string, limit = 4) {
 export function getCityRelevantPosts(limit = 3) {
   // Cherry-pick the strongest cluster for "local + AI visibility" use cases.
   const slugs = [
-    "lokales-seo-google-maps-chatgpt",
-    "stadt-seiten-skalieren",
+    "lokales-seo-google-maps-chatgpt-2026",
+    "stadt-seiten-skalieren-2026",
     "ki-sichtbarkeit-chatgpt-2026",
     "google-ai-overviews-2026",
-    "gbp-12-optimierungen",
+    "google-business-profile-12-optimierungen",
+  ];
+  return slugs
+    .map((s) => getPost(s))
+    .filter((p): p is NonNullable<ReturnType<typeof getPost>> => p !== null)
+    .slice(0, limit);
+}
+
+/**
+ * Returns the top-N posts most relevant for the Webdesign Hub.
+ */
+export function getWebdesignPosts(limit = 4) {
+  const slugs = [
+    "webdesign-kosten-2026",
+    "webseite-erstellen-lassen-mittelstand",
+    "landingpage-erstellen-lassen-kosten",
+    "webseiten-relaunch-kosten",
+    "webdesign-trends-2026",
+    "conversion-webseiten-2026",
+    "landingpage-struktur-2026",
+  ];
+  return slugs
+    .map((s) => getPost(s))
+    .filter((p): p is NonNullable<ReturnType<typeof getPost>> => p !== null)
+    .slice(0, limit);
+}
+
+/**
+ * Returns the top-N posts most relevant for the Relaunch Service Page.
+ */
+export function getRelaunchPosts(limit = 4) {
+  const slugs = [
+    "webseiten-relaunch-kosten",
+    "webdesign-kosten-2026",
+    "core-web-vitals-2026",
+    "javascript-seo-spa",
+    "headless-cms-2026",
+    "page-experience-2026",
+  ];
+  return slugs
+    .map((s) => getPost(s))
+    .filter((p): p is NonNullable<ReturnType<typeof getPost>> => p !== null)
+    .slice(0, limit);
+}
+
+/**
+ * Returns the top-N posts most relevant for SEO-Stadt-Pages.
+ * Used on `/seo/[stadt]` to deep-link into the classic + local SEO cluster.
+ */
+export function getSeoPosts(limit = 4) {
+  const slugs = [
+    "seo-agentur-fuer-handwerker",
+    "lokales-seo-google-maps-chatgpt-2026",
+    "google-business-profile-12-optimierungen",
+    "lokale-backlinks-mittelstand",
+    "stadt-seiten-skalieren-2026",
+    "internal-linking-2026",
+    "core-web-vitals-2026",
+  ];
+  return slugs
+    .map((s) => getPost(s))
+    .filter((p): p is NonNullable<ReturnType<typeof getPost>> => p !== null)
+    .slice(0, limit);
+}
+
+/**
+ * Returns the top-N posts most relevant for KI-Sichtbarkeit-Stadt-Pages.
+ * Used on `/ki-sichtbarkeit/[stadt]` to deep-link into the GEO/AEO cluster.
+ */
+export function getKiVisibilityPosts(limit = 4) {
+  const slugs = [
+    "ki-sichtbarkeit-chatgpt-2026",
+    "chatgpt-optimierung-agentur",
+    "ki-sichtbarkeit-agentur-vergleich",
+    "aeo-agentur-deutschland",
+    "perplexity-seo-2026",
+    "google-ai-overviews-2026",
+    "aeo-vs-seo-2026",
   ];
   return slugs
     .map((s) => getPost(s))

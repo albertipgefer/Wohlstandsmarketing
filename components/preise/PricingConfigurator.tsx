@@ -268,7 +268,7 @@ export default function PricingConfigurator() {
                     )}
 
                     {s.note && !active && (
-                      <div className="pointer-events-none relative z-0 mt-4 border-t border-[var(--border)] pt-3 text-[11px] text-[var(--gold)]">
+                      <div className="pointer-events-none relative z-0 mt-4 border-t border-[var(--border)] pt-3 text-[11px] text-[var(--gold-text)]">
                         {s.note}
                       </div>
                     )}
@@ -283,8 +283,8 @@ export default function PricingConfigurator() {
       {/* Sticky Action-Bar — mit Card-Radius + größerem Mobile-Margin */}
       <div className="sticky bottom-4 z-30 -mt-24 sm:bottom-6 sm:-mt-20">
         <div className="mx-auto max-w-3xl rounded-3xl border border-[var(--border)] bg-white p-3 shadow-[0_14px_40px_-10px_rgba(10,10,10,0.25)] backdrop-blur sm:p-3.5">
-          <div className="flex flex-wrap items-center justify-between gap-3 sm:gap-4">
-            <div className="flex items-center gap-2.5 pl-2 text-[13px] sm:pl-3 sm:text-[14px]">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
+            <div className="flex min-w-0 items-center gap-2.5 pl-2 text-[13px] sm:pl-3 sm:text-[14px]">
               <span
                 className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[13px] font-bold ${
                   selectedCount > 0
@@ -320,7 +320,7 @@ export default function PricingConfigurator() {
               type="button"
               onClick={calculate}
               disabled={selectedCount === 0 || submitting}
-              className="group relative inline-flex shrink-0 items-center gap-2 overflow-hidden rounded-full bg-[var(--text)] px-5 py-2.5 text-[13px] font-semibold text-white transition disabled:opacity-30 sm:px-6 sm:py-3 sm:text-[14px]"
+              className="group relative inline-flex w-full shrink-0 items-center justify-center gap-2 overflow-hidden rounded-full bg-[var(--text)] px-5 py-2.5 text-[13px] font-semibold text-white transition disabled:opacity-30 sm:w-auto sm:px-6 sm:py-3 sm:text-[14px]"
             >
               <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-dark,_#0a4bb8)] transition-transform duration-500 ease-out group-hover:translate-y-0" />
               <span className="relative z-10">

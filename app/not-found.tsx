@@ -25,7 +25,7 @@ export default function NotFound() {
         <div className="relative mx-auto max-w-3xl px-4 text-center sm:px-6 md:px-12">
           <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-4 py-1.5 text-[11px] font-medium tracking-wide text-[var(--text-muted)] shadow-[0_4px_20px_-6px_rgba(10,10,10,0.08)]">
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" />
-            <span className="font-semibold text-[var(--gold)]">404</span>
+            <span className="font-semibold text-[var(--gold-text)]">404</span>
             <span className="text-[var(--text-subtle)]">·</span>
             Seite nicht gefunden
           </span>

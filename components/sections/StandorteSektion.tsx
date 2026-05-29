@@ -67,15 +67,22 @@ export default function StandorteSektion() {
               auf deine Stadt für lokale Cases, Branchen und Preise.
             </p>
           </div>
-          <Link
-            href="/standorte"
-            className="group hidden items-center gap-2 rounded-full border border-[var(--border-strong)] bg-white px-5 py-3 text-[14px] font-semibold text-[var(--text)] transition hover:border-transparent hover:bg-[var(--text)] hover:text-white md:inline-flex"
-          >
-            Alle Standorte
-            <span className="transition-transform group-hover:translate-x-0.5">
-              →
-            </span>
-          </Link>
+          <div className="hidden flex-col items-end gap-3 md:flex">
+            <Link
+              href="/webdesign"
+              className="group inline-flex items-center gap-2 rounded-full bg-[var(--text)] px-5 py-3 text-[14px] font-semibold text-white transition hover:bg-[var(--accent)]"
+            >
+              Zur Service-Seite Webdesign
+              <span className="transition-transform group-hover:translate-x-0.5">→</span>
+            </Link>
+            <Link
+              href="/standorte"
+              className="group inline-flex items-center gap-2 rounded-full border border-[var(--border-strong)] bg-white px-5 py-3 text-[14px] font-semibold text-[var(--text)] transition hover:border-transparent hover:bg-[var(--text)] hover:text-white"
+            >
+              Alle Standorte
+              <span className="transition-transform group-hover:translate-x-0.5">→</span>
+            </Link>
+          </div>
         </div>
 
         {/* Grid — auf der Startseite nur die ersten 6 Städte (HQ-Region).
@@ -109,6 +116,92 @@ export default function StandorteSektion() {
             </li>
           ))}
         </ul>
+
+        {/* ── KI-SICHTBARKEIT × STADT — neuronale Verlinkung ───────── */}
+        <div className="mt-12 rounded-3xl border border-[var(--border)] bg-[var(--surface-2)]/40 p-6 sm:p-8 md:mt-16">
+          <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+            <div>
+              <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--accent)]">
+                Auch verfügbar
+              </span>
+              <h3 className="mt-4 font-[family-name:var(--font-display)] text-xl font-bold tracking-tight text-[var(--text)] sm:text-2xl">
+                KI-Sichtbarkeit in deiner Stadt
+              </h3>
+              <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-[var(--text-muted)]">
+                Auf ChatGPT, Perplexity, Claude und Google AI Overviews als erste
+                Wahl empfohlen — lokal verankert in deiner Region:
+              </p>
+            </div>
+            <Link
+              href="/ki-sichtbarkeit"
+              className="group inline-flex shrink-0 items-center gap-2 rounded-full bg-[var(--text)] px-5 py-2.5 text-[13px] font-semibold text-white transition hover:bg-[var(--accent)]"
+            >
+              Zur Service-Seite
+              <span className="transition-transform group-hover:translate-x-0.5">→</span>
+            </Link>
+          </div>
+          <div className="mt-5 flex flex-wrap gap-2">
+            {cities.slice(0, 6).map((c) => (
+              <Link
+                key={`ki-pill-${c.slug}`}
+                href={`/ki-sichtbarkeit/${c.slug}`}
+                className="group inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-4 py-2 text-[13px] font-medium text-[var(--text)] transition hover:border-transparent hover:bg-[var(--text)] hover:text-white"
+              >
+                KI-Sichtbarkeit in {c.name}
+                <span className="transition-transform group-hover:translate-x-0.5">→</span>
+              </Link>
+            ))}
+            <Link
+              href="/standorte"
+              className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-medium text-[var(--text-muted)] transition hover:text-[var(--text)]"
+            >
+              Alle 13 Standorte →
+            </Link>
+          </div>
+        </div>
+
+        {/* ── SEO × STADT — neuronale Verlinkung ───────────────────── */}
+        <div className="mt-6 rounded-3xl border border-[var(--border)] bg-[var(--surface-2)]/40 p-6 sm:p-8">
+          <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+            <div>
+              <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-3.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--gold-text)]">
+                Auch verfügbar
+              </span>
+              <h3 className="mt-4 font-[family-name:var(--font-display)] text-xl font-bold tracking-tight text-[var(--text)] sm:text-2xl">
+                SEO-Optimierung in deiner Stadt
+              </h3>
+              <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-[var(--text-muted)]">
+                Technisches SEO, lokales SEO und Content-Cluster — in 90 Tagen
+                sichtbar für die Money-Keywords deiner Region:
+              </p>
+            </div>
+            <Link
+              href="/seo"
+              className="group inline-flex shrink-0 items-center gap-2 rounded-full bg-[var(--text)] px-5 py-2.5 text-[13px] font-semibold text-white transition hover:bg-[var(--accent)]"
+            >
+              Zur Service-Seite
+              <span className="transition-transform group-hover:translate-x-0.5">→</span>
+            </Link>
+          </div>
+          <div className="mt-5 flex flex-wrap gap-2">
+            {cities.slice(0, 6).map((c) => (
+              <Link
+                key={`seo-pill-${c.slug}`}
+                href={`/seo/${c.slug}`}
+                className="group inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-4 py-2 text-[13px] font-medium text-[var(--text)] transition hover:border-transparent hover:bg-[var(--text)] hover:text-white"
+              >
+                SEO in {c.name}
+                <span className="transition-transform group-hover:translate-x-0.5">→</span>
+              </Link>
+            ))}
+            <Link
+              href="/standorte"
+              className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-medium text-[var(--text-muted)] transition hover:text-[var(--text)]"
+            >
+              Alle 13 Standorte →
+            </Link>
+          </div>
+        </div>
 
         {/* Mobile-only link */}
         <div className="mt-10 flex justify-center md:hidden">

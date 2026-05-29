@@ -109,7 +109,7 @@ export default function WasDuBekommst() {
                 className={`text-[10px] font-semibold uppercase tracking-[0.22em] ${
                   g.accent === "blue"
                     ? "text-[var(--accent)]"
-                    : "text-[var(--gold)]"
+                    : "text-[var(--gold-text)]"
                 }`}
               >
                 {g.label}

@@ -11,6 +11,48 @@ import InlineCTA from "./InlineCTA";
 import PreFooterCTA from "@/components/PreFooterCTA";
 import LeadMagnetForm from "@/components/LeadMagnetForm";
 
+/**
+ * Kontextuelle Cluster-Verlinkung pro Blog-Kategorie: führt vom Content-Artikel
+ * zur thematisch passenden Money-Page (Service-Hub) + den relevanten
+ * Vergleichs-Entscheidungshilfen. Verdichtet die interne Verlinkung
+ * Content → kommerzielle Seiten (Topical-Authority-Signal) für alle Artikel.
+ */
+const CATEGORY_LINKS: Record<
+  string,
+  { label: string; href: string; gold?: boolean }[]
+> = {
+  "KI-Sichtbarkeit": [
+    { label: "KI-Sichtbarkeit", href: "/ki-sichtbarkeit" },
+    { label: "SEO oder KI-Sichtbarkeit?", href: "/vergleich/seo-vs-ki-sichtbarkeit", gold: true },
+    { label: "Kostenloser KI-Check", href: "/sichtbarkeits-check" },
+  ],
+  "Technisches SEO": [
+    { label: "SEO-Optimierung", href: "/seo" },
+    { label: "SEO: selbst oder Agentur?", href: "/vergleich/agentur-vs-inhouse-seo", gold: true },
+    { label: "Relaunch oder neu bauen?", href: "/vergleich/relaunch-vs-neue-webseite", gold: true },
+  ],
+  "Lokales SEO": [
+    { label: "SEO-Optimierung", href: "/seo" },
+    { label: "Alle Standorte", href: "/standorte" },
+    { label: "SEO oder KI-Sichtbarkeit?", href: "/vergleich/seo-vs-ki-sichtbarkeit", gold: true },
+  ],
+  Webdesign: [
+    { label: "Webdesign", href: "/webdesign" },
+    { label: "Landingpage oder Website?", href: "/vergleich/landingpage-vs-unternehmenswebsite", gold: true },
+    { label: "Relaunch oder neu bauen?", href: "/vergleich/relaunch-vs-neue-webseite", gold: true },
+  ],
+  Conversion: [
+    { label: "Webdesign", href: "/webdesign" },
+    { label: "Landingpage oder Website?", href: "/vergleich/landingpage-vs-unternehmenswebsite", gold: true },
+    { label: "Preise & Pakete", href: "/preise" },
+  ],
+};
+
+const PILL_BASE =
+  "group inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[14px] transition hover:border-transparent hover:text-white";
+const PILL_NORMAL = `${PILL_BASE} border border-[var(--border)] bg-white font-medium text-[var(--text)] hover:bg-[var(--text)]`;
+const PILL_GOLD = `${PILL_BASE} border border-[var(--gold)]/40 bg-[var(--gold)]/[0.06] font-semibold text-[var(--gold-text)] hover:bg-[var(--gold-text)]`;
+
 function formatDate(iso: string) {
   return new Intl.DateTimeFormat("de-DE", {
     day: "2-digit",
@@ -179,7 +221,7 @@ export default function ArticleLayout({
             />
             <div className="relative grid items-center gap-8 md:grid-cols-[1.1fr_1fr] md:gap-12">
               <div>
-                <span className="inline-flex items-center gap-2 rounded-full border border-[var(--gold)]/40 bg-white px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--gold)] shadow-[0_4px_14px_-6px_rgba(219,111,22,0.25)]">
+                <span className="inline-flex items-center gap-2 rounded-full border border-[var(--gold)]/40 bg-white px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--gold-text)] shadow-[0_4px_14px_-6px_rgba(219,111,22,0.25)]">
                   <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" />
                   Gratis PDF · 12 Seiten
                 </span>
@@ -205,17 +247,17 @@ export default function ArticleLayout({
         </div>
       </section>
 
-      {/* Related — now 4 keyword-matched posts in a 2x2 grid (desktop) */}
+      {/* Related — 6 keyword-matched posts (3-up on desktop) for denser internal linking */}
       {related.length > 0 && (
         <section className="border-t border-[var(--border)] py-20">
           <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--gold)]">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--gold-text)]">
               Das könnte dich auch interessieren
             </p>
             <h2 className="mt-3 font-[family-name:var(--font-display)] text-2xl font-bold tracking-tight text-[var(--text)] sm:text-3xl">
               Weitere Artikel zum Thema
             </h2>
-            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-2">
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((r) => (
                 <Link
                   key={r.slug}
@@ -231,6 +273,28 @@ export default function ArticleLayout({
                   <span className="mt-3 inline-flex items-center gap-1 text-[13px] font-semibold text-[var(--accent)] transition group-hover:gap-2">
                     Artikel lesen →
                   </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Kategorie-Cluster — kontextuelle Verlinkung Content → Service-Hub + Vergleiche */}
+      {CATEGORY_LINKS[meta.category] && (
+        <section className="border-t border-[var(--border)] bg-[var(--surface-2)]/40 py-16">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--gold-text)]">
+              Passend zu diesem Thema
+            </p>
+            <h2 className="mt-3 font-[family-name:var(--font-display)] text-2xl font-bold tracking-tight text-[var(--text)] sm:text-3xl">
+              Leistung &amp; Entscheidungshilfen
+            </h2>
+            <div className="mt-6 flex flex-wrap gap-3">
+              {CATEGORY_LINKS[meta.category].map((l) => (
+                <Link key={l.href} href={l.href} className={l.gold ? PILL_GOLD : PILL_NORMAL}>
+                  {l.label}
+                  <span className="transition-transform group-hover:translate-x-0.5">→</span>
                 </Link>
               ))}
             </div>

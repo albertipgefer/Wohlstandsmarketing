@@ -30,12 +30,21 @@ export const metadata: Metadata = {
     siteName: "Wohlstandsmarketing",
     locale: "de_DE",
     type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 2400,
+        height: 1260,
+        alt: "Die 5 Phasen der Wohlstandsmarketing-Treppe",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Albert Ipgefer · Wohlstandsmarketing",
     description:
       "Die 5 Phasen vom Tagesjob zur ortsunabhängigen Selbstständigkeit.",
+    images: ["/og-image.png"],
   },
 };
 

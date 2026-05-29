@@ -52,12 +52,12 @@ function CTAButton({ size = "md" }: { size?: "md" | "lg" }) {
 function PriceBox({ large = false }: { large?: boolean }) {
   return (
     <div className={`rounded-2xl border-2 border-[#1663de]/30 bg-gradient-to-br from-white via-[#f6f8fc] to-[#eef2f9] ${large ? "p-5 sm:p-6" : "p-4 sm:p-5"} shadow-[0_12px_28px_-14px_rgba(22,99,222,0.35)]`}>
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         <div className="text-[11px] font-bold uppercase tracking-[2px] text-[var(--text-subtle)]">
           Komplettpaket-Preis
         </div>
-        <span className="rounded-md bg-emerald-500/10 px-2 py-1 text-[11px] font-bold text-emerald-600">
-          spar {BUNDLE.savings} · {BUNDLE.savingsPercent}
+        <span className="rounded-md bg-emerald-500/10 px-2 py-1 text-[11px] font-bold text-emerald-600 whitespace-nowrap">
+          Spare {BUNDLE.savings}
         </span>
       </div>
       <div className="mt-2 flex items-baseline gap-3">
@@ -227,8 +227,8 @@ export default function BundlePage() {
                   <div className="text-2xl font-extrabold text-[#db6f16] sm:text-3xl">
                     {BUNDLE.priceNow}
                   </div>
-                  <div className="mt-1 inline-block rounded-md bg-emerald-500/15 px-2 py-0.5 text-[11px] font-bold text-emerald-600">
-                    spar {BUNDLE.savings} · {BUNDLE.savingsPercent}
+                  <div className="mt-1 inline-block rounded-md bg-emerald-500/15 px-2 py-0.5 text-[11px] font-bold text-emerald-600 whitespace-nowrap">
+                    Spare {BUNDLE.savings} · {BUNDLE.savingsPercent}
                   </div>
                 </td>
               </tr>
@@ -299,14 +299,14 @@ export default function BundlePage() {
               className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)]"
             >
               <div className="flex flex-col sm:flex-row">
-                {/* Cover */}
-                <div className="relative aspect-[16/9] w-full shrink-0 bg-gradient-to-br from-[#f6f8fc] to-[#eef2f9] sm:aspect-auto sm:w-[260px]">
+                {/* Mockup */}
+                <div className="relative aspect-[4/3] w-full shrink-0 bg-gradient-to-br from-[#f6f8fc] to-[#eef2f9] ring-1 ring-black/5 sm:aspect-auto sm:w-[260px]">
                   <Image
-                    src={p.cover}
+                    src={p.mockup}
                     alt={p.shortName}
                     fill
                     sizes="(max-width: 640px) 100vw, 260px"
-                    className="object-cover"
+                    className="object-contain p-2"
                   />
                 </div>
                 {/* Inhalt */}

@@ -110,15 +110,17 @@ export default function BioPage() {
 
               {/* Preis-Block */}
               <div className="mt-1 flex items-center justify-between gap-3 border-t border-[var(--border)] pt-3">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-extrabold text-[#db6f16] sm:text-3xl">
-                    {BUNDLE.priceNow}
-                  </span>
-                  <span className="text-sm text-[var(--text-subtle)] line-through sm:text-base">
-                    {BUNDLE.priceStrike}
-                  </span>
-                  <span className="ml-1 rounded-md bg-emerald-500/10 px-2 py-0.5 text-[11px] font-bold text-emerald-600 sm:text-xs">
-                    spar {BUNDLE.savings}
+                <div className="flex flex-col items-start gap-1 sm:flex-row sm:items-baseline sm:gap-2">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-extrabold text-[#db6f16] sm:text-3xl">
+                      {BUNDLE.priceNow}
+                    </span>
+                    <span className="text-sm text-[var(--text-subtle)] line-through sm:text-base">
+                      {BUNDLE.priceStrike}
+                    </span>
+                  </div>
+                  <span className="rounded-md bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-600 whitespace-nowrap sm:ml-1 sm:text-[11px]">
+                    Spare {BUNDLE.savings}
                   </span>
                 </div>
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1663de] text-white shadow-[0_8px_20px_-6px_rgba(22,99,222,0.5)] transition-all duration-300 group-hover:bg-[#0f4cb3] group-hover:shadow-[0_12px_24px_-6px_rgba(22,99,222,0.6)]">

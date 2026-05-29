@@ -324,6 +324,7 @@ export type BundleIncludedPhase = {
   shortName: string;
   originalPrice: string;
   cover: string;
+  mockup: string;
   bullets: string[];
 };
 
@@ -366,6 +367,7 @@ export const BUNDLE: Bundle = {
       shortName: "Dein Wohlstands-Guide 2026",
       originalPrice: "19 €",
       cover: "/images/cover-phase-1-wohlstands-guide.png",
+      mockup: "/images/mockup-phase-1.png",
       bullets: [
         "18-Seiten-PDF mit dem kompletten Fahrplan, den ich heute gehen würde, wenn ich bei Null wäre",
         "Die 10 typischen Sackgassen, in denen 95 % aller Anfänger landen — und wie du sie meidest",
@@ -377,6 +379,7 @@ export const BUNDLE: Bundle = {
       shortName: "Deine erste KI-Webseite in unter 7 Tagen",
       originalPrice: "49 €",
       cover: "/images/cover-phase-2-erste-ki-webseite.png",
+      mockup: "/images/mockup-phase-2.png",
       bullets: [
         "Kompletter Notion-Workspace zum Duplizieren — landet in 3 Klicks in deinem eigenen Notion",
         "7 klare Schritte vom leeren Laptop bis zur live geschalteten Webseite (Claude Code, GitHub, Vercel, SEO)",
@@ -388,6 +391,7 @@ export const BUNDLE: Bundle = {
       shortName: "Deine ersten 3 Testkunden in 4 Wochen",
       originalPrice: "67 €",
       cover: "/images/cover-phase-3-erste-3-testkunden.png",
+      mockup: "/images/mockup-phase-3.png",
       bullets: [
         "PDF-Strategie + Notion-Workspace mit 6 Copy-Paste-Assets für deinen Beweis-Stack",
         "Wortwörtliches Vor-Ort-Skript zum Copy-Paste — Satz für Satz, was du beim Inhaber sagst",
@@ -399,6 +403,7 @@ export const BUNDLE: Bundle = {
       shortName: "Dein erster 1.000-€-Kunde",
       originalPrice: "99 €",
       cover: "/images/cover-phase-4-erster-1000-kunde.png",
+      mockup: "/images/mockup-phase-4.png",
       bullets: [
         "Akquise- und Sales-Stack als PDF + Notion-Workspace mit 8 Copy-Paste-Assets",
         "100+ qualifizierte Leads aus Google Maps in 30 Min (Apify + Claude Code)",
@@ -410,6 +415,7 @@ export const BUNDLE: Bundle = {
       shortName: "Onboarding, Umsetzung & Delivery",
       originalPrice: "197 €",
       cover: "/images/cover-phase-5-onboarding-delivery.png",
+      mockup: "/images/mockup-phase-5.png",
       bullets: [
         "14-Tage-Liefer-Playbook als PDF + Notion-Workspace mit 8 Copy-Paste-Assets",
         "Aufstockungs-Angebots-Vorlage für KI-Sichtbarkeit + SEO (500 € einmalig oder 500 €/Monat Retainer)",

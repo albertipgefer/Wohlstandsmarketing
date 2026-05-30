@@ -60,6 +60,11 @@ export default function Footer() {
                 </a>
               </li>
               <li>
+                <a href="/branchen" className="transition hover:text-[var(--text)]">
+                  Branchen
+                </a>
+              </li>
+              <li>
                 <a href="/blog" className="transition hover:text-[var(--text)]">
                   Blog
                 </a>
@@ -106,11 +111,6 @@ export default function Footer() {
               <li>
                 <a href="/preise" className="transition hover:text-[var(--text)]">
                   Preise & Pakete
-                </a>
-              </li>
-              <li>
-                <a href="/branchen" className="transition hover:text-[var(--text)]">
-                  Branchen
                 </a>
               </li>
               <li>

@@ -84,7 +84,7 @@ export const PRODUCTS: Product[] = [
   {
     slug: "ki-webseite",
     phase: "Phase 2",
-    shortName: "Deine erste KI-Webseite",
+    shortName: "Deine erste KI-Webseite in unter 7 Tagen",
     longTitle: "Deine erste KI-Webseite in unter 7 Tagen",
     subtitle:
       "Vom leeren Laptop bis zur ersten Webseite, die im Internet erreichbar ist — Schritt für Schritt, ohne eine Zeile Code zu lernen.",
@@ -139,9 +139,9 @@ export const PRODUCTS: Product[] = [
   {
     slug: "3-testkunden",
     phase: "Phase 3",
-    shortName: "Deine ersten 3 Testkunden",
+    shortName: "So gewinnst du deine ersten 3 Testkunden in den nächsten 4 Wochen",
     longTitle:
-      "So baust du dir deine ersten 3 Testkunden in den nächsten 4 Wochen auf",
+      "So gewinnst du deine ersten 3 Testkunden in den nächsten 4 Wochen",
     subtitle:
       "Ohne Testkunden sagt dir niemand 1.000 € für eine Webseite zu. Mit drei in der Hand kippt das Gespräch — und du wirst nie wieder als Anfänger wahrgenommen.",
     priceNow: "27 €",
@@ -196,9 +196,9 @@ export const PRODUCTS: Product[] = [
   {
     slug: "1000-euro-kunde",
     phase: "Phase 4",
-    shortName: "Dein erster 1.000-€-Kunde",
+    shortName: "So gewinnst du deinen ersten 1.000-€-Kunden",
     longTitle:
-      "So gewinnst du deinen ersten 1.000 € Kunden in den nächsten 2–4 Wochen",
+      "So gewinnst du deinen ersten 1.000-€-Kunden",
     subtitle:
       "Vom Testkunden zum zahlenden Auftrag — der vollständige Akquise- und Sales-Stack mit Skripten, die ich täglich nutze, um selbst zu verkaufen.",
     priceNow: "49 €",
@@ -387,7 +387,7 @@ export const BUNDLE: Bundle = {
     },
     {
       phase: "Phase 3",
-      shortName: "Deine ersten 3 Testkunden in 4 Wochen",
+      shortName: "So gewinnst du deine ersten 3 Testkunden in den nächsten 4 Wochen",
       originalPrice: "67 €",
       cover: "/images/cover-phase-3-erste-3-testkunden.png",
       mockup: "/images/mockup-phase-3.png",
@@ -399,7 +399,7 @@ export const BUNDLE: Bundle = {
     },
     {
       phase: "Phase 4",
-      shortName: "Dein erster 1.000-€-Kunde",
+      shortName: "So gewinnst du deinen ersten 1.000-€-Kunden",
       originalPrice: "99 €",
       cover: "/images/cover-phase-4-erster-1000-kunde.png",
       mockup: "/images/mockup-phase-4.png",

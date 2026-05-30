@@ -3,6 +3,7 @@ import Link from "next/link";
 import { industries } from "@/content/industries";
 import { services } from "@/content/services";
 import BlogNav from "@/components/blog/BlogNav";
+import ReviewBadges from "@/components/ReviewBadges";
 import PreFooterCTA from "@/components/PreFooterCTA";
 import Footer from "@/components/sections/Footer";
 
@@ -61,8 +62,8 @@ export default function BranchenOverviewPage() {
         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-[radial-gradient(50%_60%_at_50%_0%,rgba(22,99,222,0.14)_0%,rgba(22,99,222,0)_70%)]" />
         <div aria-hidden className="pointer-events-none absolute right-0 top-1/3 h-[420px] w-[420px] bg-[radial-gradient(circle,rgba(219,111,22,0.10)_0%,rgba(219,111,22,0)_70%)]" />
 
-        <div className="relative mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
-          <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-2 text-[12px] text-[var(--text-subtle)]">
+        <div className="relative mx-auto flex max-w-6xl flex-col items-center px-4 text-center sm:px-6 md:px-12 lg:items-start lg:text-left">
+          <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center justify-center gap-2 text-[12px] text-[var(--text-subtle)] lg:justify-start">
             <Link href="/" className="hover:text-[var(--text)]">Startseite</Link>
             <span>/</span>
             <span className="text-[var(--text)]">Branchen</span>
@@ -85,6 +86,17 @@ export default function BranchenOverviewPage() {
           <p className="mt-6 max-w-2xl text-base leading-relaxed text-[var(--text-muted)] sm:text-lg">
             Jede Branche hat eigene Kunden, eigene Suchanfragen und eigene Hürden. Wir bauen deinen Auftritt genau darauf zugeschnitten — und machen dich in 90 Tagen auf Google, ChatGPT, Perplexity und Claude sichtbar.
           </p>
+
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[12px] text-[var(--text-muted)] lg:justify-start">
+            <span className="flex items-center gap-1.5"><span className="text-emerald-500">✓</span> In 7 Tagen live</span>
+            <span className="flex items-center gap-1.5"><span className="text-emerald-500">✓</span> Google + ChatGPT</span>
+            <span className="flex items-center gap-1.5"><span className="text-emerald-500">✓</span> Ergebnis-Garantie</span>
+            <span className="flex items-center gap-1.5"><span className="text-emerald-500">✓</span> Albert persönlich</span>
+          </div>
+
+          <div className="mt-5 w-full">
+            <ReviewBadges variant="pill" centerOnMobile />
+          </div>
         </div>
       </section>
 

@@ -1,15 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { industries, getIndustry } from "@/content/industries";
 import { services } from "@/content/services";
 import { getWebdesignPosts } from "@/content/blog";
 import BlogNav from "@/components/blog/BlogNav";
+import BranchenHero from "@/components/branchen/BranchenHero";
 import InlineCTA from "@/components/blog/InlineCTA";
 import PreFooterCTA from "@/components/PreFooterCTA";
 import Footer from "@/components/sections/Footer";
-import ReviewBadges from "@/components/ReviewBadges";
 
 const SITE = "https://wohlstandsmarketing.de";
 
@@ -73,14 +72,15 @@ export default async function IndustryPage({
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name: `Webseite + KI-Sichtbarkeit für ${industry.name}`,
-      itemListElement: [
-        { "@type": "Offer", itemOffered: { "@type": "Service", name: "Unternehmenswebsite", description: `Vollständige Unternehmenswebsite mit KI-Sichtbarkeit für ${industry.name}.` } },
-        { "@type": "Offer", itemOffered: { "@type": "Service", name: "Landingpage", description: `Konvertierende Landingpage für ${industry.name} — live in 7 Tagen.` } },
-        { "@type": "Offer", itemOffered: { "@type": "Service", name: "Webseiten-Relaunch", description: `Vollständiger Relaunch bestehender Webseiten für ${industry.name}.` } },
-        { "@type": "Offer", itemOffered: { "@type": "Service", name: "KI-Sichtbarkeit (Generative Engine Optimization)", description: `Auf ChatGPT, Perplexity, Claude und Google AI Overviews als erste Wahl empfohlen — einmalig oder als Retainer.` } },
-        { "@type": "Offer", itemOffered: { "@type": "Service", name: "SEO-Optimierung", description: `Technisches, lokales und On-Page-SEO für ${industry.name} — einmalig oder als Retainer.` } },
-        { "@type": "Offer", itemOffered: { "@type": "Service", name: "Webseiten-Wartung", description: `Laufende technische Wartung, Sicherheit und Inhalts-Updates.` } },
-      ],
+      itemListElement: services.map((s) => ({
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: `${s.name} für ${industry.name}`,
+          description: s.intro,
+          url: `${SITE}/branchen/${industry.slug}/${s.slug}`,
+        },
+      })),
     },
   };
   const serviceSchema = {
@@ -121,137 +121,21 @@ export default async function IndustryPage({
 
       <BlogNav />
 
-      {/* ── HERO ───────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden border-b border-[var(--border)] pt-32 pb-16 sm:pt-36 sm:pb-20 md:pt-40 md:pb-28">
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-[radial-gradient(50%_60%_at_50%_0%,rgba(22,99,222,0.14)_0%,rgba(22,99,222,0)_70%)]" />
-        <div aria-hidden className="pointer-events-none absolute right-0 top-1/3 h-[420px] w-[420px] bg-[radial-gradient(circle,rgba(219,111,22,0.10)_0%,rgba(219,111,22,0)_70%)]" />
-
-        <div className="relative mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
-          {/* Breadcrumbs */}
-          <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-2 text-[12px] text-[var(--text-subtle)]">
-            <Link href="/" className="hover:text-[var(--text)]">Startseite</Link>
-            <span>/</span>
-            <Link href="/branchen" className="hover:text-[var(--text)]">Branchen</Link>
-            <span>/</span>
-            <span className="text-[var(--text)]">{industry.name}</span>
-          </nav>
-
-          <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
-            <div className="flex flex-col items-start text-left">
-              <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-4 py-1.5 text-[11px] font-medium tracking-wide text-[var(--text-muted)] shadow-[0_4px_20px_-6px_rgba(10,10,10,0.08)]">
-                <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
-                <span className="font-semibold text-[var(--accent)]">Branche</span>
-                <span className="text-[var(--text-subtle)]">·</span>
-                {industry.shortName}
-              </div>
-
-              <h1
-                className="mt-6 font-[family-name:var(--font-display)] font-black leading-[1.04] tracking-[-0.04em] text-[var(--text)]"
-                style={{ fontSize: "clamp(2rem, 5.2vw, 3.5rem)" }}
-              >
-                {industry.h1Lead}{" "}
-                <span className="relative inline-block">
-                  <span className="font-[family-name:var(--font-serif)] font-normal italic text-[var(--accent)]">
-                    {industry.h1Accent}
-                  </span>
-                  <svg className="absolute -bottom-1 left-0 w-full" height="12" viewBox="0 0 240 12" fill="none" preserveAspectRatio="none" aria-hidden>
-                    <path d="M2 8C 60 2, 120 10, 180 5 S 230 7, 238 4" stroke="#db6f16" strokeWidth="2.5" strokeLinecap="round" opacity="0.9" />
-                  </svg>
-                </span>{" "}
-                {industry.h1Tail}
-              </h1>
-
-              <p className="mt-6 max-w-xl text-base leading-relaxed text-[var(--text-muted)] sm:text-lg">
-                {industry.heroSubline}
-              </p>
-
-              {/* Mobile/iPad photo — BETWEEN subtitle and CTAs, full image, no fade */}
-              <div className="mx-auto mt-8 w-full max-w-md overflow-hidden rounded-3xl lg:hidden">
-                <Image
-                  src="/albert-portrait.jpg"
-                  alt={`Albert Ipgefer — Webdesign-Partner für ${industry.name}`}
-                  width={1226}
-                  height={1300}
-                  priority
-                  quality={85}
-                  sizes="(max-width: 768px) 100vw, 540px"
-                  className="h-auto w-full"
-                />
-              </div>
-
-              <div className="mt-8 flex w-full max-w-sm flex-col items-stretch gap-3">
-                <Link
-                  href="/#strategie"
-                  className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-[var(--text)] px-7 py-4 text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(22,99,222,0.5)] transition hover:shadow-[0_14px_40px_-10px_rgba(22,99,222,0.75)]"
-                >
-                  <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-dark)] transition-transform duration-500 ease-out group-hover:translate-y-0" />
-                  <span className="relative z-10">Erstgespräch sichern</span>
-                  <span className="relative z-10 transition-transform group-hover:translate-x-1">→</span>
-                </Link>
-                <Link
-                  href="/#methode"
-                  className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full border border-[var(--border-strong)] bg-white/70 px-7 py-4 text-[15px] font-medium text-[var(--text)] backdrop-blur transition hover:border-transparent"
-                >
-                  <span className="absolute inset-0 -z-0 translate-x-[-101%] bg-[var(--text)] transition-transform duration-500 ease-out group-hover:translate-x-0" />
-                  <span className="relative z-10 transition-colors group-hover:text-white">So funktioniert die WSM-Methode</span>
-                </Link>
-              </div>
-
-              <p className="mt-7 text-[11px] uppercase tracking-[0.22em] text-[var(--text-subtle)] sm:text-[12px]">
-                15-Min Erstgespräch · Kostenfrei · Albert Ipgefer persönlich
-              </p>
-
-              {/* ── MOBILE/IPAD ONLY: ReviewBadges + Bullets + CTA-Wiederholung ── */}
-              <div className="mt-5 w-full lg:hidden">
-                <ReviewBadges variant="pill" centerOnMobile />
-              </div>
-
-              <ul className="mx-auto mt-7 flex w-full max-w-md flex-col gap-3 text-left text-[13.5px] leading-relaxed text-[var(--text)] sm:text-[14.5px] lg:hidden">
-                {industry.bullets.map((b) => (
-                  <li key={b.strong} className="flex items-start gap-2.5">
-                    <span aria-hidden className="mt-[3px] flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-[12px] font-bold text-emerald-600">✓</span>
-                    <span>
-                      <strong className="font-semibold">{b.strong}</strong>{b.rest}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="mx-auto mt-7 flex w-full max-w-sm flex-col items-stretch gap-3 lg:hidden">
-                <Link
-                  href="/#strategie"
-                  aria-label={`Webseite für ${industry.name} — unverbindliches Erstgespräch sichern`}
-                  className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-[var(--text)] px-7 py-4 text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(22,99,222,0.5)] transition hover:shadow-[0_14px_40px_-10px_rgba(22,99,222,0.75)]"
-                >
-                  <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-dark)] transition-transform duration-500 ease-out group-hover:translate-y-0" />
-                  <span className="relative z-10">Jetzt unverbindliches Erstgespräch sichern</span>
-                  <span className="relative z-10 transition-transform group-hover:translate-x-1">→</span>
-                </Link>
-                <p className="text-center text-[11px] uppercase tracking-[0.22em] text-[var(--text-subtle)]">
-                  15-Min · Kostenfrei · Albert persönlich
-                </p>
-              </div>
-            </div>
-
-            {/* Right column: Albert portrait — Desktop only */}
-            <div className="relative order-2 mx-auto hidden aspect-[4/5] w-full max-w-[440px] overflow-hidden rounded-3xl lg:block">
-              <Image
-                src="/albert-portrait.jpg"
-                alt={`Albert Ipgefer — Webdesign-Partner für ${industry.name}`}
-                fill
-                priority
-                quality={88}
-                sizes="440px"
-                className="object-cover object-[50%_35%]"
-              />
-              <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-[var(--bg)] to-transparent" />
-              <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-[var(--bg)] to-transparent" />
-              <div aria-hidden className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-[var(--bg)] to-transparent" />
-              <div aria-hidden className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-[var(--bg)] to-transparent" />
-            </div>
-          </div>
-        </div>
-      </section>
+      <BranchenHero
+        breadcrumb={[
+          { label: "Startseite", href: "/" },
+          { label: "Branchen", href: "/branchen" },
+          { label: industry.name },
+        ]}
+        eyebrowAccent="Branche"
+        eyebrowRest={industry.shortName}
+        h1Lead={industry.h1Lead}
+        h1Accent={industry.h1Accent}
+        h1Tail={industry.h1Tail}
+        subline={industry.heroSubline}
+        secondaryHref="/#methode"
+        secondaryLabel="So funktioniert die WSM-Methode"
+      />
 
       {/* ── WARUM (Pain / Intro) ───────────────────────────────── */}
       <section className="bg-[var(--surface-2)]/40 py-20 md:py-24">

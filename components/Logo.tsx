@@ -20,7 +20,7 @@ export default function Logo({
         src="/icon.png"
         width={size}
         height={size}
-        alt="Wohlstandsmarketing Logo"
+        alt="Wohlstandsmarketing – Agentur für Webdesign, SEO und KI-Sichtbarkeit"
         className="shrink-0 select-none"
         draggable={false}
         decoding="async"

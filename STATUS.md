@@ -1,9 +1,31 @@
 # Wohlstandsmarketing Relaunch — Projekt-Stand
 
-> **Stand: 28. Mai 2026 (abends)**
+> **Stand: 30. Mai 2026**
 > **Status: ✅ LIVE auf https://wohlstandsmarketing.de**
 > Projektpfad: `~/.claude/Wohlstandsmarketing/Webseite/relaunch-next/`
 > **Wichtig:** Service-Portfolio seit 28.05. ohne Meta-Ads/Google-Ads. Aktuelle Services: Unternehmenswebsite · Landingpage · Webseiten-Relaunch · KI-Sichtbarkeit (3/6/9/12 Mon. oder einmalig) · SEO-Optimierung (6/9/12 Mon. oder einmalig) · Webseiten-Wartung. Komplette Doku: `~/.claude/Wohlstandsmarketing/CLAUDE.md`.
+
+---
+
+## 🆕 Updates 30.05.2026 (SEO/KI-Sichtbarkeit + Performance)
+
+Drei autonome Hebel umgesetzt, gebaut, deployt und live verifiziert:
+
+1. **Organization-Schema als Entität vervollständigt** (`app/layout.tsx`)
+   - `aggregateRating` ergänzt: **5,0 / 5 Google-Bewertungen** (echter GBP-Wert; Trustpilot 4,1/5 separat als Profil, fließt nicht ins Rating)
+   - `sameAs` befüllt: Google Business Profile · Trustpilot (`ipgefer-performance.de`) · Instagram · TikTok · LinkedIn (Profil-URLs via `REVIEW_PROFILE_URLS` aus `content/testimonials.ts`)
+   - Zweck: Entitäts-Verankerung im Knowledge Graph + Trust-Signal für KI-Engines. **Bei neuen Bewertungen `reviewCount`/`ratingValue` in `layout.tsx` nachziehen — nur echte, belegbare Werte.**
+
+2. **Mobile-LCP-Fix am Hero** (`components/sections/Hero.tsx`)
+   - Problem: Hero startete via Framer Motion mit `opacity:0` → Headline/Bild bis zur JS-Hydration unsichtbar (Ursache für LCP 6,6 s im Audit, nicht das Bild).
+   - Fix: Hero-Content rendert sofort sichtbar im SSR-HTML (`opacity:1` + dezenter `y`-Slide bleibt). Kein Redesign, Look identisch (Mobile + Desktop per Screenshot verifiziert).
+   - Vorher/Nachher-LCP nach 2–3 Tagen in Search Console „Core Web Vitals" bzw. sofort via PageSpeed Insights (Mobil) prüfen.
+
+3. **Alt-Texte SEO-/KI-optimiert** (Hero 2×, Über-Albert, Logo, Blog 3×, Vorher-Nachher 3×)
+   - Generische Alts → echte Service-Suchbegriffe (Webdesign, SEO, KI-Sichtbarkeit, Agentur), beschreibend ohne Keyword-Stuffing.
+   - Stadt-/Service-Seiten-Alts waren bereits keyword-kontextualisiert → unverändert. Kein Bild ohne Alt.
+
+**Offen / optional:** OpenGraph/Twitter-Bild-Alt (Social-Preview-Metadaten) noch nicht durchgegangen. Geplant, aber gestoppt: Live-Fetch der Google-Bewertungen via Places API (Setup-Entscheidung vertagt).
 
 ---
 
@@ -14,7 +36,7 @@
 | Domain `wohlstandsmarketing.de` | ✅ HTTP 200, alle Routes erreichbar |
 | Vercel-Projekt | `albertipgefers-projects/wohlstandsmarketing` |
 | Git-Repo | `github.com/albertipgefer/Wohlstandsmarketing` (main) |
-| Letzter Production-Deploy | `dpl_...ddj2p243r` (26.05. abends) |
+| Letzter Production-Deploy | Commit `e593122` (30.05. vormittags) — NOMA-Beach-Case |
 | Legacy-HTML-Backup | Branch `legacy-html` (SHA `17ffad4`) — Rollback-Option |
 | Kontaktformular | ✅ Resend-API aktiv, schickt an `info@wohlstandsmarketing.de` |
 | **Lead-Magnet-Funnel** | ✅ Double-Opt-In live, 7-Mail-Drip via Vercel-Cron |
@@ -31,6 +53,17 @@
 - E-Mail: Resend API (Welcome + Drip via Vercel-Cron)
 - Booking: TidyCal — `tidycal.com/albertipgefer/erstgespraech-mit-wohlstandsmarketing-2`
 - WhatsApp: `+49 176 227 87 559` (kontextuelle Pre-Filled-Nachrichten)
+
+---
+
+## 🆕 Letzte Änderung (30.05.2026)
+
+**Cases-Sektion (`VorherNachher.tsx`)** — NOMA Beach als dritten Live-Case ergänzt:
+- Bild `public/cases/noma.png` = Hero-Screenshot der **neuen** Seite (grüner Look, kein Cookie-Banner), 1440×900 wie weber/holzmann. Link → `https://www.nomabeach.de`.
+- Card-Footer neu gestapelt: **Badge → Firmenname → Standort → Text → „Live ansehen"** (besser für Mobil/iPad).
+- Grid `xl:grid-cols-2`: Desktop 2 Karten pro Reihe (3. rutscht in 2. Reihe), iPad (Hoch+Quer) + Mobil 1-spaltig gestapelt.
+- Deployt als Commit `e593122`, live verifiziert auf Desktop/iPad/Mobil.
+- ⚠️ **Working-Tree nicht sauber:** Es liegen weitere uncommittete Änderungen (`app/layout.tsx`, `Hero.tsx`, `UeberAlbert.tsx`, `Logo.tsx`, `blog/*`) — vermutlich Nacharbeiten der parallelen SEO-Session (s. Sektion oben). Diese waren NICHT Teil dieses Cases-Deploys. Vor dem nächsten Deploy prüfen, ob sie committet werden sollen.
 
 ---
 

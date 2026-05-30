@@ -120,7 +120,7 @@ export default function ArticleLayout({
           <div className="flex h-11 w-11 shrink-0 overflow-hidden rounded-full border border-[var(--border)] bg-[var(--surface-2)]">
             <img
               src="/albert-portrait.jpg"
-              alt="Albert Ipgefer — Gründer Wohlstandsmarketing"
+              alt="Albert Ipgefer, Gründer von Wohlstandsmarketing und Autor zu SEO und KI-Sichtbarkeit"
               className="h-full w-full object-cover object-[50%_30%]"
             />
           </div>

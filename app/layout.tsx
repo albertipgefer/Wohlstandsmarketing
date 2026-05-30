@@ -7,6 +7,7 @@ import StickyKiCheckCTA from "@/components/StickyKiCheckCTA";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import KiCheckTeaserPopup from "@/components/KiCheckTeaserPopup";
 import ExitIntentPopup from "@/components/ExitIntentPopup";
+import { REVIEW_PROFILE_URLS } from "@/content/testimonials";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -74,7 +75,20 @@ const orgSchema = {
     addressLocality: "Bad Ems",
     addressCountry: "DE",
   },
-  sameAs: [],
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: "5.0",
+    reviewCount: "5",
+    bestRating: "5",
+    worstRating: "1",
+  },
+  sameAs: [
+    REVIEW_PROFILE_URLS.google,
+    REVIEW_PROFILE_URLS.trustpilot,
+    "https://www.instagram.com/journeywithalbert/",
+    "https://www.tiktok.com/@journeywithalbert",
+    "https://www.linkedin.com/in/albertipgefer/",
+  ],
 };
 
 const serviceSchema = {

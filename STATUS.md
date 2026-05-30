@@ -25,9 +25,9 @@ Drei autonome Hebel umgesetzt, gebaut, deployt und live verifiziert:
    - Generische Alts → echte Service-Suchbegriffe (Webdesign, SEO, KI-Sichtbarkeit, Agentur), beschreibend ohne Keyword-Stuffing.
    - Stadt-/Service-Seiten-Alts waren bereits keyword-kontextualisiert → unverändert. Kein Bild ohne Alt.
 
-4. **Branchen-Seiten — 61 Seiten LIVE** (`/branchen`)
-   - Struktur (analog Stadt-System): `/branchen` (Übersicht) → `/branchen/[branche]` (10 Hubs) → `/branchen/[branche]/[service]` (50 Detailseiten). Build jetzt **200 Routen**.
-   - 10 Branchen (`content/industries/`): Handwerk · Steuerberater & Kanzleien · Arztpraxen · Maschinenbau & Industrie · Immobilienmakler · Autohäuser & Kfz · Hotels & Gastgewerbe · Fitnessstudios · Pflegedienste · Photovoltaik & Solarteure.
+4. **Branchen-Seiten — 181 Seiten LIVE** (`/branchen`)
+   - Struktur (analog Stadt-System): `/branchen` (Übersicht) → `/branchen/[branche]` (30 Hubs) → `/branchen/[branche]/[service]` (150 Detailseiten). Build jetzt **320 Routen**.
+   - 30 Branchen (`content/industries/`): Handwerk · Steuerberater · Arztpraxen · Maschinenbau · Immobilienmakler · Autohaus · Hotel · Fitnessstudio · Pflegedienst · Photovoltaik · Zahnärzte · Rechtsanwälte · Restaurant · Friseur · SHK · Elektro · GaLaBau · Architekt · Ingenieurbüro · Unternehmensberatung · Versicherungsmakler · Finanzberater · Logistik · Onlineshop · Tierarzt · Physiotherapie · Kosmetik · Gebäudereinigung · Bestatter · Maler.
    - **Hero:** gemeinsame Komponente `components/branchen/BranchenHero.tsx` — Mobile/iPad zentriert, ab `lg` linksbündig, Trust-Bullets + ReviewBadges, kein Foto (Stil wie Preise/KI-Check). **Branchen** als eigener Top-Nav-Link + Footer-Link.
    - 5 Services (`content/services/`): Unternehmenswebsite · Landingpage · Relaunch · KI-Sichtbarkeit · SEO. (Wartung bewusst weggelassen — kein Money-Keyword.)
    - Daten-getrieben: neue Branche/Service = nur Daten-Datei ergänzen → Pages + Sitemap automatisch.

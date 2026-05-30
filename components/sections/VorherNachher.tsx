@@ -22,6 +22,15 @@ const CASES = [
       "Komplett neuer Auftritt — fokussiert auf qualifizierte Verkaufsanfragen.",
     accent: "Webdesign + KI-Indexierung",
   },
+  {
+    client: "NOMA Beach",
+    location: "Northeim · Niedersachsen",
+    url: "https://www.nomabeach.de",
+    image: "/cases/noma.png",
+    result:
+      "Neuer Auftritt für die Eventlocation & Beachbar am See — Feiern, Hochzeiten & Events direkt anfragbar.",
+    accent: "Webdesign + lokale Sichtbarkeit",
+  },
 ];
 
 export default function VorherNachher() {
@@ -76,7 +85,7 @@ export default function VorherNachher() {
           Klick auf eine Karte — sieh dir den fertigen Auftritt direkt an.
         </motion.p>
 
-        <div className="mt-14 grid gap-6 md:mt-16 md:grid-cols-2 md:gap-8">
+        <div className="mt-14 grid gap-6 md:mt-16 md:grid-cols-3 md:gap-8">
           {CASES.map((c, i) => (
             <motion.a
               key={c.client}

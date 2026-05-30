@@ -85,7 +85,7 @@ export default function VorherNachher() {
           Klick auf eine Karte — sieh dir den fertigen Auftritt direkt an.
         </motion.p>
 
-        <div className="mt-14 grid gap-6 md:mt-16 md:grid-cols-3 md:gap-8">
+        <div className="mt-14 grid gap-6 md:mt-16 md:gap-8 xl:grid-cols-2">
           {CASES.map((c, i) => (
             <motion.a
               key={c.client}
@@ -124,18 +124,16 @@ export default function VorherNachher() {
 
               {/* Card Footer */}
               <div className="flex flex-1 flex-col gap-3 p-6 sm:p-7">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-[family-name:var(--font-display)] text-lg font-bold tracking-tight text-[var(--text)]">
-                      {c.client}
-                    </p>
-                    <p className="text-[12px] text-[var(--text-subtle)]">
-                      {c.location}
-                    </p>
-                  </div>
-                  <span className="rounded-full bg-[var(--accent-glow-soft)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--accent)]">
-                    {c.accent}
-                  </span>
+                <span className="self-start rounded-full bg-[var(--accent-glow-soft)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--accent)]">
+                  {c.accent}
+                </span>
+                <div>
+                  <p className="font-[family-name:var(--font-display)] text-lg font-bold tracking-tight text-[var(--text)]">
+                    {c.client}
+                  </p>
+                  <p className="text-[12px] text-[var(--text-subtle)]">
+                    {c.location}
+                  </p>
                 </div>
                 <p className="text-[14px] leading-relaxed text-[var(--text-muted)]">
                   {c.result}

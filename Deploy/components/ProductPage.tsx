@@ -295,7 +295,7 @@ export default function ProductPage({ product }: { product: Product }) {
             Bereit zu starten?
           </h2>
           <p className="mt-2 max-w-[480px] text-[15px] leading-relaxed text-[var(--text-muted)] sm:text-base">
-            Sicher dir <span className="font-semibold text-[var(--text)]">{product.shortName}</span> zum Einführungspreis und leg sofort los.
+            Sicher dir jetzt den <span className="font-semibold text-[var(--text)]">Einführungspreis</span> und leg sofort los.
           </p>
           <div className="mt-6">
             <PriceBox product={product} large />

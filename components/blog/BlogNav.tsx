@@ -13,6 +13,7 @@ const SERVICES = [
 ] as const;
 
 const TOP_NAV = [
+  { label: "Branchen", href: "/branchen" },
   { label: "KI-Check", href: "/sichtbarkeits-check" },
   { label: "Preise", href: "/preise" },
   { label: "Blog", href: "/blog" },

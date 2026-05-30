@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 import { posts } from "@/content/blog";
 import { cities } from "@/content/cities";
+import { industries } from "@/content/industries";
+import { services } from "@/content/services";
 
 const SITE = "https://wohlstandsmarketing.de";
 
@@ -8,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: SITE, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
     { url: `${SITE}/blog`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.9 },
+    { url: `${SITE}/branchen`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
     { url: `${SITE}/standorte`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
     { url: `${SITE}/sichtbarkeits-check`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.95 },
     { url: `${SITE}/preise`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
@@ -51,11 +54,29 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.85,
   }));
 
+  const industryRoutes: MetadataRoute.Sitemap = industries.map((i) => ({
+    url: `${SITE}/branchen/${i.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly",
+    priority: 0.85,
+  }));
+
+  const industryServiceRoutes: MetadataRoute.Sitemap = industries.flatMap((i) =>
+    services.map((s) => ({
+      url: `${SITE}/branchen/${i.slug}/${s.slug}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    })),
+  );
+
   return [
     ...staticRoutes,
     ...postRoutes,
     ...cityRoutes,
     ...kiVisibilityCityRoutes,
     ...seoCityRoutes,
+    ...industryRoutes,
+    ...industryServiceRoutes,
   ];
 }

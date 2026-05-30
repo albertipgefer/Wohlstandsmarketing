@@ -23,19 +23,22 @@ export default function Hero() {
     return () => window.removeEventListener("mousemove", onMove);
   }, [reduce]);
 
+  // LCP-kritisch: Hero-Content muss im SSR-HTML sofort sichtbar sein (opacity:1),
+  // sonst bleibt die Headline bis zur JS-Hydration unsichtbar → LCP-Killer auf Mobile.
+  // Entrance bleibt als dezenter Slide (y) erhalten; nur das paint-blockierende Fade entfällt.
   const container = {
-    hidden: { opacity: 0 },
+    hidden: { opacity: 1 },
     show: {
       opacity: 1,
-      transition: { staggerChildren: 0.11, delayChildren: 0.15 },
+      transition: { staggerChildren: 0.11, delayChildren: 0.05 },
     },
   };
   const item = {
-    hidden: { opacity: 0, y: 28 },
+    hidden: { opacity: 1, y: 22 },
     show: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] as const },
+      transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const },
     },
   };
 
@@ -76,14 +79,12 @@ export default function Hero() {
         <div className="grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:min-h-[calc(100vh-8rem)]">
           {/* ─── DESKTOP-ONLY PHOTO (right column) — 4-side fade via gradient overlays ─── */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            initial={false}
             className="relative order-2 mx-auto hidden aspect-[4/5] w-full max-w-[480px] overflow-hidden rounded-3xl lg:block"
           >
             <Image
               src="/albert-portrait.jpg"
-              alt="Albert Ipgefer, Gründer von Wohlstandsmarketing"
+              alt="Albert Ipgefer, Gründer von Wohlstandsmarketing – Agentur für Webdesign, SEO und KI-Sichtbarkeit"
               fill
               priority
               fetchPriority="high"
@@ -193,7 +194,7 @@ export default function Hero() {
             >
               <Image
                 src="/albert-portrait.jpg"
-                alt="Albert Ipgefer, Gründer von Wohlstandsmarketing"
+                alt="Albert Ipgefer, Gründer von Wohlstandsmarketing – Agentur für Webdesign, SEO und KI-Sichtbarkeit"
                 width={1226}
                 height={1300}
                 priority

@@ -35,7 +35,7 @@ export default function UeberAlbert() {
             <div className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--surface-2)] shadow-[0_20px_60px_-20px_rgba(10,10,10,0.18)]">
               <img
                 src="/albert-portrait.jpg"
-                alt="Albert Ipgefer, Gründer von Wohlstandsmarketing"
+                alt="Albert Ipgefer, Gründer von Wohlstandsmarketing – Experte für Webdesign und KI-Sichtbarkeit im Raum Koblenz"
                 className="absolute inset-0 h-full w-full object-cover object-[center_35%]"
               />
               <div className="absolute bottom-4 left-4 right-4 z-10 rounded-2xl border border-[var(--border)] bg-white/90 px-4 py-3 backdrop-blur">

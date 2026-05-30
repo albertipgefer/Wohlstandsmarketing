@@ -32,7 +32,7 @@ export default function AuthorBox() {
           <div className="flex h-20 w-20 shrink-0 overflow-hidden rounded-full border border-[var(--border)] bg-[var(--surface-2)] sm:h-24 sm:w-24">
             <img
               src="/albert-portrait.jpg"
-              alt="Albert Ipgefer — Gründer Wohlstandsmarketing"
+              alt="Albert Ipgefer, Gründer von Wohlstandsmarketing und Autor zu SEO und KI-Sichtbarkeit"
               className="h-full w-full object-cover object-[50%_30%]"
               itemProp="image"
             />

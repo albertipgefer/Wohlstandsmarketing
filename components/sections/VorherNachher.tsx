@@ -114,7 +114,7 @@ export default function VorherNachher() {
               <div className="relative aspect-[16/10] overflow-hidden bg-[var(--surface-2)]">
                 <Image
                   src={c.image}
-                  alt={`Hero-Bereich der Webseite ${c.client}`}
+                  alt={`${c.client} – von Wohlstandsmarketing umgesetzte Unternehmenswebsite (Webdesign-Referenz)`}
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover object-top transition-transform duration-700 group-hover:scale-[1.03]"

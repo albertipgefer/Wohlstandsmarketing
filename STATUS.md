@@ -25,9 +25,10 @@ Drei autonome Hebel umgesetzt, gebaut, deployt und live verifiziert:
    - Generische Alts → echte Service-Suchbegriffe (Webdesign, SEO, KI-Sichtbarkeit, Agentur), beschreibend ohne Keyword-Stuffing.
    - Stadt-/Service-Seiten-Alts waren bereits keyword-kontextualisiert → unverändert. Kein Bild ohne Alt.
 
-4. **Branchen-Seiten — 31 neue Seiten LIVE** (`/branchen`)
-   - Struktur (analog Stadt-System): `/branchen` (Übersicht) → `/branchen/[branche]` (5 Hubs) → `/branchen/[branche]/[service]` (25 Detailseiten). Build jetzt **170 Routen**.
-   - 5 Branchen (`content/industries/`): Handwerk · Steuerberater & Kanzleien · Arztpraxen · Maschinenbau & Industrie · Immobilienmakler.
+4. **Branchen-Seiten — 61 Seiten LIVE** (`/branchen`)
+   - Struktur (analog Stadt-System): `/branchen` (Übersicht) → `/branchen/[branche]` (10 Hubs) → `/branchen/[branche]/[service]` (50 Detailseiten). Build jetzt **200 Routen**.
+   - 10 Branchen (`content/industries/`): Handwerk · Steuerberater & Kanzleien · Arztpraxen · Maschinenbau & Industrie · Immobilienmakler · Autohäuser & Kfz · Hotels & Gastgewerbe · Fitnessstudios · Pflegedienste · Photovoltaik & Solarteure.
+   - **Hero:** gemeinsame Komponente `components/branchen/BranchenHero.tsx` — Mobile/iPad zentriert, ab `lg` linksbündig, Trust-Bullets + ReviewBadges, kein Foto (Stil wie Preise/KI-Check). **Branchen** als eigener Top-Nav-Link + Footer-Link.
    - 5 Services (`content/services/`): Unternehmenswebsite · Landingpage · Relaunch · KI-Sichtbarkeit · SEO. (Wartung bewusst weggelassen — kein Money-Keyword.)
    - Daten-getrieben: neue Branche/Service = nur Daten-Datei ergänzen → Pages + Sitemap automatisch.
    - Voll vernetzt: Footer-Link `/branchen` (global) + Hub↔Detail↔Cross-Branche↔Service-Hubs↔Blog. Schema je Seite: ProfessionalService, Service, BreadcrumbList, FAQPage.

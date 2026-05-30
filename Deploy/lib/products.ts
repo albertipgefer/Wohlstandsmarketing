@@ -255,8 +255,7 @@ export const PRODUCTS: Product[] = [
     slug: "onboarding-delivery",
     phase: "Phase 5",
     shortName: "Onboarding, Umsetzung & Delivery",
-    longTitle:
-      "Vom unterschriebenen Angebot zum glücklichen Kunden in nur 14 Tagen",
+    longTitle: "Onboarding, Umsetzung & Delivery",
     subtitle:
       "Mit System sauber liefern, Referenz einsammeln und den Upsell auf KI-Sichtbarkeit + SEO landen — der komplette Delivery-Prozess in einem Workspace.",
     priceNow: "97 €",
@@ -350,7 +349,7 @@ export type Bundle = {
 
 export const BUNDLE: Bundle = {
   slug: "komplettpaket",
-  shortName: "Das Wohlstandsmarketing-Treppe Komplettpaket",
+  shortName: "Komplettpaket — Die ganze Treppe",
   longTitle: "Der gesamte Weg von 0 bis zum ersten Retainer-Kunden — alle 5 Phasen in einem Paket",
   subtitle:
     "Alle 5 Phasen der Wohlstandsmarketing-Treppe in einem Schlag. Statt 431 € einzeln zahlst du nur 197 € — und hast sofort den kompletten Fahrplan vom ersten Tag bis zum ersten monatlich wiederkehrenden Retainer-Umsatz.",

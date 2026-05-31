@@ -23,8 +23,12 @@
 
 const CLOSE_BASE = "https://api.close.com/api/v1";
 
-// Custom Field "Leadquelle" (Mehrfachauswahl) — Werte u. a. "Webseite", "Lead Magnet"
+// Custom Field "Leadquelle" (Mehrfachauswahl) — Kanal, u. a. "Webseite", "Lead Magnet"
 const CF_LEADQUELLE = "cf_4tvIavFLNa1TPcIaVNimpWA2ouLoQex5CyY4RcSy523";
+
+// Custom Field "Website-Formular" (Mehrfachauswahl) — welches Formular der Lead nutzte.
+// Macht die per-Formular-Smart-Views sauber filterbar (Leadquelle bleibt = Kanal).
+const CF_WEBSITE_FORMULAR = "cf_SiThXrPoJTtQcagNHJgpYYLfede46t7lctVbsNaKR2y";
 
 // Lead-Status "Nicht kontaktiert" — Startpunkt für frische Inbound-Leads
 const STATUS_NICHT_KONTAKTIERT = "stat_LgnS6Nzg3QGf0ZdRs4LtZ0MkyQioALpOVCeLeX4T1fw";
@@ -44,6 +48,14 @@ const SOURCE_EXTRA_LEADQUELLE: Record<LeadSource, string[]> = {
   kontakt: [],
   angebot: [],
   "lead-magnet": ["Lead Magnet"],
+};
+
+// Wert im Feld "Website-Formular" je Weg (muss exakt den Choice-Werten entsprechen)
+const SOURCE_FORMULAR: Record<LeadSource, string> = {
+  "ki-check": "KI-Sichtbarkeitscheck",
+  kontakt: "Kontaktformular",
+  angebot: "Angebots-Konfigurator",
+  "lead-magnet": "Lead-Magnet",
 };
 
 function authHeader(apiKey: string): string {
@@ -83,8 +95,8 @@ async function findLeadByEmail(
   return data.data && data.data.length > 0 ? data.data[0] : null;
 }
 
-/** Fügt fehlende Leadquelle-Werte additiv hinzu (überschreibt vorhandene nie). */
-function mergeLeadquelle(existing: unknown, add: string[]): string[] {
+/** Fügt fehlende Choice-Werte additiv hinzu (überschreibt vorhandene nie). */
+function mergeChoices(existing: unknown, add: string[]): string[] {
   const current = Array.isArray(existing)
     ? (existing as string[])
     : typeof existing === "string" && existing
@@ -138,6 +150,7 @@ export async function syncLeadToClose(
   const contactName = personName || input.company?.trim() || input.email;
 
   const leadquelleAdd = ["Webseite", ...SOURCE_EXTRA_LEADQUELLE[input.source]];
+  const formularAdd = [SOURCE_FORMULAR[input.source]];
 
   try {
     const existing = await findLeadByEmail(apiKey, input.email);
@@ -146,16 +159,23 @@ export async function syncLeadToClose(
     let created: boolean;
 
     if (existing) {
-      // Bestehenden Lead aktualisieren — Leadquelle additiv mergen, Status NICHT anfassen
+      // Bestehenden Lead aktualisieren — beide Felder additiv mergen, Status NICHT anfassen
       leadId = existing.id;
       created = false;
-      const merged = mergeLeadquelle(
+      const mergedQuelle = mergeChoices(
         existing[`custom.${CF_LEADQUELLE}`],
         leadquelleAdd,
       );
+      const mergedFormular = mergeChoices(
+        existing[`custom.${CF_WEBSITE_FORMULAR}`],
+        formularAdd,
+      );
       await closeFetch(apiKey, `/lead/${leadId}/`, {
         method: "PUT",
-        body: JSON.stringify({ [`custom.${CF_LEADQUELLE}`]: merged }),
+        body: JSON.stringify({
+          [`custom.${CF_LEADQUELLE}`]: mergedQuelle,
+          [`custom.${CF_WEBSITE_FORMULAR}`]: mergedFormular,
+        }),
       });
     } else {
       // Neuen Lead anlegen
@@ -163,6 +183,7 @@ export async function syncLeadToClose(
         name: leadName,
         status_id: STATUS_NICHT_KONTAKTIERT,
         [`custom.${CF_LEADQUELLE}`]: leadquelleAdd,
+        [`custom.${CF_WEBSITE_FORMULAR}`]: formularAdd,
         contacts: [
           {
             name: contactName,

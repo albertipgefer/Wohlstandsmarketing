@@ -1,17 +1,24 @@
 /**
  * Close CRM — minimaler API-Helper (Serverless-tauglich, nur fetch).
  *
- * Zweck: Inbound-Leads (aktuell: KI-Sichtbarkeitscheck) automatisch in Close
- * anlegen — sauber gelabelt, mit Dedup, ohne Dubletten.
+ * Zweck: Jeden Inbound-Lead von der Website automatisch in Close anlegen —
+ * sauber gelabelt, mit Dedup, ohne Dubletten. Abgedeckte Wege:
+ *   - KI-Sichtbarkeitscheck  (/api/ki-check/report)
+ *   - Kontaktformular        (/api/contact)
+ *   - Angebots-Konfigurator  (/api/angebot)
+ *   - Lead-Magnet (nach DOI)  (/api/lead-magnet/confirm)
+ *
+ * Jeder Website-Lead bekommt Leadquelle "Webseite" → fällt damit in die
+ * Smart View "Neue Website-Leads". Der konkrete Weg + Details stehen in der Notiz.
  *
  * Auth: Close nutzt Basic-Auth mit dem API-Key als Username (Passwort leer).
  *
  * Required ENV:
  *   CLOSE_API_KEY
  *
- * Bewusst schlank gehalten: keine SDK-Abhängigkeit, alles über fetch.
+ * Bewusst schlank: keine SDK-Abhängigkeit, alles über fetch.
  * Fehler werfen NIE nach außen — der Aufrufer kapselt in try/catch, damit
- * ein Close-Ausfall nie den Report-Versand an den Kunden blockiert.
+ * ein Close-Ausfall nie den Mail-Versand an den Kunden blockiert.
  */
 
 const CLOSE_BASE = "https://api.close.com/api/v1";
@@ -22,8 +29,24 @@ const CF_LEADQUELLE = "cf_4tvIavFLNa1TPcIaVNimpWA2ouLoQex5CyY4RcSy523";
 // Lead-Status "Nicht kontaktiert" — Startpunkt für frische Inbound-Leads
 const STATUS_NICHT_KONTAKTIERT = "stat_LgnS6Nzg3QGf0ZdRs4LtZ0MkyQioALpOVCeLeX4T1fw";
 
+export type LeadSource = "ki-check" | "kontakt" | "angebot" | "lead-magnet";
+
+const SOURCE_LABEL: Record<LeadSource, string> = {
+  "ki-check": "KI-Sichtbarkeitscheck",
+  kontakt: "Kontaktformular",
+  angebot: "Angebots-Konfigurator",
+  "lead-magnet": "Lead-Magnet (PDF)",
+};
+
+// Zusätzliche Leadquelle-Werte je Weg (zu "Webseite", das immer gesetzt wird)
+const SOURCE_EXTRA_LEADQUELLE: Record<LeadSource, string[]> = {
+  "ki-check": ["Lead Magnet"],
+  kontakt: [],
+  angebot: [],
+  "lead-magnet": ["Lead Magnet"],
+};
+
 function authHeader(apiKey: string): string {
-  // Basic-Auth: base64("<key>:")
   return "Basic " + Buffer.from(`${apiKey}:`).toString("base64");
 }
 
@@ -61,10 +84,7 @@ async function findLeadByEmail(
 }
 
 /** Fügt fehlende Leadquelle-Werte additiv hinzu (überschreibt vorhandene nie). */
-function mergeLeadquelle(
-  existing: unknown,
-  add: string[],
-): string[] {
+function mergeLeadquelle(existing: unknown, add: string[]): string[] {
   const current = Array.isArray(existing)
     ? (existing as string[])
     : typeof existing === "string" && existing
@@ -75,16 +95,18 @@ function mergeLeadquelle(
   return Array.from(set);
 }
 
-export type KiCheckLeadInput = {
-  firstName: string;
-  lastName: string;
+export type SyncLeadInput = {
+  source: LeadSource;
+  /** Voller Name (z. B. Kontaktformular liefert nur ein Namensfeld). */
+  fullName?: string;
+  firstName?: string;
+  lastName?: string;
   email: string;
-  phone: string;
-  url: string;
-  score: number;
-  scoreLabel: string;
-  city?: string;
-  goal?: string;
+  phone?: string;
+  /** Firmenname — wird, falls vorhanden, als Lead-Name genutzt (B2B-üblich). */
+  company?: string;
+  /** Zeilen für die Notiz (Header mit Quelle wird automatisch vorangestellt). */
+  noteLines?: (string | null | undefined)[];
 };
 
 export type CloseSyncResult = {
@@ -95,22 +117,27 @@ export type CloseSyncResult = {
 };
 
 /**
- * Legt den KI-Check-Lead in Close an (oder aktualisiert einen bestehenden):
+ * Legt einen Website-Lead in Close an (oder aktualisiert einen bestehenden):
  *   - Dedup per E-Mail
- *   - Leadquelle = "Webseite" + "Lead Magnet" (additiv)
+ *   - Leadquelle = "Webseite" (+ ggf. weg-spezifische Werte), additiv
  *   - Kontakt mit Name + Mail + Telefon
- *   - Notiz mit Score, geprüfter URL, Stadt & Ziel
+ *   - Notiz mit Quelle + übergebenen Detail-Zeilen
  *
  * Wirft nicht — gibt im Fehlerfall { ok: false, reason } zurück.
  */
-export async function syncKiCheckLead(
-  input: KiCheckLeadInput,
+export async function syncLeadToClose(
+  input: SyncLeadInput,
 ): Promise<CloseSyncResult> {
   const apiKey = process.env.CLOSE_API_KEY;
   if (!apiKey) return { ok: false, reason: "missing_close_key" };
 
-  const fullName = `${input.firstName} ${input.lastName}`.trim();
-  const leadquelleAdd = ["Webseite", "Lead Magnet"];
+  const personName =
+    input.fullName?.trim() ||
+    `${input.firstName || ""} ${input.lastName || ""}`.trim();
+  const leadName = input.company?.trim() || personName || input.email;
+  const contactName = personName || input.company?.trim() || input.email;
+
+  const leadquelleAdd = ["Webseite", ...SOURCE_EXTRA_LEADQUELLE[input.source]];
 
   try {
     const existing = await findLeadByEmail(apiKey, input.email);
@@ -133,12 +160,12 @@ export async function syncKiCheckLead(
     } else {
       // Neuen Lead anlegen
       const createBody = {
-        name: fullName,
+        name: leadName,
         status_id: STATUS_NICHT_KONTAKTIERT,
         [`custom.${CF_LEADQUELLE}`]: leadquelleAdd,
         contacts: [
           {
-            name: fullName,
+            name: contactName,
             emails: [{ email: input.email, type: "office" }],
             phones: input.phone
               ? [{ phone: input.phone, type: "office" }]
@@ -158,14 +185,11 @@ export async function syncKiCheckLead(
       created = true;
     }
 
-    // Notiz mit den KI-Check-Daten anhängen (immer, auch bei Update)
+    // Notiz anhängen (immer — auch bei bestehendem Lead = neuer Touchpoint)
     const note = [
-      `KI-Sichtbarkeitscheck eingegangen`,
-      `Score: ${input.score}/100 (${input.scoreLabel})`,
-      `Geprüfte URL: ${input.url}`,
-      input.city ? `Stadt: ${input.city}` : null,
-      input.goal ? `Hauptziel: ${input.goal}` : null,
-      `Telefon: ${input.phone}`,
+      `Neue Anfrage über: ${SOURCE_LABEL[input.source]}`,
+      ...(input.noteLines || []).filter(Boolean),
+      input.phone ? `Telefon: ${input.phone}` : null,
     ]
       .filter(Boolean)
       .join("\n");

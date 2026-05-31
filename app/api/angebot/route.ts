@@ -9,6 +9,7 @@ import {
   BUNDLE_DISCOUNT,
   type ResolvedSelection,
 } from "@/content/pricing";
+import { syncLeadToClose } from "@/lib/close";
 
 export const runtime = "nodejs";
 
@@ -262,6 +263,31 @@ export async function POST(req: NextRequest) {
       `,
     }),
   });
+
+  // Lead automatisch in Close CRM anlegen (gelabelt: Webseite). Gekapselt.
+  try {
+    const sync = await syncLeadToClose({
+      source: "angebot",
+      firstName,
+      lastName,
+      email,
+      phone,
+      noteLines: [
+        `Angebot konfiguriert: ${selections.length} Leistung(en)`,
+        ...totals.selected.map(
+          (r) =>
+            `· ${r.service.name} — ${describeSelection(r)} — ${
+              r.oneTimeSum > 0 ? formatEuro(r.oneTimeSum) : `${formatEuro(r.monthlySum)}/Mo`
+            }`,
+        ),
+        `Summe einmalig: ${formatEuro(totals.oneTime)}`,
+        totals.monthly > 0 ? `Summe monatlich: ${formatEuro(totals.monthly)}/Mo` : null,
+      ],
+    });
+    if (!sync.ok) console.warn("Close-Sync (Angebot) fehlgeschlagen:", sync.reason);
+  } catch (e) {
+    console.warn("Close-Sync (Angebot) Exception:", e);
+  }
 
   return NextResponse.json({ ok: true });
 }

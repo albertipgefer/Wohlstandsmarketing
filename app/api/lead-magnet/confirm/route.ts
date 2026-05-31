@@ -14,6 +14,7 @@
 export const runtime = "nodejs";
 
 import { verifyToken } from "@/lib/lead-magnet-token";
+import { syncLeadToClose } from "@/lib/close";
 
 const SITE = "https://wohlstandsmarketing.de";
 const PDF_PATH = "/lead-magnet/11-marketing-fehler-mittelstand.pdf";
@@ -111,6 +112,23 @@ export async function GET(req: Request) {
       `,
     }),
   });
+
+  // 3b) Lead automatisch in Close CRM anlegen (gelabelt: Webseite + Lead Magnet).
+  //     Erst hier — nach bestätigtem DOI. Gekapselt: blockiert nie den Redirect.
+  try {
+    const sync = await syncLeadToClose({
+      source: "lead-magnet",
+      firstName,
+      email,
+      noteLines: [
+        `Lead-Magnet-PDF angefordert (Double-Opt-In bestätigt)`,
+        `Newsletter-Opt-In: ${newsletter ? "ja" : "nein"}`,
+      ],
+    });
+    if (!sync.ok) console.warn("Close-Sync (Lead-Magnet) fehlgeschlagen:", sync.reason);
+  } catch (e) {
+    console.warn("Close-Sync (Lead-Magnet) Exception:", e);
+  }
 
   // 4) Redirect auf Danke-Seite
   const danke = new URL("/lead-magnet/danke", SITE);

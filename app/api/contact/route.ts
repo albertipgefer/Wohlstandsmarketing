@@ -10,6 +10,8 @@
  */
 export const runtime = "nodejs";
 
+import { syncLeadToClose } from "@/lib/close";
+
 export async function POST(req: Request) {
   const apiKey = process.env.RESEND_API_KEY;
   const fromEmail =
@@ -72,6 +74,21 @@ export async function POST(req: Request) {
       { ok: false, reason: "resend_error", detail: errText },
       { status: 500 }
     );
+  }
+
+  // Lead automatisch in Close CRM anlegen (gelabelt: Webseite). Gekapselt:
+  // ein Close-Fehler darf den Kontaktformular-Versand nie blockieren.
+  try {
+    const sync = await syncLeadToClose({
+      source: "kontakt",
+      fullName: name,
+      email,
+      company: company || undefined,
+      noteLines: [message ? `Nachricht:\n${message}` : null],
+    });
+    if (!sync.ok) console.warn("Close-Sync (Kontakt) fehlgeschlagen:", sync.reason);
+  } catch (e) {
+    console.warn("Close-Sync (Kontakt) Exception:", e);
   }
 
   return Response.json({ ok: true });

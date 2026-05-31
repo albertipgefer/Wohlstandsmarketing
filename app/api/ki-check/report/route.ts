@@ -5,7 +5,7 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import type { KiCheckResult, PillarResult } from "@/lib/ki-check/types";
-import { syncKiCheckLead } from "@/lib/close";
+import { syncLeadToClose } from "@/lib/close";
 
 export const runtime = "nodejs";
 
@@ -316,16 +316,18 @@ export async function POST(req: NextRequest) {
   // 3) Lead automatisch in Close CRM anlegen (gelabelt: Webseite + Lead Magnet).
   //    Gekapselt: Ein Close-Fehler darf den bereits versendeten Report nie blockieren.
   try {
-    const sync = await syncKiCheckLead({
+    const sync = await syncLeadToClose({
+      source: "ki-check",
       firstName,
       lastName,
       email,
       phone,
-      url: result.normalizedUrl,
-      score: result.score,
-      scoreLabel: result.scoreLabel,
-      city: result.answers.city,
-      goal: result.answers.goal,
+      noteLines: [
+        `Score: ${result.score}/100 (${result.scoreLabel})`,
+        `Geprüfte URL: ${result.normalizedUrl}`,
+        result.answers.city ? `Stadt: ${result.answers.city}` : null,
+        result.answers.goal ? `Hauptziel: ${result.answers.goal}` : null,
+      ],
     });
     if (!sync.ok) {
       console.warn("Close-Sync fehlgeschlagen:", sync.reason);

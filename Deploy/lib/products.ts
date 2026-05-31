@@ -5,7 +5,9 @@
  *   "Erhalte X, mit dem du Y" oder "Wie du Z" — psychologisch wirksam,
  *   beschreibend, mit klarem Nutzen-Verweis.
  *
- * `digistoreUrl` ist aktuell null — wird gefüllt, sobald CopeCart-Setup steht.
+ * `digistoreUrl`: die 5 Einzelprodukte sind mit ihrer CopeCart-Checkout-URL
+ * scharf geschaltet. Das Bundle bleibt null, bis CopeCart das Bundle manuell
+ * freigegeben hat (dann Checkout-URL eintragen → CTA wird automatisch aktiv).
  */
 
 export type Product = {
@@ -79,7 +81,7 @@ export const PRODUCTS: Product[] = [
         a: "Bei 5 € erübrigt sich das ehrlich gesagt. Wenn dir das PDF nichts bringt — schreib mir eine DM und ich überweise dir die 5 € zurück. Versprochen.",
       },
     ],
-    digistoreUrl: null,
+    digistoreUrl: "https://copecart.com/products/42bcd145/checkout",
   },
   {
     slug: "ki-webseite",
@@ -134,7 +136,7 @@ export const PRODUCTS: Product[] = [
         a: "Lebenslang. Der Workspace gehört dir nach dem Duplizieren komplett.",
       },
     ],
-    digistoreUrl: null,
+    digistoreUrl: "https://copecart.com/products/36cab8ec/checkout",
   },
   {
     slug: "3-testkunden",
@@ -191,7 +193,7 @@ export const PRODUCTS: Product[] = [
         a: "Lebenslang.",
       },
     ],
-    digistoreUrl: null,
+    digistoreUrl: "https://copecart.com/products/556c9048/checkout",
   },
   {
     slug: "1000-euro-kunde",
@@ -249,7 +251,7 @@ export const PRODUCTS: Product[] = [
         a: "Lebenslang.",
       },
     ],
-    digistoreUrl: null,
+    digistoreUrl: "https://copecart.com/products/72c5dbcd/checkout",
   },
   {
     slug: "onboarding-delivery",
@@ -306,7 +308,7 @@ export const PRODUCTS: Product[] = [
         a: "Lebenslang.",
       },
     ],
-    digistoreUrl: null,
+    digistoreUrl: "https://copecart.com/products/0a3d2219/checkout",
   },
 ];
 

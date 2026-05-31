@@ -75,13 +75,6 @@ const orgSchema = {
     addressLocality: "Bad Ems",
     addressCountry: "DE",
   },
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: "5.0",
-    reviewCount: "5",
-    bestRating: "5",
-    worstRating: "1",
-  },
   sameAs: [
     REVIEW_PROFILE_URLS.google,
     REVIEW_PROFILE_URLS.trustpilot,

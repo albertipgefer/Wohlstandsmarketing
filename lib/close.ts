@@ -21,6 +21,8 @@
  * ein Close-Ausfall nie den Mail-Versand an den Kunden blockiert.
  */
 
+import { notifyNewLead } from "@/lib/telegram";
+
 const CLOSE_BASE = "https://api.close.com/api/v1";
 
 // Custom Field "Leadquelle" (Mehrfachauswahl) — Kanal, u. a. "Webseite", "Lead Magnet"
@@ -219,6 +221,20 @@ export async function syncLeadToClose(
       method: "POST",
       body: JSON.stringify({ lead_id: leadId, note }),
     });
+
+    // Telegram-Sofort-Benachrichtigung aufs Handy (eigenes try/catch — nie blockierend)
+    try {
+      await notifyNewLead({
+        sourceLabel: SOURCE_LABEL[input.source],
+        name: personName || leadName,
+        email: input.email,
+        phone: input.phone,
+        detailLines: input.noteLines,
+        leadId,
+      });
+    } catch (e) {
+      console.warn("Telegram-Notify Exception:", e);
+    }
 
     return { ok: true, leadId, created };
   } catch (e) {

@@ -60,6 +60,17 @@ export const testimonials: Testimonial[] = [
     featured: true,
   },
   {
+    id: "niklas-schwate",
+    name: "Niklas Schwate",
+    rating: 5,
+    date: "2026-05-31",
+    short:
+      "Echtes Interesse durch Rückfragen und umfangreiche Antworten — sehr viel Mehrwert und Expertise erhalten. Man merkt: Albert weiß, wovon er spricht.",
+    full: "Echtes Interesse zeigt sich durch Rückfragen und umfangreiche Antworten. Genau das habe ich hier bekommen.\n\nIch habe sehr viel Mehrwert und Expertise for free erhalten, egal ob im Bereich Ads oder anderen Themen.\n\nMan erkennt direkt, dass Albert weiß wovon er spricht!\n\nDanke nochmal vielmals🙏",
+    source: "google",
+    featured: false,
+  },
+  {
     id: "robin-schaefer",
     name: "Robin Schäfer",
     rating: 5,

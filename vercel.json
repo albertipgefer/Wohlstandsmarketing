@@ -8,6 +8,10 @@
     {
       "path": "/api/cron/lead-magnet-drip",
       "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/weekly-briefing",
+      "schedule": "0 6 * * 1"
     }
   ],
   "redirects": [

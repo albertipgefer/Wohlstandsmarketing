@@ -32,15 +32,17 @@ export default function PostCard({
           featured ? "md:p-10" : ""
         }`}
       >
-        <div className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--text-subtle)]">
+        <div className="flex flex-col gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--text-subtle)]">
           {featured && (
-            <span className="rounded-full bg-[var(--gold-glow-soft)] px-2.5 py-1 text-[var(--gold-text)]">
+            <span className="w-fit rounded-full bg-[var(--gold-glow-soft)] px-2.5 py-1 text-[var(--gold-text)]">
               Beliebter Artikel
             </span>
           )}
-          <span>{meta.category}</span>
-          <span aria-hidden>·</span>
-          <span>{meta.readingTime}</span>
+          <div className="flex items-center gap-3">
+            <span>{meta.category}</span>
+            <span aria-hidden>·</span>
+            <span>{meta.readingTime}</span>
+          </div>
         </div>
 
         <h3

@@ -322,6 +322,7 @@ export async function POST(req: NextRequest) {
       lastName,
       email,
       phone,
+      kiScore: result.score, // steuert HOT-Einstufung (< 60 = großer Handlungsbedarf)
       noteLines: [
         `Score: ${result.score}/100 (${result.scoreLabel})`,
         `Geprüfte URL: ${result.normalizedUrl}`,

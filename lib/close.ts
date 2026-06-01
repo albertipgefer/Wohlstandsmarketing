@@ -35,6 +35,16 @@ const CF_WEBSITE_FORMULAR = "cf_SiThXrPoJTtQcagNHJgpYYLfede46t7lctVbsNaKR2y";
 // Lead-Status "Nicht kontaktiert" — Startpunkt für frische Inbound-Leads
 const STATUS_NICHT_KONTAKTIERT = "stat_LgnS6Nzg3QGf0ZdRs4LtZ0MkyQioALpOVCeLeX4T1fw";
 
+// HOT-Lead-Routing: Wem die automatische "Sofort anrufen"-Aufgabe zugewiesen wird
+// (Albert). Über ENV überschreibbar, falls der Account/Owner wechselt.
+const ASSIGNEE_USER_ID =
+  process.env.CLOSE_ASSIGNEE_USER_ID ||
+  "user_f7ko2arPVfVjWzWjr8hgfaX1cj4nguGNdwaEDd83h6f";
+
+// ki-check-Score darunter = großer Handlungsbedarf = HOT (starker Verkaufsaufhänger).
+// Der Report selbst stuft < 60 als "deutliche Lücken" bis "kritisch" ein.
+const HOT_KICHECK_MAX_SCORE = 60;
+
 export type LeadSource = "ki-check" | "kontakt" | "angebot" | "lead-magnet";
 
 const SOURCE_LABEL: Record<LeadSource, string> = {
@@ -121,6 +131,8 @@ export type SyncLeadInput = {
   company?: string;
   /** Zeilen für die Notiz (Header mit Quelle wird automatisch vorangestellt). */
   noteLines?: (string | null | undefined)[];
+  /** Nur bei source "ki-check": Gesamtscore 0–100 — steuert die HOT-Einstufung. */
+  kiScore?: number;
 };
 
 export type CloseSyncResult = {
@@ -131,11 +143,56 @@ export type CloseSyncResult = {
 };
 
 /**
+ * HOT-Lead = hohe Kaufabsicht, soll sofort angerufen werden:
+ *   - Angebots-Konfigurator genutzt (konkret konfiguriertes Angebot)
+ *   - ki-check mit großem Handlungsbedarf (Score < HOT_KICHECK_MAX_SCORE)
+ * Kontakt- und Lead-Magnet-Leads sind nie HOT (geringere/indirekte Absicht).
+ */
+function isHotLead(input: SyncLeadInput): boolean {
+  if (input.source === "angebot") return true;
+  if (
+    input.source === "ki-check" &&
+    typeof input.kiScore === "number" &&
+    input.kiScore < HOT_KICHECK_MAX_SCORE
+  ) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Legt eine "Sofort anrufen"-Aufgabe für Albert an (Fälligkeit: morgen = 24 h).
+ * Gekapselt vom Aufrufer — ein Fehler hier darf den Lead-Sync nie sprengen.
+ */
+async function createCallTask(
+  apiKey: string,
+  leadId: string,
+  sourceLabel: string,
+): Promise<void> {
+  // Fälligkeit morgen im Format YYYY-MM-DD (Close-Task-Due-Date ist datumsbasiert)
+  const due = new Date(Date.now() + 24 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10);
+  await closeFetch(apiKey, `/task/`, {
+    method: "POST",
+    body: JSON.stringify({
+      _type: "lead",
+      lead_id: leadId,
+      assigned_to: ASSIGNEE_USER_ID,
+      text: `🔥 HOT-Lead — sofort anrufen (${sourceLabel})`,
+      date: due,
+      is_complete: false,
+    }),
+  });
+}
+
+/**
  * Legt einen Website-Lead in Close an (oder aktualisiert einen bestehenden):
  *   - Dedup per E-Mail
  *   - Leadquelle = "Webseite" (+ ggf. weg-spezifische Werte), additiv
  *   - Kontakt mit Name + Mail + Telefon
  *   - Notiz mit Quelle + übergebenen Detail-Zeilen
+ *   - HOT-Leads: zusätzlich "Sofort anrufen"-Aufgabe (24 h) für Albert
  *
  * Wirft nicht — gibt im Fehlerfall { ok: false, reason } zurück.
  */
@@ -222,6 +279,17 @@ export async function syncLeadToClose(
       body: JSON.stringify({ lead_id: leadId, note }),
     });
 
+    // HOT-Lead-Routing: bei hoher Kaufabsicht eine "Sofort anrufen"-Aufgabe (24 h)
+    // für Albert anlegen (eigenes try/catch — nie blockierend).
+    const hot = isHotLead(input);
+    if (hot) {
+      try {
+        await createCallTask(apiKey, leadId, SOURCE_LABEL[input.source]);
+      } catch (e) {
+        console.warn("Close-Task (HOT) Exception:", e);
+      }
+    }
+
     // Telegram-Sofort-Benachrichtigung aufs Handy (eigenes try/catch — nie blockierend)
     try {
       await notifyNewLead({
@@ -231,6 +299,7 @@ export async function syncLeadToClose(
         phone: input.phone,
         detailLines: input.noteLines,
         leadId,
+        hot,
       });
     } catch (e) {
       console.warn("Telegram-Notify Exception:", e);

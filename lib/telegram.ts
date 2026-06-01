@@ -29,6 +29,9 @@ export type LeadNotification = {
   detailLines?: (string | null | undefined)[];
   /** Close-Lead-ID für den Deep-Link */
   leadId?: string;
+  /** HOT = hohe Kaufabsicht (Angebots-Konfigurator oder ki-check mit großem
+   *  Handlungsbedarf) → auffälliger Alert + Hinweis auf die Rückruf-Aufgabe. */
+  hot?: boolean;
 };
 
 /** Schickt eine formatierte Lead-Benachrichtigung an den hinterlegten Telegram-Chat. */
@@ -37,14 +40,22 @@ export async function notifyNewLead(n: LeadNotification): Promise<void> {
   const chatId = process.env.TELEGRAM_CHAT_ID;
   if (!token || !chatId) return; // Feature optional — nicht konfiguriert = still überspringen
 
+  const header = n.hot
+    ? `🔥🔥 <b>HOT-LEAD — sofort anrufen</b>\n${escapeHtml(n.sourceLabel)}`
+    : `🟢 <b>Neuer Lead</b> — ${escapeHtml(n.sourceLabel)}`;
+
   const lines = [
-    `🔥 <b>Neuer Lead</b> — ${escapeHtml(n.sourceLabel)}`,
+    header,
     ``,
     `👤 ${escapeHtml(n.name)}`,
     `✉️ ${escapeHtml(n.email)}`,
     n.phone ? `📞 ${escapeHtml(n.phone)}` : null,
     ...(n.detailLines || []).filter(Boolean).map((l) => escapeHtml(String(l))),
   ];
+
+  if (n.hot) {
+    lines.push(``, `⏰ Rückruf-Aufgabe (24 h) wurde in Close angelegt.`);
+  }
 
   if (n.leadId) {
     lines.push(``, `➡️ <a href="https://app.close.com/lead/${n.leadId}/">In Close öffnen</a>`);

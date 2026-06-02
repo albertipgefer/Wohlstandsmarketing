@@ -10,11 +10,13 @@
  * Optional — fehlt eine ENV, gibt getGscSummary() null zurück (Briefing zeigt
  * den SEO-Block dann einfach nicht). Wirft nie nach außen.
  *
- * Required ENV (alle drei):
- *   GSC_CLIENT_EMAIL   — client_email des Service-Accounts
- *   GSC_PRIVATE_KEY    — private_key des Service-Accounts (\n maskiert erlaubt)
- *   GSC_SITE_URL       — Property, z. B. "sc-domain:wohlstandsmarketing.de"
- *                        oder "https://wohlstandsmarketing.de/"
+ * Auth — zwei Wege, OAuth hat Vorrang (Service-Account als Fallback):
+ *   A) OAuth-Refresh-Token (User-Consent, umgeht den GSC-"email not found"-Bug):
+ *      GSC_OAUTH_CLIENT_ID, GSC_OAUTH_CLIENT_SECRET, GSC_OAUTH_REFRESH_TOKEN
+ *   B) Service-Account (JWT): GSC_CLIENT_EMAIL, GSC_PRIVATE_KEY
+ *   Immer nötig:
+ *      GSC_SITE_URL       — Property, z. B. "sc-domain:wohlstandsmarketing.de"
+ *                           oder "https://wohlstandsmarketing.de/"
  */
 import { createSign } from "crypto";
 
@@ -66,6 +68,27 @@ async function getAccessToken(
   return data.access_token ?? null;
 }
 
+/** Access-Token über den OAuth-Refresh-Token (User-Consent-Flow) holen. */
+async function getAccessTokenOAuth(
+  clientId: string,
+  clientSecret: string,
+  refreshToken: string,
+): Promise<string | null> {
+  const r = await fetch(TOKEN_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      client_id: clientId,
+      client_secret: clientSecret,
+      refresh_token: refreshToken,
+      grant_type: "refresh_token",
+    }),
+  });
+  if (!r.ok) return null;
+  const data = (await r.json()) as { access_token?: string };
+  return data.access_token ?? null;
+}
+
 function isoDaysAgo(days: number): string {
   return new Date(Date.now() - days * 86_400_000).toISOString().slice(0, 10);
 }
@@ -104,16 +127,25 @@ export type GscSummary = {
 
 /** Liefert die GSC-Kennzahlen der letzten 7 Tage — oder null, wenn nicht konfiguriert/Fehler. */
 export async function getGscSummary(): Promise<GscSummary | null> {
+  const site = process.env.GSC_SITE_URL;
+  if (!site) return null;
+
+  // Auth: OAuth-Refresh-Token bevorzugt, Service-Account als Fallback.
+  const oauthId = process.env.GSC_OAUTH_CLIENT_ID;
+  const oauthSecret = process.env.GSC_OAUTH_CLIENT_SECRET;
+  const oauthRefresh = process.env.GSC_OAUTH_REFRESH_TOKEN;
   const clientEmail = process.env.GSC_CLIENT_EMAIL;
   const rawKey = process.env.GSC_PRIVATE_KEY;
-  const site = process.env.GSC_SITE_URL;
-  if (!clientEmail || !rawKey || !site) return null;
 
-  // Vercel speichert mehrzeilige Keys oft mit \n als Literal — zurückübersetzen.
-  const privateKey = rawKey.replace(/\\n/g, "\n");
+  const hasOAuth = Boolean(oauthId && oauthSecret && oauthRefresh);
+  const hasSA = Boolean(clientEmail && rawKey);
+  if (!hasOAuth && !hasSA) return null;
 
   try {
-    const token = await getAccessToken(clientEmail, privateKey);
+    const token = hasOAuth
+      ? await getAccessTokenOAuth(oauthId!, oauthSecret!, oauthRefresh!)
+      // Vercel speichert mehrzeilige Keys oft mit \n als Literal — zurückübersetzen.
+      : await getAccessToken(clientEmail!, rawKey!.replace(/\\n/g, "\n"));
     if (!token) return null;
 
     const end = isoDaysAgo(0);

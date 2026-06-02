@@ -19,7 +19,18 @@ Nächster organischer Hebel nach dem pSEO-Fundament: Content-Cluster-Ausbau. 5 n
 
 **Strategie:** Ratgeber-Content für die kaufkräftigsten Branchen ohne Blog-Artikel — jeder verlinkt im Body auf die passende `/branchen`-Landingpage (erste Body-internen Links überhaupt; `.prose-blog a` stylt sie automatisch). Baut Topical Authority + Funnel ins Branchen-Cluster, das gerade mit den Stadt-Seiten verbunden wurde. Echter Content, kein Doorway-Risiko.
 
-**Offen / Folge-Chargen:** Weitere Branchen ohne Artikel (Hotel, Fitnessstudio, Photovoltaik, Versicherung/Finanz, Architekt/Ingenieur, Physiotherapie, Logistik, …). Bei Bedarf nächste 5er-Charge.
+**Charge 2 (7 weitere, gleicher Bauplan — jetzt 76 Blog-Artikel, 332 Routen):**
+6. `webseite-fuer-hotels` (Conversion) → `/branchen/hotel`
+7. `webseite-fuer-fitnessstudios` (Lokales SEO) → `/branchen/fitnessstudio`
+8. `webseite-fuer-photovoltaik` (Conversion) → `/branchen/photovoltaik`
+9. `webseite-versicherung-finanzberater` (Webdesign) → `/branchen/versicherungsmakler` + `/branchen/finanzberater`
+10. `webseite-architekt-ingenieur` (Webdesign) → `/branchen/architekt` + `/branchen/ingenieurbuero`
+11. `webseite-fuer-physiotherapie` (Lokales SEO) → `/branchen/physiotherapie`
+12. `webseite-fuer-logistik` (KI-Sichtbarkeit) → `/branchen/logistik`
+
+(Verwandte Paare Versicherung/Finanz und Architekt/Ingenieur bewusst je 1 Artikel — sonst Thin-Content zwischen zu ähnlichen Branchen.)
+
+**Offen / Folge-Chargen:** Noch ohne Artikel u.a. Autohaus, Pflegedienst, Friseur, SHK, Elektro, GaLaBau, Tierarzt, Kosmetik, Gebäudereinigung, Bestatter, Maler. Bei Bedarf nächste Charge.
 
 ---
 

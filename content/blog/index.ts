@@ -84,6 +84,15 @@ import * as immobilienmaklerWeb from "./posts/webseite-fuer-immobilienmakler";
 import * as maschinenbauB2b from "./posts/b2b-webseite-maschinenbau";
 import * as zaehnaerzteWeb from "./posts/webseite-fuer-zahnaerzte";
 
+// ── Branchen-Ratgeber Charge 2 (7 — Juni 2026) ────────────────────────
+import * as hotelsWeb from "./posts/webseite-fuer-hotels";
+import * as fitnessWeb from "./posts/webseite-fuer-fitnessstudios";
+import * as photovoltaikWeb from "./posts/webseite-fuer-photovoltaik";
+import * as versFinanzWeb from "./posts/webseite-versicherung-finanzberater";
+import * as architektIngWeb from "./posts/webseite-architekt-ingenieur";
+import * as physioWeb from "./posts/webseite-fuer-physiotherapie";
+import * as logistikWeb from "./posts/webseite-fuer-logistik";
+
 const modules: Array<{
   meta: Post["meta"];
   default: () => React.ReactNode;
@@ -165,6 +174,14 @@ const modules: Array<{
   { meta: { ...immobilienmaklerWeb.meta, popularity: 82 }, default: immobilienmaklerWeb.default },
   { meta: { ...maschinenbauB2b.meta, popularity: 80 }, default: maschinenbauB2b.default },
   { meta: { ...zaehnaerzteWeb.meta, popularity: 83 }, default: zaehnaerzteWeb.default },
+  // Branchen-Ratgeber Charge 2 (7 — Juni 2026)
+  { meta: { ...hotelsWeb.meta, popularity: 81 }, default: hotelsWeb.default },
+  { meta: { ...fitnessWeb.meta, popularity: 79 }, default: fitnessWeb.default },
+  { meta: { ...photovoltaikWeb.meta, popularity: 84 }, default: photovoltaikWeb.default },
+  { meta: { ...versFinanzWeb.meta, popularity: 80 }, default: versFinanzWeb.default },
+  { meta: { ...architektIngWeb.meta, popularity: 78 }, default: architektIngWeb.default },
+  { meta: { ...physioWeb.meta, popularity: 80 }, default: physioWeb.default },
+  { meta: { ...logistikWeb.meta, popularity: 79 }, default: logistikWeb.default },
 ];
 
 /** Posts sorted by date descending (newest first) */

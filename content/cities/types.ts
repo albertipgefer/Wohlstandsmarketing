@@ -17,4 +17,12 @@ export type City = {
   description: string;
   /** Personal hook — 1-2 sentences for the local intro */
   intro: string;
+  /** 3-4 sentences on the real local economy — unique per city, kills thin/duplicate content */
+  economy: string;
+  /** 4-6 districts / surrounding towns for local long-tail relevance */
+  districts: string[];
+  /** 4-6 industry slugs (from content/industries) — links the city + industry silos */
+  relatedIndustries: string[];
+  /** Exactly 2 city-specific FAQ pairs — substantively unique, not just name-swapped */
+  localFaqs: { q: string; a: string }[];
 };

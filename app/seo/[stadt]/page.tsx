@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { cities, getCity, getNeighbourCities } from "@/content/cities";
+import { getIndustry } from "@/content/industries";
 import { getSeoPosts } from "@/content/blog";
 import BlogNav from "@/components/blog/BlogNav";
 import InlineCTA from "@/components/blog/InlineCTA";
@@ -55,6 +56,9 @@ export default async function SeoCityPage({
   if (!city) notFound();
   const neighbours = getNeighbourCities(city.slug);
   const seoPosts = getSeoPosts(4);
+  const relatedIndustries = city.relatedIndustries
+    .map(getIndustry)
+    .filter((i): i is NonNullable<typeof i> => Boolean(i));
 
   /* ── JSON-LD Schemas ────────────────────────────────────────────────── */
   const localBusinessSchema = {
@@ -132,6 +136,7 @@ export default async function SeoCityPage({
   };
 
   const faqs = [
+    ...city.localFaqs,
     {
       q: `Was ist der Unterschied zwischen lokalem SEO in ${city.name} und überregionalem SEO?`,
       a: `Lokales SEO in ${city.name} zielt auf Suchanfragen mit Ortsbezug — „Steuerberater Koblenz", „Handwerker in der Nähe". Hebel: Google Business Profile, lokale Backlinks aus ${city.region}, NAP-Konsistenz (Name, Adresse, Telefon), lokale Schema. Überregionales SEO zielt auf informationelle / generische Keywords. Für Mittelstand mit lokalem Kundenstamm ist lokal fast immer der härtere Hebel.`,
@@ -350,6 +355,7 @@ export default async function SeoCityPage({
           </h2>
           <div className="mt-6 max-w-3xl text-base leading-relaxed text-[var(--text-muted)] sm:text-lg">
             <p>{city.intro}</p>
+            <p className="mt-4">{city.economy}</p>
             <p className="mt-4">
               Genau deshalb ist SEO in {city.name} ein echter Hebel: Wer in einer Region
               {city.landmarks.length > 0 && (
@@ -367,6 +373,12 @@ export default async function SeoCityPage({
               <strong className="text-[var(--text)]"> kaufstarke Anfragen</strong> —
               ohne Werbebudget jeden Monat neu in den Markt blasen zu müssen.
             </p>
+            {city.districts.length > 0 && (
+              <p className="mt-4">
+                Lokale Rankings bauen wir für {city.name} und das Umland auf — darunter{" "}
+                {city.districts.join(", ")}.
+              </p>
+            )}
           </div>
         </div>
       </section>
@@ -402,6 +414,26 @@ export default async function SeoCityPage({
               </div>
             ))}
           </div>
+
+          {relatedIndustries.length > 0 && (
+            <div className="mt-12">
+              <p className="text-[14px] font-medium text-[var(--text-muted)] sm:text-[15px]">
+                Branchen-Seiten mit SEO-Schwerpunkt für {city.name}:
+              </p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                {relatedIndustries.map((ind) => (
+                  <Link
+                    key={ind.slug}
+                    href={`/branchen/${ind.slug}`}
+                    className="group inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-5 py-2.5 text-[14px] font-medium text-[var(--text)] transition hover:border-transparent hover:bg-[var(--text)] hover:text-white"
+                  >
+                    SEO für {ind.shortName}
+                    <span className="transition-transform group-hover:translate-x-0.5">→</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 

@@ -77,6 +77,13 @@ import * as metaAdsAgentur from "./posts/meta-ads-agentur-mittelstand";
 import * as googleAdsAgentur from "./posts/google-ads-agentur-mittelstand";
 import * as aeoAgentur from "./posts/aeo-agentur-deutschland";
 
+// ── Branchen-Ratgeber (5 — Juni 2026) ─────────────────────────────────
+import * as steuerberaterWeb from "./posts/webseite-fuer-steuerberater";
+import * as arztpraxenMarketing from "./posts/praxismarketing-arztpraxen";
+import * as immobilienmaklerWeb from "./posts/webseite-fuer-immobilienmakler";
+import * as maschinenbauB2b from "./posts/b2b-webseite-maschinenbau";
+import * as zaehnaerzteWeb from "./posts/webseite-fuer-zahnaerzte";
+
 const modules: Array<{
   meta: Post["meta"];
   default: () => React.ReactNode;
@@ -152,6 +159,12 @@ const modules: Array<{
   { meta: { ...metaAdsAgentur.meta, popularity: 84 }, default: metaAdsAgentur.default },
   { meta: { ...googleAdsAgentur.meta, popularity: 82 }, default: googleAdsAgentur.default },
   { meta: { ...aeoAgentur.meta, popularity: 88 }, default: aeoAgentur.default },
+  // Branchen-Ratgeber (5 — Juni 2026)
+  { meta: { ...steuerberaterWeb.meta, popularity: 86 }, default: steuerberaterWeb.default },
+  { meta: { ...arztpraxenMarketing.meta, popularity: 84 }, default: arztpraxenMarketing.default },
+  { meta: { ...immobilienmaklerWeb.meta, popularity: 82 }, default: immobilienmaklerWeb.default },
+  { meta: { ...maschinenbauB2b.meta, popularity: 80 }, default: maschinenbauB2b.default },
+  { meta: { ...zaehnaerzteWeb.meta, popularity: 83 }, default: zaehnaerzteWeb.default },
 ];
 
 /** Posts sorted by date descending (newest first) */

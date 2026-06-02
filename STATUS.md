@@ -7,6 +7,22 @@
 
 ---
 
+## 🆕 Updates 02.06.2026 (Blog-Offensive — 5 Branchen-Ratgeber)
+
+Nächster organischer Hebel nach dem pSEO-Fundament: Content-Cluster-Ausbau. 5 neue transaktionale Branchen-Ratgeber-Artikel (jetzt 69 Blog-Artikel, **325 Routen**):
+
+1. `webseite-fuer-steuerberater` (Webdesign) → verlinkt `/branchen/steuerberater`
+2. `praxismarketing-arztpraxen` (Lokales SEO) → `/branchen/arztpraxen` + `/branchen/zahnaerzte`
+3. `webseite-fuer-immobilienmakler` (Webdesign) → `/branchen/immobilienmakler`
+4. `b2b-webseite-maschinenbau` (KI-Sichtbarkeit) → `/branchen/maschinenbau`
+5. `webseite-fuer-zahnaerzte` (Lokales SEO) → `/branchen/zahnaerzte` + `/branchen/arztpraxen`
+
+**Strategie:** Ratgeber-Content für die kaufkräftigsten Branchen ohne Blog-Artikel — jeder verlinkt im Body auf die passende `/branchen`-Landingpage (erste Body-internen Links überhaupt; `.prose-blog a` stylt sie automatisch). Baut Topical Authority + Funnel ins Branchen-Cluster, das gerade mit den Stadt-Seiten verbunden wurde. Echter Content, kein Doorway-Risiko.
+
+**Offen / Folge-Chargen:** Weitere Branchen ohne Artikel (Hotel, Fitnessstudio, Photovoltaik, Versicherung/Finanz, Architekt/Ingenieur, Physiotherapie, Logistik, …). Bei Bedarf nächste 5er-Charge.
+
+---
+
 ## 🆕 Updates 02.06.2026 (pSEO-Fundament — Stadt-Seiten Duplikat-Risiko gekillt)
 
 Die 39 Stadt-Seiten (13 Städte × 3 Vertikalen `/webdesign`, `/seo`, `/ki-sichtbarkeit`) waren innerhalb jeder Vertikale ~90 % identisch (nur `intro` + landmarks + industries einzigartig) → Doorway-/Thin-Content-Risiko. Behoben, **ohne eine einzige neue Route** (weiterhin 320):

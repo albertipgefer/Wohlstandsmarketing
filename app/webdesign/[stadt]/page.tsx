@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { cities, getCity, getNeighbourCities } from "@/content/cities";
+import { getIndustry } from "@/content/industries";
 import { getCityRelevantPosts } from "@/content/blog";
 import BlogNav from "@/components/blog/BlogNav";
 import InlineCTA from "@/components/blog/InlineCTA";
@@ -56,6 +57,9 @@ export default async function CityPage({
   if (!city) notFound();
   const neighbours = getNeighbourCities(city.slug);
   const cityRelevantPosts = getCityRelevantPosts(3);
+  const relatedIndustries = city.relatedIndustries
+    .map(getIndustry)
+    .filter((i): i is NonNullable<typeof i> => Boolean(i));
 
   /* ── JSON-LD Schemas ────────────────────────────────────────────────── */
   const localBusinessSchema = {
@@ -173,6 +177,7 @@ export default async function CityPage({
     ],
   };
   const faqs = [
+    ...city.localFaqs,
     {
       q: `Bist du auch in ${city.name} aktiv?`,
       a: `Ja. Wir betreuen Kunden in ${city.name} und ${city.region} regelmäßig — Termine vor Ort oder remote, je nach Projekt.`,
@@ -389,6 +394,7 @@ export default async function CityPage({
           </h2>
           <div className="mt-6 max-w-3xl text-base leading-relaxed text-[var(--text-muted)] sm:text-lg">
             <p>{city.intro}</p>
+            <p className="mt-4">{city.economy}</p>
             {city.landmarks.length > 0 && (
               <p className="mt-4">
                 Bekannt für{" "}
@@ -399,6 +405,12 @@ export default async function CityPage({
                   </span>
                 ))}{" "}
                 Wir kennen die Region und die typischen Anforderungen des lokalen Mittelstands.
+              </p>
+            )}
+            {city.districts.length > 0 && (
+              <p className="mt-4">
+                Aktiv für Unternehmen in {city.name} und Umgebung — darunter{" "}
+                {city.districts.join(", ")}.
               </p>
             )}
           </div>
@@ -435,6 +447,26 @@ export default async function CityPage({
               </div>
             ))}
           </div>
+
+          {relatedIndustries.length > 0 && (
+            <div className="mt-12">
+              <p className="text-[14px] font-medium text-[var(--text-muted)] sm:text-[15px]">
+                Eigene Branchen-Seiten mit Webdesign-Schwerpunkt für {city.name}:
+              </p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                {relatedIndustries.map((ind) => (
+                  <Link
+                    key={ind.slug}
+                    href={`/branchen/${ind.slug}`}
+                    className="group inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-5 py-2.5 text-[14px] font-medium text-[var(--text)] transition hover:border-transparent hover:bg-[var(--text)] hover:text-white"
+                  >
+                    Webseite für {ind.shortName}
+                    <span className="transition-transform group-hover:translate-x-0.5">→</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 

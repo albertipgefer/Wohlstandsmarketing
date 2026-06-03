@@ -1,9 +1,72 @@
 # Wohlstandsmarketing Relaunch — Projekt-Stand
 
-> **Stand: 30. Mai 2026**
+> **Stand: 2. Juni 2026**
 > **Status: ✅ LIVE auf https://wohlstandsmarketing.de**
 > Projektpfad: `~/.claude/Wohlstandsmarketing/Webseite/relaunch-next/`
 > **Wichtig:** Service-Portfolio seit 28.05. ohne Meta-Ads/Google-Ads. Aktuelle Services: Unternehmenswebsite · Landingpage · Webseiten-Relaunch · KI-Sichtbarkeit (3/6/9/12 Mon. oder einmalig) · SEO-Optimierung (6/9/12 Mon. oder einmalig) · Webseiten-Wartung. Komplette Doku: `~/.claude/Wohlstandsmarketing/CLAUDE.md`.
+
+---
+
+## 🆕 Updates 02.06.2026 (Blog-Offensive — 5 Branchen-Ratgeber)
+
+Nächster organischer Hebel nach dem pSEO-Fundament: Content-Cluster-Ausbau. 5 neue transaktionale Branchen-Ratgeber-Artikel (jetzt 69 Blog-Artikel, **325 Routen**):
+
+1. `webseite-fuer-steuerberater` (Webdesign) → verlinkt `/branchen/steuerberater`
+2. `praxismarketing-arztpraxen` (Lokales SEO) → `/branchen/arztpraxen` + `/branchen/zahnaerzte`
+3. `webseite-fuer-immobilienmakler` (Webdesign) → `/branchen/immobilienmakler`
+4. `b2b-webseite-maschinenbau` (KI-Sichtbarkeit) → `/branchen/maschinenbau`
+5. `webseite-fuer-zahnaerzte` (Lokales SEO) → `/branchen/zahnaerzte` + `/branchen/arztpraxen`
+
+**Strategie:** Ratgeber-Content für die kaufkräftigsten Branchen ohne Blog-Artikel — jeder verlinkt im Body auf die passende `/branchen`-Landingpage (erste Body-internen Links überhaupt; `.prose-blog a` stylt sie automatisch). Baut Topical Authority + Funnel ins Branchen-Cluster, das gerade mit den Stadt-Seiten verbunden wurde. Echter Content, kein Doorway-Risiko.
+
+**Charge 2 (7 weitere, gleicher Bauplan — jetzt 76 Blog-Artikel, 332 Routen):**
+6. `webseite-fuer-hotels` (Conversion) → `/branchen/hotel`
+7. `webseite-fuer-fitnessstudios` (Lokales SEO) → `/branchen/fitnessstudio`
+8. `webseite-fuer-photovoltaik` (Conversion) → `/branchen/photovoltaik`
+9. `webseite-versicherung-finanzberater` (Webdesign) → `/branchen/versicherungsmakler` + `/branchen/finanzberater`
+10. `webseite-architekt-ingenieur` (Webdesign) → `/branchen/architekt` + `/branchen/ingenieurbuero`
+11. `webseite-fuer-physiotherapie` (Lokales SEO) → `/branchen/physiotherapie`
+12. `webseite-fuer-logistik` (KI-Sichtbarkeit) → `/branchen/logistik`
+
+(Verwandte Paare Versicherung/Finanz und Architekt/Ingenieur bewusst je 1 Artikel — sonst Thin-Content zwischen zu ähnlichen Branchen.)
+
+**Offen / Folge-Chargen:** Noch ohne Artikel u.a. Autohaus, Pflegedienst, Friseur, SHK, Elektro, GaLaBau, Tierarzt, Kosmetik, Gebäudereinigung, Bestatter, Maler. Bei Bedarf nächste Charge.
+
+---
+
+## 🆕 Updates 02.06.2026 (pSEO-Fundament — Stadt-Seiten Duplikat-Risiko gekillt)
+
+Die 39 Stadt-Seiten (13 Städte × 3 Vertikalen `/webdesign`, `/seo`, `/ki-sichtbarkeit`) waren innerhalb jeder Vertikale ~90 % identisch (nur `intro` + landmarks + industries einzigartig) → Doorway-/Thin-Content-Risiko. Behoben, **ohne eine einzige neue Route** (weiterhin 320):
+
+1. **`City`-Typ erweitert** (`content/cities/types.ts`) um 4 required Felder: `economy` (3–4 Sätze echte lokale Wirtschaftsstruktur), `districts` (Stadtteile/Umland), `relatedIndustries` (Branchen-Slugs), `localFaqs` (2 stadt-spezifische FAQ).
+2. **Alle 13 Städte einzigartig befüllt** (`content/cities/index.ts`) — faktischer Content (z.B. Mainz/BioNTech, Koblenz/Mittelrhein, Montabaur/1&1+IONOS, Köln/Veedel, Aachen/RWTH).
+3. **Templates angereichert** (alle 3 `[stadt]/page.tsx`): `economy`+`districts`-Absätze in „Lokaler Bezug"; `localFaqs` vor die generischen FAQs (greift auch im FAQPage-JSON-LD); je Vertikale eigenes Framing.
+4. **Silos verbunden:** Stadt-Seiten verlinken jetzt zu passenden `/branchen/[slug]`-Seiten (Branchen-Pills in der „Für wen wir bauen"-Sektion) — erste interne Verlinkung zwischen Stadt- und Branchen-Cluster.
+
+Build grün (✓ 320 Routen), Content-Differenz stichprobenartig in den gebauten Seiten verifiziert. **Bewusst NICHT:** kein Stadt×Branche-Kreuzprodukt / keine neuen Routen — kommt als Phase 2, nachdem GSC die Indexierungs-Wirkung dieses Fundament-Fixes zeigt.
+
+**Wiedervorlage:** GSC-Indexierung der Stadt-Seiten in ~2–3 Wochen prüfen (steigt der Anteil indexierter Stadt-Routen?).
+
+---
+
+## 🆕 Updates 31.05.2026 (Lead-Automatisierung — Close CRM + Telegram)
+
+Komplette Auto-Pipeline für Website-Leads gebaut, getestet, live (PR #14 + #15):
+
+1. **Alle 4 Formulare → Close CRM automatisch** (`lib/close.ts` · `syncLeadToClose`)
+   - Eingehängt in `/api/contact`, `/api/angebot`, `/api/ki-check/report`, `/api/lead-magnet/confirm` (Lead-Magnet erst NACH Double-Opt-In).
+   - Dedup per E-Mail (kein Dublette), Leadquelle „Webseite" (+ „Lead Magnet" bei KI-Check/Lead-Magnet), Status „Nicht kontaktiert", Notiz mit Quelle + Details. Firmenname als Lead-Name, wenn vorhanden.
+   - Alle Aufrufe in try/catch — Close-Ausfall blockiert nie Mail-Versand an den Kunden.
+
+2. **Custom Field „Website-Formular"** (mehrwertig, `cf_SiThXrPoJTtQcagNHJgpYYLfede46t7lctVbsNaKR2y`) je Weg gesetzt → saubere per-Formular-Filterung.
+
+3. **6 Smart Views in Close:** 🌐 Alle Website-Leads · 🔥 Web-Leads – zu kontaktieren · 💼 Angebots-Konfigurator · 🤖 KI-Sichtbarkeitscheck · ✉️ Kontaktformular · 📄 Lead-Magnet (PDF). (Alte „KI-Check-Leads (Leadmagnet Website)" gelöscht.)
+
+4. **Telegram-Sofort-Push bei neuem Lead** (`lib/telegram.ts` · `notifyNewLead`) — formatierte Nachricht (Name, Quelle, Mail, Tel, Details, Close-Deep-Link) an Albert aufs Handy. Bot `@ClaudeOrganicLeadBot`.
+
+**ENV auf Vercel (Prod+Preview):** `CLOSE_API_KEY`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`. Key-Backup lokal in `~/.config/close/credentials`.
+
+**Offen / nächste Hebel (priorisiert):** (a) Speed-to-Lead: Auto-Task in Close bei neuem Lead; (b) TidyCal→Close-Webhook (Buchungs-Loop schließen, braucht TidyCal-Config); (c) KI-Check-Score als Zahlenfeld + „Score < 50"-View; (d) UTM-Tracking; (e) Auto-Google-Review nach Go-Live. **E-Mail-Nurture-Sequenz braucht erst separates Opt-In/DOI** (KI-Check-Consent erlaubt nur Bericht + Anruf).
 
 ---
 

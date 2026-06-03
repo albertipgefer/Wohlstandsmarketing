@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { cities, getCity, getNeighbourCities } from "@/content/cities";
+import { getIndustry } from "@/content/industries";
 import { getKiVisibilityPosts } from "@/content/blog";
 import BlogNav from "@/components/blog/BlogNav";
 import InlineCTA from "@/components/blog/InlineCTA";
@@ -57,6 +58,9 @@ export default async function KiSichtbarkeitCityPage({
   if (!city) notFound();
   const neighbours = getNeighbourCities(city.slug);
   const kiPosts = getKiVisibilityPosts(4);
+  const relatedIndustries = city.relatedIndustries
+    .map(getIndustry)
+    .filter((i): i is NonNullable<typeof i> => Boolean(i));
 
   /* ── JSON-LD Schemas ────────────────────────────────────────────────── */
   const localBusinessSchema = {
@@ -134,6 +138,7 @@ export default async function KiSichtbarkeitCityPage({
   };
 
   const faqs = [
+    ...city.localFaqs,
     {
       q: `Was bedeutet KI-Sichtbarkeit für ein Unternehmen aus ${city.name}?`,
       a: `KI-Sichtbarkeit heißt, dass dich ChatGPT, Perplexity, Claude und Google AI Overviews aktiv als Anbieter in ${city.name} empfehlen — wenn jemand fragt „Welche Agentur / welchen Anbieter würdest du in ${city.region} empfehlen?". Das passiert nicht zufällig: KIs nutzen schema.org-Markup, lokale Entitäten, Author-Profile und zitierfähigen Content, um regionale Anbieter zu nennen. Wir bauen dieses Empfehlungs-Profil systematisch auf.`,
@@ -352,6 +357,7 @@ export default async function KiSichtbarkeitCityPage({
           </h2>
           <div className="mt-6 max-w-3xl text-base leading-relaxed text-[var(--text-muted)] sm:text-lg">
             <p>{city.intro}</p>
+            <p className="mt-4">{city.economy}</p>
             <p className="mt-4">
               Genau das macht KI-Sichtbarkeit in {city.name} wichtig: Wer in einer Region mit{" "}
               {city.landmarks.length > 0 && (
@@ -370,6 +376,12 @@ export default async function KiSichtbarkeitCityPage({
               <strong className="text-[var(--text)]"> erste KI-Empfehlung</strong> auftaucht, gewinnt
               Anfragen, bevor die Konkurrenz überhaupt geklickt wird.
             </p>
+            {city.districts.length > 0 && (
+              <p className="mt-4">
+                Wir verankern dein KI-Empfehlungsprofil für {city.name} und Umgebung — darunter{" "}
+                {city.districts.join(", ")}.
+              </p>
+            )}
           </div>
         </div>
       </section>
@@ -405,6 +417,26 @@ export default async function KiSichtbarkeitCityPage({
               </div>
             ))}
           </div>
+
+          {relatedIndustries.length > 0 && (
+            <div className="mt-12">
+              <p className="text-[14px] font-medium text-[var(--text-muted)] sm:text-[15px]">
+                Branchen-Seiten mit KI-Sichtbarkeits-Schwerpunkt für {city.name}:
+              </p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                {relatedIndustries.map((ind) => (
+                  <Link
+                    key={ind.slug}
+                    href={`/branchen/${ind.slug}`}
+                    className="group inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-5 py-2.5 text-[14px] font-medium text-[var(--text)] transition hover:border-transparent hover:bg-[var(--text)] hover:text-white"
+                  >
+                    KI-Sichtbarkeit für {ind.shortName}
+                    <span className="transition-transform group-hover:translate-x-0.5">→</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 

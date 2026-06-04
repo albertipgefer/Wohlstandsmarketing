@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   PARTNER_PRODUCTS,
@@ -40,8 +41,21 @@ export default function PartnerClient() {
         initial="hidden"
         animate="visible"
         variants={stagger}
-        className="relative mx-auto w-full max-w-[640px] px-5 pt-10 pb-4 sm:pt-14"
+        className="relative mx-auto w-full max-w-[640px] px-5 pt-8 pb-4 sm:pt-12"
       >
+        {/* Back-Link */}
+        <motion.div variants={fadeUp}>
+          <Link
+            href="/"
+            className="mb-6 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-[1.5px] text-[var(--text-subtle)] transition hover:text-[#1663de]"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <path d="M19 12H5m7-7l-7 7 7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            zurück zur Übersicht
+          </Link>
+        </motion.div>
+
         <motion.div
           variants={fadeUp}
           className="mx-auto mb-6 h-24 w-24 overflow-hidden rounded-full border-2 border-[#1663de] shadow-[0_0_0_3px_rgba(22,99,222,0.08),0_20px_40px_-20px_rgba(22,99,222,0.4)]"
@@ -144,34 +158,36 @@ export default function PartnerClient() {
             <motion.div
               key={p.id}
               variants={fadeUp}
-              className="group flex items-center gap-4 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#1663de]/40 hover:shadow-[0_14px_30px_-14px_rgba(22,99,222,0.3)] sm:p-5"
+              className="flex flex-col gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 transition-all duration-300 hover:border-[#1663de]/40 hover:shadow-[0_14px_30px_-14px_rgba(22,99,222,0.3)] sm:flex-row sm:items-center sm:gap-4 sm:p-5"
             >
-              <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface-2)] sm:h-[72px] sm:w-[72px]">
-                <Image
-                  src={p.image}
-                  alt={p.name}
-                  fill
-                  sizes="72px"
-                  className="object-contain p-1"
-                />
-              </div>
-              <div className="flex min-w-0 flex-1 flex-col gap-1">
-                <h3 className="text-[15px] font-bold leading-snug text-[var(--text)]">{p.name}</h3>
-                <p className="text-[13px] leading-relaxed text-[var(--text-muted)]">{p.tagline}</p>
-                <div className="mt-1 flex flex-wrap items-center gap-2 text-[12px]">
-                  <span className="rounded-md bg-[var(--surface-2)] px-2 py-0.5 font-semibold text-[var(--text-muted)]">
-                    {euro(p.price)} €
-                  </span>
-                  <span className="rounded-md bg-[#1663de]/10 px-2 py-0.5 font-bold text-[#1663de]">
-                    {COMMISSION_PCT} % → ≈ {euro(earningPerSale(p.price))} € / Verkauf
-                  </span>
+              <div className="flex min-w-0 items-center gap-3 sm:flex-1 sm:gap-4">
+                <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface-2)] sm:h-[72px] sm:w-[72px]">
+                  <Image
+                    src={p.image}
+                    alt={p.name}
+                    fill
+                    sizes="72px"
+                    className="object-contain p-1"
+                  />
+                </div>
+                <div className="flex min-w-0 flex-1 flex-col gap-1">
+                  <h3 className="text-[14px] font-bold leading-snug text-[var(--text)] sm:text-[15px]">{p.name}</h3>
+                  <p className="text-[12.5px] leading-relaxed text-[var(--text-muted)] sm:text-[13px]">{p.tagline}</p>
+                  <div className="mt-1 flex flex-wrap items-center gap-1.5 text-[11.5px] sm:gap-2 sm:text-[12px]">
+                    <span className="rounded-md bg-[var(--surface-2)] px-2 py-0.5 font-semibold text-[var(--text-muted)]">
+                      {euro(p.price)} €
+                    </span>
+                    <span className="rounded-md bg-[#1663de]/10 px-2 py-0.5 font-bold text-[#1663de]">
+                      {COMMISSION_PCT} % → ≈ {euro(earningPerSale(p.price))} € / Verkauf
+                    </span>
+                  </div>
                 </div>
               </div>
               <a
                 href={p.invite}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-[var(--surface-2)] px-4 text-[13px] font-bold text-[var(--text)] transition-all duration-300 group-hover:bg-[#1663de] group-hover:text-white"
+                className="flex h-11 w-full shrink-0 items-center justify-center gap-1.5 rounded-xl border border-[#1663de]/20 bg-[#1663de]/[0.06] px-5 text-[13px] font-bold text-[#1663de] transition-all duration-300 hover:bg-[#1663de] hover:text-white sm:h-10 sm:w-auto"
               >
                 Bewerben
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>

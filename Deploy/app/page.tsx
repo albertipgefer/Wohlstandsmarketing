@@ -150,6 +150,29 @@ export default function BioPage() {
             </a>
           </motion.div>
 
+          {/* Kachel 4 — Partnerprogramm */}
+          <motion.div variants={fadeUp}>
+            <Link
+              href="/partner"
+              className="group flex items-center gap-4 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#1663de]/40 hover:shadow-[0_14px_30px_-14px_rgba(22,99,222,0.3)] sm:p-5"
+            >
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#059669] to-[#10b981] text-white shadow-[0_8px_20px_-8px_rgba(5,150,105,0.6)]">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+              <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <h3 className="text-[15px] font-bold leading-snug text-[var(--text)] sm:text-base">
+                  Werde Partner & verdiene 50 % Provision
+                </h3>
+                <p className="text-[13px] leading-relaxed text-[var(--text-muted)]">
+                  Empfiehl meine Produkte und verdiene an jedem Verkauf mit
+                </p>
+              </div>
+              <Arrow />
+            </Link>
+          </motion.div>
+
         </div>
       </motion.section>
 

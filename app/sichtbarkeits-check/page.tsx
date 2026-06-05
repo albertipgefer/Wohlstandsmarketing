@@ -3,6 +3,7 @@ import BlogNav from "@/components/blog/BlogNav";
 import Footer from "@/components/sections/Footer";
 import KiCheckTool from "@/components/ki-check/KiCheckTool";
 import ReviewBadges from "@/components/ReviewBadges";
+import OutreachTracker from "@/components/ki-check/OutreachTracker";
 
 export const metadata: Metadata = {
   title: "KI-Sichtbarkeits-Check — kostenlos prüfen",
@@ -21,6 +22,7 @@ export const metadata: Metadata = {
 export default function SichtbarkeitsCheckPage() {
   return (
     <main className="bg-[var(--bg)] text-[var(--text)]">
+      <OutreachTracker />
       <BlogNav />
 
       {/* HERO */}

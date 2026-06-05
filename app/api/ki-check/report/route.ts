@@ -6,6 +6,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import type { KiCheckResult, PillarResult } from "@/lib/ki-check/types";
 import { syncLeadToClose } from "@/lib/close";
+import { getProspectByEmail, updateProspect, logEvent } from "@/lib/outreach-db";
+import { sendOutreachTelegram } from "@/lib/telegram";
 
 export const runtime = "nodejs";
 
@@ -335,6 +337,31 @@ export async function POST(req: NextRequest) {
     }
   } catch (e) {
     console.warn("Close-Sync Exception:", e);
+  }
+
+  // 4) Cold-Outreach: Stammt der Lead aus einer laufenden Outreach-Sequenz?
+  //    → Sequenz sofort stoppen (status=converted), Event loggen, Albert pingen.
+  //    Gekapselt — darf den Report nie blockieren.
+  try {
+    const prospect = await getProspectByEmail(email);
+    if (prospect && prospect.status !== "converted") {
+      await updateProspect(prospect.id, { status: "converted" });
+      await logEvent(prospect.id, "conversion", {
+        sequence_step: prospect.sequence_step,
+        ab_arm: prospect.ab_arm,
+        meta: { score: result.score },
+      });
+      await sendOutreachTelegram(
+        `🔥 <b>Cold-Outreach-Lead hat den KI-Check gemacht!</b>\n\n` +
+          `👤 ${escapeHtml(firstName)} ${escapeHtml(lastName)}\n` +
+          `✉️ ${escapeHtml(email)}\n` +
+          `📞 ${escapeHtml(phone)}\n` +
+          `🏙️ ${escapeHtml(prospect.city || "—")} · Score ${result.score}/100\n\n` +
+          `➡️ Sequenz gestoppt — jetzt anrufen.`,
+      );
+    }
+  } catch (e) {
+    console.warn("Outreach-Conversion Exception:", e);
   }
 
   return NextResponse.json({ ok: true });

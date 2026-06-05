@@ -25,9 +25,12 @@ function escapeHtml(s: string): string {
  * Gibt true zurück, wenn gesendet wurde; false wenn nicht konfiguriert/Fehler.
  * Wirft nie nach außen.
  */
-export async function sendTelegramMessage(html: string): Promise<boolean> {
-  const token = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
+export async function sendTelegramMessage(
+  html: string,
+  opts?: { token?: string; chatId?: string },
+): Promise<boolean> {
+  const token = opts?.token || process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = opts?.chatId || process.env.TELEGRAM_CHAT_ID;
   if (!token || !chatId) return false;
   try {
     const r = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
@@ -44,6 +47,19 @@ export async function sendTelegramMessage(html: string): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+/**
+ * Cold-Outreach-Benachrichtigung an den DEDIZIERTEN Outreach-Bot.
+ * Nutzt OUTREACH_TELEGRAM_BOT_TOKEN / OUTREACH_TELEGRAM_CHAT_ID; fällt auf den
+ * Standard-Bot (TELEGRAM_*) zurück, falls die Outreach-Variablen nicht gesetzt sind.
+ * So landen Outreach-Alerts/Reports getrennt von den normalen Lead-Alerts.
+ */
+export async function sendOutreachTelegram(html: string): Promise<boolean> {
+  return sendTelegramMessage(html, {
+    token: process.env.OUTREACH_TELEGRAM_BOT_TOKEN,
+    chatId: process.env.OUTREACH_TELEGRAM_CHAT_ID,
+  });
 }
 
 export type LeadNotification = {

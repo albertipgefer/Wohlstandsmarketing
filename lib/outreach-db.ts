@@ -127,7 +127,9 @@ export async function getDueProspects(limit = 50): Promise<Prospect[]> {
     const q =
       `status=in.(active,paused)&hook_status=eq.ready` +
       `&or=(next_send_at.is.null,next_send_at.lte.${nowIso})` +
-      `&order=next_send_at.asc.nullsfirst&limit=${limit}`;
+      // nullslast: fällige Follow-ups (next_send_at gesetzt, älteste zuerst) vor
+      // neuen Erstkontakten (null) → Sequenz bleibt pünktlich, Rest-Cap = neue Leads.
+      `&order=next_send_at.asc.nullslast&limit=${limit}`;
     const r = await fetch(`${URL}/rest/v1/outreach_prospects?${q}`, { headers: headers() });
     if (!r.ok) return [];
     return (await r.json()) as Prospect[];

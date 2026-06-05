@@ -31,7 +31,7 @@ export type ProspectStatus =
 
 export type EventType =
   | "sent" | "delivered" | "bounce" | "click"
-  | "reply" | "conversion" | "unsubscribe";
+  | "reply" | "conversion" | "unsubscribe" | "open";
 
 export type Prospect = {
   id: string;
@@ -62,6 +62,41 @@ export async function getProspectByEmail(email: string): Promise<Prospect | null
     return rows[0] || null;
   } catch {
     return null;
+  }
+}
+
+/** Prospect per ID holen (für Open-Pixel: ab_arm + sequence_step). Null bei Fehler. */
+export async function getProspectById(id: string): Promise<Prospect | null> {
+  if (!ready()) return null;
+  try {
+    const r = await fetch(`${URL}/rest/v1/outreach_prospects?id=eq.${id}&limit=1`, { headers: headers() });
+    if (!r.ok) return null;
+    const rows = (await r.json()) as Prospect[];
+    return rows[0] || null;
+  } catch {
+    return null;
+  }
+}
+
+/** Eindeutige Öffnungen (distinct Prospect) gesamt + je A/B-Arm — für Dashboard/Report.
+ *  Zählt pro Prospect nur einmal (mehrfaches Pixel-Laden bläht nicht auf). */
+export async function openStats(): Promise<{ unique: number; byArm: Record<string, number> }> {
+  if (!ready()) return { unique: 0, byArm: { link: 0, reply: 0 } };
+  try {
+    const r = await fetch(`${URL}/rest/v1/outreach_events?select=prospect_id,ab_arm&type=eq.open`, { headers: headers() });
+    if (!r.ok) return { unique: 0, byArm: { link: 0, reply: 0 } };
+    const rows = (await r.json()) as { prospect_id: string | null; ab_arm: string | null }[];
+    const seen = new Set<string>();
+    const armSeen: Record<string, Set<string>> = { link: new Set(), reply: new Set() };
+    for (const row of rows) {
+      if (!row.prospect_id) continue;
+      seen.add(row.prospect_id);
+      const arm = row.ab_arm === "reply" ? "reply" : row.ab_arm === "link" ? "link" : null;
+      if (arm) armSeen[arm].add(row.prospect_id);
+    }
+    return { unique: seen.size, byArm: { link: armSeen.link.size, reply: armSeen.reply.size } };
+  } catch {
+    return { unique: 0, byArm: { link: 0, reply: 0 } };
   }
 }
 

@@ -3,10 +3,8 @@ import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import CookieBanner from "@/components/CookieBanner";
 import ClarityAnalytics from "@/components/ClarityAnalytics";
-import StickyKiCheckCTA from "@/components/StickyKiCheckCTA";
 import WhatsAppButton from "@/components/WhatsAppButton";
-import KiCheckTeaserPopup from "@/components/KiCheckTeaserPopup";
-import ExitIntentPopup from "@/components/ExitIntentPopup";
+import MarketingOverlays from "@/components/MarketingOverlays";
 import { REVIEW_PROFILE_URLS } from "@/content/testimonials";
 
 const inter = Inter({
@@ -170,10 +168,8 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
         />
         {children}
-        <StickyKiCheckCTA />
         <WhatsAppButton />
-        <KiCheckTeaserPopup />
-        <ExitIntentPopup />
+        <MarketingOverlays />
         <CookieBanner />
         <ClarityAnalytics />
       </body>

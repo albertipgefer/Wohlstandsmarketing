@@ -2,7 +2,7 @@
  * GET /api/cron/outreach-send — Versand-Engine der Cold-Outreach-Sequenz.
  *
  * Läuft als Vercel-Cron (mehrmals werktags). Pro Lauf:
- *   - Sende-Fenster prüfen (Di–Do, 9–11 & 14–16), außer ?force=1
+ *   - Sende-Fenster prüfen (Mo–Sa, 9–11 & 14–16), außer ?force=1
  *   - Kill-Switch: Bounce-Quote > 5 % → pausieren + Telegram
  *   - fällige Prospects holen, Postfach mit freier Tages-Kapazität rotieren
  *   - Mail 1 aus DB (individuell) bzw. Follow-up-Template (als Re:) senden
@@ -43,7 +43,7 @@ function loadInboxes(): Inbox[] {
   }
 }
 
-/** Sende-Fenster Di–Do, 9–11 & 14–16 Uhr in echter Europe/Berlin-Zeit
+/** Sende-Fenster Mo–Sa (NIE Sonntag), 9–11 & 14–16 Uhr in echter Europe/Berlin-Zeit
  *  (unabhängig von der UTC-Serverzeit auf Vercel). */
 function inWindow(d = new Date()): boolean {
   const parts = Object.fromEntries(
@@ -51,9 +51,9 @@ function inWindow(d = new Date()): boolean {
       timeZone: "Europe/Berlin", weekday: "short", hour: "2-digit", hour12: false,
     }).formatToParts(d).map((p) => [p.type, p.value]),
   );
-  const isMidWeek = ["Tue", "Wed", "Thu"].includes(parts.weekday);
+  const isSendDay = parts.weekday !== "Sun"; // Mo–Sa, sonntags nie
   const h = parseInt(parts.hour, 10);
-  return isMidWeek && ((h >= 9 && h < 11) || (h >= 14 && h < 16));
+  return isSendDay && ((h >= 9 && h < 11) || (h >= 14 && h < 16));
 }
 
 function unsubUrl(email: string): string {

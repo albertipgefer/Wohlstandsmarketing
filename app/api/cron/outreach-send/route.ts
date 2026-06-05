@@ -26,8 +26,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const SITE = "https://wohlstandsmarketing.de";
-// Abstände in Tagen NACH Versand von Schritt s (0→1, 1→2, …). Sequenz 0/3/10/24/52.
-const NEXT_OFFSET_DAYS = [3, 7, 14, 28];
+// Abstände in Tagen NACH Versand von Schritt s (0→1, 1→2, …). Ergibt Mail-Tage 0/3/7/14/28.
+const NEXT_OFFSET_DAYS = [3, 4, 7, 14];
 const KILL_BOUNCE_RATE = 0.1; // harter Stopp = Alarm-Schwelle (10 %)
 
 type Inbox = {
@@ -56,18 +56,49 @@ function inWindow(d = new Date()): boolean {
   return isMidWeek && ((h >= 9 && h < 11) || (h >= 14 && h < 16));
 }
 
-function footer(email: string): string {
+function unsubUrl(email: string): string {
   let unsub = `${SITE}/api/outreach/unsubscribe`;
   try {
     unsub += `?token=${createUnsubToken(email)}`;
   } catch {
     /* Secret fehlt → Link ohne Token (Feinschliff) */
   }
+  return unsub;
+}
+
+function escapeHtml(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+/** Plain-Text-Variante: CTA-Marker → nackte URL; dezenter Impressum-Footer + Abmelden. */
+function renderText(bodyCore: string, checkLink: string, email: string): string {
+  const body = bodyCore
+    .replace(/\{\{cta:[^}]*\}\}/g, checkLink)
+    .replace(/\{\{check_link\}\}/g, checkLink);
   return (
-    `\n\n--\nAlbert Ipgefer · Wohlstandsmarketing\n` +
-    `+49 176 227 87 559 · wohlstandsmarketing.de\n\n` +
-    `Wohlstandsmarketing · Vor der Loos 4e · 56130 Bad Ems · Deutschland\n` +
-    `Kein Interesse? Hier abmelden: ${unsub}`
+    body +
+    `\n\n—\nWohlstandsmarketing · Albert Ipgefer · Vor der Loos 4e · 56130 Bad Ems · +49 176 227 87 559\n` +
+    `Abmelden: ${unsubUrl(email)}`
+  );
+}
+
+/** Schlankes HTML in Plain-Text-Optik: ein verlinktes Wort (CTA) + dezenter grauer Footer (Impressum + Abmelden). */
+function renderHtml(bodyCore: string, checkLink: string, email: string): string {
+  const hl = checkLink.replace(/&/g, "&amp;");
+  const esc = escapeHtml(bodyCore)
+    .replace(/\{\{cta:([^}]*)\}\}/g, (_m, label) => `<a href="${hl}" style="color:#2563eb;">${label}</a>`)
+    .replace(/\{\{check_link\}\}/g, `<a href="${hl}" style="color:#2563eb;">hier nachsehen</a>`);
+  const paras = esc
+    .split(/\n\n+/)
+    .map((p) => `<p style="margin:0 0 14px;">${p.replace(/\n/g, "<br>")}</p>`)
+    .join("");
+  const footer =
+    `<p style="margin:26px 0 0;font-size:11px;line-height:1.5;color:#9aa3b2;">` +
+    `Wohlstandsmarketing · Albert Ipgefer · Vor der Loos 4e · 56130 Bad Ems · +49&nbsp;176&nbsp;227&nbsp;87&nbsp;559<br>` +
+    `<a href="${unsubUrl(email).replace(/&/g, "&amp;")}" style="color:#9aa3b2;text-decoration:underline;">Abmelden</a></p>`;
+  return (
+    `<div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:#222;max-width:560px;">` +
+    paras + footer + `</div>`
   );
 }
 
@@ -75,15 +106,14 @@ function greeting(p: Prospect): string {
   return p.salutation ? `Hallo ${p.salutation}` : `Guten Tag`;
 }
 
-/** Follow-up-Texte (Schritt 1–4 = Mail 2–5), Link-CTA für beide Arme ab Follow-up. */
-function followupBody(p: Prospect, step: number, checkLink: string): string {
+/** Follow-up-Texte (Schritt 1–4 = Mail 2–5), Stil v2. CTA als {{cta:Label}}-Marker. */
+function followupBody(p: Prospect, step: number): string {
   const g = greeting(p);
-  const stadt = p.city || "Ihrer Region";
   const t: Record<number, string> = {
-    1: `${g},\n\nkurzer Nachtrag zu meiner ChatGPT-Frage: Die drei Makler, die statt Ihnen genannt wurden, sind nicht größer als Sie. Sie sind für die KI nur besser „lesbar".\n\nWas Sie davon trennt, sehen Sie hier: ${checkLink}`,
-    2: `${g},\n\ndas Überraschende: Es liegt nicht an Ihrer Bekanntheit. Ich kenne Makler mit Top-Ruf, die ChatGPT trotzdem komplett übergeht — weil ihre Seite für KI nicht lesbar ist.\n\nOb das bei Ihnen auch so ist, klärt der Check in 3 Minuten: ${checkLink}`,
-    3: `${g},\n\nstellen Sie sich denselben Test in zwölf Monaten vor — dann fragen die meisten Eigentümer so nach ihrem Makler. Wer bis dahin sichtbar ist, gewinnt die Anfragen fast ohne Wettbewerb.\n\nWo Sie heute stehen: ${checkLink}`,
-    4: `${g},\n\nich lasse die Sache mit dem ChatGPT-Test jetzt ruhen — letzte Mail dazu, versprochen.\n\nFalls es Sie doch interessiert, wer in ${stadt} genannt wird und wo Sie stehen: ${checkLink}\n\nIhnen weiterhin gute Abschlüsse.`,
+    1: `${g},\n\nkurz zum Nachklang meiner ChatGPT-Frage.\n\nDie drei, die genannt wurden, sind nicht größer als Sie. Nicht besser. Nur für die KI besser lesbar.\n\nDas ist der ganze Unterschied — und er lässt sich ändern.\n\nWo Sie heute stehen: {{cta:in 3 Minuten sehen}}`,
+    2: `${g},\n\nstellen Sie sich vor, ein Eigentümer mit einem Objekt für 800.000 € tippt heute Abend in ChatGPT: „Wer verkauft mein Haus?"\n\nDrei Namen. Ein Anruf. Ein Auftrag.\n\nDie Frage ist nur, ob Ihrer dabei ist.\n\nIn 3 Minuten wissen Sie es: {{cta:jetzt prüfen}}`,
+    3: `${g},\n\ndas wird nicht weniger. In zwölf Monaten fragt so der Großteil der Eigentümer nach seinem Makler.\n\nWer dann sichtbar ist, nimmt die Anfragen fast ohne Wettbewerb mit.\n\nDer Vorsprung entsteht jetzt — oder er entsteht für jemand anderen.\n\nIhr Stand heute: {{cta:hier sehen}}`,
+    4: `${g},\n\nich lasse die Sache mit ChatGPT jetzt ruhen — das ist meine letzte Mail dazu.\n\nFalls es Sie doch interessiert, wer statt Ihnen empfohlen wird und woran es liegt: {{cta:ein letzter Blick}}\n\nAnsonsten weiterhin gute Abschlüsse — und kein böses Blut.`,
   };
   return (t[step] || t[1]) + `\n\nBeste Grüße\nAlbert Ipgefer · Wohlstandsmarketing`;
 }
@@ -144,9 +174,10 @@ export async function GET(req: NextRequest) {
       ? p.mail1_subject || "Ihre Sichtbarkeit bei ChatGPT"
       : `Re: ${p.mail1_subject || "Ihre Sichtbarkeit bei ChatGPT"}`;
     const bodyCore = step === 0
-      ? (p.mail1_body || "").replace("{{check_link}}", checkLink)
-      : followupBody(p, step, checkLink);
-    const text = bodyCore + footer(p.email);
+      ? (p.mail1_body || "")
+      : followupBody(p, step);
+    const text = renderText(bodyCore, checkLink, p.email);
+    const html = renderHtml(bodyCore, checkLink, p.email);
 
     if (dryrun) {
       results.push({ email: p.email, step, inbox: chosen.user, sent: false });
@@ -160,6 +191,7 @@ export async function GET(req: NextRequest) {
         to: p.email,
         subject,
         text,
+        html,
         ...(step > 0 && p.thread_message_id
           ? { inReplyTo: p.thread_message_id, references: p.thread_message_id }
           : {}),

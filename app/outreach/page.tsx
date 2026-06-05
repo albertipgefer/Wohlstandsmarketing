@@ -1,9 +1,9 @@
 /**
  * /outreach — geschütztes KPI-Dashboard für die Cold-Outreach-Engine.
  * Zugriff: ?pw=<OUTREACH_DASHBOARD_PASSWORD>. Liest live aus Supabase.
- * Bewusst keine Open-Rate (zustellungs-schonendes Tracking).
+ * Öffnungen via Pixel (absolut ungenau wg. Auto-Bildladen — v. a. für A/B-Vergleich).
  */
-import { eventCounts, statusCounts } from "@/lib/outreach-db";
+import { eventCounts, statusCounts, openStats } from "@/lib/outreach-db";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -39,6 +39,7 @@ export default async function OutreachDashboard({
 
   const { byType, byArm } = await eventCounts();
   const status = await statusCounts();
+  const opens = await openStats();
   const sent = byType.sent || 0;
   const bounce = byType.bounce || 0;
   const delivered = Math.max(0, sent - bounce);
@@ -51,11 +52,13 @@ export default async function OutreachDashboard({
   const armRow = (arm: "link" | "reply") => {
     const a = byArm[arm] || {};
     const s = a.sent || 0;
+    const opensArm = opens.byArm[arm] || 0;
     const qualified = (a.reply || 0) + (a.conversion || 0);
     return (
       <tr key={arm}>
         <td style={td}>{arm === "link" ? "Direkter Link" : "Reply-CTA"}</td>
         <td style={td}>{s}</td>
+        <td style={{ ...td, fontWeight: 700 }}>{pct(opensArm, s)}</td>
         <td style={td}>{a.click || 0}</td>
         <td style={td}>{a.reply || 0}</td>
         <td style={td}>{a.conversion || 0}</td>
@@ -68,12 +71,13 @@ export default async function OutreachDashboard({
     <>
       <h1 style={{ fontSize: 26, fontWeight: 800, margin: "0 0 4px" }}>Cold-Outreach — Dashboard</h1>
       <p style={{ fontSize: 14, color: "#737373", margin: "0 0 28px" }}>
-        {totalProspects} Prospects · live aus Supabase · zustellungs-schonendes Tracking (keine Open-Rate)
+        {totalProspects} Prospects · live aus Supabase · Öffnungen via Pixel (absolut ungenau wg. Auto-Bildladen — v. a. für A/B-Betreffvergleich)
       </p>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: 14, marginBottom: 14 }}>
         <Card label="Versendet" value={String(sent)} />
         <Card label="Zugestellt" value={String(delivered)} sub={`Bounce ${pct(bounce, sent)}`} />
+        <Card label="Öffnungen" value={String(opens.unique)} sub={`${pct(opens.unique, delivered)} (≈, Richtwert)`} />
         <Card label="Klicks" value={String(click)} sub={`${pct(click, delivered)} der Zustellungen`} />
         <Card label="Antworten" value={String(reply)} sub={`${pct(reply, delivered)} Reply-Rate`} />
         <Card label="KI-Checks" value={String(conv)} sub={`${pct(conv, delivered)} Conversion`} />
@@ -83,7 +87,7 @@ export default async function OutreachDashboard({
       <h2 style={{ fontSize: 18, fontWeight: 700, margin: "28px 0 12px" }}>A/B — qualifizierte Reaktion (Reply + Conversion)</h2>
       <table style={{ width: "100%", borderCollapse: "collapse", background: "#fff", border: "1px solid #ececec", borderRadius: 14, overflow: "hidden" }}>
         <thead><tr style={{ background: "#f5f5f5" }}>
-          {["Arm", "Versendet", "Klicks", "Antworten", "KI-Checks", "Quote"].map((h) => (
+          {["Arm", "Versendet", "Öffnungsrate", "Klicks", "Antworten", "KI-Checks", "Quote"].map((h) => (
             <th key={h} style={{ ...td, fontWeight: 700, fontSize: 12, textTransform: "uppercase", color: "#737373" }}>{h}</th>
           ))}
         </tr></thead>

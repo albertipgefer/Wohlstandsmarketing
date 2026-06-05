@@ -82,8 +82,9 @@ function renderText(bodyCore: string, checkLink: string, email: string): string 
   );
 }
 
-/** Schlankes HTML in Plain-Text-Optik: ein verlinktes Wort (CTA) + dezenter grauer Footer (Impressum + Abmelden). */
-function renderHtml(bodyCore: string, checkLink: string, email: string): string {
+/** Schlankes HTML in Plain-Text-Optik: ein verlinktes Wort (CTA) + dezenter grauer Footer
+ *  (Impressum + Abmelden) + unsichtbarer Open-Tracking-Pixel. */
+function renderHtml(bodyCore: string, checkLink: string, email: string, pid: string): string {
   const hl = checkLink.replace(/&/g, "&amp;");
   const esc = escapeHtml(bodyCore)
     .replace(/\{\{cta:([^}]*)\}\}/g, (_m, label) => `<a href="${hl}" style="color:#2563eb;">${label}</a>`)
@@ -96,9 +97,10 @@ function renderHtml(bodyCore: string, checkLink: string, email: string): string 
     `<p style="margin:26px 0 0;font-size:11px;line-height:1.5;color:#9aa3b2;">` +
     `Wohlstandsmarketing · Albert Ipgefer · Vor der Loos 4e · 56130 Bad Ems · +49&nbsp;176&nbsp;227&nbsp;87&nbsp;559<br>` +
     `<a href="${unsubUrl(email).replace(/&/g, "&amp;")}" style="color:#9aa3b2;text-decoration:underline;">Abmelden</a></p>`;
+  const pixel = `<img src="${SITE}/api/outreach/pixel?pid=${pid}" width="1" height="1" alt="" style="display:block;width:1px;height:1px;border:0;opacity:0;">`;
   return (
     `<div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:#222;max-width:560px;">` +
-    paras + footer + `</div>`
+    paras + footer + pixel + `</div>`
   );
 }
 
@@ -177,7 +179,7 @@ export async function GET(req: NextRequest) {
       ? (p.mail1_body || "")
       : followupBody(p, step);
     const text = renderText(bodyCore, checkLink, p.email);
-    const html = renderHtml(bodyCore, checkLink, p.email);
+    const html = renderHtml(bodyCore, checkLink, p.email, p.id);
 
     if (dryrun) {
       results.push({ email: p.email, step, inbox: chosen.user, sent: false });

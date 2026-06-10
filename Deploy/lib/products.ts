@@ -6,8 +6,8 @@
  *   beschreibend, mit klarem Nutzen-Verweis.
  *
  * `digistoreUrl`: die 5 Einzelprodukte sind mit ihrer CopeCart-Checkout-URL
- * scharf geschaltet. Das Bundle bleibt null, bis CopeCart das Bundle manuell
- * freigegeben hat (dann Checkout-URL eintragen → CTA wird automatisch aktiv).
+ * scharf geschaltet. Das Bundle zeigt auf den CopeCart-Shop (shops/4f959ab0,
+ * Bundle ganz oben), da es als Einzelprodukt nicht verkaufbar war.
  */
 
 export type Product = {
@@ -477,5 +477,5 @@ export const BUNDLE: Bundle = {
       a: "Beide Termine kannst du jederzeit zusätzlich buchen — die sind nicht im Paket enthalten. Aber: ehrlich gesagt, wenn du das Paket durcharbeitest, brauchst du das 49-€-Strategiegespräch wahrscheinlich nicht. Das kostenlose Skalierungs-Gespräch macht erst Sinn, wenn du Phase 4 + 5 abgeschlossen hast und konkret skalieren willst.",
     },
   ],
-  digistoreUrl: null,
+  digistoreUrl: "https://copecart.com/shops/4f959ab0",
 };

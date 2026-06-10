@@ -400,6 +400,38 @@ export default function BetriebssystemPage() {
         </div>
       </motion.section>
 
+      {/* ───── CROSS-SELL: Komplettpaket / Die ganze Treppe ───── */}
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-50px" }}
+        variants={fadeUp}
+        className="mx-auto w-full max-w-[820px] px-5 pb-14"
+      >
+        <Link
+          href="/komplettpaket"
+          className="group flex flex-col gap-4 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 transition hover:border-[#1663de]/40 hover:bg-[var(--surface-2)] sm:flex-row sm:items-center sm:justify-between sm:p-6"
+        >
+          <div>
+            <div className="text-[11px] font-bold uppercase tracking-[2px] text-[#1663de]">
+              Übrigens
+            </div>
+            <h3 className="mt-1.5 text-lg font-extrabold tracking-tight text-[var(--text)] sm:text-xl">
+              Du willst nicht nur die Tools, sondern den ganzen Weg?
+            </h3>
+            <p className="mt-1.5 max-w-[520px] text-[14px] leading-relaxed text-[var(--text-muted)] sm:text-[15px]">
+              Im Komplettpaket bekommst du den kompletten Fahrplan von 0 bis zum ersten Retainer-Kunden — alle 5 Phasen in einem Paket.
+            </p>
+          </div>
+          <span className="inline-flex shrink-0 items-center gap-2 self-start whitespace-nowrap rounded-full border border-[var(--border)] bg-[var(--bg)] px-5 py-2.5 text-[13px] font-semibold text-[var(--text)] transition group-hover:border-[#1663de] group-hover:text-[#1663de] sm:self-auto">
+            Komplettpaket ansehen
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden>
+              <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+        </Link>
+      </motion.section>
+
       {/* ───── FOOTER ───── */}
       <footer className="mx-auto w-full max-w-[820px] border-t border-[var(--border)] px-5 py-6 text-center text-xs text-[var(--text-subtle)]">
         <p className="mb-1">

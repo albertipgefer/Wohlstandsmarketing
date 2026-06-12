@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
 import { isLoggedIn } from "@/lib/angebot/auth";
 import { listAngebote } from "@/lib/angebot/db";
 import { listRechnungen } from "@/lib/finanzen/db";
+import { listAusgaben, ausgabenJahr } from "@/lib/finanzen/ausgaben";
 import { computeKpis } from "@/lib/finanzen/forecast";
 import { eur, deDate } from "@/lib/angebot/format";
 import FinanzShell from "@/components/finanzen/FinanzShell";
@@ -26,9 +27,15 @@ export default async function FinanzUebersicht() {
   if (!(await isLoggedIn())) redirect("/angebot/login");
 
   const now = new Date();
-  const [angebote, rechnungen] = await Promise.all([listAngebote(), listRechnungen()]);
+  const [angebote, rechnungen, ausgaben] = await Promise.all([
+    listAngebote(),
+    listRechnungen(),
+    listAusgaben(),
+  ]);
   const k = computeKpis(angebote, rechnungen, now);
   const jahr = now.getFullYear();
+  const aus = ausgabenJahr(ausgaben, jahr);
+  const gewinn = k.umsatzJahrNetto - aus.netto;
 
   const maxMonat = Math.max(1, ...k.monatlichNetto);
 
@@ -58,6 +65,13 @@ export default async function FinanzUebersicht() {
           value={eur(k.offenNetto)}
           sub={k.ueberfaelligNetto > 0 ? `davon überfällig: ${eur(k.ueberfaelligNetto)}` : `${k.offeneAnzahl} Rechnung(en)`}
           warn={k.ueberfaelligNetto > 0}
+        />
+        <Kpi label={`Ausgaben ${jahr} (netto)`} value={eur(aus.netto)} sub="erfasste Betriebsausgaben" />
+        <Kpi
+          label={`Gewinn ${jahr} (netto)`}
+          value={eur(gewinn)}
+          sub="Einnahmen − Ausgaben"
+          accent
         />
       </div>
 

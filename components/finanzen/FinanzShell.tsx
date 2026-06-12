@@ -8,13 +8,14 @@ import Logo from "@/components/Logo";
 import LogoutButton from "@/components/angebot/LogoutButton";
 import "@/app/finanzen/finanzen.css";
 
-export type FinanzTab = "uebersicht" | "angebote" | "rechnungen" | "wiederkehrend" | "kunden";
+export type FinanzTab = "uebersicht" | "angebote" | "rechnungen" | "wiederkehrend" | "ausgaben" | "kunden";
 
 const NAV: { key: FinanzTab; label: string; href: string; icon: string }[] = [
   { key: "uebersicht", label: "Übersicht", href: "/finanzen", icon: "▦" },
   { key: "angebote", label: "Angebote", href: "/angebot", icon: "✎" },
   { key: "rechnungen", label: "Rechnungen", href: "/finanzen/rechnungen", icon: "₂" },
   { key: "wiederkehrend", label: "Wiederkehrend", href: "/finanzen/wiederkehrend", icon: "↻" },
+  { key: "ausgaben", label: "Ausgaben", href: "/finanzen/ausgaben", icon: "↧" },
   { key: "kunden", label: "Kunden", href: "/finanzen/kunden", icon: "☺" },
 ];
 

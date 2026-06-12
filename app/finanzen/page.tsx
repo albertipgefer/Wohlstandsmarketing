@@ -44,7 +44,7 @@ export default async function FinanzUebersicht() {
   return (
     <FinanzShell active="uebersicht" title={`Übersicht ${jahr}`}>
       {/* KPI-Karten */}
-      <div style={S.kpiGrid}>
+      <div className="fin-kpis">
         <Kpi label={`Umsatz ${jahr} (netto)`} value={eur(k.umsatzJahrNetto)} sub="bezahlte Rechnungen" />
         <Kpi label="Aktuelles Quartal" value={eur(k.umsatzQuartalNetto)} sub="bezahlt, netto" />
         <Kpi
@@ -84,7 +84,7 @@ export default async function FinanzUebersicht() {
       </div>
 
       {/* Zwei Handlungs-Listen */}
-      <div style={S.twoCol}>
+      <div className="fin-twocol">
         <div style={S.card}>
           <div style={S.cardTitleRow}>
             <span style={S.cardTitle}>Offene & Entwurfs-Rechnungen</span>

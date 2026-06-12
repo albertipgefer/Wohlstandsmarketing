@@ -84,7 +84,7 @@ export default async function KundenSeite() {
       {zeilen.length === 0 ? (
         <div style={S.empty}>Noch keine Kunden. Lege deinen ersten Kunden an — auch ohne Angebot.</div>
       ) : (
-        <div style={S.tableWrap}>
+        <div className="fin-table-wrap">
           <table style={S.table}>
             <thead>
               <tr>{["Kunde", "Typ", "Angebote", "Rechnungen", "Umsatz (netto)", "Offen", ""].map((h) => (<th key={h} style={S.th}>{h}</th>))}</tr>

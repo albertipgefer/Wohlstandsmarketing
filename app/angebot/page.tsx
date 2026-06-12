@@ -7,8 +7,10 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { isLoggedIn } from "@/lib/angebot/auth";
 import { listAngebote, dbReady, type AngebotStatus } from "@/lib/angebot/db";
+import { listRechnungen } from "@/lib/finanzen/db";
 import { eur, deDate } from "@/lib/angebot/format";
 import FinanzShell from "@/components/finanzen/FinanzShell";
+import RechnungAusAngebotButton from "@/components/finanzen/RechnungAusAngebotButton";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -27,7 +29,10 @@ const STATUS_STYLE: Record<AngebotStatus, { bg: string; fg: string; label: strin
 
 export default async function AngebotDashboard() {
   if (!(await isLoggedIn())) redirect("/angebot/login");
-  const angebote = await listAngebote();
+  const [angebote, rechnungen] = await Promise.all([listAngebote(), listRechnungen()]);
+  const angebotIdsMitRechnung = new Set(
+    rechnungen.map((r) => r.angebot_id).filter(Boolean) as string[],
+  );
 
   const action = (
     <Link href="/angebot/neu" style={S.newBtn}>+ Neues Angebot</Link>
@@ -47,7 +52,7 @@ export default async function AngebotDashboard() {
           Noch keine Angebote. Klick auf <strong>+ Neues Angebot</strong>, um loszulegen.
         </div>
       ) : (
-        <div style={S.tableWrap}>
+        <div className="fin-table-wrap">
           <table style={S.table}>
             <thead>
               <tr>
@@ -79,6 +84,9 @@ export default async function AngebotDashboard() {
                         <a href={`/angebot/a/${a.public_token}`} target="_blank" rel="noreferrer" style={{ ...S.link, marginLeft: 12 }}>
                           Ansicht
                         </a>
+                      )}
+                      {a.status === "angenommen" && !angebotIdsMitRechnung.has(a.id) && (
+                        <RechnungAusAngebotButton angebotId={a.id} />
                       )}
                     </td>
                   </tr>

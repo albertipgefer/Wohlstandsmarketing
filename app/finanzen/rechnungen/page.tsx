@@ -49,7 +49,7 @@ export default async function RechnungenSeite() {
           automatisch ein <strong>Rechnungs-Entwurf</strong>.
         </div>
       ) : (
-        <div style={S.tableWrap}>
+        <div className="fin-table-wrap">
           <table style={S.table}>
             <thead>
               <tr>

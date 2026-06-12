@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
 import { isLoggedIn } from "@/lib/angebot/auth";
 import { listAngebote } from "@/lib/angebot/db";
 import { listRechnungen } from "@/lib/finanzen/db";
+import { listAusgaben, ausgabenJahr } from "@/lib/finanzen/ausgaben";
 import { computeKpis } from "@/lib/finanzen/forecast";
 import { eur, deDate } from "@/lib/angebot/format";
 import FinanzShell from "@/components/finanzen/FinanzShell";
@@ -26,11 +27,17 @@ export default async function FinanzUebersicht() {
   if (!(await isLoggedIn())) redirect("/angebot/login");
 
   const now = new Date();
-  const [angebote, rechnungen] = await Promise.all([listAngebote(), listRechnungen()]);
+  const [angebote, rechnungen, ausgaben] = await Promise.all([
+    listAngebote(),
+    listRechnungen(),
+    listAusgaben(),
+  ]);
   const k = computeKpis(angebote, rechnungen, now);
   const jahr = now.getFullYear();
+  const aus = ausgabenJahr(ausgaben, jahr);
+  const gewinn = k.umsatzJahrNetto - aus.netto;
 
-  const maxMonat = Math.max(1, ...k.monatlichNetto);
+  const maxMonat = Math.max(1, ...k.monatlichNetto, ...aus.monatlich);
 
   // Handlungs-Listen
   const offeneRechnungen = rechnungen
@@ -44,7 +51,7 @@ export default async function FinanzUebersicht() {
   return (
     <FinanzShell active="uebersicht" title={`Übersicht ${jahr}`}>
       {/* KPI-Karten */}
-      <div style={S.kpiGrid}>
+      <div className="fin-kpis">
         <Kpi label={`Umsatz ${jahr} (netto)`} value={eur(k.umsatzJahrNetto)} sub="bezahlte Rechnungen" />
         <Kpi label="Aktuelles Quartal" value={eur(k.umsatzQuartalNetto)} sub="bezahlt, netto" />
         <Kpi
@@ -59,22 +66,35 @@ export default async function FinanzUebersicht() {
           sub={k.ueberfaelligNetto > 0 ? `davon überfällig: ${eur(k.ueberfaelligNetto)}` : `${k.offeneAnzahl} Rechnung(en)`}
           warn={k.ueberfaelligNetto > 0}
         />
+        <Kpi label={`Ausgaben ${jahr} (netto)`} value={eur(aus.netto)} sub="erfasste Betriebsausgaben" />
+        <Kpi
+          label={`Gewinn ${jahr} (netto)`}
+          value={eur(gewinn)}
+          sub="Einnahmen − Ausgaben"
+          accent
+        />
       </div>
 
-      {/* Monats-Chart */}
+      {/* Monats-Chart: Einnahmen vs. Ausgaben (netto) */}
       <div style={S.card}>
-        <div style={S.cardTitle}>Bezahlter Umsatz {jahr} — pro Monat (netto)</div>
+        <div style={S.cardTitleRow}>
+          <span style={S.cardTitle}>Einnahmen vs. Ausgaben {jahr} — pro Monat (netto)</span>
+          <span style={{ display: "flex", gap: 14, fontSize: 12, color: "#71717a" }}>
+            <Legend color="#1663de" label="Einnahmen" />
+            <Legend color="#f0a3a3" label="Ausgaben" />
+          </span>
+        </div>
         <div style={S.chart}>
           {k.monatlichNetto.map((v, i) => (
             <div key={i} style={S.chartCol}>
-              <div style={S.chartBarWrap}>
+              <div style={{ ...S.chartBarWrap, gap: 2 }}>
                 <div
-                  style={{
-                    ...S.chartBar,
-                    height: `${Math.round((v / maxMonat) * 100)}%`,
-                    background: i === now.getMonth() ? "#1663de" : "#cdddfa",
-                  }}
-                  title={eur(v)}
+                  style={{ ...S.chartBar, width: "46%", height: `${Math.round((v / maxMonat) * 100)}%`, background: i === now.getMonth() ? "#1663de" : "#9dc0f5" }}
+                  title={`Einnahmen ${MONATE[i]}: ${eur(v)}`}
+                />
+                <div
+                  style={{ ...S.chartBar, width: "46%", height: `${Math.round((aus.monatlich[i] / maxMonat) * 100)}%`, background: "#f0a3a3" }}
+                  title={`Ausgaben ${MONATE[i]}: ${eur(aus.monatlich[i])}`}
                 />
               </div>
               <div style={S.chartLabel}>{MONATE[i]}</div>
@@ -84,7 +104,7 @@ export default async function FinanzUebersicht() {
       </div>
 
       {/* Zwei Handlungs-Listen */}
-      <div style={S.twoCol}>
+      <div className="fin-twocol">
         <div style={S.card}>
           <div style={S.cardTitleRow}>
             <span style={S.cardTitle}>Offene & Entwurfs-Rechnungen</span>
@@ -181,6 +201,15 @@ function StatusBadge({
   else if (status === "ueberfaellig" || (status === "offen" && past)) { label = "Überfällig"; bg = "#fef3f2"; fg = "#b42318"; }
   else if (status === "offen") { label = "Offen"; bg = "#eff6ff"; fg = "#1663de"; }
   return <span style={{ ...S.badge, background: bg, color: fg }}>{label}</span>;
+}
+
+function Legend({ color, label }: { color: string; label: string }) {
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+      <span style={{ width: 10, height: 10, borderRadius: 3, background: color, display: "inline-block" }} />
+      {label}
+    </span>
+  );
 }
 
 const S: Record<string, React.CSSProperties> = {

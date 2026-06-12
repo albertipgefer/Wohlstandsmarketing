@@ -37,7 +37,7 @@ export default async function WiederkehrendSeite() {
           der tägliche Finanz-Lauf erzeugt daraus automatisch Rechnungs-Entwürfe.
         </div>
       ) : (
-        <div style={S.tableWrap}>
+        <div className="fin-table-wrap">
           <table style={S.table}>
             <thead>
               <tr>{["Bezeichnung", "Kunde", "Betrag", "Intervall", "Nächste", "Status", ""].map((h) => (<th key={h} style={S.th}>{h}</th>))}</tr>

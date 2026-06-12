@@ -1,0 +1,108 @@
+/* Responsives Layout fürs Finanz-Modul (Desktop / iPad / Mobil).
+   Wird von FinanzShell + Finanz-Seiten importiert. Reine Layout-Klassen –
+   Detailstyling bleibt inline in den Komponenten. */
+
+.fin-root {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 232px 1fr;
+  background: #f6f7f9;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  color: #0a0a0a;
+}
+
+.fin-sidebar {
+  border-right: 1px solid #ececf0;
+  background: #fff;
+  padding: 22px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.fin-nav { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
+.fin-sidebar-footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid #f0f0f2;
+}
+
+.fin-main { padding: 28px 32px; max-width: 1180px; width: 100%; }
+.fin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+.fin-h1 { font-size: 28px; font-weight: 800; margin: 0; letter-spacing: -0.5px; }
+
+/* Übersicht-Grids */
+.fin-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
+.fin-twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* Tabellen scrollen horizontal statt zu zerbrechen */
+.fin-table-wrap {
+  background: #fff;
+  border: 1px solid #ececf0;
+  border-radius: 14px;
+  overflow-x: auto;
+}
+.fin-table-wrap table { min-width: 640px; }
+
+/* ---------- iPad / kleiner Desktop ---------- */
+@media (max-width: 1024px) {
+  .fin-kpis { grid-template-columns: repeat(2, 1fr); }
+  .fin-main { padding: 22px 20px; }
+}
+
+/* ---------- Mobil ---------- */
+@media (max-width: 760px) {
+  .fin-root { grid-template-columns: 1fr; }
+  .fin-sidebar {
+    position: static;
+    height: auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-right: none;
+    border-bottom: 1px solid #ececf0;
+    overflow-x: auto;
+  }
+  .fin-nav {
+    flex-direction: row;
+    margin-top: 0;
+    gap: 2px;
+    flex: 1;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .fin-nav a { white-space: nowrap; padding: 8px 10px !important; font-size: 13.5px !important; }
+  .fin-sidebar-footer {
+    margin-top: 0;
+    flex-direction: row;
+    padding-top: 0;
+    border-top: none;
+    border-left: 1px solid #f0f0f2;
+    padding-left: 12px;
+    gap: 8px;
+    align-items: center;
+  }
+  .fin-sidebar-footer a { display: none; } /* "Zur Website" mobil ausblenden */
+  .fin-brandtext { display: none; }        /* nur Logo mobil */
+  .fin-main { padding: 18px 14px; }
+  .fin-h1 { font-size: 22px; }
+  .fin-kpis { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .fin-twocol { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 420px) {
+  .fin-kpis { grid-template-columns: 1fr; }
+}

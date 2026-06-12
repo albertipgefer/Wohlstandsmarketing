@@ -12,7 +12,6 @@ import {
   StyleSheet,
   renderToBuffer,
 } from "@react-pdf/renderer";
-import React from "react";
 import { ANBIETER } from "@/lib/angebot/stammdaten";
 import { eur, deDate } from "@/lib/angebot/format";
 import type { Angebot, AngebotPosition } from "@/lib/angebot/db";

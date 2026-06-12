@@ -3,6 +3,7 @@
  * mit Status, Fälligkeit, Betrag + Aktionen (Senden / Bezahlt / Mahnung).
  */
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { isLoggedIn } from "@/lib/angebot/auth";
 import { listRechnungen, type RechnungStatus } from "@/lib/finanzen/db";
@@ -36,8 +37,12 @@ export default async function RechnungenSeite() {
   const heute = new Date().toISOString().slice(0, 10);
   const rechnungen = await listRechnungen();
 
+  const action = (
+    <Link href="/finanzen/rechnungen/neu" style={S.newBtn}>+ Neue Rechnung</Link>
+  );
+
   return (
-    <FinanzShell active="rechnungen" title="Rechnungen">
+    <FinanzShell active="rechnungen" title="Rechnungen" action={action}>
       {rechnungen.length === 0 ? (
         <div style={S.empty}>
           Noch keine Rechnungen. Sobald ein Angebot angenommen wird, entsteht hier
@@ -75,6 +80,15 @@ export default async function RechnungenSeite() {
                     </td>
                     <td style={S.td}>{r.faellig_am ? deDate(r.faellig_am) : "—"}</td>
                     <td style={{ ...S.td, textAlign: "right" }}>
+                      <div style={{ display: "flex", gap: 12, justifyContent: "flex-end", marginBottom: 6 }}>
+                        {r.status === "entwurf" && (
+                          <Link href={`/finanzen/rechnungen/neu?id=${r.id}`} style={S.link}>Bearbeiten</Link>
+                        )}
+                        <a href={`/api/finanzen/pdf?rechnung=${r.id}`} target="_blank" rel="noreferrer" style={S.link}>PDF</a>
+                        {r.public_token && (
+                          <a href={`/finanzen/r/${r.public_token}`} target="_blank" rel="noreferrer" style={S.link}>Ansicht</a>
+                        )}
+                      </div>
                       <RechnungActions id={r.id} status={eff} />
                     </td>
                   </tr>
@@ -96,4 +110,6 @@ const S: Record<string, React.CSSProperties> = {
   tr: { borderBottom: "1px solid #f4f4f5" },
   td: { padding: "13px 16px", fontSize: 14, verticalAlign: "middle" },
   badge: { display: "inline-block", padding: "3px 10px", borderRadius: 999, fontSize: 12, fontWeight: 700 },
+  link: { color: "#1663de", textDecoration: "none", fontSize: 13, fontWeight: 600 },
+  newBtn: { background: "#1663de", color: "#fff", textDecoration: "none", borderRadius: 9, padding: "10px 16px", fontSize: 14, fontWeight: 700 },
 };

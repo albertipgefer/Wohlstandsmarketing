@@ -33,14 +33,20 @@ function betragBox(r: Rechnung): string {
 </table>`;
 }
 
-/** Rechnungs-Mail an den Kunden. */
-export function rechnungEmailHtml(r: Rechnung): string {
+/** Rechnungs-Mail an den Kunden. `link` = öffentliche Online-Ansicht (optional). */
+export function rechnungEmailHtml(r: Rechnung, link?: string): string {
+  const linkBtn = link
+    ? `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:4px 0 18px;"><tr><td style="border-radius:10px;background:#1663de;">
+<a href="${escapeHtml(link)}" style="display:inline-block;padding:13px 26px;color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;">Rechnung online ansehen &amp; PDF →</a>
+</td></tr></table>`
+    : "";
   return SHELL(`
 <tr><td style="padding:24px 32px 0;">
 <h1 style="font-size:22px;font-weight:800;margin:0 0 12px;">Ihre Rechnung von Wohlstandsmarketing</h1>
 <p style="font-size:15px;line-height:1.6;color:#27272a;margin:0 0 16px;">${anrede(r)}</p>
-<p style="font-size:15px;line-height:1.6;color:#27272a;margin:0 0 16px;">anbei Ihre Rechnung ${escapeHtml(r.nummer || "")}. Bitte begleichen Sie den Betrag bis zum <strong>${escapeHtml(deDate(r.faellig_am))}</strong>.</p>
+<p style="font-size:15px;line-height:1.6;color:#27272a;margin:0 0 16px;">anbei Ihre Rechnung ${escapeHtml(r.nummer || "")} (auch als PDF im Anhang). Bitte begleichen Sie den Betrag bis zum <strong>${escapeHtml(deDate(r.faellig_am))}</strong>.</p>
 ${betragBox(r)}
+${linkBtn}
 <p style="font-size:13px;line-height:1.6;color:#71717a;margin:0 0 8px;">Bei Fragen einfach auf diese Mail antworten.</p>
 <p style="font-size:13px;line-height:1.6;color:#71717a;margin:0 0 8px;">Herzliche Grüße<br>${escapeHtml(ANBIETER.name)} · Wohlstandsmarketing</p>
 </td></tr>`);

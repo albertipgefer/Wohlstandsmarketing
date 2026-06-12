@@ -37,7 +37,7 @@ export default async function FinanzUebersicht() {
   const aus = ausgabenJahr(ausgaben, jahr);
   const gewinn = k.umsatzJahrNetto - aus.netto;
 
-  const maxMonat = Math.max(1, ...k.monatlichNetto);
+  const maxMonat = Math.max(1, ...k.monatlichNetto, ...aus.monatlich);
 
   // Handlungs-Listen
   const offeneRechnungen = rechnungen
@@ -75,20 +75,26 @@ export default async function FinanzUebersicht() {
         />
       </div>
 
-      {/* Monats-Chart */}
+      {/* Monats-Chart: Einnahmen vs. Ausgaben (netto) */}
       <div style={S.card}>
-        <div style={S.cardTitle}>Bezahlter Umsatz {jahr} — pro Monat (netto)</div>
+        <div style={S.cardTitleRow}>
+          <span style={S.cardTitle}>Einnahmen vs. Ausgaben {jahr} — pro Monat (netto)</span>
+          <span style={{ display: "flex", gap: 14, fontSize: 12, color: "#71717a" }}>
+            <Legend color="#1663de" label="Einnahmen" />
+            <Legend color="#f0a3a3" label="Ausgaben" />
+          </span>
+        </div>
         <div style={S.chart}>
           {k.monatlichNetto.map((v, i) => (
             <div key={i} style={S.chartCol}>
-              <div style={S.chartBarWrap}>
+              <div style={{ ...S.chartBarWrap, gap: 2 }}>
                 <div
-                  style={{
-                    ...S.chartBar,
-                    height: `${Math.round((v / maxMonat) * 100)}%`,
-                    background: i === now.getMonth() ? "#1663de" : "#cdddfa",
-                  }}
-                  title={eur(v)}
+                  style={{ ...S.chartBar, width: "46%", height: `${Math.round((v / maxMonat) * 100)}%`, background: i === now.getMonth() ? "#1663de" : "#9dc0f5" }}
+                  title={`Einnahmen ${MONATE[i]}: ${eur(v)}`}
+                />
+                <div
+                  style={{ ...S.chartBar, width: "46%", height: `${Math.round((aus.monatlich[i] / maxMonat) * 100)}%`, background: "#f0a3a3" }}
+                  title={`Ausgaben ${MONATE[i]}: ${eur(aus.monatlich[i])}`}
                 />
               </div>
               <div style={S.chartLabel}>{MONATE[i]}</div>
@@ -195,6 +201,15 @@ function StatusBadge({
   else if (status === "ueberfaellig" || (status === "offen" && past)) { label = "Überfällig"; bg = "#fef3f2"; fg = "#b42318"; }
   else if (status === "offen") { label = "Offen"; bg = "#eff6ff"; fg = "#1663de"; }
   return <span style={{ ...S.badge, background: bg, color: fg }}>{label}</span>;
+}
+
+function Legend({ color, label }: { color: string; label: string }) {
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+      <span style={{ width: 10, height: 10, borderRadius: 3, background: color, display: "inline-block" }} />
+      {label}
+    </span>
+  );
 }
 
 const S: Record<string, React.CSSProperties> = {

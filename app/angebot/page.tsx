@@ -9,6 +9,7 @@ import { isLoggedIn } from "@/lib/angebot/auth";
 import { listAngebote, dbReady, type AngebotStatus } from "@/lib/angebot/db";
 import { eur, deDate } from "@/lib/angebot/format";
 import LogoutButton from "@/components/angebot/LogoutButton";
+import Logo from "@/components/Logo";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -19,9 +20,9 @@ export const metadata: Metadata = {
 
 const STATUS_STYLE: Record<AngebotStatus, { bg: string; fg: string; label: string }> = {
   entwurf: { bg: "#f4f4f5", fg: "#52525b", label: "Entwurf" },
-  gesendet: { bg: "#eff6ff", fg: "#1663de", label: "Gesendet" },
+  gesendet: { bg: "#eff6ff", fg: "#1663de", label: "Abgesendet" },
   angesehen: { bg: "#fff7ed", fg: "#c2410c", label: "Angesehen" },
-  angenommen: { bg: "#ecfdf3", fg: "#027a48", label: "Angenommen" },
+  angenommen: { bg: "#ecfdf3", fg: "#027a48", label: "Bestätigt" },
   abgelehnt: { bg: "#fef3f2", fg: "#b42318", label: "Abgelehnt" },
 };
 
@@ -34,9 +35,7 @@ export default async function AngebotDashboard() {
       <div style={S.wrap}>
         <header style={S.header}>
           <div>
-            <div style={S.brand}>
-              WOHLSTANDS<span style={{ color: "#1663de" }}>MARKETING</span>
-            </div>
+            <Logo size={34} withWordmark={false} />
             <h1 style={S.h1}>Angebote</h1>
           </div>
           <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
@@ -61,7 +60,7 @@ export default async function AngebotDashboard() {
           <table style={S.table}>
             <thead>
               <tr>
-                {["Nr.", "Kunde", "Betrag", "Status", "Erstellt", ""].map((h) => (
+                {["Nr.", "Kunde", "Betrag", "Status", "Fällig", "Erstellt", ""].map((h) => (
                   <th key={h} style={S.th}>{h}</th>
                 ))}
               </tr>
@@ -80,6 +79,7 @@ export default async function AngebotDashboard() {
                     <td style={S.td}>
                       <span style={{ ...S.badge, background: st.bg, color: st.fg }}>{st.label}</span>
                     </td>
+                    <td style={S.td}>{a.gueltig_bis ? deDate(a.gueltig_bis) : "—"}</td>
                     <td style={S.td}>{deDate(a.created_at)}</td>
                     <td style={{ ...S.td, textAlign: "right", whiteSpace: "nowrap" }}>
                       <Link href={`/angebot/neu?id=${a.id}`} style={S.link}>Bearbeiten</Link>

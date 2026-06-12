@@ -10,7 +10,7 @@ import ExitIntentPopup from "@/components/ExitIntentPopup";
  * sie auf internen Dashboard-/Tool-Routen aus — dort sind sie fehl am Platz.
  * Neue interne Route? Einfach unten ergänzen.
  */
-const HIDDEN_PREFIXES = ["/outreach"];
+const HIDDEN_PREFIXES = ["/outreach", "/angebot", "/finanzen"];
 
 export default function MarketingOverlays() {
   const pathname = usePathname() || "";

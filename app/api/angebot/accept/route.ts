@@ -1,15 +1,15 @@
 /**
  * POST /api/angebot/accept — Kunde nimmt das Angebot an (öffentlich, token-gated).
  * Body: { token, name }. Setzt Status 'angenommen', benachrichtigt Albert,
- * schickt dem Kunden eine Bestätigung, legt HOT-Lead in Close an.
+ * schickt dem Kunden eine Bestätigung, markiert den Kontakt in Close als "Kunde".
  */
 export const runtime = "nodejs";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getAngebotByToken, updateAngebot, dbReady } from "@/lib/angebot/db";
-import { sendMail, acceptedCustomerEmailHtml } from "@/lib/angebot/email";
+import { sendMail, acceptedCustomerEmailHtml, publicLink } from "@/lib/angebot/email";
 import { sendTelegramMessage } from "@/lib/telegram";
-import { syncLeadToClose } from "@/lib/close";
+import { markCloseLeadAsKunde } from "@/lib/angebot/close-kunde";
 import { ANBIETER } from "@/lib/angebot/stammdaten";
 import { eur } from "@/lib/angebot/format";
 
@@ -82,20 +82,24 @@ Betrag: ${eur(a.brutto)}</p>`,
     /* ignore */
   }
 
-  // HOT-Lead in Close (gekapselt; legt zugleich Rückruf-Aufgabe + eigene Telegram-Notiz an).
-  try {
-    await syncLeadToClose({
-      source: "angebot",
-      fullName: a.kunde_ansprech || undefined,
-      email: a.kunde_email || "",
-      company: a.kunde_firma || undefined,
-      noteLines: [
-        `Angebot ${a.nummer || ""} ANGENOMMEN (${eur(a.brutto)})`,
-        `Angenommen von: ${name}`,
-      ],
-    });
-  } catch {
-    /* ignore */
+  // Close: Kunde als "Kunde" markieren (kein HOT-Lead, keine Rückruf-Task,
+  // keine zusätzliche Telegram — die Annahme-Telegram ist oben bereits raus).
+  // Lead suchen → Status "Kunde"; nicht gefunden → als Kunde anlegen. Plus Notiz.
+  if (a.kunde_email) {
+    try {
+      await markCloseLeadAsKunde({
+        email: a.kunde_email,
+        company: a.kunde_firma,
+        contactName: a.kunde_ansprech,
+        noteLines: [
+          `Angebot ${a.nummer || ""} angenommen (${eur(a.brutto)})`,
+          `Angenommen von: ${name}`,
+          a.public_token ? `Angebot: ${publicLink(a.public_token)}` : null,
+        ],
+      });
+    } catch {
+      /* ignore */
+    }
   }
 
   return NextResponse.json({ ok: true });

@@ -35,6 +35,8 @@ export async function sendMail(opts: {
   subject: string;
   html: string;
   replyTo?: string;
+  /** Optionale Anhänge (z. B. PDF). content = base64-String. */
+  attachments?: { filename: string; content: string }[];
 }): Promise<{ ok: boolean; error?: string }> {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.ANGEBOT_FROM_EMAIL || process.env.RESEND_FROM_EMAIL;
@@ -49,6 +51,9 @@ export async function sendMail(opts: {
         reply_to: opts.replyTo || ANBIETER.email,
         subject: opts.subject,
         html: opts.html,
+        ...(opts.attachments && opts.attachments.length
+          ? { attachments: opts.attachments }
+          : {}),
       }),
     });
     if (!r.ok) return { ok: false, error: `resend_${r.status}` };

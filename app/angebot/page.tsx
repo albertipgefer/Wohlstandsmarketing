@@ -74,6 +74,7 @@ export default async function AngebotDashboard() {
                     <td style={S.td}>{deDate(a.created_at)}</td>
                     <td style={{ ...S.td, textAlign: "right", whiteSpace: "nowrap" }}>
                       <Link href={`/angebot/neu?id=${a.id}`} style={S.link}>Bearbeiten</Link>
+                      <a href={`/api/finanzen/pdf?angebot=${a.id}`} target="_blank" rel="noreferrer" style={{ ...S.link, marginLeft: 12 }}>PDF</a>
                       {a.public_token && (
                         <a href={`/angebot/a/${a.public_token}`} target="_blank" rel="noreferrer" style={{ ...S.link, marginLeft: 12 }}>
                           Ansicht

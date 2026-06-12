@@ -15,6 +15,7 @@ import {
   insertRechnung,
   rechnungFromAngebot,
 } from "@/lib/finanzen/db";
+import { baseUrl } from "@/lib/angebot/email";
 import { ANBIETER } from "@/lib/angebot/stammdaten";
 import { eur } from "@/lib/angebot/format";
 
@@ -99,7 +100,8 @@ Betrag: ${eur(a.brutto)}</p>`,
         noteLines: [
           `Angebot ${a.nummer || ""} angenommen (${eur(a.brutto)})`,
           `Angenommen von: ${name}`,
-          a.public_token ? `Angebot: ${publicLink(a.public_token)}` : null,
+          a.public_token ? `Angebot ansehen: ${publicLink(a.public_token)}` : null,
+          a.public_token ? `Angebot als PDF: ${baseUrl()}/api/finanzen/pdf?angebotToken=${a.public_token}` : null,
         ],
       });
     } catch {

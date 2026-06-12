@@ -1,15 +1,18 @@
 /**
- * /finanzen/kunden — Kundenübersicht (login-geschützt, read-only v1).
- * Abgeleitet aus Angeboten + Rechnungen: pro Kunde Anzahl Dokumente + bezahlter
- * Umsatz + offener Betrag. (Eigene Kundenverwaltung folgt als nächster Schritt.)
+ * /finanzen/kunden — Kundenverwaltung. Eigene Stammkunden (anlegen/bearbeiten/
+ * löschen) werden mit den aus Angeboten/Rechnungen abgeleiteten Umsätzen
+ * synchron zusammengeführt (Abgleich per E-Mail bzw. Firma).
  */
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { isLoggedIn } from "@/lib/angebot/auth";
 import { listAngebote } from "@/lib/angebot/db";
 import { listRechnungen } from "@/lib/finanzen/db";
+import { listKunden } from "@/lib/finanzen/kunden";
 import { eur } from "@/lib/angebot/format";
 import FinanzShell from "@/components/finanzen/FinanzShell";
+import KundeDeleteButton from "@/components/finanzen/KundeDeleteButton";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -18,8 +21,9 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-type KundeAgg = {
+type Zeile = {
   key: string;
+  id: string | null; // managed-id, falls Stammkunde
   firma: string;
   email: string;
   angebote: number;
@@ -28,59 +32,91 @@ type KundeAgg = {
   offenBrutto: number;
 };
 
+function keyOf(firma: string | null, email: string | null): string {
+  return (email || firma || "—").toLowerCase().trim();
+}
+
 export default async function KundenSeite() {
   if (!(await isLoggedIn())) redirect("/angebot/login");
 
-  const [angebote, rechnungen] = await Promise.all([listAngebote(), listRechnungen()]);
-  const map = new Map<string, KundeAgg>();
+  const [angebote, rechnungen, kunden] = await Promise.all([
+    listAngebote(),
+    listRechnungen(),
+    listKunden(),
+  ]);
 
-  function get(firma: string | null, email: string | null): KundeAgg {
-    const key = (email || firma || "—").toLowerCase().trim();
-    let k = map.get(key);
-    if (!k) {
-      k = { key, firma: firma || email || "—", email: email || "", angebote: 0, rechnungen: 0, bezahltNetto: 0, offenBrutto: 0 };
-      map.set(key, k);
+  const map = new Map<string, Zeile>();
+  function get(firma: string | null, email: string | null): Zeile {
+    const key = keyOf(firma, email);
+    let z = map.get(key);
+    if (!z) {
+      z = { key, id: null, firma: firma || email || "—", email: email || "", angebote: 0, rechnungen: 0, bezahltNetto: 0, offenBrutto: 0 };
+      map.set(key, z);
     }
-    if (!k.firma || k.firma === "—") k.firma = firma || k.firma;
-    if (!k.email) k.email = email || "";
-    return k;
+    return z;
   }
 
+  // Stammkunden zuerst (damit sie die Identität + ID bekommen)
+  for (const k of kunden) {
+    const z = get(k.firma, k.email);
+    z.id = k.id;
+    if (k.firma) z.firma = k.firma;
+    if (k.email) z.email = k.email;
+  }
+  // Abgeleitete Umsätze drauflegen
   for (const a of angebote) get(a.kunde_firma, a.kunde_email).angebote += 1;
   for (const r of rechnungen) {
-    const k = get(r.kunde_firma, r.kunde_email);
-    k.rechnungen += 1;
-    if (r.status === "bezahlt") k.bezahltNetto += r.netto;
-    if (r.status === "offen" || r.status === "ueberfaellig") k.offenBrutto += r.brutto;
+    const z = get(r.kunde_firma, r.kunde_email);
+    z.rechnungen += 1;
+    if (r.status === "bezahlt") z.bezahltNetto += r.netto;
+    if (r.status === "offen" || r.status === "ueberfaellig") z.offenBrutto += r.brutto;
   }
 
-  const kunden = Array.from(map.values()).sort((a, b) => b.bezahltNetto - a.bezahltNetto);
+  const zeilen = Array.from(map.values()).sort((a, b) => {
+    if (!!b.id !== !!a.id) return b.id ? 1 : -1; // Stammkunden zuerst
+    return b.bezahltNetto - a.bezahltNetto;
+  });
+
+  const action = <Link href="/finanzen/kunden/neu" style={S.newBtn}>+ Neuer Kunde</Link>;
 
   return (
-    <FinanzShell active="kunden" title="Kunden">
-      {kunden.length === 0 ? (
-        <div style={S.empty}>Noch keine Kunden.</div>
+    <FinanzShell active="kunden" title="Kunden" action={action}>
+      {zeilen.length === 0 ? (
+        <div style={S.empty}>Noch keine Kunden. Lege deinen ersten Kunden an — auch ohne Angebot.</div>
       ) : (
         <div style={S.tableWrap}>
           <table style={S.table}>
             <thead>
-              <tr>
-                {["Kunde", "Angebote", "Rechnungen", "Umsatz (netto)", "Offen"].map((h) => (
-                  <th key={h} style={S.th}>{h}</th>
-                ))}
-              </tr>
+              <tr>{["Kunde", "Typ", "Angebote", "Rechnungen", "Umsatz (netto)", "Offen", ""].map((h) => (<th key={h} style={S.th}>{h}</th>))}</tr>
             </thead>
             <tbody>
-              {kunden.map((k) => (
-                <tr key={k.key} style={S.tr}>
+              {zeilen.map((z) => (
+                <tr key={z.key} style={S.tr}>
                   <td style={S.td}>
-                    <div style={{ fontWeight: 600 }}>{k.firma}</div>
-                    <div style={{ fontSize: 12, color: "#a3a3a3" }}>{k.email}</div>
+                    <div style={{ fontWeight: 600 }}>{z.firma}</div>
+                    <div style={{ fontSize: 12, color: "#a3a3a3" }}>{z.email}</div>
                   </td>
-                  <td style={S.td}>{k.angebote}</td>
-                  <td style={S.td}>{k.rechnungen}</td>
-                  <td style={S.td}>{eur(k.bezahltNetto)}</td>
-                  <td style={S.td}>{k.offenBrutto > 0 ? eur(k.offenBrutto) : "—"}</td>
+                  <td style={S.td}>
+                    {z.id ? (
+                      <span style={{ ...S.badge, background: "#eef3fd", color: "#1663de" }}>Stammkunde</span>
+                    ) : (
+                      <span style={{ ...S.badge, background: "#f4f4f5", color: "#a1a1aa" }}>aus Dokumenten</span>
+                    )}
+                  </td>
+                  <td style={S.td}>{z.angebote}</td>
+                  <td style={S.td}>{z.rechnungen}</td>
+                  <td style={S.td}>{eur(z.bezahltNetto)}</td>
+                  <td style={S.td}>{z.offenBrutto > 0 ? eur(z.offenBrutto) : "—"}</td>
+                  <td style={{ ...S.td, textAlign: "right", whiteSpace: "nowrap" }}>
+                    {z.id ? (
+                      <>
+                        <Link href={`/finanzen/kunden/neu?id=${z.id}`} style={S.link}>Bearbeiten</Link>
+                        <span style={{ marginLeft: 12 }}><KundeDeleteButton id={z.id} name={z.firma} /></span>
+                      </>
+                    ) : (
+                      <span style={{ fontSize: 12, color: "#c4c4c4" }}>—</span>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -98,4 +134,7 @@ const S: Record<string, React.CSSProperties> = {
   th: { textAlign: "left", padding: "12px 16px", fontSize: 12, fontWeight: 700, textTransform: "uppercase", color: "#737373", background: "#f9fafb", borderBottom: "1px solid #f0f0f0" },
   tr: { borderBottom: "1px solid #f4f4f5" },
   td: { padding: "13px 16px", fontSize: 14, verticalAlign: "middle" },
+  badge: { display: "inline-block", padding: "2px 9px", borderRadius: 999, fontSize: 11, fontWeight: 700 },
+  link: { color: "#1663de", textDecoration: "none", fontSize: 13, fontWeight: 600 },
+  newBtn: { background: "#1663de", color: "#fff", textDecoration: "none", borderRadius: 9, padding: "10px 16px", fontSize: 14, fontWeight: 700 },
 };

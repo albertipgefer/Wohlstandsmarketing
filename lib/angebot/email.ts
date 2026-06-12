@@ -3,8 +3,9 @@
  * app/api/angebot/route.ts). WSM-Branding-HTML, kein Storage.
  *
  * Required ENV:
- *   RESEND_API_KEY      — Resend-API-Key
- *   RESEND_FROM_EMAIL   — verifizierte Absender-Adresse (z.B. angebot@wohlstandsmarketing.de)
+ *   RESEND_API_KEY      — Resend-API-Key (geteilt mit bestehenden Mails)
+ *   ANGEBOT_FROM_EMAIL  — Absender NUR fürs Angebot (z.B. angebot@wohlstandsmarketing.de);
+ *                         Fallback auf RESEND_FROM_EMAIL, damit bestehende Mails unberührt bleiben.
  *   ANGEBOT_BASE_URL    — Basis-URL für Kunden-Links (Default: https://wohlstandsmarketing.de)
  */
 import { ANBIETER } from "./stammdaten";
@@ -36,7 +37,7 @@ export async function sendMail(opts: {
   replyTo?: string;
 }): Promise<{ ok: boolean; error?: string }> {
   const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM_EMAIL;
+  const from = process.env.ANGEBOT_FROM_EMAIL || process.env.RESEND_FROM_EMAIL;
   if (!apiKey || !from) return { ok: false, error: "missing_resend_env" };
   try {
     const r = await fetch("https://api.resend.com/emails", {

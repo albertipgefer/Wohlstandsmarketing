@@ -10,6 +10,11 @@ import { getAngebotByToken, updateAngebot, dbReady } from "@/lib/angebot/db";
 import { sendMail, acceptedCustomerEmailHtml, publicLink } from "@/lib/angebot/email";
 import { sendTelegramMessage } from "@/lib/telegram";
 import { markCloseLeadAsKunde } from "@/lib/angebot/close-kunde";
+import {
+  getRechnungByAngebotId,
+  insertRechnung,
+  rechnungFromAngebot,
+} from "@/lib/finanzen/db";
 import { ANBIETER } from "@/lib/angebot/stammdaten";
 import { eur } from "@/lib/angebot/format";
 
@@ -100,6 +105,18 @@ Betrag: ${eur(a.brutto)}</p>`,
     } catch {
       /* ignore */
     }
+  }
+
+  // Finanzen: aus dem angenommenen Angebot automatisch einen Rechnungs-ENTWURF
+  // erzeugen (sofern noch keiner existiert). Albert finalisiert/sendet ihn im
+  // Finanz-Modul. Gekapselt — darf die Annahme nie blockieren.
+  try {
+    const existing = await getRechnungByAngebotId(a.id);
+    if (!existing) {
+      await insertRechnung(rechnungFromAngebot(a, { status: "entwurf" }));
+    }
+  } catch {
+    /* ignore */
   }
 
   return NextResponse.json({ ok: true });

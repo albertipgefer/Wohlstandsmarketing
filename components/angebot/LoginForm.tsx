@@ -21,7 +21,7 @@ export default function LoginForm() {
         body: JSON.stringify({ password: pw }),
       });
       if (r.ok) {
-        router.replace("/angebot");
+        router.replace("/finanzen");
         router.refresh();
       } else {
         setErr("Falsches Passwort.");

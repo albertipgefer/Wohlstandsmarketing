@@ -42,6 +42,9 @@ const KI_CHECK_HIDDEN_PATHS = [
 const WHATSAPP_HIDDEN_PATHS = [
   "/sichtbarkeits-check",
   "/preise",
+  // Interne, passwortgeschützte Tools — dort keine WhatsApp-Ablenkung.
+  "/angebot",
+  "/finanzen",
 ];
 
 function buildMessage(pathname: string, articleTitle: string | null): string {

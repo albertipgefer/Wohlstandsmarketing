@@ -2,21 +2,30 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const STORAGE_KEY = "wsm-cookie-consent";
 
+// Interne, passwortgeschützte Tools — dort ist der Cookie-Hinweis fehl am Platz.
+const HIDDEN_PREFIXES = ["/outreach", "/angebot", "/finanzen"];
+
 export default function CookieBanner() {
+  const pathname = usePathname() || "";
+  const hidden = HIDDEN_PREFIXES.some((p) => pathname.startsWith(p));
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    if (hidden) return;
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (!stored) setVisible(true);
     } catch {
       /* localStorage blocked → don't show */
     }
-  }, []);
+  }, [hidden]);
+
+  if (hidden) return null;
 
   function persist(decision: "accept" | "decline") {
     try {

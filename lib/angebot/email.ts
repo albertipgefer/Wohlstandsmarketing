@@ -61,7 +61,7 @@ export async function sendMail(opts: {
 const SHELL = (inner: string) => `<!DOCTYPE html><html lang="de"><body style="margin:0;background:#f4f5f7;padding:24px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#0a0a0a;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border:1px solid #e4e4e7;border-radius:16px;overflow:hidden;">
-<tr><td style="padding:24px 32px 0;font-size:15px;font-weight:700;letter-spacing:-0.3px;">WOHLSTANDS<span style="color:#1663de;">MARKETING</span></td></tr>
+<tr><td style="padding:24px 32px 0;"><img src="${baseUrl()}/icon.png" width="40" height="40" alt="Wohlstandsmarketing" style="display:block;border:0;border-radius:9px;"></td></tr>
 ${inner}
 <tr><td style="padding:20px 32px 28px;border-top:1px solid #f0f0f1;font-size:12px;color:#a3a3a3;line-height:1.6;">
 ${escapeHtml(ANBIETER.name)} · ${escapeHtml(ANBIETER.strasse)} · ${escapeHtml(ANBIETER.plzOrt)}<br>
@@ -80,13 +80,13 @@ export function offerEmailHtml(a: Angebot, link: string): string {
 <tr><td style="padding:24px 32px 0;">
 <h1 style="font-size:22px;font-weight:800;margin:0 0 12px;">Ihr Angebot von Wohlstandsmarketing</h1>
 <p style="font-size:15px;line-height:1.6;color:#27272a;margin:0 0 16px;">${anrede}</p>
-<p style="font-size:15px;line-height:1.6;color:#27272a;margin:0 0 16px;">vielen Dank für Ihr Interesse. Ihr persönliches Angebot ist fertig — Sie können es bequem online ansehen, als PDF herunterladen und direkt annehmen.</p>
+<p style="font-size:15px;line-height:1.6;color:#27272a;margin:0 0 16px;">vielen Dank für Ihr Interesse. Ihr persönliches Angebot ist fertig — Sie können es bequem online einsehen und als PDF herunterladen.</p>
 <table role="presentation" cellpadding="0" cellspacing="0" style="margin:8px 0 20px;background:#f4f7fc;border-radius:10px;width:100%;">
 <tr><td style="padding:14px 18px;font-size:14px;color:#52525b;">Angebot ${escapeHtml(a.nummer || "")}</td>
 <td style="padding:14px 18px;font-size:16px;font-weight:800;color:#1663de;text-align:right;">${escapeHtml(eur(a.brutto))}</td></tr>
 </table>
 <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 22px;"><tr><td style="border-radius:10px;background:#1663de;">
-<a href="${escapeHtml(link)}" style="display:inline-block;padding:14px 28px;color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;">Angebot ansehen &amp; annehmen →</a>
+<a href="${escapeHtml(link)}" style="display:inline-block;padding:14px 28px;color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;">Angebot einsehen →</a>
 </td></tr></table>
 <p style="font-size:13px;line-height:1.6;color:#71717a;margin:0 0 4px;">Gültig bis ${escapeHtml(deDate(a.gueltig_bis))}. Bei Fragen einfach auf diese Mail antworten.</p>
 <p style="font-size:13px;line-height:1.6;color:#71717a;margin:0 0 8px;">Herzliche Grüße<br>${escapeHtml(ANBIETER.name)} · Wohlstandsmarketing</p>

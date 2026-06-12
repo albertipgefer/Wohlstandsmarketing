@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AngebotLoginPage() {
-  if (await isLoggedIn()) redirect("/angebot");
+  if (await isLoggedIn()) redirect("/finanzen");
   return (
     <main
       style={{

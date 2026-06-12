@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Logo from "@/components/Logo";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -20,7 +21,7 @@ export default function LoginForm() {
         body: JSON.stringify({ password: pw }),
       });
       if (r.ok) {
-        router.replace("/angebot");
+        router.replace("/finanzen");
         router.refresh();
       } else {
         setErr("Falsches Passwort.");
@@ -34,10 +35,8 @@ export default function LoginForm() {
 
   return (
     <form onSubmit={submit} style={S.form}>
-      <div style={S.brand}>
-        WOHLSTANDS<span style={{ color: "#1663de" }}>MARKETING</span>
-      </div>
-      <h1 style={S.h1}>Angebote</h1>
+      <Logo size={48} withWordmark={false} />
+      <h1 style={S.h1}>Finanzen</h1>
       <p style={S.sub}>Interner Bereich — bitte einloggen.</p>
       <input
         type="password"

@@ -65,7 +65,7 @@ export async function GET(req: NextRequest) {
   for (const r of rechnungen) {
     if (mahnungen >= 25) break;
     if (r.status !== "ueberfaellig" || !r.kunde_email) continue;
-    if ((r.mahnstufe || 0) >= 3) continue;
+    if ((r.mahnstufe || 0) >= 2) continue; // max. Mahnstufe 2 — danach Inkasso (keine weitere Kunden-Mail)
 
     const ueberfaelligTage = tageSeit(r.faellig_am, now);
     const seitLetzterMahnung = tageSeit(r.last_mahnung_at, now);

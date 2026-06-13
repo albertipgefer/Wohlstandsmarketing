@@ -31,6 +31,8 @@ export async function POST(req: NextRequest) {
   const updated = await updateRechnung(r.id, {
     status: body.status,
     bezahlt_am: body.status === "bezahlt" ? new Date().toISOString() : null,
+    // Bei "Bezahlt" die Mahnstufe entfernen (Status soll dann sauber sein).
+    ...(body.status === "bezahlt" ? { mahnstufe: 0, last_mahnung_at: null } : {}),
   });
   if (!updated) return NextResponse.json({ ok: false, error: "update_failed" }, { status: 500 });
 

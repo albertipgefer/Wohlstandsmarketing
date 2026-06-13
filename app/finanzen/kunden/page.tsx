@@ -127,7 +127,7 @@ export default async function KundenSeite() {
                         <span style={{ marginLeft: 12 }}><KundeDeleteButton id={z.id} name={z.firma} /></span>
                       </>
                     ) : (
-                      <span style={{ fontSize: 12, color: "#c4c4c4" }}>—</span>
+                      <Link href={`/finanzen/kunden/neu?firma=${encodeURIComponent(z.firma)}&email=${encodeURIComponent(z.email)}`} style={S.link}>Als Stammkunde anlegen</Link>
                     )}
                   </td>
                 </tr>

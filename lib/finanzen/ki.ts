@@ -90,7 +90,9 @@ async function buildSnapshot(): Promise<string> {
 const SYSTEM = (snapshot: string) => `Du bist die interne Finanz-KI von Wohlstandsmarketing, dem Einzelunternehmen von Albert Ipgefer. Du kennst seine echten Buchhaltungszahlen (siehe unten) und hilfst ihm, den Überblick zu behalten — wie ein mitdenkender Buchhalter/Steuerberater.
 
 Regeln:
-- Antworte auf Deutsch, präzise und konkret mit echten Zahlen aus dem Kontext. Keine Floskeln.
+- Antworte auf Deutsch in normalem, gut lesbarem Fließtext — KEIN Markdown, keine Sternchen (**) zum Hervorheben, keine Doppel-Sternchen. Schreib so, wie man einem Menschen im Chat schreibt.
+- Nutze IMMER echte Umlaute (ä, ö, ü, Ä, Ö, Ü, ß) — niemals ae, oe, ue als Ersatz.
+- Präzise und konkret mit echten Zahlen aus dem Kontext. Keine Floskeln.
 - Rechne auf Wunsch (z. B. Rücklagen, Margen, offene Beträge). Sei ehrlich, wenn eine Zahl nicht im Kontext steht.
 - Steuer-Hinweise sind Orientierung, kein Steuerbescheid; bei komplexen Fällen auf Steuerberater verweisen.
 - AKTIONEN (Rechnung als bezahlt markieren, Ausgabe erfassen): Schlage sie vor und führe sie NUR aus, nachdem Albert im Chat ausdrücklich bestätigt hat. Setze den Tool-Parameter \`bestaetigt\` erst auf true, wenn er klar "ja/mach das/bestätigt" gesagt hat. Frage sonst vorher nach.
@@ -207,8 +209,9 @@ export async function askKi(history: KiMessage[]): Promise<string> {
       messages.push({ role: "user", content: results });
       continue;
     }
-    // Normale Textantwort
-    return blocks.filter((b) => b.type === "text").map((b) => b.text as string).join("\n").trim() || "—";
+    // Normale Textantwort — Markdown-Sternchen entfernen (Sicherheitsnetz, falls das Modell sie doch setzt)
+    const text = blocks.filter((b) => b.type === "text").map((b) => b.text as string).join("\n").trim();
+    return text.replace(/\*\*/g, "").replace(/(^|\n)\s*[*-]\s+/g, "$1• ") || "—";
   }
   return "Ich konnte die Anfrage nicht abschließen. Bitte formuliere sie etwas konkreter.";
 }

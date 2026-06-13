@@ -43,6 +43,16 @@ export type KundeLite = {
   email: string | null;
 };
 
+/** Preislisten-Position — für den "Aus Preisliste"-Picker. */
+export type PreisLite = {
+  id: string;
+  bezeichnung: string;
+  beschreibung: string | null;
+  preis_netto: number;
+  ust_satz: number;
+  einheit: string;
+};
+
 function uid() {
   return Math.random().toString(36).slice(2, 10);
 }
@@ -54,7 +64,7 @@ function leerePos(): Pos {
 const eur = (n: number) =>
   new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(n || 0);
 
-export default function RechnungEditor({ initial, kunden = [] }: { initial?: RechnungInitial; kunden?: KundeLite[] }) {
+export default function RechnungEditor({ initial, kunden = [], preisliste = [] }: { initial?: RechnungInitial; kunden?: KundeLite[]; preisliste?: PreisLite[] }) {
   const router = useRouter();
   const [typ, setTyp] = useState(initial?.typ || "rechnung");
   const [titel, setTitel] = useState(initial?.titel || "");
@@ -107,6 +117,23 @@ export default function RechnungEditor({ initial, kunden = [] }: { initial?: Rec
 
   function setPos(i: number, patch: Partial<Pos>) {
     setPositionen((ps) => ps.map((p, j) => (j === i ? { ...p, ...patch } : p)));
+  }
+
+  function ausPreisliste(id: string) {
+    const p = preisliste.find((x) => x.id === id);
+    if (!p) return;
+    const neu: Pos = {
+      uid: uid(),
+      titel: p.bezeichnung,
+      beschreibung: p.beschreibung || "",
+      leistungen: [],
+      preisNetto: p.preis_netto,
+      einheit: p.einheit === "pro Monat" ? "pro Monat" : "einmalig",
+      menge: 1,
+      ustSatz: p.ust_satz,
+    };
+    // Leere Erstposition ersetzen, sonst anhängen
+    setPositionen((ps) => (ps.length === 1 && !ps[0].titel && !ps[0].preisNetto ? [neu] : [...ps, neu]));
   }
 
   async function submit(send: boolean) {
@@ -215,6 +242,16 @@ export default function RechnungEditor({ initial, kunden = [] }: { initial?: Rec
       </Card>
 
       <Card title="Positionen">
+        {preisliste.length > 0 && (
+          <div style={{ marginBottom: 12 }}>
+            <select value="" onChange={(e) => { ausPreisliste(e.target.value); e.target.value = ""; }} style={{ ...inp, maxWidth: 360 }}>
+              <option value="">+ Aus Preisliste hinzufügen …</option>
+              {preisliste.map((p) => (
+                <option key={p.id} value={p.id}>{p.bezeichnung} — {eur(p.preis_netto)}{p.einheit === "pro Monat" ? " /M" : ""}</option>
+              ))}
+            </select>
+          </div>
+        )}
         {positionen.map((p, i) => (
           <div key={p.uid} style={{ border: "1px solid #ececf0", borderRadius: 10, padding: 12, marginBottom: 10 }}>
             <Row>

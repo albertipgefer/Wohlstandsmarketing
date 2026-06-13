@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { isLoggedIn } from "@/lib/angebot/auth";
 import { getWiederkehrendById } from "@/lib/finanzen/recurring";
+import { getAngebotById } from "@/lib/angebot/db";
 import { listKunden } from "@/lib/finanzen/kunden";
 import { listPreisliste } from "@/lib/finanzen/preisliste";
 import FinanzShell from "@/components/finanzen/FinanzShell";
@@ -21,16 +22,32 @@ export const metadata: Metadata = {
 export default async function WiederkehrendNeuSeite({
   searchParams,
 }: {
-  searchParams: Promise<{ id?: string }>;
+  searchParams: Promise<{ id?: string; fromAngebot?: string }>;
 }) {
   if (!(await isLoggedIn())) redirect("/angebot/login");
-  const { id } = await searchParams;
+  const { id, fromAngebot } = await searchParams;
 
   const [kundenRaw, preisRaw] = await Promise.all([listKunden(), listPreisliste(true)]);
   const kunden: KundeLite[] = kundenRaw.map((k) => ({ id: k.id, firma: k.firma, ansprech: k.ansprech, strasse: k.strasse, plz_ort: k.plz_ort, land: k.land, email: k.email }));
   const preisliste: PreisLite[] = preisRaw.map((p) => ({ id: p.id, bezeichnung: p.bezeichnung, beschreibung: p.beschreibung, preis_netto: p.preis_netto, ust_satz: p.ust_satz, einheit: p.einheit }));
 
   let initial: WkInitial | undefined;
+  let abschlagInit: number | undefined;
+  if (fromAngebot) {
+    const a = await getAngebotById(fromAngebot);
+    if (a) {
+      initial = {
+        bezeichnung: `Abschlagszahlung ${a.kunde_firma || a.kunde_email || ""}`.trim(),
+        kunde_firma: a.kunde_firma || "",
+        kunde_ansprech: a.kunde_ansprech || "",
+        kunde_strasse: a.kunde_strasse || "",
+        kunde_plz_ort: a.kunde_plz_ort || "",
+        kunde_email: a.kunde_email || "",
+        titel: a.titel || "Abschlagszahlung",
+      };
+      abschlagInit = a.brutto; // Gesamtbetrag des Angebots (brutto) als Abschlags-Basis
+    }
+  }
   if (id) {
     const w = await getWiederkehrendById(id);
     if (w) {
@@ -58,7 +75,7 @@ export default async function WiederkehrendNeuSeite({
 
   return (
     <FinanzShell section="einnahmen" subTab="wiederkehrend" title={id ? "Vorlage bearbeiten" : "Neue Vorlage"}>
-      <WiederkehrendEditor initial={initial} kunden={kunden} preisliste={preisliste} />
+      <WiederkehrendEditor initial={initial} kunden={kunden} preisliste={preisliste} abschlagInit={abschlagInit} />
     </FinanzShell>
   );
 }

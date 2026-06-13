@@ -1,10 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
-import CookieBanner from "@/components/CookieBanner";
 import ClarityAnalytics from "@/components/ClarityAnalytics";
-import WhatsAppButton from "@/components/WhatsAppButton";
-import MarketingOverlays from "@/components/MarketingOverlays";
+import GlobalOverlays from "@/components/GlobalOverlays";
 import { REVIEW_PROFILE_URLS } from "@/content/testimonials";
 
 const inter = Inter({
@@ -168,9 +166,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
         />
         {children}
-        <WhatsAppButton />
-        <MarketingOverlays />
-        <CookieBanner />
+        <GlobalOverlays />
         <ClarityAnalytics />
       </body>
     </html>

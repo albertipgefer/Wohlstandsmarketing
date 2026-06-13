@@ -15,7 +15,7 @@ import { ustVoranmeldung, euer, ruecklageEmpfehlung, zeitraum } from "@/lib/fina
 import { eur } from "@/lib/angebot/format";
 
 const API_KEY = process.env.ANTHROPIC_API_KEY;
-const MODEL = process.env.FINANZEN_KI_MODEL || "claude-opus-4-8";
+const MODEL = process.env.FINANZEN_KI_MODEL || "claude-sonnet-4-6";
 
 export function kiReady(): boolean {
   return !!API_KEY;

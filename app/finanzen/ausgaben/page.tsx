@@ -19,9 +19,16 @@ export const metadata: Metadata = {
 
 export default async function AusgabenSeite() {
   if (!(await isLoggedIn())) redirect("/angebot/login");
-  const jahr = new Date().getFullYear();
+  const now = new Date();
+  const jahr = now.getFullYear();
+  const q = Math.floor(now.getMonth() / 3);
   const ausgaben = await listAusgaben();
   const { netto } = ausgabenJahr(ausgaben, jahr);
+  let quartalNetto = 0;
+  for (const a of ausgaben) {
+    const d = new Date(a.datum);
+    if (!Number.isNaN(d.getTime()) && d.getFullYear() === jahr && Math.floor(d.getMonth() / 3) === q) quartalNetto += a.betrag_netto;
+  }
 
   const zeilen: AusgabeZeile[] = ausgaben.map((a) => ({
     id: a.id,
@@ -36,12 +43,33 @@ export default async function AusgabenSeite() {
     beleg_url: a.beleg_url,
   }));
 
-  return (
-    <FinanzShell section="ausgaben" title="Ausgaben">
-      <div style={{ marginBottom: 14, fontSize: 14, color: "#52525b" }}>
-        Ausgaben {jahr} (netto): <strong style={{ color: "#0a0a0a" }}>{eur(netto)}</strong>
+  const banner = (
+    <div style={S.band}>
+      <div style={S.title}>Ausgaben</div>
+      <div style={S.kpis}>
+        <div>
+          <div style={S.kpiLabel}>Abzugsfähige Kosten {jahr}</div>
+          <div style={S.kpiValue}>{eur(netto)}</div>
+        </div>
+        <div>
+          <div style={S.kpiLabel}>Q{q + 1} {jahr}</div>
+          <div style={S.kpiValue}>{eur(quartalNetto)}</div>
+        </div>
       </div>
+    </div>
+  );
+
+  return (
+    <FinanzShell section="ausgaben" title="Ausgaben" banner={banner}>
       <AusgabenManager ausgaben={zeilen} />
     </FinanzShell>
   );
 }
+
+const S: Record<string, React.CSSProperties> = {
+  band: { background: "linear-gradient(90deg,#fde8e4,#fdeee9)", border: "1px solid #f5d3c9", borderRadius: 16, padding: "20px 24px", display: "flex", alignItems: "center", gap: 28, flexWrap: "wrap" },
+  title: { fontSize: 26, fontWeight: 800, letterSpacing: "-0.5px", color: "#5a241b" },
+  kpis: { display: "flex", gap: 36, flexWrap: "wrap" },
+  kpiLabel: { fontSize: 12.5, color: "#7a4034", fontWeight: 600 },
+  kpiValue: { fontSize: 22, fontWeight: 800, color: "#5a241b", marginTop: 2 },
+};

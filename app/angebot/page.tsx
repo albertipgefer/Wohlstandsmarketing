@@ -8,7 +8,9 @@ import { redirect } from "next/navigation";
 import { isLoggedIn } from "@/lib/angebot/auth";
 import { listAngebote, dbReady } from "@/lib/angebot/db";
 import { listRechnungen } from "@/lib/finanzen/db";
+import { umsatzKpis, quartalLabel, bannerAction } from "@/lib/finanzen/einnahmen-kpis";
 import FinanzShell from "@/components/finanzen/FinanzShell";
+import EinnahmenBanner from "@/components/finanzen/EinnahmenBanner";
 import AngeboteListe, { type AngebotZeile } from "@/components/finanzen/AngeboteListe";
 
 export const dynamic = "force-dynamic";
@@ -20,10 +22,12 @@ export const metadata: Metadata = {
 
 export default async function AngebotDashboard() {
   if (!(await isLoggedIn())) redirect("/angebot/login");
+  const now = new Date();
   const [angebote, rechnungen] = await Promise.all([listAngebote(), listRechnungen()]);
   const angebotIdsMitRechnung = new Set(
     rechnungen.map((r) => r.angebot_id).filter(Boolean) as string[],
   );
+  const kpi = umsatzKpis(rechnungen, now);
 
   const zeilen: AngebotZeile[] = angebote.map((a) => ({
     id: a.id,
@@ -38,12 +42,19 @@ export default async function AngebotDashboard() {
     abrechenbar: a.status === "angenommen" && !angebotIdsMitRechnung.has(a.id),
   }));
 
-  const action = (
-    <Link href="/angebot/neu" style={S.newBtn}>+ Neues Angebot</Link>
+  const banner = (
+    <EinnahmenBanner
+      title="Angebote"
+      jahr={now.getFullYear()}
+      quartalLabel={quartalLabel(now)}
+      umsatzJahrNetto={kpi.jahr}
+      umsatzQuartalNetto={kpi.quartal}
+      action={<Link href="/angebot/neu" style={bannerAction}>+ Angebot hinzufügen</Link>}
+    />
   );
 
   return (
-    <FinanzShell section="einnahmen" subTab="angebote" title="Angebote" action={action}>
+    <FinanzShell section="einnahmen" subTab="angebote" title="Angebote" banner={banner}>
       {!dbReady() && (
         <div style={S.warn}>
           ⚠️ Datenbank nicht verbunden (Env-Vars <code>ANGEBOT_SUPABASE_URL</code> /

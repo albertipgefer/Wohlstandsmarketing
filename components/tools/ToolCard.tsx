@@ -59,8 +59,12 @@ export default function ToolCard({ tool }: { tool: Tool }) {
           {tool.internal ? "Intern" : "Öffentlich"}
         </span>
         {tool.access === "geschützt" && (
-          <span className="rounded-full border border-[var(--border)] bg-[var(--surface-2)] px-2.5 py-1 text-[11px] font-medium text-[var(--text-subtle)]">
-            🔒 Zugang geschützt
+          <span
+            className="rounded-full border border-[var(--border)] bg-[var(--surface-2)] px-2.5 py-1 text-[11px] font-medium text-[var(--text-subtle)]"
+            title="Zugang geschützt"
+            aria-label="Zugang geschützt"
+          >
+            🔒
           </span>
         )}
         <span className="ml-auto text-[var(--accent)] transition group-hover:translate-x-0.5">

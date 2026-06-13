@@ -11,6 +11,7 @@ export type RechnungZeile = {
   kunde_firma: string | null;
   kunde_email: string | null;
   brutto: number;
+  rest: number; // offener Restbetrag (bei Teilzahlung)
   datum: string | null;
   status: string; // effektiver Status
   faellig_am: string | null;
@@ -24,6 +25,7 @@ const deDate = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString("
 const STATUS_STYLE: Record<string, { bg: string; fg: string; label: string }> = {
   entwurf: { bg: "#f4f4f5", fg: "#52525b", label: "Entwurf" },
   offen: { bg: "#eff6ff", fg: "#1663de", label: "Offen" },
+  teilbezahlt: { bg: "#fef9e7", fg: "#a16207", label: "Teilbezahlt" },
   bezahlt: { bg: "#ecfdf3", fg: "#027a48", label: "Bezahlt" },
   ueberfaellig: { bg: "#fef3f2", fg: "#b42318", label: "Überfällig" },
   storniert: { bg: "#f4f4f5", fg: "#a1a1aa", label: "Storniert" },
@@ -33,6 +35,7 @@ const TABS: { key: string; label: string }[] = [
   { key: "alle", label: "Alle" },
   { key: "entwurf", label: "Entwürfe" },
   { key: "offen", label: "Offen" },
+  { key: "teilbezahlt", label: "Teilbezahlt" },
   { key: "ueberfaellig", label: "Überfällig" },
   { key: "bezahlt", label: "Bezahlt" },
 ];
@@ -93,6 +96,9 @@ export default function RechnungenListe({ rechnungen }: { rechnungen: RechnungZe
                       <span style={{ ...S.badge, background: st.bg, color: st.fg }}>{st.label}</span>
                       {r.mahnstufe > 0 && (
                         <span style={{ ...S.badge, background: "#fff7ed", color: "#c2410c", marginLeft: 6 }}>Mahnstufe {r.mahnstufe}</span>
+                      )}
+                      {r.status === "teilbezahlt" && r.rest > 0 && (
+                        <div style={{ fontSize: 11.5, color: "#a16207", marginTop: 3 }}>Rest {eur(r.rest)}</div>
                       )}
                     </td>
                     <td style={{ ...S.td, fontWeight: 700 }}>{eur(r.brutto)}</td>

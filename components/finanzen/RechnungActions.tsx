@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-type Status = "entwurf" | "offen" | "bezahlt" | "ueberfaellig" | "storniert";
+type Status = "entwurf" | "offen" | "teilbezahlt" | "bezahlt" | "ueberfaellig" | "storniert";
 
 export default function RechnungActions({
   id,
@@ -64,7 +64,30 @@ export default function RechnungActions({
     }
   }
 
-  const offenOrDue = status === "offen" || status === "ueberfaellig";
+  async function zahlungErfassen() {
+    const eingabe = window.prompt("Teilzahlung erfassen — Betrag in € (z. B. 500):");
+    if (eingabe === null) return;
+    const betrag = Number(eingabe.replace(",", "."));
+    if (!(betrag > 0)) { setErr("Ungültiger Betrag"); return; }
+    setBusy("zahlung");
+    setErr("");
+    try {
+      const r = await fetch("/api/finanzen/zahlung/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rechnungId: id, betrag }),
+      });
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok || !data.ok) { setErr(data.error || "Fehler"); setBusy(null); return; }
+      router.refresh();
+    } catch {
+      setErr("Netzwerkfehler");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  const offenOrDue = status === "offen" || status === "ueberfaellig" || status === "teilbezahlt";
 
   return (
     <div style={{ display: "flex", gap: 6, alignItems: "center", justifyContent: "flex-end", flexWrap: "wrap" }}>
@@ -80,6 +103,11 @@ export default function RechnungActions({
       {offenOrDue && (
         <button style={btn(true)} disabled={!!busy} onClick={() => setStatus("bezahlt", "paid")}>
           {busy === "paid" ? "…" : "Bezahlt"}
+        </button>
+      )}
+      {offenOrDue && (
+        <button style={btn(false)} disabled={!!busy} onClick={zahlungErfassen}>
+          {busy === "zahlung" ? "…" : "Teilzahlung"}
         </button>
       )}
       {offenOrDue && (

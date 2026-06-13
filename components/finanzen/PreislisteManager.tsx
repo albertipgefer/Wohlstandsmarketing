@@ -60,7 +60,7 @@ export default function PreislisteManager({ positionen }: { positionen: PreisZei
     <>
       <div style={S.toolbar}>
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Preisliste durchsuchen …" style={S.search} />
-        <button onClick={neu} style={btnPrimary}>+ Position</button>
+        <button onClick={neu} style={btnPrimary}>+ Artikel hinzufügen</button>
       </div>
 
       {open && (

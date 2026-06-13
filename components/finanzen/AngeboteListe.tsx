@@ -80,22 +80,21 @@ export default function AngeboteListe({ angebote }: { angebote: AngebotZeile[] }
         <div className="fin-table-wrap">
           <table style={S.table}>
             <thead>
-              <tr>{["Nr.", "Kunde", "Betrag", "Status", "Gültig bis", "Erstellt", ""].map((h) => (<th key={h} style={S.th}>{h}</th>))}</tr>
+              <tr>{["Kundenname", "Nummer", "Datum", "Status", "Gesamtbetrag", ""].map((h) => (<th key={h} style={S.th}>{h}</th>))}</tr>
             </thead>
             <tbody>
               {gefiltert.map((a) => {
                 const st = STATUS_STYLE[a.status] || STATUS_STYLE.entwurf;
                 return (
                   <tr key={a.id} style={S.tr}>
-                    <td style={S.td}>{a.nummer || "—"}</td>
                     <td style={S.td}>
-                      <div style={{ fontWeight: 600 }}>{a.kunde_firma || "—"}</div>
-                      <div style={{ fontSize: 12, color: "#a3a3a3" }}>{a.kunde_email || ""}</div>
+                      <div style={{ fontWeight: 600 }}>{a.kunde_firma || a.kunde_email || "—"}</div>
+                      {a.kunde_firma && a.kunde_email && <div style={{ fontSize: 12, color: "#a3a3a3" }}>{a.kunde_email}</div>}
                     </td>
-                    <td style={S.td}>{eur(a.brutto)}</td>
-                    <td style={S.td}><span style={{ ...S.badge, background: st.bg, color: st.fg }}>{st.label}</span></td>
-                    <td style={S.td}>{deDate(a.gueltig_bis)}</td>
+                    <td style={S.td}>{a.nummer || "—"}</td>
                     <td style={S.td}>{deDate(a.created_at)}</td>
+                    <td style={S.td}><span style={{ ...S.badge, background: st.bg, color: st.fg }}>{st.label}</span></td>
+                    <td style={{ ...S.td, fontWeight: 700 }}>{eur(a.brutto)}</td>
                     <td style={{ ...S.td, textAlign: "right", whiteSpace: "nowrap" }}>
                       <Link href={`/angebot/neu?id=${a.id}`} style={S.link}>Bearbeiten</Link>
                       <a href={`/api/finanzen/pdf?angebot=${a.id}`} target="_blank" rel="noreferrer" style={{ ...S.link, marginLeft: 12 }}>PDF</a>

@@ -7,8 +7,11 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { isLoggedIn } from "@/lib/angebot/auth";
 import { listWiederkehrend } from "@/lib/finanzen/recurring";
+import { listRechnungen } from "@/lib/finanzen/db";
+import { umsatzKpis, quartalLabel, bannerAction } from "@/lib/finanzen/einnahmen-kpis";
 import { eur, deDate } from "@/lib/angebot/format";
 import FinanzShell from "@/components/finanzen/FinanzShell";
+import EinnahmenBanner from "@/components/finanzen/EinnahmenBanner";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -25,12 +28,23 @@ const INTERVALL_LABEL: Record<string, string> = {
 
 export default async function WiederkehrendSeite() {
   if (!(await isLoggedIn())) redirect("/angebot/login");
-  const items = await listWiederkehrend();
+  const now = new Date();
+  const [items, rechnungen] = await Promise.all([listWiederkehrend(), listRechnungen()]);
+  const kpi = umsatzKpis(rechnungen, now);
 
-  const action = <Link href="/finanzen/wiederkehrend/neu" style={S.newBtn}>+ Neue Vorlage</Link>;
+  const banner = (
+    <EinnahmenBanner
+      title="Wiederkehrende Rechnungen"
+      jahr={now.getFullYear()}
+      quartalLabel={quartalLabel(now)}
+      umsatzJahrNetto={kpi.jahr}
+      umsatzQuartalNetto={kpi.quartal}
+      action={<Link href="/finanzen/wiederkehrend/neu" style={bannerAction}>+ Vorlage hinzufügen</Link>}
+    />
+  );
 
   return (
-    <FinanzShell section="einnahmen" subTab="wiederkehrend" title="Wiederkehrende Rechnungen" action={action}>
+    <FinanzShell section="einnahmen" subTab="wiederkehrend" title="Wiederkehrende Rechnungen" banner={banner}>
       {items.length === 0 ? (
         <div style={S.empty}>
           Noch keine wiederkehrenden Rechnungen. Lege eine Vorlage an (z. B. Retainer) —
@@ -40,22 +54,26 @@ export default async function WiederkehrendSeite() {
         <div className="fin-table-wrap">
           <table style={S.table}>
             <thead>
-              <tr>{["Bezeichnung", "Kunde", "Betrag", "Intervall", "Nächste", "Status", ""].map((h) => (<th key={h} style={S.th}>{h}</th>))}</tr>
+              <tr>{["Name des Kunden", "Gesamtbetrag", "Nächste Rechnung", "Status", "Frequenz", "Autom. senden", ""].map((h) => (<th key={h} style={S.th}>{h}</th>))}</tr>
             </thead>
             <tbody>
               {items.map((w) => (
                 <tr key={w.id} style={S.tr}>
-                  <td style={S.td}>{w.bezeichnung || "—"}</td>
                   <td style={S.td}>
-                    <div style={{ fontWeight: 600 }}>{w.kunde_firma || "—"}</div>
-                    <div style={{ fontSize: 12, color: "#a3a3a3" }}>{w.kunde_email || ""}</div>
+                    <div style={{ fontWeight: 600 }}>{w.kunde_firma || w.bezeichnung || "—"}</div>
+                    {w.kunde_email && <div style={{ fontSize: 12, color: "#a3a3a3" }}>{w.kunde_email}</div>}
                   </td>
-                  <td style={S.td}>{eur(w.brutto)}</td>
-                  <td style={S.td}>{INTERVALL_LABEL[w.intervall] || w.intervall}</td>
+                  <td style={{ ...S.td, fontWeight: 700 }}>{eur(w.brutto)}</td>
                   <td style={S.td}>{deDate(w.naechste_faelligkeit)}</td>
                   <td style={S.td}>
                     <span style={{ ...S.badge, ...(w.aktiv ? { background: "#ecfdf3", color: "#027a48" } : { background: "#f4f4f5", color: "#a1a1aa" }) }}>
                       {w.aktiv ? "aktiv" : "pausiert"}
+                    </span>
+                  </td>
+                  <td style={S.td}>{INTERVALL_LABEL[w.intervall] || w.intervall}</td>
+                  <td style={S.td}>
+                    <span style={{ ...S.badge, ...(w.auto_senden ? { background: "#eef3fd", color: "#1663de" } : { background: "#f4f4f5", color: "#a1a1aa" }) }}>
+                      {w.auto_senden ? "an" : "aus"}
                     </span>
                   </td>
                   <td style={{ ...S.td, textAlign: "right" }}>

@@ -71,7 +71,7 @@ export default async function FinanzStart() {
   const vorschlaege = buildVorschlaege({ k, ausgaben, jahr, ueberfaellig, angenommeneOhneRechnung });
 
   return (
-    <FinanzShell section="start" title="Start" banner={<h1 className="fin-h1">Willkommen, Albert! 🐷</h1>}>
+    <FinanzShell section="start" title="Start" banner={<h1 className="fin-h1">Willkommen, Albert!</h1>}>
       <div className="fin-dash">
         {/* To-Do-Liste */}
         <div className="fin-dash-todo" style={S.card}>

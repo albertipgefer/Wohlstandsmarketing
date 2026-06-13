@@ -7,9 +7,11 @@ import RechnungActions from "@/components/finanzen/RechnungActions";
 export type RechnungZeile = {
   id: string;
   nummer: string | null;
+  typ: string;
   kunde_firma: string | null;
   kunde_email: string | null;
   brutto: number;
+  datum: string | null;
   status: string; // effektiver Status
   faellig_am: string | null;
   mahnstufe: number;
@@ -73,26 +75,27 @@ export default function RechnungenListe({ rechnungen }: { rechnungen: RechnungZe
         <div className="fin-table-wrap">
           <table style={S.table}>
             <thead>
-              <tr>{["Nr.", "Kunde", "Betrag", "Status", "Fällig", "Aktionen"].map((h) => (<th key={h} style={S.th}>{h}</th>))}</tr>
+              <tr>{["Name des Kunden", "Typ", "Nummer", "Datum", "Status", "Gesamtbetrag", ""].map((h) => (<th key={h} style={S.th}>{h}</th>))}</tr>
             </thead>
             <tbody>
               {gefiltert.map((r) => {
                 const st = STATUS_STYLE[r.status] || STATUS_STYLE.entwurf;
                 return (
                   <tr key={r.id} style={S.tr}>
-                    <td style={S.td}>{r.nummer || <span style={{ color: "#a1a1aa" }}>Entwurf</span>}</td>
                     <td style={S.td}>
-                      <div style={{ fontWeight: 600 }}>{r.kunde_firma || "—"}</div>
-                      <div style={{ fontSize: 12, color: "#a3a3a3" }}>{r.kunde_email || ""}</div>
+                      <div style={{ fontWeight: 600 }}>{r.kunde_firma || r.kunde_email || "—"}</div>
+                      {r.kunde_firma && r.kunde_email && <div style={{ fontSize: 12, color: "#a3a3a3" }}>{r.kunde_email}</div>}
                     </td>
-                    <td style={S.td}>{eur(r.brutto)}</td>
+                    <td style={S.td}>{r.typ}</td>
+                    <td style={S.td}>{r.nummer || <span style={{ color: "#a1a1aa" }}>Entwurf</span>}</td>
+                    <td style={S.td}>{deDate(r.datum)}</td>
                     <td style={S.td}>
                       <span style={{ ...S.badge, background: st.bg, color: st.fg }}>{st.label}</span>
                       {r.mahnstufe > 0 && (
                         <span style={{ ...S.badge, background: "#fff7ed", color: "#c2410c", marginLeft: 6 }}>Mahnstufe {r.mahnstufe}</span>
                       )}
                     </td>
-                    <td style={S.td}>{deDate(r.faellig_am)}</td>
+                    <td style={{ ...S.td, fontWeight: 700 }}>{eur(r.brutto)}</td>
                     <td style={{ ...S.td, textAlign: "right" }}>
                       <div style={{ display: "flex", gap: 12, justifyContent: "flex-end", marginBottom: 6 }}>
                         {r.status === "entwurf" && <Link href={`/finanzen/rechnungen/neu?id=${r.id}`} style={S.link}>Bearbeiten</Link>}

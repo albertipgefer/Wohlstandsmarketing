@@ -10,8 +10,10 @@ import { isLoggedIn } from "@/lib/angebot/auth";
 import { listAngebote } from "@/lib/angebot/db";
 import { listRechnungen } from "@/lib/finanzen/db";
 import { listKunden } from "@/lib/finanzen/kunden";
+import { umsatzKpis, quartalLabel, bannerAction } from "@/lib/finanzen/einnahmen-kpis";
 import { eur } from "@/lib/angebot/format";
 import FinanzShell from "@/components/finanzen/FinanzShell";
+import EinnahmenBanner from "@/components/finanzen/EinnahmenBanner";
 import KundeDeleteButton from "@/components/finanzen/KundeDeleteButton";
 
 export const dynamic = "force-dynamic";
@@ -26,11 +28,17 @@ type Zeile = {
   id: string | null; // managed-id, falls Stammkunde
   firma: string;
   email: string;
+  stadt: string;
+  ustId: string;
   angebote: number;
   rechnungen: number;
   bezahltNetto: number;
   offenBrutto: number;
 };
+
+function stadtAus(plzOrt: string | null): string {
+  return (plzOrt || "").replace(/^\s*\d{4,5}\s*/, "").trim();
+}
 
 function keyOf(firma: string | null, email: string | null): string {
   return (email || firma || "—").toLowerCase().trim();
@@ -50,7 +58,7 @@ export default async function KundenSeite() {
     const key = keyOf(firma, email);
     let z = map.get(key);
     if (!z) {
-      z = { key, id: null, firma: firma || email || "—", email: email || "", angebote: 0, rechnungen: 0, bezahltNetto: 0, offenBrutto: 0 };
+      z = { key, id: null, firma: firma || email || "—", email: email || "", stadt: "", ustId: "", angebote: 0, rechnungen: 0, bezahltNetto: 0, offenBrutto: 0 };
       map.set(key, z);
     }
     return z;
@@ -62,6 +70,8 @@ export default async function KundenSeite() {
     z.id = k.id;
     if (k.firma) z.firma = k.firma;
     if (k.email) z.email = k.email;
+    z.stadt = stadtAus(k.plz_ort);
+    z.ustId = k.ust_id || "";
   }
   // Abgeleitete Umsätze drauflegen
   for (const a of angebote) get(a.kunde_firma, a.kunde_email).angebote += 1;
@@ -77,17 +87,28 @@ export default async function KundenSeite() {
     return b.bezahltNetto - a.bezahltNetto;
   });
 
-  const action = <Link href="/finanzen/kunden/neu" style={S.newBtn}>+ Neuer Kunde</Link>;
+  const now = new Date();
+  const kpi = umsatzKpis(rechnungen, now);
+  const banner = (
+    <EinnahmenBanner
+      title="Kunden"
+      jahr={now.getFullYear()}
+      quartalLabel={quartalLabel(now)}
+      umsatzJahrNetto={kpi.jahr}
+      umsatzQuartalNetto={kpi.quartal}
+      action={<Link href="/finanzen/kunden/neu" style={bannerAction}>+ Kunde hinzufügen</Link>}
+    />
+  );
 
   return (
-    <FinanzShell section="einnahmen" subTab="kunden" title="Kunden" action={action}>
+    <FinanzShell section="einnahmen" subTab="kunden" title="Kunden" banner={banner}>
       {zeilen.length === 0 ? (
         <div style={S.empty}>Noch keine Kunden. Lege deinen ersten Kunden an — auch ohne Angebot.</div>
       ) : (
         <div className="fin-table-wrap">
           <table style={S.table}>
             <thead>
-              <tr>{["Kunde", "Typ", "Angebote", "Rechnungen", "Umsatz (netto)", "Offen", ""].map((h) => (<th key={h} style={S.th}>{h}</th>))}</tr>
+              <tr>{["Name", "Stadt", "USt-IdNr.", "Umsatz (netto)", ""].map((h) => (<th key={h} style={S.th}>{h}</th>))}</tr>
             </thead>
             <tbody>
               {zeilen.map((z) => (
@@ -96,17 +117,9 @@ export default async function KundenSeite() {
                     <div style={{ fontWeight: 600 }}>{z.firma}</div>
                     <div style={{ fontSize: 12, color: "#a3a3a3" }}>{z.email}</div>
                   </td>
-                  <td style={S.td}>
-                    {z.id ? (
-                      <span style={{ ...S.badge, background: "#eef3fd", color: "#1663de" }}>Stammkunde</span>
-                    ) : (
-                      <span style={{ ...S.badge, background: "#f4f4f5", color: "#a1a1aa" }}>aus Dokumenten</span>
-                    )}
-                  </td>
-                  <td style={S.td}>{z.angebote}</td>
-                  <td style={S.td}>{z.rechnungen}</td>
+                  <td style={S.td}>{z.stadt || "—"}</td>
+                  <td style={S.td}>{z.ustId || "—"}</td>
                   <td style={S.td}>{eur(z.bezahltNetto)}</td>
-                  <td style={S.td}>{z.offenBrutto > 0 ? eur(z.offenBrutto) : "—"}</td>
                   <td style={{ ...S.td, textAlign: "right", whiteSpace: "nowrap" }}>
                     {z.id ? (
                       <>

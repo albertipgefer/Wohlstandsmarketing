@@ -128,17 +128,22 @@ export default function AusgabenManager({ ausgaben }: { ausgaben: AusgabeZeile[]
         <div className="fin-table-wrap">
           <table style={S.table}>
             <thead>
-              <tr>{["Datum", "Lieferant", "Kategorie", "Beschreibung", "Netto", "Brutto", "Beleg", ""].map((h) => (<th key={h} style={S.th}>{h}</th>))}</tr>
+              <tr>{["Lieferant", "Datum", "Kategorie", "Status", "Anhang", "Betrag", ""].map((h) => (<th key={h} style={S.th}>{h}</th>))}</tr>
             </thead>
             <tbody>
               {gefiltert.map((a) => (
                 <tr key={a.id} style={S.tr}>
+                  <td style={S.td}>
+                    <div style={{ fontWeight: 600 }}>{a.lieferant || "—"}</div>
+                    {a.beschreibung && <div style={{ fontSize: 12, color: "#a3a3a3" }}>{a.beschreibung}</div>}
+                  </td>
                   <td style={S.td}>{deDate(a.datum)}</td>
-                  <td style={S.td}>{a.lieferant || "—"}</td>
                   <td style={S.td}>{a.kategorie || "—"}</td>
-                  <td style={S.td}>{a.beschreibung || "—"}</td>
-                  <td style={S.td}>{eur(a.betrag_netto)}</td>
-                  <td style={S.td}>{eur(a.betrag_brutto)}</td>
+                  <td style={S.td}>
+                    <span style={{ ...S.badge, ...(a.bezahlt ? { background: "#ecfdf3", color: "#027a48" } : { background: "#fff7ed", color: "#c2410c" }) }}>
+                      {a.bezahlt ? "bezahlt" : "offen"}
+                    </span>
+                  </td>
                   <td style={S.td}>
                     {a.beleg_url ? (
                       <a href={`/api/finanzen/beleg?id=${a.id}`} target="_blank" rel="noreferrer" style={S.link}>📎 ansehen</a>
@@ -146,6 +151,7 @@ export default function AusgabenManager({ ausgaben }: { ausgaben: AusgabeZeile[]
                       <span style={{ color: "#c4c4c4", fontSize: 13 }}>—</span>
                     )}
                   </td>
+                  <td style={{ ...S.td, fontWeight: 700 }}>{eur(a.betrag_brutto)}</td>
                   <td style={{ ...S.td, textAlign: "right", whiteSpace: "nowrap" }}>
                     <button onClick={() => bearbeiten(a)} style={S.linkBtn}>Bearbeiten</button>
                     <button onClick={() => loeschen(a.id)} style={{ ...S.linkBtn, color: "#b42318", marginLeft: 12 }}>Löschen</button>
@@ -174,6 +180,7 @@ const S: Record<string, React.CSSProperties> = {
   th: { textAlign: "left", padding: "12px 16px", fontSize: 12, fontWeight: 700, textTransform: "uppercase", color: "#737373", background: "#f9fafb", borderBottom: "1px solid #f0f0f0" },
   tr: { borderBottom: "1px solid #f4f4f5" },
   td: { padding: "13px 16px", fontSize: 14, verticalAlign: "middle" },
+  badge: { display: "inline-block", padding: "3px 10px", borderRadius: 999, fontSize: 12, fontWeight: 700 },
   link: { color: "#1663de", textDecoration: "none", fontSize: 13, fontWeight: 600 },
   linkBtn: { background: "none", border: "none", color: "#1663de", fontSize: 13, fontWeight: 600, cursor: "pointer", padding: 0 },
 };

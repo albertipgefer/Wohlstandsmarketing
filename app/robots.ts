@@ -5,8 +5,8 @@ const SITE = "https://wohlstandsmarketing.de";
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
-      // Default: allow all
-      { userAgent: "*", allow: "/" },
+      // Default: allow all — interner Tool-Bereich ausgenommen
+      { userAgent: "*", allow: "/", disallow: ["/tools"] },
       // Explicitly allow major AI crawlers
       { userAgent: "GPTBot", allow: "/" },
       { userAgent: "OAI-SearchBot", allow: "/" },

@@ -68,6 +68,27 @@
 .fin-subtab:hover { color: #27272a; }
 .fin-subtab.on { color: #0a0a0a; border-bottom-color: #16a34a; }
 
+/* Zeitraum-Pills (Steuern) */
+.fin-pill {
+  display: inline-block;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid #e4e4e7;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  color: #52525b;
+  text-decoration: none;
+}
+.fin-pill.on { background: #1663de; border-color: #1663de; color: #fff; }
+
+/* Druckansicht (Report → PDF) */
+@media print {
+  .fin-sidebar, .fin-subnav, .fin-header > div, .no-print { display: none !important; }
+  .fin-root { grid-template-columns: 1fr; background: #fff; }
+  .fin-main { padding: 0; max-width: none; }
+}
+
 /* Übersicht-Grids */
 .fin-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
 .fin-twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }

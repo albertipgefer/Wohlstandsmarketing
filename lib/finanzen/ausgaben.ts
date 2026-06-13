@@ -30,6 +30,7 @@ export type Ausgabe = {
   betrag_brutto: number;
   bezahlt: boolean;
   notiz: string | null;
+  beleg_url: string | null;
   created_at: string;
   updated_at: string;
 };

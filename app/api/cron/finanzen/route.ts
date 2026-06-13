@@ -24,6 +24,7 @@ import {
   vorrueckenWiederkehrend,
 } from "@/lib/finanzen/recurring";
 import { sendMail, mahnungEmailHtml } from "@/lib/finanzen/email";
+import { syncAlleKonten, listKonten } from "@/lib/finanzen/bank";
 import { sendTelegramMessage } from "@/lib/telegram";
 
 const TAG = 24 * 60 * 60 * 1000;
@@ -107,14 +108,35 @@ export async function GET(req: NextRequest) {
     fehler.push(`Wiederkehrend: ${e instanceof Error ? e.message : "unknown"}`);
   }
 
+  // 4) Bank-Sync (N26 via GoCardless) + 90-Tage-Reauth-Reminder
+  let bankNeu = 0;
+  const bankHinweise: string[] = [];
+  try {
+    const sync = await syncAlleKonten();
+    bankNeu = sync.neu;
+    const konten = await listKonten();
+    for (const k of konten) {
+      // Reauth-Reminder, wenn Freigabe in <= 7 Tagen abläuft oder Konto abgelaufen ist
+      if (k.status === "abgelaufen") bankHinweise.push(`${k.name || "Bank"}: Freigabe abgelaufen — bitte neu verbinden.`);
+      else if (k.consent_expires_at) {
+        const rest = Math.floor((new Date(k.consent_expires_at).getTime() - now) / TAG);
+        if (rest <= 7) bankHinweise.push(`${k.name || "Bank"}: Freigabe läuft in ${rest} Tag(en) ab — bitte erneuern.`);
+      }
+    }
+  } catch (e) {
+    fehler.push(`Bank-Sync: ${e instanceof Error ? e.message : "unknown"}`);
+  }
+
   // Report
-  if (markedOverdue || mahnungen || wiederkehrend || fehler.length) {
+  if (markedOverdue || mahnungen || wiederkehrend || bankNeu || bankHinweise.length || fehler.length) {
     try {
       await sendTelegramMessage(
         `🧾 <b>Finanz-Lauf</b>\n` +
           `Überfällig markiert: ${markedOverdue}\n` +
           `Mahnungen gesendet: ${mahnungen}\n` +
-          `Neue wiederkehrende Rechnungen: ${wiederkehrend}` +
+          `Neue wiederkehrende Rechnungen: ${wiederkehrend}\n` +
+          `Neue Bank-Umsätze: ${bankNeu}` +
+          (bankHinweise.length ? `\n🏦 ${bankHinweise.join("; ")}` : "") +
           (fehler.length ? `\n⚠️ ${fehler.slice(0, 5).join("; ")}` : ""),
       );
     } catch {
@@ -122,5 +144,5 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  return NextResponse.json({ ok: true, markedOverdue, mahnungen, wiederkehrend, fehler });
+  return NextResponse.json({ ok: true, markedOverdue, mahnungen, wiederkehrend, bankNeu, bankHinweise, fehler });
 }

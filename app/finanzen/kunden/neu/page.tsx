@@ -18,10 +18,10 @@ export const metadata: Metadata = {
 export default async function KundeNeuSeite({
   searchParams,
 }: {
-  searchParams: Promise<{ id?: string }>;
+  searchParams: Promise<{ id?: string; firma?: string; email?: string }>;
 }) {
   if (!(await isLoggedIn())) redirect("/angebot/login");
-  const { id } = await searchParams;
+  const { id, firma, email } = await searchParams;
 
   let initial: KundeInitial | undefined;
   if (id) {
@@ -38,8 +38,12 @@ export default async function KundeNeuSeite({
         telefon: k.telefon || "",
         ust_id: k.ust_id || "",
         notiz: k.notiz || "",
+        weitere_emails: k.weitere_emails || [],
       };
     }
+  } else if (firma || email) {
+    // Abgeleiteten Kunden (aus Dokumenten) als Stammkunde vorbefüllen.
+    initial = { firma: firma || "", email: email || "" };
   }
 
   return (

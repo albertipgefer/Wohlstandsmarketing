@@ -29,6 +29,7 @@ export async function POST(req: NextRequest) {
     telefon: (body.telefon as string) || null,
     ust_id: (body.ust_id as string) || null,
     notiz: (body.notiz as string) || null,
+    weitere_emails: Array.isArray(body.weitere_emails) ? (body.weitere_emails as string[]) : [],
   };
 
   if (!fields.firma && !fields.email) {

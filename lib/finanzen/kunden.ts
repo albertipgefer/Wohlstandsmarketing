@@ -29,6 +29,7 @@ export type Kunde = {
   telefon: string | null;
   ust_id: string | null;
   notiz: string | null;
+  weitere_emails: string[];
   created_at: string;
   updated_at: string;
 };

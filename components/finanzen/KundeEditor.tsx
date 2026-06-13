@@ -14,6 +14,7 @@ export type KundeInitial = {
   telefon?: string;
   ust_id?: string;
   notiz?: string;
+  weitere_emails?: string[];
 };
 
 export default function KundeEditor({ initial }: { initial?: KundeInitial }) {
@@ -28,6 +29,7 @@ export default function KundeEditor({ initial }: { initial?: KundeInitial }) {
     telefon: initial?.telefon || "",
     ust_id: initial?.ust_id || "",
     notiz: initial?.notiz || "",
+    weitere_emails: (initial?.weitere_emails || []).join(", "),
   });
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
@@ -42,9 +44,10 @@ export default function KundeEditor({ initial }: { initial?: KundeInitial }) {
       setBusy(false); return setMsg("Bitte mindestens Firma oder E-Mail angeben.");
     }
     try {
+      const weitere = f.weitere_emails.split(/[,\n;]+/).map((s) => s.trim()).filter((s) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s));
       const r = await fetch("/api/finanzen/kunde/save", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: initial?.id, ...f }),
+        body: JSON.stringify({ id: initial?.id, ...f, weitere_emails: weitere }),
       });
       const data = await r.json().catch(() => ({}));
       if (!r.ok || !data.ok) { setBusy(false); return setMsg(data.error || "Speichern fehlgeschlagen."); }
@@ -67,6 +70,7 @@ export default function KundeEditor({ initial }: { initial?: KundeInitial }) {
           <Field label="Land"><input value={f.land} onChange={(e) => set("land", e.target.value)} style={inp} /></Field>
           <Field label="E-Mail"><input value={f.email} onChange={(e) => set("email", e.target.value)} style={inp} placeholder="kunde@firma.de" /></Field>
         </Row>
+        <Field label="Weitere E-Mails (Komma-getrennt, z. B. fürs CC)"><input value={f.weitere_emails} onChange={(e) => set("weitere_emails", e.target.value)} style={inp} placeholder="buchhaltung@firma.de, chef@firma.de" /></Field>
         <Row>
           <Field label="Telefon"><input value={f.telefon} onChange={(e) => set("telefon", e.target.value)} style={inp} /></Field>
           <Field label="USt-IdNr."><input value={f.ust_id} onChange={(e) => set("ust_id", e.target.value)} style={inp} /></Field>

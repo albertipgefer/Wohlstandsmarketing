@@ -44,6 +44,9 @@ export type Wiederkehrend = {
   intervall: Intervall;
   zahlungsziel_tage: number;
   naechste_faelligkeit: string;
+  enddatum: string | null;
+  abschlag_modus: boolean;
+  abschlag_gesamt: number | null;
   aktiv: boolean;
   auto_senden: boolean;
   created_at: string;
@@ -87,7 +90,9 @@ export async function listFaelligeWiederkehrend(heute: string): Promise<Wiederke
     const q = `aktiv=eq.true&naechste_faelligkeit=lte.${heute}&limit=200`;
     const r = await fetch(`${REST()}?${q}`, { headers: headers() });
     if (!r.ok) return [];
-    return (await r.json()) as Wiederkehrend[];
+    const rows = (await r.json()) as Wiederkehrend[];
+    // Laufzeit-Ende: keine Erzeugung mehr, wenn die fällige Rate hinter dem Enddatum liegt.
+    return rows.filter((w) => !w.enddatum || w.naechste_faelligkeit <= w.enddatum);
   } catch {
     return [];
   }
@@ -147,7 +152,7 @@ export function rechnungAusWiederkehrend(
   const faellig = new Date(now + (w.zahlungsziel_tage || 14) * 24 * 60 * 60 * 1000);
   return {
     nummer,
-    typ: "rechnung",
+    typ: w.abschlag_modus ? "abschlag" : "rechnung",
     titel: w.titel,
     kunde_firma: w.kunde_firma,
     kunde_ansprech: w.kunde_ansprech,
@@ -169,10 +174,14 @@ export function rechnungAusWiederkehrend(
   };
 }
 
-/** Schiebt die nächste Fälligkeit der Vorlage um ein Intervall nach vorn. */
+/** Schiebt die nächste Fälligkeit nach vorn — und deaktiviert die Vorlage,
+ *  sobald die nächste Fälligkeit hinter dem Enddatum läge (Laufzeit-Ende). */
 export async function vorrueckenWiederkehrend(w: Wiederkehrend, now: number): Promise<void> {
+  const naechste = naechstesDatum(w.naechste_faelligkeit, w.intervall);
+  const beendet = !!w.enddatum && naechste > w.enddatum;
   await updateWiederkehrend(w.id, {
-    naechste_faelligkeit: naechstesDatum(w.naechste_faelligkeit, w.intervall),
+    naechste_faelligkeit: naechste,
     last_erzeugt_at: new Date(now).toISOString(),
+    ...(beendet ? { aktiv: false } : {}),
   });
 }

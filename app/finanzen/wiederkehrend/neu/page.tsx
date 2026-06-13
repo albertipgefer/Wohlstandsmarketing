@@ -5,8 +5,11 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { isLoggedIn } from "@/lib/angebot/auth";
 import { getWiederkehrendById } from "@/lib/finanzen/recurring";
+import { listKunden } from "@/lib/finanzen/kunden";
+import { listPreisliste } from "@/lib/finanzen/preisliste";
 import FinanzShell from "@/components/finanzen/FinanzShell";
 import WiederkehrendEditor, { type WkInitial } from "@/components/finanzen/WiederkehrendEditor";
+import type { KundeLite, PreisLite } from "@/components/finanzen/RechnungEditor";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -22,6 +25,10 @@ export default async function WiederkehrendNeuSeite({
 }) {
   if (!(await isLoggedIn())) redirect("/angebot/login");
   const { id } = await searchParams;
+
+  const [kundenRaw, preisRaw] = await Promise.all([listKunden(), listPreisliste(true)]);
+  const kunden: KundeLite[] = kundenRaw.map((k) => ({ id: k.id, firma: k.firma, ansprech: k.ansprech, strasse: k.strasse, plz_ort: k.plz_ort, land: k.land, email: k.email }));
+  const preisliste: PreisLite[] = preisRaw.map((p) => ({ id: p.id, bezeichnung: p.bezeichnung, beschreibung: p.beschreibung, preis_netto: p.preis_netto, ust_satz: p.ust_satz, einheit: p.einheit }));
 
   let initial: WkInitial | undefined;
   if (id) {
@@ -42,6 +49,7 @@ export default async function WiederkehrendNeuSeite({
         intervall: w.intervall,
         naechste_faelligkeit: w.naechste_faelligkeit,
         zahlungsziel_tage: w.zahlungsziel_tage,
+        enddatum: w.enddatum || "",
         aktiv: w.aktiv,
         anmerkungen: w.anmerkungen || "",
       };
@@ -50,7 +58,7 @@ export default async function WiederkehrendNeuSeite({
 
   return (
     <FinanzShell section="einnahmen" subTab="wiederkehrend" title={id ? "Vorlage bearbeiten" : "Neue Vorlage"}>
-      <WiederkehrendEditor initial={initial} />
+      <WiederkehrendEditor initial={initial} kunden={kunden} preisliste={preisliste} />
     </FinanzShell>
   );
 }

@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
   const rest = Math.round((r.brutto - summe) * 100) / 100;
 
   if (summe + 0.01 >= r.brutto) {
-    await updateRechnung(id, { status: "bezahlt", bezahlt_am: new Date().toISOString() });
+    await updateRechnung(id, { status: "bezahlt", bezahlt_am: new Date().toISOString(), mahnstufe: 0, last_mahnung_at: null });
     return NextResponse.json({ ok: true, status: "bezahlt", rest: 0 });
   }
   if (r.status !== "storniert" && r.status !== "entwurf") {

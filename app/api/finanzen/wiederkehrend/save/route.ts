@@ -68,8 +68,11 @@ export async function POST(req: NextRequest) {
     ust,
     brutto,
     intervall,
-    zahlungsziel_tage: Number(body.zahlungsziel_tage) || 14,
+    zahlungsziel_tage: Number(body.zahlungsziel_tage) || 7,
     naechste_faelligkeit: naechste,
+    enddatum: (body.enddatum as string) || null,
+    abschlag_modus: body.abschlag_modus === true,
+    abschlag_gesamt: body.abschlag_gesamt != null ? Number(body.abschlag_gesamt) : null,
     aktiv: body.aktiv === false ? false : true,
   };
 

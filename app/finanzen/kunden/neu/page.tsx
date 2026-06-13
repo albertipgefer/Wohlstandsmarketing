@@ -43,7 +43,7 @@ export default async function KundeNeuSeite({
   }
 
   return (
-    <FinanzShell active="kunden" title={id ? "Kunde bearbeiten" : "Neuer Kunde"}>
+    <FinanzShell section="einnahmen" subTab="kunden" title={id ? "Kunde bearbeiten" : "Neuer Kunde"}>
       <KundeEditor initial={initial} />
     </FinanzShell>
   );

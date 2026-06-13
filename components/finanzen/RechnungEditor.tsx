@@ -32,6 +32,17 @@ export type RechnungInitial = {
   zahlungsziel_tage?: number;
 };
 
+/** Stammkunde aus der Kundenverwaltung — für den Auswahl-Picker. */
+export type KundeLite = {
+  id: string;
+  firma: string | null;
+  ansprech: string | null;
+  strasse: string | null;
+  plz_ort: string | null;
+  land: string | null;
+  email: string | null;
+};
+
 function uid() {
   return Math.random().toString(36).slice(2, 10);
 }
@@ -43,7 +54,7 @@ function leerePos(): Pos {
 const eur = (n: number) =>
   new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(n || 0);
 
-export default function RechnungEditor({ initial }: { initial?: RechnungInitial }) {
+export default function RechnungEditor({ initial, kunden = [] }: { initial?: RechnungInitial; kunden?: KundeLite[] }) {
   const router = useRouter();
   const [typ, setTyp] = useState(initial?.typ || "rechnung");
   const [titel, setTitel] = useState(initial?.titel || "");
@@ -65,8 +76,24 @@ export default function RechnungEditor({ initial }: { initial?: RechnungInitial 
   const [zielTage, setZielTage] = useState(initial?.zahlungsziel_tage ?? 14);
   const [anmerkungen, setAnmerkungen] = useState(initial?.anmerkungen || "");
   const [bedingungen, setBedingungen] = useState(initial?.bedingungen || "");
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState<null | "draft" | "send">(null);
   const [msg, setMsg] = useState<{ kind: "err" | "ok"; text: string } | null>(null);
+  const [kundenWahl, setKundenWahl] = useState("");
+
+  function waehleKunde(id: string) {
+    setKundenWahl(id);
+    if (!id) return; // "Neuer Kunde" → Felder unverändert lassen
+    const k = kunden.find((x) => x.id === id);
+    if (!k) return;
+    setKunde({
+      firma: k.firma || "",
+      ansprech: k.ansprech || "",
+      strasse: k.strasse || "",
+      plz_ort: k.plz_ort || "",
+      land: k.land || "Deutschland",
+      email: k.email || "",
+    });
+  }
 
   const summe = useMemo(() => {
     let netto = 0, ust = 0;
@@ -82,13 +109,12 @@ export default function RechnungEditor({ initial }: { initial?: RechnungInitial 
     setPositionen((ps) => ps.map((p, j) => (j === i ? { ...p, ...patch } : p)));
   }
 
-  async function save() {
-    setBusy(true);
+  async function submit(send: boolean) {
     setMsg(null);
     if (!kunde.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(kunde.email)) {
-      setBusy(false);
       return setMsg({ kind: "err", text: "Bitte eine gültige Kunden-E-Mail eintragen." });
     }
+    setBusy(send ? "send" : "draft");
     try {
       const r = await fetch("/api/finanzen/rechnung/save", {
         method: "POST",
@@ -113,13 +139,28 @@ export default function RechnungEditor({ initial }: { initial?: RechnungInitial 
       });
       const data = await r.json().catch(() => ({}));
       if (!r.ok || !data.ok) {
-        setBusy(false);
+        setBusy(null);
         return setMsg({ kind: "err", text: data.error || "Speichern fehlgeschlagen." });
       }
+
+      if (send) {
+        const id = data.id || initial?.id;
+        const sres = await fetch("/api/finanzen/rechnung/send", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id }),
+        });
+        const sdata = await sres.json().catch(() => ({}));
+        if (!sres.ok || !sdata.ok) {
+          setBusy(null);
+          return setMsg({ kind: "err", text: sdata.error || "Rechnung gespeichert, aber Versand fehlgeschlagen." });
+        }
+      }
+
       router.push("/finanzen/rechnungen");
       router.refresh();
     } catch {
-      setBusy(false);
+      setBusy(null);
       setMsg({ kind: "err", text: "Netzwerkfehler." });
     }
   }
@@ -127,6 +168,18 @@ export default function RechnungEditor({ initial }: { initial?: RechnungInitial 
   return (
     <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 18, maxWidth: 820 }}>
       <Card title="Art & Kunde">
+        {kunden.length > 0 && (
+          <Row>
+            <Field label="Kunde auswählen">
+              <select value={kundenWahl} onChange={(e) => waehleKunde(e.target.value)} style={inp}>
+                <option value="">➕ Neuer Kunde (Felder unten ausfüllen)</option>
+                {kunden.map((k) => (
+                  <option key={k.id} value={k.id}>{k.firma || k.email || "—"}</option>
+                ))}
+              </select>
+            </Field>
+          </Row>
+        )}
         <Row>
           <Field label="Art">
             <select value={typ} onChange={(e) => setTyp(e.target.value)} style={inp}>
@@ -196,7 +249,10 @@ export default function RechnungEditor({ initial }: { initial?: RechnungInitial 
         <div style={{ fontSize: 14, color: "#52525b" }}>
           Netto {eur(summe.netto)} · USt {eur(summe.ust)} · <strong style={{ color: "#0a0a0a", fontSize: 16 }}>Gesamt {eur(summe.brutto)}</strong>
         </div>
-        <button onClick={save} disabled={busy} style={btnPrimary}>{busy ? "…" : "Als Entwurf speichern"}</button>
+        <div style={{ display: "flex", gap: 10 }}>
+          <button onClick={() => submit(false)} disabled={busy !== null} style={btnGhostPrimary}>{busy === "draft" ? "…" : "Als Entwurf speichern"}</button>
+          <button onClick={() => submit(true)} disabled={busy !== null} style={btnPrimary}>{busy === "send" ? "Sende …" : "Speichern & versenden"}</button>
+        </div>
       </div>
       {msg && <div style={{ color: msg.kind === "err" ? "#b42318" : "#027a48", fontSize: 14 }}>{msg.text}</div>}
     </div>
@@ -226,3 +282,4 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 const inp: React.CSSProperties = { border: "1px solid #d4d4d8", borderRadius: 8, padding: "9px 11px", fontSize: 14, fontFamily: "inherit", width: "100%" };
 const btnPrimary: React.CSSProperties = { background: "#1663de", color: "#fff", border: "none", borderRadius: 9, padding: "11px 20px", fontSize: 14, fontWeight: 700, cursor: "pointer" };
 const btnGhost: React.CSSProperties = { background: "#fff", border: "1px solid #d4d4d8", borderRadius: 8, padding: "8px 14px", fontSize: 13, fontWeight: 600, cursor: "pointer" };
+const btnGhostPrimary: React.CSSProperties = { background: "#fff", color: "#1663de", border: "1px solid #1663de", borderRadius: 9, padding: "11px 18px", fontSize: 14, fontWeight: 700, cursor: "pointer" };

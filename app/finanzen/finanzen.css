@@ -43,9 +43,66 @@
 }
 .fin-h1 { font-size: 28px; font-weight: 800; margin: 0; letter-spacing: -0.5px; }
 
+/* Voll-Header (z.B. grüner KPI-Streifen auf Einnahmen-Seiten) */
+.fin-banner { margin-bottom: 18px; }
+
+/* Sub-Tabs unter "Einnahmen" (Rechnungen/Angebote/Kunden/…) */
+.fin-subnav {
+  display: flex;
+  gap: 2px;
+  margin: 0 0 20px;
+  border-bottom: 1px solid #ececf0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.fin-subtab {
+  white-space: nowrap;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #71717a;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.fin-subtab:hover { color: #27272a; }
+.fin-subtab.on { color: #0a0a0a; border-bottom-color: #16a34a; }
+
 /* Übersicht-Grids */
 .fin-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
 .fin-twocol { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* Start-Dashboard (Accountable-Look): To-Do + Vorschläge oben, KI rechts hoch, Chart unten */
+.fin-dash {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.05fr;
+  grid-template-areas:
+    "todo vorschlaege ki"
+    "chart chart ki";
+  gap: 16px;
+  align-items: start;
+}
+.fin-dash-todo { grid-area: todo; }
+.fin-dash-vorschlaege { grid-area: vorschlaege; }
+.fin-dash-ki { grid-area: ki; align-self: stretch; }
+.fin-dash-chart { grid-area: chart; }
+
+@media (max-width: 1024px) {
+  .fin-dash {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "todo vorschlaege"
+      "chart chart"
+      "ki ki";
+  }
+  .fin-dash-ki { min-height: 360px; }
+}
+@media (max-width: 680px) {
+  .fin-dash {
+    grid-template-columns: 1fr;
+    grid-template-areas: "todo" "vorschlaege" "chart" "ki";
+  }
+}
 
 /* Tabellen scrollen horizontal statt zu zerbrechen */
 .fin-table-wrap {

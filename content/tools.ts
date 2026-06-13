@@ -112,7 +112,7 @@ export const TOOLS: Tool[] = [
     slug: "betriebssystem",
     name: "Solopreneur OS (LP)",
     description: "Landingpage für das Claude-Code-Skill-Produkt (50 Skills + 5 Agenten).",
-    href: "/betriebssystem",
+    href: "https://start.wohlstandsmarketing.de/betriebssystem",
     icon: "🧰",
     category: "akquise",
     status: "live",

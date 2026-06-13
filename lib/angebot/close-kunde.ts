@@ -40,6 +40,24 @@ async function closeFetch(
 }
 
 type CloseLead = { id: string; name?: string; [key: string]: unknown };
+type CloseFile = { id: string; url?: string; [key: string]: unknown };
+
+/** Lädt eine Datei in Close hoch (multipart) und gibt das Datei-Objekt zurück (null bei Fehler). */
+async function uploadFileToClose(apiKey: string, bytes: Uint8Array, filename: string, mime: string): Promise<CloseFile | null> {
+  try {
+    const fd = new FormData();
+    fd.append("file", new Blob([bytes as unknown as ArrayBuffer], { type: mime }), filename);
+    const r = await fetch(`${CLOSE_BASE}/files/`, {
+      method: "POST",
+      headers: { Authorization: authHeader(apiKey) }, // KEIN Content-Type → fetch setzt multipart-boundary
+      body: fd,
+    });
+    if (!r.ok) return null;
+    return (await r.json()) as CloseFile;
+  } catch {
+    return null;
+  }
+}
 
 async function findLeadByEmail(
   apiKey: string,
@@ -58,6 +76,8 @@ export type AcceptCloseInput = {
   contactName?: string | null;
   /** Detail-Zeilen für die Notiz (z. B. Angebotsnummer, Betrag, angenommen von). */
   noteLines?: (string | null | undefined)[];
+  /** Optionales PDF (z. B. das angenommene Angebot), das an die Notiz angehängt wird. */
+  pdf?: { bytes: Uint8Array; filename: string };
 };
 
 export type AcceptCloseResult = {
@@ -119,17 +139,33 @@ export async function markCloseLeadAsKunde(
       created = true;
     }
 
-    // Notiz mit den Annahme-Details anhängen.
+    // PDF (falls vorhanden) zu Close hochladen — best-effort.
+    let attachments: CloseFile[] = [];
+    if (input.pdf) {
+      const file = await uploadFileToClose(apiKey, input.pdf.bytes, input.pdf.filename, "application/pdf");
+      if (file) attachments = [file];
+    }
+
+    // Notiz mit den Annahme-Details anhängen (inkl. PDF-Attachment, wenn vorhanden).
     const note = [
       "✅ Angebot angenommen — Kunde",
       ...(input.noteLines || []).filter(Boolean),
     ]
       .filter(Boolean)
       .join("\n");
-    await closeFetch(apiKey, `/activity/note/`, {
+    const noteBody: Record<string, unknown> = { lead_id: leadId, note };
+    if (attachments.length) noteBody.attachments = attachments;
+    const noteRes = await closeFetch(apiKey, `/activity/note/`, {
       method: "POST",
-      body: JSON.stringify({ lead_id: leadId, note }),
+      body: JSON.stringify(noteBody),
     });
+    // Falls die Notiz mit Attachment scheitert (Schema), Notiz ohne Anhang nachreichen.
+    if (!noteRes.ok && attachments.length) {
+      await closeFetch(apiKey, `/activity/note/`, {
+        method: "POST",
+        body: JSON.stringify({ lead_id: leadId, note }),
+      });
+    }
 
     return { ok: true, leadId, created };
   } catch (e) {

@@ -7,6 +7,31 @@
 
 ---
 
+## 🆕 Updates 13.06.2026 (Interne Tool-Übersicht `/tools`)
+
+**🟢 LIVE & passwortgeschützt auf https://wohlstandsmarketing.de/tools** — zentrale interne Maske, die alle eigenen WSM-Webapps/Tools als anklickbare Kacheln bündelt (4 Kategorien mit fester Farbe, Suche + Filter, ganze Kachel = Link). Rein intern, nur für Albert.
+
+**Architektur (Single Source of Truth):**
+- `content/tools.ts` — **alle Kacheln + Kategorien hier**. Neues Tool = ein Objekt ergänzen → automatisch im Grid. **‼️ Niemals Passwörter in dieser Datei** (Repo geht zu Vercel), nur Badge `access: "geschützt"` (zeigt nur 🔒).
+- `app/tools/page.tsx` (Server, `isLoggedIn()`-Gate, `noindex`), `app/tools/login/page.tsx`
+- `components/tools/`: `ToolsGrid.tsx` (Suche/Filter), `ToolCard.tsx`, `LoginForm.tsx`, `LogoutButton.tsx`
+- `lib/tools/auth.ts` — HMAC-Cookie (Muster wie `/angebot`), Cookie `tl_session`
+- `app/api/tools/{login,logout}/route.ts`
+- `components/GlobalOverlays.tsx` — blendet WhatsApp/Marketing-Popups/Cookie-Banner auf internen Seiten aus (`BARE_PREFIXES = ["/tools","/rechner","/outreach"]`); ersetzt die 3 direkten Overlay-Renders in `app/layout.tsx`
+- `app/robots.ts` — `Disallow: /tools`
+
+**ENV (Vercel-Projekt `wohlstandsmarketing`, prod/preview/dev gesetzt):** `TOOLS_PASSWORD` = `Youtubegaming1.` · `TOOLS_SESSION_SECRET` (HMAC-Secret).
+
+**Kategorien:** Akquise & Vertrieb (Blau) · Webseiten & SEO (Orange) · KI & Automatisierung (Teal) · Content (Violett). Vorbefüllt mit 14 Tools.
+
+**Verifiziert (Production):** Redirect ohne Login → `/tools/login`, Login 200 + HttpOnly/Secure-Cookie, Grid 200, keine Pop-ups, robots-Disallow.
+
+**Auto-Add-Regel:** Bei neuem eigenem WSM-Tool fragt Claude kurz nach → bei „Ja" Kachel in `content/tools.ts` + Deploy (via PR, `main` ist PR-geschützt).
+
+**Offen / Ideen für später:** Vercel-Token revoken (Albert) · optional: Sortierung/Reihenfolge pro Kategorie, „zuletzt aktualisiert"-Feld, Archiv-Bereich für eingestellte Tools, Kundenprojekte als eigene Kategorie (bewusst aktuell ausgeklammert).
+
+---
+
 ## 🆕 Updates 02.06.2026 (Blog-Offensive — 5 Branchen-Ratgeber)
 
 Nächster organischer Hebel nach dem pSEO-Fundament: Content-Cluster-Ausbau. 5 neue transaktionale Branchen-Ratgeber-Artikel (jetzt 69 Blog-Artikel, **325 Routen**):

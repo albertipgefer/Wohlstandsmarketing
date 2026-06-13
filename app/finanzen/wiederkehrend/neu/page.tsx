@@ -49,7 +49,7 @@ export default async function WiederkehrendNeuSeite({
   }
 
   return (
-    <FinanzShell active="wiederkehrend" title={id ? "Vorlage bearbeiten" : "Neue Vorlage"}>
+    <FinanzShell section="einnahmen" subTab="wiederkehrend" title={id ? "Vorlage bearbeiten" : "Neue Vorlage"}>
       <WiederkehrendEditor initial={initial} />
     </FinanzShell>
   );

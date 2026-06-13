@@ -80,7 +80,7 @@ export default async function KundenSeite() {
   const action = <Link href="/finanzen/kunden/neu" style={S.newBtn}>+ Neuer Kunde</Link>;
 
   return (
-    <FinanzShell active="kunden" title="Kunden" action={action}>
+    <FinanzShell section="einnahmen" subTab="kunden" title="Kunden" action={action}>
       {zeilen.length === 0 ? (
         <div style={S.empty}>Noch keine Kunden. Lege deinen ersten Kunden an — auch ohne Angebot.</div>
       ) : (

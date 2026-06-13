@@ -6,8 +6,9 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { isLoggedIn } from "@/lib/angebot/auth";
 import { getRechnungById } from "@/lib/finanzen/db";
+import { listKunden } from "@/lib/finanzen/kunden";
 import FinanzShell from "@/components/finanzen/FinanzShell";
-import RechnungEditor, { type RechnungInitial } from "@/components/finanzen/RechnungEditor";
+import RechnungEditor, { type RechnungInitial, type KundeLite } from "@/components/finanzen/RechnungEditor";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -23,6 +24,11 @@ export default async function RechnungNeuSeite({
 }) {
   if (!(await isLoggedIn())) redirect("/angebot/login");
   const { id } = await searchParams;
+
+  const kundenRaw = await listKunden();
+  const kunden: KundeLite[] = kundenRaw.map((k) => ({
+    id: k.id, firma: k.firma, ansprech: k.ansprech, strasse: k.strasse, plz_ort: k.plz_ort, land: k.land, email: k.email,
+  }));
 
   let initial: RechnungInitial | undefined;
   if (id) {
@@ -49,8 +55,8 @@ export default async function RechnungNeuSeite({
   }
 
   return (
-    <FinanzShell active="rechnungen" title={id ? "Rechnung bearbeiten" : "Rechnung erstellen"}>
-      <RechnungEditor initial={initial} />
+    <FinanzShell section="einnahmen" subTab="rechnungen" title={id ? "Rechnung bearbeiten" : "Rechnung erstellen"}>
+      <RechnungEditor initial={initial} kunden={kunden} />
     </FinanzShell>
   );
 }

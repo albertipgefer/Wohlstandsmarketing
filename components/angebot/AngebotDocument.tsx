@@ -44,7 +44,11 @@ export default function AngebotDocument({ data }: { data: DocData }) {
         <div className="ag-cover-top">
           <img className="ag-avatar" src="/albert-portrait.jpg" alt="Albert Ipgefer" />
           <div className="ag-brand">
-            WOHLSTANDS<span className="ag-accent">MARKETING</span>
+            <span className="ag-brand-row">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="ag-logo" src="/icon.png" alt="Wohlstandsmarketing" />
+              <span>Wohlstands<span className="ag-accent">marketing</span></span>
+            </span>
             <small>Angebot {data.nummer}</small>
           </div>
         </div>
@@ -232,6 +236,8 @@ export const DOC_CSS = `
 .ag-cover-top { display: flex; align-items: center; gap: 14px; }
 .ag-avatar { width: 56px; height: 56px; border-radius: 14px; object-fit: cover; box-shadow: 0 2px 10px rgba(22,99,222,0.20); }
 .ag-brand { font-size: 14pt; font-weight: 700; letter-spacing: -0.3px; }
+.ag-brand-row { display: inline-flex; align-items: center; gap: 8px; }
+.ag-logo { width: 26px; height: 26px; border-radius: 6px; flex-shrink: 0; }
 .ag-brand .ag-accent { color: var(--ag-accent); }
 .ag-brand small { display: block; font-size: 8.5pt; font-weight: 500; color: #71717a; text-transform: uppercase; letter-spacing: 2.2px; margin-top: 2px; }
 .ag-hero { margin-top: 34mm; }

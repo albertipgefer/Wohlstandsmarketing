@@ -25,7 +25,7 @@ export default async function AusgabenSeite() {
   const { netto } = ausgabenJahr(ausgaben, jahr);
 
   return (
-    <FinanzShell active="ausgaben" title="Ausgaben">
+    <FinanzShell section="ausgaben" title="Ausgaben">
       <div style={{ marginBottom: 14, fontSize: 14, color: "#52525b" }}>
         Ausgaben {jahr} (netto): <strong style={{ color: "#0a0a0a" }}>{eur(netto)}</strong>
       </div>

@@ -30,7 +30,7 @@ export default async function WiederkehrendSeite() {
   const action = <Link href="/finanzen/wiederkehrend/neu" style={S.newBtn}>+ Neue Vorlage</Link>;
 
   return (
-    <FinanzShell active="wiederkehrend" title="Wiederkehrende Rechnungen" action={action}>
+    <FinanzShell section="einnahmen" subTab="wiederkehrend" title="Wiederkehrende Rechnungen" action={action}>
       {items.length === 0 ? (
         <div style={S.empty}>
           Noch keine wiederkehrenden Rechnungen. Lege eine Vorlage an (z. B. Retainer) —

@@ -31,6 +31,19 @@ export async function POST(req: NextRequest) {
   if (!r.kunde_email)
     return NextResponse.json({ ok: false, error: "missing_customer_email" }, { status: 400 });
 
+  // Maximal 2 Mahnungen an den Kunden. Danach KEINE weitere Kundenmail —
+  // stattdessen interne Erinnerung: Fall ans Inkasso übergeben.
+  if ((r.mahnstufe || 0) >= 2) {
+    try {
+      await sendTelegramMessage(
+        `🟥 <b>Inkasso fällig</b>\n${r.kunde_firma || r.kunde_email} · ${eur(r.brutto)} · Nr. ${r.nummer || "—"}\n2. Mahnung ist raus — bitte den Fall jetzt ans Inkasso übergeben (keine weitere Mahnung an den Kunden).`,
+      );
+    } catch {
+      /* ignore */
+    }
+    return NextResponse.json({ ok: true, stufe: 2, inkasso: true });
+  }
+
   const stufe = (r.mahnstufe || 0) + 1;
 
   const mail = await sendMail({

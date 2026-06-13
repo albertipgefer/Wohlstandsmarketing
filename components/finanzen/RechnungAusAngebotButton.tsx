@@ -32,9 +32,9 @@ export default function RechnungAusAngebotButton({ angebotId }: { angebotId: str
       onClick={go}
       disabled={busy}
       style={{ background: "none", border: "none", color: "#027a48", fontSize: 13, fontWeight: 600, cursor: "pointer", padding: 0, marginLeft: 12 }}
-      title="Rechnungs-Entwurf aus diesem Angebot erzeugen"
+      title="Gesamte Rechnung aus diesem Angebot erzeugen"
     >
-      {busy ? "…" : "→ Rechnung"}
+      {busy ? "…" : "→ Gesamte Rechnung"}
     </button>
   );
 }

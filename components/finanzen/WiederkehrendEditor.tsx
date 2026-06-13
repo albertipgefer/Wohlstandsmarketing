@@ -29,7 +29,7 @@ function addMonths(iso: string, months: number): string {
   return d.toISOString().slice(0, 10);
 }
 
-export default function WiederkehrendEditor({ initial, kunden = [], preisliste = [] }: { initial?: WkInitial; kunden?: KundeLite[]; preisliste?: PreisLite[] }) {
+export default function WiederkehrendEditor({ initial, kunden = [], preisliste = [], abschlagInit }: { initial?: WkInitial; kunden?: KundeLite[]; preisliste?: PreisLite[]; abschlagInit?: number }) {
   const router = useRouter();
   const [f, setF] = useState({
     bezeichnung: initial?.bezeichnung || "",
@@ -49,8 +49,8 @@ export default function WiederkehrendEditor({ initial, kunden = [], preisliste =
     anmerkungen: initial?.anmerkungen || "",
   });
   const [kundenWahl, setKundenWahl] = useState("");
-  const [abschlag, setAbschlag] = useState(false);
-  const [absGesamt, setAbsGesamt] = useState(0);
+  const [abschlag, setAbschlag] = useState(!!abschlagInit);
+  const [absGesamt, setAbsGesamt] = useState(abschlagInit || 0);
   const [absRaten, setAbsRaten] = useState(3);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");

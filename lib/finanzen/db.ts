@@ -29,6 +29,7 @@ export function dbReady(): boolean {
 export type RechnungStatus =
   | "entwurf"
   | "offen"
+  | "teilbezahlt"
   | "bezahlt"
   | "ueberfaellig"
   | "storniert";

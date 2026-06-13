@@ -1,8 +1,8 @@
 /**
- * /finanzen/steuern — Accountable-Stil: oben Gewinn + geschätzte Einkommensteuer,
- * darunter die Liste der Steuer-Erklärungen (USt-Voranmeldungen Q1–Q4,
- * Umsatzsteuererklärung, EÜR/Jahresabschluss, Einkommensteuer, Gewerbesteuer).
- * Klick auf eine Zeile → Detail (?art=…). Berechnung + Report, KEINE ELSTER-Einreichung.
+ * /finanzen/steuern — Accountable-Layout (WSM-Stil): violettes Banner (Gewinn +
+ * geschätzte Einkommensteuer), Jahres-Tabs, Steuer-Verpflichtungen als Karten-Grid
+ * pro Quartal + Jahresabschluss. Klick auf eine Karte → Detail (?art=…).
+ * Berechnung + Report, KEINE ELSTER-Einreichung.
  */
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -14,20 +14,19 @@ import { ustVoranmeldung, euer, ruecklageEmpfehlung, zeitraum } from "@/lib/fina
 import { eur } from "@/lib/angebot/format";
 import FinanzShell from "@/components/finanzen/FinanzShell";
 import PrintButton from "@/components/finanzen/PrintButton";
+import SteuerListe, { type SteuerGruppe } from "@/components/finanzen/SteuerListe";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 export const metadata: Metadata = { title: "Finanzen — Steuern", robots: { index: false, follow: false } };
 
-const GEWST_HEBESATZ = 0.0; // Gemeinde-Hebesatz unbekannt → unten als Hinweis; Default 400 % nur als Schätzung
-const HEBESATZ_DEFAULT = 4.0; // 400 %
+const HEBESATZ_DEFAULT = 4.0; // 400 % Gewerbesteuer-Hebesatz (Schätzung)
 
 function gewerbesteuer(gewinn: number): { messbetrag: number; steuer: number; relevant: boolean } {
   const ertrag = Math.floor(Math.max(0, gewinn) / 100) * 100;
   if (ertrag <= 24500) return { messbetrag: 0, steuer: 0, relevant: false };
   const messbetrag = Math.round((ertrag - 24500) * 0.035 * 100) / 100;
-  const hebe = GEWST_HEBESATZ || HEBESATZ_DEFAULT;
-  return { messbetrag, steuer: Math.round(messbetrag * hebe * 100) / 100, relevant: true };
+  return { messbetrag, steuer: Math.round(messbetrag * HEBESATZ_DEFAULT * 100) / 100, relevant: true };
 }
 
 export default async function SteuernSeite({ searchParams }: { searchParams: Promise<{ jahr?: string; art?: string; z?: string }> }) {
@@ -39,73 +38,84 @@ export default async function SteuernSeite({ searchParams }: { searchParams: Pro
   const [rechnungen, ausgaben] = await Promise.all([listRechnungen(), listAusgaben()]);
   const e = euer(rechnungen, ausgaben, jahr);
   const rl = ruecklageEmpfehlung(e.gewinn);
-  const jahrU = ustVoranmeldung(rechnungen, ausgaben, `${jahr}-01-01`, `${jahr}-12-31`);
   const gewSt = gewerbesteuer(e.gewinn);
 
-  // Detail-Ansicht?
   if (sp.art) {
-    return <Detail art={sp.art} z={sp.z} jahr={jahr} rechnungen={rechnungen} ausgaben={ausgaben} />;
+    return <Detail art={sp.art} z={sp.z} jahr={jahr} rechnungen={rechnungen} ausgaben={ausgaben} gewSt={gewSt} />;
   }
 
-  const aktQ = Math.floor(now.getMonth() / 3) + 1;
-  const ustQ = (["q1", "q2", "q3", "q4"] as const).map((q, i) => {
+  const ustQ = (["q1", "q2", "q3", "q4"] as const).map((q) => {
     const zr = zeitraum(jahr, q);
-    const u = ustVoranmeldung(rechnungen, ausgaben, zr.von, zr.bis);
-    return { key: q, nr: i + 1, label: `Umsatzsteuer-Voranmeldung Q${i + 1} ${jahr}`, betrag: u.zahllast, faellig: i + 1 < aktQ || jahr < now.getFullYear() };
+    return ustVoranmeldung(rechnungen, ausgaben, zr.von, zr.bis).zahllast;
+  });
+  const jahrU = ustVoranmeldung(rechnungen, ausgaben, `${jahr}-01-01`, `${jahr}-12-31`);
+  const estVz = Math.round((rl.einkommensteuerSchaetzung / 4) * 100) / 100;
+  const gewVz = Math.round((gewSt.steuer / 4) * 100) / 100;
+
+  const gewStFaellig = [`${jahr}-02-15`, `${jahr}-05-15`, `${jahr}-08-15`, `${jahr}-11-15`];
+  const estFaellig = [`${jahr}-03-10`, `${jahr}-06-10`, `${jahr}-09-10`, `${jahr}-12-10`];
+  const ustFaellig = [`${jahr}-04-10`, `${jahr}-07-10`, `${jahr}-10-10`, `${jahr + 1}-01-10`];
+
+  const gruppen: SteuerGruppe[] = [1, 2, 3, 4].map((nr) => {
+    const i = nr - 1;
+    return {
+      titel: `${nr}. Quartal ${jahr}`,
+      karten: [
+        { id: `gewvz-${nr}`, title: "Gewerbesteuer-Vorauszahlung", betrag: gewVz, faelligISO: gewStFaellig[i], href: `/finanzen/steuern?jahr=${jahr}&art=gewst` },
+        { id: `estvz-${nr}`, title: "Einkommensteuer-Vorauszahlung", betrag: estVz, faelligISO: estFaellig[i], href: `/finanzen/steuern?jahr=${jahr}&art=est` },
+        { id: `ust-${nr}`, title: "Umsatzsteuer (USt.)", betrag: ustQ[i], faelligISO: ustFaellig[i], href: `/finanzen/steuern?jahr=${jahr}&art=ustva&z=q${nr}` },
+      ],
+    };
+  });
+  gruppen.push({
+    titel: `Jahresabschluss ${jahr}`,
+    karten: [
+      { id: "euer", title: "EÜR", betrag: null, faelligISO: `${jahr + 1}-07-31`, href: `/finanzen/steuern?jahr=${jahr}&art=euer` },
+      { id: "gewst-erkl", title: "Gewerbesteuererklärung", betrag: null, faelligISO: `${jahr + 1}-07-31`, href: `/finanzen/steuern?jahr=${jahr}&art=gewst` },
+      { id: "est-erkl", title: "Einkommensteuererklärung", betrag: null, faelligISO: `${jahr + 1}-07-31`, href: `/finanzen/steuern?jahr=${jahr}&art=est` },
+      { id: "ust-erkl", title: `Umsatzsteuererklärung für ${jahr}`, betrag: jahrU.zahllast, faelligISO: `${jahr + 1}-07-31`, href: `/finanzen/steuern?jahr=${jahr}&art=ustjahr` },
+      { id: "zahlung-est", title: "Zahlung Einkommensteuer", betrag: rl.einkommensteuerSchaetzung, faelligISO: null, href: `/finanzen/steuern?jahr=${jahr}&art=est` },
+    ],
   });
 
   const banner = (
     <div style={S.band}>
-      <div>
-        <div style={S.bandLabel}>Gewinn {jahr} (vorläufig)</div>
+      <div style={S.bandTitle}>✌︎ Steuern</div>
+      <div style={S.bandKpi}>
+        <div style={S.bandLabel}>Gewinn in {jahr}</div>
         <div style={S.bandValue}>{eur(e.gewinn)}</div>
       </div>
-      <div>
-        <div style={S.bandLabel}>geschätzte Einkommensteuer</div>
+      <div style={S.bandKpi}>
+        <div style={S.bandLabel}>Bisherige Einkommensteuer</div>
         <div style={S.bandValue}>{eur(rl.einkommensteuerSchaetzung)}</div>
       </div>
-      <div style={{ marginLeft: "auto", display: "flex", gap: 10 }} className="no-print">
-        <a href={`/api/finanzen/steuern/export?jahr=${jahr}`} style={S.ghostBtn}>⬇ CSV</a>
-        <PrintButton />
+      <div style={{ marginLeft: "auto", display: "flex", gap: 8 }} className="no-print">
+        <a href={`/api/finanzen/steuern/export?jahr=${jahr}`} style={S.bandBtn} title="CSV-Export">⬇</a>
       </div>
     </div>
   );
 
   return (
     <FinanzShell section="steuern" title="Steuern" banner={banner}>
-      <div style={S.years} className="no-print">
+      <div style={S.tabs} className="no-print">
         {[now.getFullYear(), now.getFullYear() - 1, now.getFullYear() - 2].map((y) => (
           <Link key={y} href={`/finanzen/steuern?jahr=${y}`} className={y === jahr ? "fin-pill on" : "fin-pill"}>{y}</Link>
         ))}
+        <PrintButton label="PDF" />
       </div>
 
-      <div style={S.listCard}>
-        <Gruppe titel="Umsatzsteuer-Voranmeldungen" />
-        {ustQ.map((q) => (
-          <FilingRow key={q.key} href={`/finanzen/steuern?jahr=${jahr}&art=ustva&z=${q.key}`} name={q.label} betrag={q.betrag} betragLabel={q.betrag >= 0 ? "Zahllast" : "Erstattung"} faellig={q.faellig} />
-        ))}
-        <Gruppe titel="Jahreserklärungen" />
-        <FilingRow href={`/finanzen/steuern?jahr=${jahr}&art=ustjahr`} name={`Umsatzsteuererklärung ${jahr}`} betrag={jahrU.zahllast} betragLabel="Zahllast Jahr" />
-        <FilingRow href={`/finanzen/steuern?jahr=${jahr}&art=euer`} name={`EÜR / Jahresabschluss ${jahr}`} betrag={e.gewinn} betragLabel="Gewinn" />
-        <FilingRow href={`/finanzen/steuern?jahr=${jahr}&art=est`} name={`Einkommensteuererklärung ${jahr}`} betrag={rl.einkommensteuerSchaetzung} betragLabel="geschätzt" />
-        <FilingRow
-          href={`/finanzen/steuern?jahr=${jahr}&art=gewst`}
-          name={`Gewerbesteuererklärung ${jahr}`}
-          betrag={gewSt.relevant ? gewSt.steuer : 0}
-          betragLabel={gewSt.relevant ? "geschätzt" : "unter Freibetrag"}
-        />
-      </div>
+      <SteuerListe gruppen={gruppen} />
 
       <p style={S.note}>
-        Regelbesteuerung 19 %, Ist-Besteuerung. Alle Werte werden automatisch aus deinen Ein- und Ausgaben berechnet und sind eine
-        Orientierung (kein Steuerbescheid). Die Einreichung erfolgt aktuell über das ELSTER-Online-Portal — die ELSTER-Direkteinreichung folgt als eigene Phase.
+        Alle Werte werden automatisch aus deinen Ein- und Ausgaben berechnet (Regelbesteuerung 19 %, Ist-Besteuerung) und sind eine
+        Orientierung — kein Steuerbescheid. Mit Überprüfen öffnest du die Detailansicht mit den Zahlen fürs ELSTER-Portal. Die ELSTER-Direkteinreichung folgt als eigene Phase.
       </p>
     </FinanzShell>
   );
 }
 
 // ---------- Detail ----------
-function Detail({ art, z, jahr, rechnungen, ausgaben }: { art: string; z?: string; jahr: number; rechnungen: Rechnung[]; ausgaben: Ausgabe[] }) {
+function Detail({ art, z, jahr, rechnungen, ausgaben, gewSt }: { art: string; z?: string; jahr: number; rechnungen: Rechnung[]; ausgaben: Ausgabe[]; gewSt: { messbetrag: number; steuer: number; relevant: boolean } }) {
   const e = euer(rechnungen, ausgaben, jahr);
   const rl = ruecklageEmpfehlung(e.gewinn);
   let titel = "Steuer-Detail";
@@ -138,22 +148,21 @@ function Detail({ art, z, jahr, rechnungen, ausgaben }: { art: string; z?: strin
       { label: "Gewinn vor Steuern", value: eur(e.gewinn), stark: true },
     );
   } else if (art === "est") {
-    titel = `Einkommensteuererklärung ${jahr}`;
+    titel = `Einkommensteuer ${jahr}`;
     rows.push(
       { label: "zu versteuerndes Einkommen (≈ Gewinn)", value: eur(e.gewinn) },
       { label: `Einkommensteuer (Grundtarif, Ø ${rl.durchschnittssatz}%)`, value: eur(rl.einkommensteuerSchaetzung), stark: true, warn: true },
     );
   } else if (art === "gewst") {
-    const g = gewerbesteuer(e.gewinn);
-    titel = `Gewerbesteuererklärung ${jahr}`;
-    if (!g.relevant) {
+    titel = `Gewerbesteuer ${jahr}`;
+    if (!gewSt.relevant) {
       rows.push({ label: "Gewinn unter Freibetrag (24.500 €)", value: "keine Gewerbesteuer", stark: true });
     } else {
       rows.push(
         { label: "Gewerbeertrag", value: eur(e.gewinn) },
         { label: "− Freibetrag", value: "− 24.500,00 €" },
-        { label: "Steuermessbetrag (3,5 %)", value: eur(g.messbetrag) },
-        { label: "Gewerbesteuer (Hebesatz 400 %, Schätzung)", value: eur(g.steuer), stark: true, warn: true },
+        { label: "Steuermessbetrag (3,5 %)", value: eur(gewSt.messbetrag) },
+        { label: "Gewerbesteuer (Hebesatz 400 %, Schätzung)", value: eur(gewSt.steuer), stark: true, warn: true },
       );
     }
   }
@@ -179,40 +188,16 @@ function Detail({ art, z, jahr, rechnungen, ausgaben }: { art: string; z?: strin
   );
 }
 
-function FilingRow({ href, name, betrag, betragLabel, faellig }: { href: string; name: string; betrag: number; betragLabel: string; faellig?: boolean }) {
-  return (
-    <Link href={href} style={S.row}>
-      <span style={S.rowName}>{name}</span>
-      <span style={{ display: "flex", alignItems: "center", gap: 14 }}>
-        <span style={{ textAlign: "right" }}>
-          <span style={S.rowAmount}>{eur(betrag)}</span>
-          <span style={S.rowAmountLabel}>{betragLabel}</span>
-        </span>
-        {faellig ? <span style={{ ...S.badge, background: "#fff7ed", color: "#c2410c" }}>fällig</span> : <span style={{ ...S.badge, background: "#f4f4f5", color: "#71717a" }}>offen</span>}
-        <span style={{ color: "#c4c4c4" }}>→</span>
-      </span>
-    </Link>
-  );
-}
-
-function Gruppe({ titel }: { titel: string }) {
-  return <div style={S.gruppe}>{titel}</div>;
-}
-
 const S: Record<string, React.CSSProperties> = {
-  band: { background: "linear-gradient(90deg,#e6efff,#eef4ff)", border: "1px solid #d2e0fb", borderRadius: 16, padding: "20px 24px", display: "flex", alignItems: "center", gap: 40, flexWrap: "wrap" },
-  bandLabel: { fontSize: 12.5, color: "#3f5680", fontWeight: 600 },
-  bandValue: { fontSize: 24, fontWeight: 800, color: "#14264a", marginTop: 2 },
-  years: { display: "flex", gap: 6, margin: "18px 0" },
-  listCard: { background: "#fff", border: "1px solid #ececf0", borderRadius: 14, overflow: "hidden" },
-  gruppe: { fontSize: 12, fontWeight: 700, textTransform: "uppercase", color: "#737373", background: "#f9fafb", padding: "10px 18px", borderBottom: "1px solid #f0f0f0" },
-  row: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "15px 18px", borderBottom: "1px solid #f4f4f5", textDecoration: "none", color: "inherit" },
-  rowName: { fontSize: 14.5, fontWeight: 600 },
-  rowAmount: { display: "block", fontSize: 14.5, fontWeight: 700 },
-  rowAmountLabel: { display: "block", fontSize: 11.5, color: "#a1a1aa" },
-  badge: { display: "inline-block", padding: "3px 10px", borderRadius: 999, fontSize: 11.5, fontWeight: 700 },
+  band: { background: "linear-gradient(90deg,#cdbdf6,#dcd2f8)", border: "1px solid #c3b3ef", borderRadius: 16, padding: "20px 24px", display: "flex", alignItems: "center", gap: 36, flexWrap: "wrap" },
+  bandTitle: { fontSize: 26, fontWeight: 800, letterSpacing: "-0.5px", color: "#2c1a55" },
+  bandKpi: {},
+  bandLabel: { fontSize: 12.5, color: "#4a3a78", fontWeight: 600 },
+  bandValue: { fontSize: 24, fontWeight: 800, color: "#2c1a55", marginTop: 2 },
+  bandBtn: { width: 38, height: 38, borderRadius: 10, background: "rgba(255,255,255,0.7)", color: "#4a3a78", display: "inline-flex", alignItems: "center", justifyContent: "center", textDecoration: "none", fontSize: 16, fontWeight: 700 },
+  tabs: { display: "flex", gap: 8, alignItems: "center", margin: "18px 0" },
+  note: { fontSize: 12.5, color: "#a1a1aa", marginTop: 16, lineHeight: 1.55, maxWidth: 820 },
   card: { background: "#fff", border: "1px solid #ececf0", borderRadius: 14, padding: "18px 22px" },
   cardHead: { fontSize: 15, fontWeight: 800, color: "#0a0a0a", marginBottom: 8 },
-  note: { fontSize: 12.5, color: "#a1a1aa", marginTop: 16, lineHeight: 1.55, maxWidth: 760 },
   ghostBtn: { background: "#fff", color: "#1663de", border: "1px solid #1663de", borderRadius: 9, padding: "9px 16px", fontSize: 14, fontWeight: 700, textDecoration: "none" },
 };

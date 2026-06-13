@@ -7,6 +7,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { isLoggedIn } from "@/lib/angebot/auth";
 import { listRechnungen, type RechnungStatus } from "@/lib/finanzen/db";
+import { listAlleZahlungen, summen } from "@/lib/finanzen/zahlungen";
 import { umsatzKpis, quartalLabel, bannerAction } from "@/lib/finanzen/einnahmen-kpis";
 import FinanzShell from "@/components/finanzen/FinanzShell";
 import EinnahmenBanner from "@/components/finanzen/EinnahmenBanner";
@@ -31,22 +32,28 @@ export default async function RechnungenSeite() {
 
   const now = new Date();
   const heute = now.toISOString().slice(0, 10);
-  const rechnungen = await listRechnungen();
+  const [rechnungen, zahlungen] = await Promise.all([listRechnungen(), listAlleZahlungen()]);
   const kpi = umsatzKpis(rechnungen, now);
+  const bezahltMap = summen(zahlungen);
 
-  const zeilen: RechnungZeile[] = rechnungen.map((r) => ({
-    id: r.id,
-    nummer: r.nummer,
-    typ: TYP_LABEL[r.typ] || "Rechnung",
-    kunde_firma: r.kunde_firma,
-    kunde_email: r.kunde_email,
-    brutto: r.brutto,
-    datum: r.rechnungsdatum || r.created_at,
-    status: effektiverStatus(r.status, r.faellig_am, heute),
-    faellig_am: r.faellig_am,
-    mahnstufe: r.mahnstufe,
-    public_token: r.public_token,
-  }));
+  const zeilen: RechnungZeile[] = rechnungen.map((r) => {
+    const gezahlt = bezahltMap.get(r.id) || 0;
+    const rest = Math.max(0, Math.round((r.brutto - gezahlt) * 100) / 100);
+    return {
+      id: r.id,
+      nummer: r.nummer,
+      typ: TYP_LABEL[r.typ] || "Rechnung",
+      kunde_firma: r.kunde_firma,
+      kunde_email: r.kunde_email,
+      brutto: r.brutto,
+      rest,
+      datum: r.rechnungsdatum || r.created_at,
+      status: effektiverStatus(r.status, r.faellig_am, heute),
+      faellig_am: r.faellig_am,
+      mahnstufe: r.mahnstufe,
+      public_token: r.public_token,
+    };
+  });
 
   const banner = (
     <EinnahmenBanner

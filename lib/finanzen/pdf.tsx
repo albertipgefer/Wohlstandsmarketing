@@ -47,7 +47,7 @@ const s = StyleSheet.create({
   page: { paddingTop: 48, paddingBottom: 64, paddingHorizontal: 48, fontSize: 9.5, color: "#1a1a1a", fontFamily: "Helvetica", lineHeight: 1.4 },
   headerRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 28 },
   brandRow: { flexDirection: "row", alignItems: "center" },
-  brandLogo: { width: 26, height: 26, marginRight: 8 },
+  brandLogo: { width: 38, height: 38 },
   brand: { fontSize: 15, fontFamily: "Helvetica-Bold", color: "#0a0a0a" },
   brandAccent: { color: ACCENT },
   senderSmall: { fontSize: 8, color: "#6b6b6b", marginTop: 4, lineHeight: 1.5 },
@@ -98,9 +98,6 @@ function DokumentPdf({ d }: { d: PdfDoc }) {
             <View style={s.brandRow}>
               {/* eslint-disable-next-line jsx-a11y/alt-text */}
               <Image style={s.brandLogo} src={LOGO_PNG_DATA_URI} />
-              <Text style={s.brand}>
-                Wohlstands<Text style={s.brandAccent}>marketing</Text>
-              </Text>
             </View>
             <Text style={s.senderSmall}>
               {ANBIETER.name} · {ANBIETER.strasse} · {ANBIETER.plzOrt}

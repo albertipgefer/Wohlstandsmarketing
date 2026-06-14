@@ -119,10 +119,35 @@ export default function RechnungActions({
           {busy === "mahn" ? "…" : "Mahnung"}
         </button>
       )}
+      <button
+        style={delBtn}
+        disabled={!!busy}
+        onClick={() =>
+          call(
+            "/api/finanzen/rechnung/delete",
+            "del",
+            "Rechnung wirklich endgültig löschen? Das kann nicht rückgängig gemacht werden. (Versendete/bezahlte Rechnungen besser stornieren statt löschen.)",
+          )
+        }
+        title="Rechnung löschen"
+      >
+        {busy === "del" ? "…" : "Löschen"}
+      </button>
       {err && <span style={{ color: "#b42318", fontSize: 12 }}>{err}</span>}
     </div>
   );
 }
+
+const delBtn: React.CSSProperties = {
+  border: "1px solid #fecaca",
+  background: "#fff",
+  color: "#b42318",
+  borderRadius: 8,
+  padding: "6px 12px",
+  fontSize: 13,
+  fontWeight: 600,
+  cursor: "pointer",
+};
 
 function btn(primary: boolean): React.CSSProperties {
   return {

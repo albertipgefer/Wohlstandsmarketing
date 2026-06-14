@@ -169,6 +169,28 @@ export async function getRechnungByAngebotId(
 }
 
 /**
+ * Rechnung endgültig löschen (login-geschützt im Route-Handler).
+ * Entfernt zuerst zugehörige Teilzahlungen (FK), dann die Rechnung selbst.
+ */
+export async function deleteRechnung(id: string): Promise<boolean> {
+  if (!dbReady() || !id) return false;
+  try {
+    // Teilzahlungen zuerst entfernen (verhindert FK-Constraint-Fehler)
+    await fetch(`${URL}/rest/v1/zahlungen?rechnung_id=eq.${id}`, {
+      method: "DELETE",
+      headers: headers(),
+    });
+    const r = await fetch(`${REST()}?id=eq.${id}`, {
+      method: "DELETE",
+      headers: headers(),
+    });
+    return r.ok;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Nächste Rechnungsnummer RE{Jahr}-{0001..} ermitteln.
  * Liest die höchste vorhandene Nummer des Jahres und zählt hoch.
  */

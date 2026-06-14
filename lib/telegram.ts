@@ -49,6 +49,82 @@ export async function sendTelegramMessage(
   }
 }
 
+export type InlineButton = { text: string; callback_data: string };
+
+/**
+ * Schickt eine Nachricht mit Inline-Buttons (Genehmigungs-Flow) und gibt die
+ * message_id zurück (für späteres Editieren) — null bei Fehler/nicht konfiguriert.
+ */
+export async function sendTelegramButtons(
+  html: string,
+  buttons: InlineButton[][],
+): Promise<number | null> {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!token || !chatId) return null;
+  try {
+    const r = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: html,
+        parse_mode: "HTML",
+        disable_web_page_preview: true,
+        reply_markup: { inline_keyboard: buttons },
+      }),
+    });
+    if (!r.ok) return null;
+    const data = (await r.json()) as { result?: { message_id?: number } };
+    return data.result?.message_id ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** Editiert Text + Buttons einer bestehenden Nachricht (z.B. nach Genehmigung). */
+export async function editTelegramMessage(
+  messageId: number,
+  html: string,
+  buttons?: InlineButton[][],
+): Promise<boolean> {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!token || !chatId) return false;
+  try {
+    const r = await fetch(`https://api.telegram.org/bot${token}/editMessageText`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: chatId,
+        message_id: messageId,
+        text: html,
+        parse_mode: "HTML",
+        disable_web_page_preview: true,
+        reply_markup: buttons ? { inline_keyboard: buttons } : undefined,
+      }),
+    });
+    return r.ok;
+  } catch {
+    return false;
+  }
+}
+
+/** Beantwortet einen Button-Klick (entfernt die Lade-Animation, optional Toast). */
+export async function answerCallback(callbackId: string, text?: string): Promise<void> {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  if (!token) return;
+  try {
+    await fetch(`https://api.telegram.org/bot${token}/answerCallbackQuery`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ callback_query_id: callbackId, text: text || undefined }),
+    });
+  } catch {
+    /* ignore */
+  }
+}
+
 /**
  * Cold-Outreach-Benachrichtigung an den DEDIZIERTEN Outreach-Bot.
  * Nutzt OUTREACH_TELEGRAM_BOT_TOKEN / OUTREACH_TELEGRAM_CHAT_ID; fällt auf den

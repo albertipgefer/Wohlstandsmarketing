@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import RechnungAusAngebotButton from "@/components/finanzen/RechnungAusAngebotButton";
+import DeleteButton from "@/components/finanzen/DeleteButton";
 
 export type AngebotZeile = {
   id: string;
@@ -105,6 +106,13 @@ export default function AngeboteListe({ angebote }: { angebote: AngebotZeile[] }
                           → Abschlagszahlung
                         </Link>
                       )}
+                      <span style={{ marginLeft: 12 }}>
+                        <DeleteButton
+                          endpoint="/api/angebot/delete"
+                          id={a.id}
+                          confirmMsg={`Angebot ${a.nummer || ""} wirklich löschen? (Eine daraus erzeugte Rechnung bleibt erhalten.)`}
+                        />
+                      </span>
                     </td>
                   </tr>
                 );

@@ -135,6 +135,20 @@ export async function updateWiederkehrend(
   }
 }
 
+/** Wiederkehrende Rechnung (Vorlage) löschen — stoppt künftige Auto-Erzeugung. */
+export async function deleteWiederkehrend(id: string): Promise<boolean> {
+  if (!dbReady() || !id) return false;
+  try {
+    const r = await fetch(`${REST()}?id=eq.${id}`, {
+      method: "DELETE",
+      headers: headers(),
+    });
+    return r.ok;
+  } catch {
+    return false;
+  }
+}
+
 function naechstesDatum(iso: string, intervall: Intervall): string {
   const d = new Date(iso + "T00:00:00Z");
   const monate = intervall === "monatlich" ? 1 : intervall === "quartalsweise" ? 3 : 12;

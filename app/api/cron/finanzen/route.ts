@@ -50,6 +50,7 @@ export async function GET(req: NextRequest) {
   let mahnungen = 0;
   let wiederkehrend = 0;
   const fehler: string[] = [];
+  const inkassoReif: string[] = []; // Rechnungen, die jetzt die letzte Mahnstufe (2) erreicht haben
 
   const rechnungen = await listRechnungen(1000);
 
@@ -88,6 +89,11 @@ export async function GET(req: NextRequest) {
     if (mail.ok) {
       await updateRechnung(r.id, { mahnstufe: stufe, last_mahnung_at: new Date(now).toISOString() });
       mahnungen++;
+      // Letzte Mahnstufe erreicht → einmalige interne Inkasso-Erinnerung (kein Spam:
+      // triggert nur in dem Lauf, in dem Stufe 2 gesendet wurde).
+      if (stufe >= 2) {
+        inkassoReif.push(`${r.nummer || "—"} · ${r.kunde_firma || r.kunde_email || ""} · ${(r.brutto || 0).toFixed(2)} €`);
+      }
     } else {
       fehler.push(`Mahnung ${r.nummer}: ${mail.error}`);
     }
@@ -128,7 +134,7 @@ export async function GET(req: NextRequest) {
   }
 
   // Report
-  if (markedOverdue || mahnungen || wiederkehrend || bankNeu || bankHinweise.length || fehler.length) {
+  if (markedOverdue || mahnungen || wiederkehrend || bankNeu || bankHinweise.length || inkassoReif.length || fehler.length) {
     try {
       await sendTelegramMessage(
         `🧾 <b>Finanz-Lauf</b>\n` +
@@ -136,6 +142,9 @@ export async function GET(req: NextRequest) {
           `Mahnungen gesendet: ${mahnungen}\n` +
           `Neue wiederkehrende Rechnungen: ${wiederkehrend}\n` +
           `Neue Bank-Umsätze: ${bankNeu}` +
+          (inkassoReif.length
+            ? `\n\n🔴 <b>Letzte Mahnung verschickt — Inkasso prüfen:</b>\n${inkassoReif.join("\n")}`
+            : "") +
           (bankHinweise.length ? `\n🏦 ${bankHinweise.join("; ")}` : "") +
           (fehler.length ? `\n⚠️ ${fehler.slice(0, 5).join("; ")}` : ""),
       );
@@ -144,5 +153,5 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  return NextResponse.json({ ok: true, markedOverdue, mahnungen, wiederkehrend, bankNeu, bankHinweise, fehler });
+  return NextResponse.json({ ok: true, markedOverdue, mahnungen, wiederkehrend, bankNeu, bankHinweise, inkassoReif, fehler });
 }

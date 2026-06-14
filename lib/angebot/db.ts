@@ -123,6 +123,29 @@ export async function updateAngebot(
   }
 }
 
+/**
+ * Angebot löschen (login-geschützt im Route-Handler). Eine evtl. daraus
+ * erzeugte Rechnung bleibt erhalten — ihre angebot_id wird gelöst (auf null
+ * gesetzt), damit kein FK-Constraint das Löschen blockiert.
+ */
+export async function deleteAngebot(id: string): Promise<boolean> {
+  if (!dbReady() || !id) return false;
+  try {
+    await fetch(`${URL}/rest/v1/rechnungen?angebot_id=eq.${id}`, {
+      method: "PATCH",
+      headers: headers(),
+      body: JSON.stringify({ angebot_id: null }),
+    });
+    const r = await fetch(`${REST()}?id=eq.${id}`, {
+      method: "DELETE",
+      headers: headers(),
+    });
+    return r.ok;
+  } catch {
+    return false;
+  }
+}
+
 export async function getAngebotById(id: string): Promise<Angebot | null> {
   if (!dbReady()) return null;
   try {

@@ -12,6 +12,7 @@ import { umsatzKpis, quartalLabel, bannerAction } from "@/lib/finanzen/einnahmen
 import { eur, deDate } from "@/lib/angebot/format";
 import FinanzShell from "@/components/finanzen/FinanzShell";
 import EinnahmenBanner from "@/components/finanzen/EinnahmenBanner";
+import DeleteButton from "@/components/finanzen/DeleteButton";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -76,8 +77,15 @@ export default async function WiederkehrendSeite() {
                       {w.auto_senden ? "an" : "aus"}
                     </span>
                   </td>
-                  <td style={{ ...S.td, textAlign: "right" }}>
+                  <td style={{ ...S.td, textAlign: "right", whiteSpace: "nowrap" }}>
                     <Link href={`/finanzen/wiederkehrend/neu?id=${w.id}`} style={S.link}>Bearbeiten</Link>
+                    <span style={{ marginLeft: 12 }}>
+                      <DeleteButton
+                        endpoint="/api/finanzen/wiederkehrend/delete"
+                        id={w.id}
+                        confirmMsg={`Wiederkehrende Rechnung „${w.kunde_firma || w.bezeichnung || ""}" wirklich löschen? Es werden danach keine neuen Entwürfe mehr erzeugt. (Bereits erstellte Rechnungen bleiben erhalten.)`}
+                      />
+                    </span>
                   </td>
                 </tr>
               ))}

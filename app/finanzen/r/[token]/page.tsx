@@ -63,7 +63,8 @@ function Shell({ children }: { children: React.ReactNode }) {
   return (
     <main style={S.page}>
       <div style={S.card}>
-        <div style={S.brand}>WOHLSTANDS<span style={{ color: "#1663de" }}>MARKETING</span></div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/icon.png" width={40} height={40} alt="Wohlstandsmarketing" style={{ borderRadius: 9, marginBottom: 18, display: "block" }} />
         {children}
       </div>
     </main>

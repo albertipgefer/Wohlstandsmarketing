@@ -224,15 +224,46 @@ export async function nextRechnungsnummer(year: number): Promise<string> {
  */
 export function rechnungFromAngebot(
   a: Angebot,
-  opts?: { zahlungszielTage?: number; status?: RechnungStatus },
+  opts?: {
+    zahlungszielTage?: number;
+    status?: RechnungStatus;
+    /** Wenn gesetzt (1–100): Abschlagsrechnung über diesen Prozentsatz des
+     *  Angebotsbetrags statt der vollen Rechnung. */
+    abschlagProzent?: number;
+  },
 ): RechnungInput {
   const ziel = opts?.zahlungszielTage ?? 14;
   const heute = new Date();
   const faellig = new Date(heute.getTime() + ziel * 24 * 60 * 60 * 1000);
+
+  const p = opts?.abschlagProzent;
+  const istAbschlag = typeof p === "number" && p > 0 && p < 100;
+
+  // Bei Abschlag: eine einzelne Abschlags-Position über den Teilbetrag (netto),
+  // USt 19 %. Sonst die Original-Positionen 1:1.
+  const abschlagNetto = istAbschlag ? Math.round(a.netto * (p! / 100) * 100) / 100 : a.netto;
+  const abschlagUst = istAbschlag ? Math.round(abschlagNetto * 0.19 * 100) / 100 : a.ust;
+  const abschlagBrutto = istAbschlag ? Math.round((abschlagNetto + abschlagUst) * 100) / 100 : a.brutto;
+
+  const positionen = istAbschlag
+    ? [
+        {
+          uid: `abschlag-${a.id}`,
+          titel: `Abschlagszahlung ${p}%`,
+          beschreibung: `${p}%-Abschlag auf Angebot ${a.nummer || ""}`.trim(),
+          leistungen: [] as string[],
+          preisNetto: abschlagNetto,
+          menge: 1,
+          einheit: "einmalig" as const,
+          ustSatz: 19,
+        },
+      ]
+    : a.positionen;
+
   return {
     angebot_id: a.id,
-    typ: "rechnung",
-    titel: a.titel,
+    typ: istAbschlag ? "abschlag" : "rechnung",
+    titel: istAbschlag ? `Abschlagsrechnung — ${a.titel || ""}`.trim() : a.titel,
     untertitel: a.untertitel,
     kunde_firma: a.kunde_firma,
     kunde_ansprech: a.kunde_ansprech,
@@ -241,12 +272,12 @@ export function rechnungFromAngebot(
     kunde_land: a.kunde_land,
     kunde_email: a.kunde_email,
     einleitung: a.einleitung,
-    positionen: a.positionen,
+    positionen,
     anmerkungen: a.anmerkungen,
     bedingungen: a.bedingungen,
-    netto: a.netto,
-    ust: a.ust,
-    brutto: a.brutto,
+    netto: abschlagNetto,
+    ust: abschlagUst,
+    brutto: abschlagBrutto,
     status: opts?.status ?? "entwurf",
     rechnungsdatum: heute.toISOString().slice(0, 10),
     faellig_am: faellig.toISOString().slice(0, 10),

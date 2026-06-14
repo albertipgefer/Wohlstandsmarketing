@@ -101,9 +101,10 @@ export default function AngeboteListe({ angebote }: { angebote: AngebotZeile[] }
                       <a href={`/api/finanzen/pdf?angebot=${a.id}`} target="_blank" rel="noreferrer" style={{ ...S.link, marginLeft: 12 }}>PDF</a>
                       {a.public_token && <a href={`/angebot/a/${a.public_token}`} target="_blank" rel="noreferrer" style={{ ...S.link, marginLeft: 12 }}>Ansicht</a>}
                       {a.abrechenbar && <RechnungAusAngebotButton angebotId={a.id} />}
+                      {a.abrechenbar && <RechnungAusAngebotButton angebotId={a.id} abschlag />}
                       {a.abrechenbar && (
-                        <Link href={`/finanzen/wiederkehrend/neu?fromAngebot=${a.id}`} style={{ ...S.link, color: "#7c3aed", marginLeft: 12 }} title="Abschlagszahlung (Raten) aus diesem Angebot">
-                          → Abschlagszahlung
+                        <Link href={`/finanzen/wiederkehrend/neu?fromAngebot=${a.id}`} style={{ ...S.link, color: "#0ea5e9", marginLeft: 12 }} title="Wiederkehrende Rechnung / Retainer aus diesem Angebot">
+                          → Retainer
                         </Link>
                       )}
                       <span style={{ marginLeft: 12 }}>

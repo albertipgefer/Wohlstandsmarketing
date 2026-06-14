@@ -19,6 +19,7 @@ import { renderDokumentPdf, rechnungToPdfDoc } from "@/lib/finanzen/pdf";
 import { baseUrl } from "@/lib/angebot/email";
 import { sendTelegramMessage } from "@/lib/telegram";
 import { eur } from "@/lib/angebot/format";
+import { freigabeFlowAktiv, createFreigabe } from "@/lib/finanzen/freigabe";
 
 export async function POST(req: NextRequest) {
   if (!(await isLoggedIn())) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
@@ -51,11 +52,29 @@ export async function POST(req: NextRequest) {
     attachments = undefined;
   }
   const link = `${baseUrl()}/finanzen/r/${token}`;
+  const betreff = `Ihre Rechnung von Wohlstandsmarketing — ${nummer}`;
+  const html = rechnungEmailHtml(merged, link);
+
+  // Freigabe-Flow: nicht direkt senden, sondern Albert per Telegram zur
+  // Genehmigung vorlegen. Nummer + Token werden stabil gesichert; Status
+  // bleibt Entwurf bis zur Genehmigung (sendeFreigabe setzt dann "offen").
+  if (freigabeFlowAktiv()) {
+    await updateRechnung(r.id, { nummer, public_token: token });
+    const created = await createFreigabe({
+      typ: "rechnung",
+      zielId: r.id,
+      empfaenger: r.kunde_email,
+      betreff,
+      html,
+    });
+    if (!created) return NextResponse.json({ ok: false, error: "freigabe_failed" }, { status: 500 });
+    return NextResponse.json({ ok: true, freigabe: true, nummer });
+  }
 
   const mail = await sendMail({
     to: r.kunde_email,
-    subject: `Ihre Rechnung von Wohlstandsmarketing — ${nummer}`,
-    html: rechnungEmailHtml(merged, link),
+    subject: betreff,
+    html,
     attachments,
   });
   if (!mail.ok) return NextResponse.json({ ok: false, error: `mail_failed:${mail.error}` }, { status: 502 });

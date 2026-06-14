@@ -10,6 +10,7 @@
 import { sendTelegramButtons, type InlineButton } from "@/lib/telegram";
 import { sendMail } from "@/lib/angebot/email";
 import { getRechnungById, updateRechnung } from "@/lib/finanzen/db";
+import { getAngebotById, updateAngebot } from "@/lib/angebot/db";
 import { renderDokumentPdf, rechnungToPdfDoc } from "@/lib/finanzen/pdf";
 
 const URL = process.env.ANGEBOT_SUPABASE_URL;
@@ -145,13 +146,19 @@ export async function sendeFreigabe(f: Freigabe): Promise<{ ok: boolean; error?:
 
   const res = await sendMail({ to: f.empfaenger, subject: f.betreff, html: f.html, attachments: attachments.length ? attachments : undefined });
 
-  // Bei erfolgreichem Rechnungsversand: Rechnung auf "offen" setzen (war im
-  // Freigabe-Modus noch Entwurf, bis Albert genehmigt hat).
-  if (res.ok && f.typ === "rechnung" && f.ziel_id) {
+  // Status nachziehen (war im Freigabe-Modus noch Entwurf bis zur Genehmigung).
+  if (res.ok && f.ziel_id) {
     try {
-      const r = await getRechnungById(f.ziel_id);
-      if (r && r.status === "entwurf") {
-        await updateRechnung(f.ziel_id, { status: "offen", sent_at: new Date().toISOString() });
+      if (f.typ === "rechnung") {
+        const r = await getRechnungById(f.ziel_id);
+        if (r && r.status === "entwurf") {
+          await updateRechnung(f.ziel_id, { status: "offen", sent_at: new Date().toISOString() });
+        }
+      } else if (f.typ === "angebot") {
+        const a = await getAngebotById(f.ziel_id);
+        if (a && (a.status === "entwurf" || !a.sent_at)) {
+          await updateAngebot(f.ziel_id, { status: "gesendet", sent_at: new Date().toISOString() });
+        }
       }
     } catch {
       /* ignore */

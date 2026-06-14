@@ -120,6 +120,8 @@ function Detail({ art, z, jahr, rechnungen, ausgaben, gewSt }: { art: string; z?
   const rl = ruecklageEmpfehlung(e.gewinn);
   let titel = "Steuer-Detail";
   const rows: { label: string; value: string; stark?: boolean; warn?: boolean }[] = [];
+  // Belege/Ausgaben des Zeitraums (Vorsteuer-Nachweis) — nur bei USt-VA gefüllt.
+  let vorsteuerBelege: Ausgabe[] = [];
 
   if (art === "ustva" && z) {
     const zr = zeitraum(jahr, z);
@@ -131,6 +133,9 @@ function Detail({ art, z, jahr, rechnungen, ausgaben, gewSt }: { art: string; z?
       { label: "abziehbare Vorsteuer (Kz. 66)", value: `− ${eur(u.vorsteuer)}` },
       { label: u.zahllast >= 0 ? "Zahllast (Kz. 83)" : "Erstattung", value: eur(Math.abs(u.zahllast)), stark: true, warn: u.zahllast > 0 },
     );
+    vorsteuerBelege = ausgaben
+      .filter((a) => a.datum >= zr.von && a.datum <= zr.bis && a.ust > 0)
+      .sort((a, b) => (a.datum < b.datum ? -1 : 1));
   } else if (art === "ustjahr") {
     const u = ustVoranmeldung(rechnungen, ausgaben, `${jahr}-01-01`, `${jahr}-12-31`);
     titel = `Umsatzsteuererklärung ${jahr}`;
@@ -179,6 +184,37 @@ function Detail({ art, z, jahr, rechnungen, ausgaben, gewSt }: { art: string; z?
           </div>
         ))}
       </div>
+
+      {vorsteuerBelege.length > 0 && (
+        <div style={{ ...S.card, marginTop: 16 }}>
+          <div style={S.cardHead}>Belege mit Vorsteuer in diesem Zeitraum ({vorsteuerBelege.length})</div>
+          <div style={{ fontSize: 12.5, color: "#a1a1aa", marginBottom: 10 }}>
+            Diese erfassten Ausgaben ergeben die abziehbare Vorsteuer (Kz. 66). Beleg zum Öffnen anklicken.
+          </div>
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr>{["Datum", "Lieferant", "Kategorie", "Netto", "Vorsteuer", "Beleg"].map((h) => (
+                <th key={h} style={{ textAlign: h === "Netto" || h === "Vorsteuer" ? "right" : "left", padding: "8px 10px", fontSize: 11.5, fontWeight: 700, textTransform: "uppercase", color: "#737373", borderBottom: "1px solid #f0f0f0" }}>{h}</th>
+              ))}</tr>
+            </thead>
+            <tbody>
+              {vorsteuerBelege.map((a) => (
+                <tr key={a.id} style={{ borderBottom: "1px solid #f6f6f7" }}>
+                  <td style={{ padding: "9px 10px", fontSize: 13.5 }}>{new Date(a.datum).toLocaleDateString("de-DE")}</td>
+                  <td style={{ padding: "9px 10px", fontSize: 13.5, fontWeight: 600 }}>{a.lieferant || "—"}</td>
+                  <td style={{ padding: "9px 10px", fontSize: 13.5, color: "#71717a" }}>{a.kategorie || "—"}</td>
+                  <td style={{ padding: "9px 10px", fontSize: 13.5, textAlign: "right" }}>{eur(a.betrag_netto)}</td>
+                  <td style={{ padding: "9px 10px", fontSize: 13.5, textAlign: "right", fontWeight: 600 }}>{eur(a.ust)}</td>
+                  <td style={{ padding: "9px 10px", fontSize: 13.5 }}>
+                    {a.beleg_url ? <a href={a.beleg_url} target="_blank" rel="noreferrer" style={{ color: "#1663de", fontWeight: 600, textDecoration: "none" }}>öffnen ↗</a> : <span style={{ color: "#c2410c" }}>fehlt</span>}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
       <div style={{ marginTop: 16, display: "flex", gap: 10 }} className="no-print">
         <a href={`/api/finanzen/steuern/export?jahr=${jahr}`} style={S.ghostBtn}>⬇ CSV-Export</a>
         <PrintButton />

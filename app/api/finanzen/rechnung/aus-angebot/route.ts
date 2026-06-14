@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
   if (!(await isLoggedIn())) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
   if (!dbReady()) return NextResponse.json({ ok: false, error: "db_not_configured" }, { status: 503 });
 
-  let body: { angebotId?: string };
+  let body: { angebotId?: string; abschlagProzent?: number };
   try {
     body = await req.json();
   } catch {
@@ -30,10 +30,19 @@ export async function POST(req: NextRequest) {
   const a = await getAngebotById(body.angebotId);
   if (!a) return NextResponse.json({ ok: false, error: "not_found" }, { status: 404 });
 
-  const existing = await getRechnungByAngebotId(a.id);
-  if (existing) return NextResponse.json({ ok: true, id: existing.id, already: true });
+  const prozent = Number(body.abschlagProzent);
+  const istAbschlag = prozent > 0 && prozent < 100;
 
-  const created = await insertRechnung(rechnungFromAngebot(a, { status: "entwurf" }));
+  // Doppel-Erzeugung nur bei der Voll-Rechnung verhindern; Abschlagsrechnungen
+  // dürfen mehrfach existieren (z. B. mehrere Teilbeträge).
+  if (!istAbschlag) {
+    const existing = await getRechnungByAngebotId(a.id);
+    if (existing) return NextResponse.json({ ok: true, id: existing.id, already: true });
+  }
+
+  const created = await insertRechnung(
+    rechnungFromAngebot(a, { status: "entwurf", abschlagProzent: istAbschlag ? prozent : undefined }),
+  );
   if (!created) return NextResponse.json({ ok: false, error: "create_failed" }, { status: 500 });
   return NextResponse.json({ ok: true, id: created.id });
 }

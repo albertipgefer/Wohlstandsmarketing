@@ -41,7 +41,7 @@ export type Freigabe = {
 export async function getFreigabe(id: string): Promise<Freigabe | null> {
   if (!URL || !KEY || !id) return null;
   try {
-    const r = await fetch(`${REST()}?id=eq.${id}&limit=1`, { headers: headers() });
+    const r = await fetch(`${REST()}?id=eq.${encodeURIComponent(id)}&limit=1`, { headers: headers() });
     if (!r.ok) return null;
     const rows = (await r.json()) as Freigabe[];
     return rows[0] || null;
@@ -53,7 +53,7 @@ export async function getFreigabe(id: string): Promise<Freigabe | null> {
 export async function updateFreigabe(id: string, fields: Partial<Freigabe>): Promise<Freigabe | null> {
   if (!URL || !KEY) return null;
   try {
-    const r = await fetch(`${REST()}?id=eq.${id}`, {
+    const r = await fetch(`${REST()}?id=eq.${encodeURIComponent(id)}`, {
       method: "PATCH",
       headers: headers({ Prefer: "return=representation" }),
       body: JSON.stringify({ ...fields, updated_at: new Date().toISOString() }),
@@ -76,6 +76,21 @@ export async function findFreigabeWartetAnpassung(): Promise<Freigabe | null> {
     return rows[0] || null;
   } catch {
     return null;
+  }
+}
+
+/** Setzt alle (anderen) offenen Anpassungs-Anfragen zurück auf "wartet",
+ *  damit immer nur genau eine Freigabe auf eine Text-Anweisung wartet. */
+export async function resetOffeneAnpassungen(): Promise<void> {
+  if (!URL || !KEY) return;
+  try {
+    await fetch(`${REST()}?status=eq.anpassen_angefragt`, {
+      method: "PATCH",
+      headers: headers(),
+      body: JSON.stringify({ status: "wartet", updated_at: new Date().toISOString() }),
+    });
+  } catch {
+    /* ignore */
   }
 }
 
@@ -208,6 +223,18 @@ export async function createFreigabe(input: {
 }): Promise<boolean> {
   if (!URL || !KEY) return false;
   try {
+    // Idempotenz: existiert schon eine offene Freigabe für dieses Ziel, nicht
+    // erneut anlegen (verhindert Mehrfach-Senden → mehrere offene Freigaben).
+    if (input.zielId) {
+      const ex = await fetch(
+        `${REST()}?ziel_id=eq.${encodeURIComponent(input.zielId)}&status=in.(wartet,anpassen_angefragt)&limit=1`,
+        { headers: headers() },
+      );
+      if (ex.ok) {
+        const offen = (await ex.json()) as Freigabe[];
+        if (offen.length) return true; // bereits zur Freigabe vorgelegt
+      }
+    }
     const r = await fetch(REST(), {
       method: "POST",
       headers: headers({ Prefer: "return=representation" }),

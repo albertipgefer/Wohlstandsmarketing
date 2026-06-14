@@ -22,11 +22,14 @@ const TWOFA_TTL = 5 * 60; // 5 Minuten
 const TWOFA_MAX_ATTEMPTS = 6;
 
 function secret(): string {
-  return (
-    process.env.ANGEBOT_SESSION_SECRET ||
-    process.env.ANGEBOT_PASSWORD ||
-    "ag-dev-secret"
-  );
+  const s = process.env.ANGEBOT_SESSION_SECRET || process.env.ANGEBOT_PASSWORD;
+  if (s) return s;
+  // In Produktion niemals auf ein im Code stehendes Dev-Secret zurückfallen
+  // (sonst könnte jeder gültige Session-/2FA-Tokens fälschen).
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("ANGEBOT_SESSION_SECRET oder ANGEBOT_PASSWORD muss in Produktion gesetzt sein.");
+  }
+  return "ag-dev-secret";
 }
 
 function sign(data: string): string {

@@ -21,6 +21,7 @@ import {
   passeMailAn,
   freigabeButtons,
   vorschauText,
+  resetOffeneAnpassungen,
 } from "@/lib/finanzen/freigabe";
 import {
   answerCallback,
@@ -76,6 +77,7 @@ export async function POST(req: NextRequest) {
         await editTelegramMessage(fg.telegram_message_id, `⚠️ Senden fehlgeschlagen: ${res.error}`, freigabeButtons(id));
       }
     } else if (action === "edit") {
+      await resetOffeneAnpassungen(); // sicherstellen, dass nur DIESE auf Text wartet
       await updateFreigabe(id, { status: "anpassen_angefragt" });
       await editTelegramMessage(
         fg.telegram_message_id,

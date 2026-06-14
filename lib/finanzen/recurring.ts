@@ -74,7 +74,7 @@ export async function listWiederkehrend(): Promise<Wiederkehrend[]> {
 export async function getWiederkehrendById(id: string): Promise<Wiederkehrend | null> {
   if (!dbReady() || !id) return null;
   try {
-    const r = await fetch(`${REST()}?id=eq.${id}&limit=1`, { headers: headers() });
+    const r = await fetch(`${REST()}?id=eq.${encodeURIComponent(id)}&limit=1`, { headers: headers() });
     if (!r.ok) return null;
     const rows = (await r.json()) as Wiederkehrend[];
     return rows[0] || null;
@@ -122,7 +122,7 @@ export async function updateWiederkehrend(
 ): Promise<Wiederkehrend | null> {
   if (!dbReady()) return null;
   try {
-    const r = await fetch(`${REST()}?id=eq.${id}`, {
+    const r = await fetch(`${REST()}?id=eq.${encodeURIComponent(id)}`, {
       method: "PATCH",
       headers: headers({ Prefer: "return=representation" }),
       body: JSON.stringify({ ...fields, updated_at: new Date().toISOString() }),
@@ -139,7 +139,7 @@ export async function updateWiederkehrend(
 export async function deleteWiederkehrend(id: string): Promise<boolean> {
   if (!dbReady() || !id) return false;
   try {
-    const r = await fetch(`${REST()}?id=eq.${id}`, {
+    const r = await fetch(`${REST()}?id=eq.${encodeURIComponent(id)}`, {
       method: "DELETE",
       headers: headers(),
     });

@@ -53,7 +53,7 @@ export async function listAusgaben(limit = 500): Promise<Ausgabe[]> {
 export async function getAusgabeById(id: string): Promise<Ausgabe | null> {
   if (!dbReady() || !id) return null;
   try {
-    const r = await fetch(`${REST()}?id=eq.${id}&limit=1`, { headers: headers() });
+    const r = await fetch(`${REST()}?id=eq.${encodeURIComponent(id)}&limit=1`, { headers: headers() });
     if (!r.ok) return null;
     const rows = (await r.json()) as Ausgabe[];
     return rows[0] || null;
@@ -81,7 +81,7 @@ export async function insertAusgabe(fields: AusgabeInput): Promise<Ausgabe | nul
 export async function updateAusgabe(id: string, fields: AusgabeInput): Promise<Ausgabe | null> {
   if (!dbReady()) return null;
   try {
-    const r = await fetch(`${REST()}?id=eq.${id}`, {
+    const r = await fetch(`${REST()}?id=eq.${encodeURIComponent(id)}`, {
       method: "PATCH",
       headers: headers({ Prefer: "return=representation" }),
       body: JSON.stringify({ ...fields, updated_at: new Date().toISOString() }),
@@ -97,7 +97,7 @@ export async function updateAusgabe(id: string, fields: AusgabeInput): Promise<A
 export async function deleteAusgabe(id: string): Promise<boolean> {
   if (!dbReady() || !id) return false;
   try {
-    const r = await fetch(`${REST()}?id=eq.${id}`, { method: "DELETE", headers: headers() });
+    const r = await fetch(`${REST()}?id=eq.${encodeURIComponent(id)}`, { method: "DELETE", headers: headers() });
     return r.ok;
   } catch {
     return false;

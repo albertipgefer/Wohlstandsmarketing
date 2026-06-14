@@ -40,7 +40,7 @@ export async function listAlleZahlungen(): Promise<Zahlung[]> {
 export async function listZahlungenFor(rechnungId: string): Promise<Zahlung[]> {
   if (!dbReady() || !rechnungId) return [];
   try {
-    const r = await fetch(`${REST()}?rechnung_id=eq.${rechnungId}&order=datum.asc`, { headers: headers() });
+    const r = await fetch(`${REST()}?rechnung_id=eq.${encodeURIComponent(rechnungId)}&order=datum.asc`, { headers: headers() });
     return r.ok ? ((await r.json()) as Zahlung[]) : [];
   } catch {
     return [];

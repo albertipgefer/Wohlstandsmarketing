@@ -100,7 +100,7 @@ export async function updateRechnung(
 ): Promise<Rechnung | null> {
   if (!dbReady()) return null;
   try {
-    const r = await fetch(`${REST()}?id=eq.${id}`, {
+    const r = await fetch(`${REST()}?id=eq.${encodeURIComponent(id)}`, {
       method: "PATCH",
       headers: headers({ Prefer: "return=representation" }),
       body: JSON.stringify({ ...fields, updated_at: new Date().toISOString() }),
@@ -116,7 +116,7 @@ export async function updateRechnung(
 export async function getRechnungById(id: string): Promise<Rechnung | null> {
   if (!dbReady()) return null;
   try {
-    const r = await fetch(`${REST()}?id=eq.${id}&limit=1`, { headers: headers() });
+    const r = await fetch(`${REST()}?id=eq.${encodeURIComponent(id)}&limit=1`, { headers: headers() });
     if (!r.ok) return null;
     const rows = (await r.json()) as Rechnung[];
     return rows[0] || null;
@@ -158,7 +158,7 @@ export async function getRechnungByAngebotId(
 ): Promise<Rechnung | null> {
   if (!dbReady() || !angebotId) return null;
   try {
-    const q = `angebot_id=eq.${angebotId}&limit=1`;
+    const q = `angebot_id=eq.${encodeURIComponent(angebotId)}&limit=1`;
     const r = await fetch(`${REST()}?${q}`, { headers: headers() });
     if (!r.ok) return null;
     const rows = (await r.json()) as Rechnung[];
@@ -176,11 +176,11 @@ export async function deleteRechnung(id: string): Promise<boolean> {
   if (!dbReady() || !id) return false;
   try {
     // Teilzahlungen zuerst entfernen (verhindert FK-Constraint-Fehler)
-    await fetch(`${URL}/rest/v1/zahlungen?rechnung_id=eq.${id}`, {
+    await fetch(`${URL}/rest/v1/zahlungen?rechnung_id=eq.${encodeURIComponent(id)}`, {
       method: "DELETE",
       headers: headers(),
     });
-    const r = await fetch(`${REST()}?id=eq.${id}`, {
+    const r = await fetch(`${REST()}?id=eq.${encodeURIComponent(id)}`, {
       method: "DELETE",
       headers: headers(),
     });

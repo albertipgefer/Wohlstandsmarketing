@@ -110,7 +110,7 @@ export async function updateAngebot(
 ): Promise<Angebot | null> {
   if (!dbReady()) return null;
   try {
-    const r = await fetch(`${REST()}?id=eq.${id}`, {
+    const r = await fetch(`${REST()}?id=eq.${encodeURIComponent(id)}`, {
       method: "PATCH",
       headers: headers({ Prefer: "return=representation" }),
       body: JSON.stringify({ ...fields, updated_at: new Date().toISOString() }),
@@ -131,12 +131,12 @@ export async function updateAngebot(
 export async function deleteAngebot(id: string): Promise<boolean> {
   if (!dbReady() || !id) return false;
   try {
-    await fetch(`${URL}/rest/v1/rechnungen?angebot_id=eq.${id}`, {
+    await fetch(`${URL}/rest/v1/rechnungen?angebot_id=eq.${encodeURIComponent(id)}`, {
       method: "PATCH",
       headers: headers(),
       body: JSON.stringify({ angebot_id: null }),
     });
-    const r = await fetch(`${REST()}?id=eq.${id}`, {
+    const r = await fetch(`${REST()}?id=eq.${encodeURIComponent(id)}`, {
       method: "DELETE",
       headers: headers(),
     });
@@ -149,7 +149,7 @@ export async function deleteAngebot(id: string): Promise<boolean> {
 export async function getAngebotById(id: string): Promise<Angebot | null> {
   if (!dbReady()) return null;
   try {
-    const r = await fetch(`${REST()}?id=eq.${id}&limit=1`, {
+    const r = await fetch(`${REST()}?id=eq.${encodeURIComponent(id)}&limit=1`, {
       headers: headers(),
     });
     if (!r.ok) return null;

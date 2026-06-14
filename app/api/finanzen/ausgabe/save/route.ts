@@ -39,6 +39,11 @@ export async function POST(req: NextRequest) {
     notiz: (body.notiz as string) || null,
   };
 
+  // Beleg-Pfad aus einem vorherigen Scan/Upload (Storage-Pfad, nicht URL).
+  if (typeof body.belegPath === "string" && body.belegPath) {
+    fields.beleg_url = body.belegPath;
+  }
+
   const saved = body.id ? await updateAusgabe(body.id, fields) : await insertAusgabe(fields);
   if (!saved) return NextResponse.json({ ok: false, error: "save_failed" }, { status: 500 });
   return NextResponse.json({ ok: true, id: saved.id });

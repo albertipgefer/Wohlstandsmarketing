@@ -206,7 +206,7 @@ function Detail({ art, z, jahr, rechnungen, ausgaben, gewSt }: { art: string; z?
                   <td style={{ padding: "9px 10px", fontSize: 13.5, textAlign: "right" }}>{eur(a.betrag_netto)}</td>
                   <td style={{ padding: "9px 10px", fontSize: 13.5, textAlign: "right", fontWeight: 600 }}>{eur(a.ust)}</td>
                   <td style={{ padding: "9px 10px", fontSize: 13.5 }}>
-                    {a.beleg_url ? <a href={a.beleg_url} target="_blank" rel="noreferrer" style={{ color: "#1663de", fontWeight: 600, textDecoration: "none" }}>öffnen ↗</a> : <span style={{ color: "#c2410c" }}>fehlt</span>}
+                    {a.beleg_url ? <a href={`/api/finanzen/beleg?id=${a.id}`} target="_blank" rel="noreferrer" style={{ color: "#1663de", fontWeight: 600, textDecoration: "none" }}>öffnen ↗</a> : <span style={{ color: "#c2410c" }}>fehlt</span>}
                   </td>
                 </tr>
               ))}

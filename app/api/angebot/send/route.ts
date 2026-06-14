@@ -11,6 +11,7 @@ import { getAngebotById, updateAngebot, newPublicToken, dbReady } from "@/lib/an
 import { sendMail, offerEmailHtml, publicLink } from "@/lib/angebot/email";
 import { sendTelegramMessage } from "@/lib/telegram";
 import { eur } from "@/lib/angebot/format";
+import { freigabeFlowAktiv, createFreigabe } from "@/lib/finanzen/freigabe";
 
 export async function POST(req: NextRequest) {
   if (!(await isLoggedIn())) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
@@ -32,13 +33,23 @@ export async function POST(req: NextRequest) {
   // Token sicherstellen (einmal vergeben, danach stabil).
   const token = a.public_token || newPublicToken();
   const link = publicLink(token);
+  const betreff = a.nummer
+    ? `Ihr Angebot von Wohlstandsmarketing — ${a.nummer}`
+    : "Ihr Angebot von Wohlstandsmarketing";
+  const html = offerEmailHtml({ ...a, public_token: token }, link);
+
+  // Freigabe-Flow: Albert per Telegram genehmigen lassen statt direkt senden.
+  if (freigabeFlowAktiv()) {
+    await updateAngebot(a.id, { public_token: token });
+    const created = await createFreigabe({ typ: "angebot", zielId: a.id, empfaenger: a.kunde_email, betreff, html });
+    if (!created) return NextResponse.json({ ok: false, error: "freigabe_failed" }, { status: 500 });
+    return NextResponse.json({ ok: true, freigabe: true, link });
+  }
 
   const mail = await sendMail({
     to: a.kunde_email,
-    subject: a.nummer
-      ? `Ihr Angebot von Wohlstandsmarketing — ${a.nummer}`
-      : "Ihr Angebot von Wohlstandsmarketing",
-    html: offerEmailHtml({ ...a, public_token: token }, link),
+    subject: betreff,
+    html,
   });
   if (!mail.ok) return NextResponse.json({ ok: false, error: `mail_failed:${mail.error}` }, { status: 502 });
 

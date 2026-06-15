@@ -21,7 +21,7 @@
  * ein Close-Ausfall nie den Mail-Versand an den Kunden blockiert.
  */
 
-import { notifyNewLead } from "@/lib/telegram";
+import { notifyNewLead, sendTelegramMessage } from "@/lib/telegram";
 
 const CLOSE_BASE = "https://api.close.com/api/v1";
 
@@ -306,6 +306,163 @@ export async function syncLeadToClose(
     }
 
     return { ok: true, leadId, created };
+  } catch (e) {
+    return { ok: false, reason: e instanceof Error ? e.message : "unknown" };
+  }
+}
+
+// ───────────────────────── Fireflies → Call-Notiz (Baustein A) ─────────────────────────
+
+export type CallType = "erstgespraech" | "strategiegespraech" | "folgetermin";
+
+const CALL_TYPE_LABEL: Record<CallType, string> = {
+  erstgespraech: "Erstgespräch (Setting)",
+  strategiegespraech: "Strategiegespräch (Closing)",
+  folgetermin: "Folgetermin",
+};
+
+const CALL_TYPE_FOLLOWUP: Record<CallType, string> = {
+  erstgespraech: "Erstgespräch nachbereiten → Strategiegespräch terminieren",
+  strategiegespraech: "Strategiegespräch nachfassen (Angebot / Entscheidung)",
+  folgetermin: "Folgetermin nachfassen",
+};
+
+export type CallNoteInput = {
+  /** E-Mail des Interessenten (nicht-interner Teilnehmer). */
+  email: string;
+  callType: CallType;
+  /** Fireflies-Meeting-Titel (für Kontext in der Notiz). */
+  title: string;
+  /** ISO-Datum des Calls. */
+  dateISO: string;
+  /** Fireflies short_summary. */
+  summary: string;
+  keywords: string[];
+  /** Fireflies action_items (vorformatierter String). */
+  actionItems: string;
+  meetingLink?: string;
+  /** Fireflies-Transcript-ID — dient als Idempotenz-Marker. */
+  transcriptId: string;
+  /** Anzeigename des Interessenten (für Telegram), optional. */
+  prospectName?: string;
+  /** Wenn true: nichts in Close schreiben, nur das Ergebnis zurückgeben (Test). */
+  dryRun?: boolean;
+};
+
+export type CallNoteResult = {
+  ok: boolean;
+  leadId?: string;
+  /** true, wenn der Call schon dokumentiert war (Idempotenz). */
+  skipped?: boolean;
+  /** true, wenn kein passender Lead in Close gefunden wurde. */
+  noLead?: boolean;
+  reason?: string;
+  /** Im dryRun: die Notiz, die geschrieben WÜRDE. */
+  preview?: string;
+};
+
+function esc(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+/**
+ * Schreibt nach einem Setting-/Closing-/Folgetermin automatisch eine
+ * strukturierte Notiz + Follow-up-Task in den passenden Close-Lead.
+ *
+ * Match über die E-Mail des Interessenten. Idempotent über den versteckten
+ * Marker `[ff:<transcriptId>]` in der Notiz (fängt Webhook-Retries ab).
+ * Kein passender Lead → noLead:true (Aufrufer alarmiert per Telegram).
+ * Wirft nicht.
+ */
+export async function addCallNoteAndTask(
+  input: CallNoteInput,
+): Promise<CallNoteResult> {
+  const apiKey = process.env.CLOSE_API_KEY;
+  if (!apiKey) return { ok: false, reason: "missing_close_key" };
+
+  const marker = `[ff:${input.transcriptId}]`;
+  const kw = input.keywords.filter(Boolean).join(", ");
+  const note = [
+    `📞 ${CALL_TYPE_LABEL[input.callType]} — ${input.dateISO.slice(0, 10)}`,
+    "",
+    input.summary?.trim() || "(keine Zusammenfassung verfügbar)",
+    kw ? `\nKeywords: ${kw}` : null,
+    input.actionItems?.trim() ? `\nAction Items:\n${input.actionItems.trim()}` : null,
+    input.meetingLink ? `\nFireflies: ${input.meetingLink}` : null,
+    `\n${marker}`,
+  ]
+    .filter((l) => l !== null)
+    .join("\n");
+
+  if (input.dryRun) {
+    const lead = await findLeadByEmail(apiKey, input.email);
+    return {
+      ok: true,
+      leadId: lead?.id,
+      noLead: !lead,
+      preview: note,
+    };
+  }
+
+  try {
+    const lead = await findLeadByEmail(apiKey, input.email);
+    if (!lead) return { ok: true, noLead: true };
+    const leadId = lead.id;
+
+    // Idempotenz: existiert schon eine Notiz mit diesem Marker?
+    try {
+      const r = await closeFetch(
+        apiKey,
+        `/activity/note/?lead_id=${encodeURIComponent(leadId)}&_limit=50`,
+      );
+      if (r.ok) {
+        const data = (await r.json()) as { data?: { note?: string }[] };
+        const exists = (data.data || []).some((n) =>
+          (n.note || "").includes(marker),
+        );
+        if (exists) return { ok: true, leadId, skipped: true };
+      }
+    } catch {
+      // Idempotenz-Check fehlgeschlagen → lieber schreiben als Call verlieren.
+    }
+
+    // Notiz schreiben
+    await closeFetch(apiKey, `/activity/note/`, {
+      method: "POST",
+      body: JSON.stringify({ lead_id: leadId, note }),
+    });
+
+    // Follow-up-Task (Fälligkeit morgen) — eigenes try/catch, nie blockierend
+    try {
+      const due = new Date(Date.now() + 24 * 60 * 60 * 1000)
+        .toISOString()
+        .slice(0, 10);
+      await closeFetch(apiKey, `/task/`, {
+        method: "POST",
+        body: JSON.stringify({
+          _type: "lead",
+          lead_id: leadId,
+          assigned_to: ASSIGNEE_USER_ID,
+          text: `📞 ${CALL_TYPE_FOLLOWUP[input.callType]}`,
+          date: due,
+          is_complete: false,
+        }),
+      });
+    } catch (e) {
+      console.warn("Close-Task (Call-Followup) Exception:", e);
+    }
+
+    // Telegram-Ping (nie blockierend)
+    try {
+      const name = input.prospectName || input.email;
+      await sendTelegramMessage(
+        `📞 <b>Call-Notiz erstellt</b>\n${esc(CALL_TYPE_LABEL[input.callType])} mit ${esc(name)}\n<a href="https://app.close.com/lead/${leadId}/">In Close öffnen</a>`,
+      );
+    } catch (e) {
+      console.warn("Telegram-Notify (Call) Exception:", e);
+    }
+
+    return { ok: true, leadId };
   } catch (e) {
     return { ok: false, reason: e instanceof Error ? e.message : "unknown" };
   }

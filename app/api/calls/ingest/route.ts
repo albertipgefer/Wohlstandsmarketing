@@ -20,7 +20,7 @@ import {
   type FfTranscript,
 } from "@/lib/fireflies";
 import { addCallNoteAndTask } from "@/lib/close";
-import { sendTelegramMessage } from "@/lib/telegram";
+import { sendFirefliesTelegram } from "@/lib/telegram";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -36,7 +36,7 @@ async function processOne(t: FfTranscript, dryRun: boolean) {
   const prospect = extractProspect(t);
   if (!prospect) {
     if (!dryRun) {
-      await sendTelegramMessage(
+      await sendFirefliesTelegram(
         `⚠️ <b>Call ohne erkennbaren Interessenten</b>\nTitel: ${t.title}`,
       ).catch(() => {});
     }
@@ -58,7 +58,7 @@ async function processOne(t: FfTranscript, dryRun: boolean) {
   });
 
   if (!dryRun && result.noLead) {
-    await sendTelegramMessage(
+    await sendFirefliesTelegram(
       `⚠️ <b>Call ohne passenden Close-Lead</b>\n${prospect.email}\nTitel: ${t.title}`,
     ).catch(() => {});
   }

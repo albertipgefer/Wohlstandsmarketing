@@ -21,7 +21,7 @@
  * ein Close-Ausfall nie den Mail-Versand an den Kunden blockiert.
  */
 
-import { notifyNewLead, sendTelegramMessage } from "@/lib/telegram";
+import { notifyNewLead, sendFirefliesTelegram } from "@/lib/telegram";
 
 const CLOSE_BASE = "https://api.close.com/api/v1";
 
@@ -455,7 +455,7 @@ export async function addCallNoteAndTask(
     // Telegram-Ping (nie blockierend)
     try {
       const name = input.prospectName || input.email;
-      await sendTelegramMessage(
+      await sendFirefliesTelegram(
         `📞 <b>Call-Notiz erstellt</b>\n${esc(CALL_TYPE_LABEL[input.callType])} mit ${esc(name)}\n<a href="https://app.close.com/lead/${leadId}/">In Close öffnen</a>`,
       );
     } catch (e) {

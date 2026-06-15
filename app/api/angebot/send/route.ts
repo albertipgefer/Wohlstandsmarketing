@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { isLoggedIn } from "@/lib/angebot/auth";
 import { getAngebotById, updateAngebot, newPublicToken, dbReady } from "@/lib/angebot/db";
 import { sendMail, offerEmailHtml, publicLink } from "@/lib/angebot/email";
-import { sendTelegramMessage } from "@/lib/telegram";
+import { sendFinanzenTelegram } from "@/lib/telegram";
 import { eur } from "@/lib/angebot/format";
 import { freigabeFlowAktiv, createFreigabe } from "@/lib/finanzen/freigabe";
 
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
 
   // Telegram-Info (gekapselt — blockiert nicht).
   try {
-    await sendTelegramMessage(
+    await sendFinanzenTelegram(
       `📤 <b>Angebot gesendet</b>\n${a.kunde_firma || a.kunde_email} · ${eur(a.brutto)}\nNr. ${a.nummer || "—"}`,
     );
   } catch {

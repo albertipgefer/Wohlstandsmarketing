@@ -25,10 +25,13 @@ import {
   rechnungAusWiederkehrend,
   vorrueckenWiederkehrend,
 } from "@/lib/finanzen/recurring";
-import { sendMail, mahnungEmailHtml } from "@/lib/finanzen/email";
+import { sendMail, mahnungEmailHtml, rechnungEmailHtml } from "@/lib/finanzen/email";
+import { freigabeFlowAktiv, createFreigabe } from "@/lib/finanzen/freigabe";
+import { newPublicToken } from "@/lib/angebot/db";
+import { baseUrl } from "@/lib/angebot/email";
 import { syncAlleKonten, listKonten } from "@/lib/finanzen/bank";
 import { verarbeiteReminderLauf } from "@/lib/angebot/reminder";
-import { sendTelegramMessage } from "@/lib/telegram";
+import { sendFinanzenTelegram } from "@/lib/telegram";
 
 const TAG = 24 * 60 * 60 * 1000;
 
@@ -102,16 +105,40 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // 3) Wiederkehrende Rechnungen fällig → Entwurf
+  // 3) Wiederkehrende Rechnungen fällig → Entwurf erzeugen.
+  //    Ist der Freigabe-Flow aktiv, kommt die Rechnung NICHT still als Entwurf,
+  //    sondern als Telegram-Vorschau zur Freigabe (human-in-the-loop): Albert
+  //    genehmigt/passt an/verwirft, erst dann geht die Mail an den Kunden raus.
+  let wiederkehrendFreigabe = 0;
   try {
     const faellige = await listFaelligeWiederkehrend(heute);
     for (const w of faellige) {
       const nummer = await nextRechnungsnummer(new Date(now).getFullYear());
       const ins = await insertRechnung(rechnungAusWiederkehrend(w, nummer, now));
-      if (ins) {
-        await vorrueckenWiederkehrend(w, now);
-        wiederkehrend++;
+      if (!ins) continue;
+      // Bei aktivem Freigabe-Flow + gültiger Kundenmail: Vorschau zur Freigabe vorlegen.
+      if (freigabeFlowAktiv() && ins.kunde_email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(ins.kunde_email)) {
+        try {
+          const token = ins.public_token || newPublicToken();
+          await updateRechnung(ins.id, { public_token: token });
+          const link = `${baseUrl()}/finanzen/r/${token}`;
+          const betreff = `Ihre Rechnung von Wohlstandsmarketing — ${nummer}`;
+          const html = rechnungEmailHtml({ ...ins, nummer, public_token: token }, link);
+          const created = await createFreigabe({
+            typ: "rechnung",
+            zielId: ins.id,
+            empfaenger: ins.kunde_email,
+            betreff,
+            html,
+            kontext: `Wiederkehrende Rechnung: ${w.bezeichnung || w.titel || "Retainer"}`,
+          });
+          if (created) wiederkehrendFreigabe++;
+        } catch (e) {
+          fehler.push(`Freigabe wiederkehrend ${nummer}: ${e instanceof Error ? e.message : "unknown"}`);
+        }
       }
+      await vorrueckenWiederkehrend(w, now);
+      wiederkehrend++;
     }
   } catch (e) {
     fehler.push(`Wiederkehrend: ${e instanceof Error ? e.message : "unknown"}`);
@@ -150,12 +177,12 @@ export async function GET(req: NextRequest) {
   // Report
   if (markedOverdue || mahnungen || wiederkehrend || reminderAngefragt || bankNeu || bankHinweise.length || inkassoReif.length || fehler.length) {
     try {
-      await sendTelegramMessage(
+      await sendFinanzenTelegram(
         `🧾 <b>Finanz-Lauf</b>\n` +
           `Überfällig markiert: ${markedOverdue}\n` +
           `Mahnungen gesendet: ${mahnungen}\n` +
           `Angebots-Erinnerungen vorgelegt: ${reminderAngefragt}\n` +
-          `Neue wiederkehrende Rechnungen: ${wiederkehrend}\n` +
+          `Neue wiederkehrende Rechnungen: ${wiederkehrend}${wiederkehrendFreigabe ? ` (davon ${wiederkehrendFreigabe} zur Freigabe vorgelegt)` : ""}\n` +
           `Neue Bank-Umsätze: ${bankNeu}` +
           (inkassoReif.length
             ? `\n\n🔴 <b>Letzte Mahnung verschickt — Inkasso prüfen:</b>\n${inkassoReif.join("\n")}`

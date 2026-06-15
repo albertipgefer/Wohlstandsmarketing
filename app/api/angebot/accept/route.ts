@@ -8,7 +8,7 @@ export const runtime = "nodejs";
 import { NextRequest, NextResponse } from "next/server";
 import { getAngebotByToken, updateAngebot, dbReady } from "@/lib/angebot/db";
 import { sendMail, acceptedCustomerEmailHtml, publicLink } from "@/lib/angebot/email";
-import { sendTelegramMessage } from "@/lib/telegram";
+import { sendFinanzenTelegram } from "@/lib/telegram";
 import { markCloseLeadAsKunde } from "@/lib/angebot/close-kunde";
 import { renderDokumentPdf, angebotToPdfDoc } from "@/lib/finanzen/pdf";
 import {
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
 
   // Albert: Telegram + E-Mail.
   try {
-    await sendTelegramMessage(
+    await sendFinanzenTelegram(
       `✅ <b>ANGEBOT ANGENOMMEN</b>\n${a.kunde_firma || a.kunde_email} · ${eur(a.brutto)}\nNr. ${a.nummer || "—"} · angenommen von ${name}`,
     );
   } catch {

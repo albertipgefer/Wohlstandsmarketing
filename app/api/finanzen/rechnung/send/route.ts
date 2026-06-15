@@ -17,7 +17,7 @@ import { newPublicToken } from "@/lib/angebot/db";
 import { sendMail, rechnungEmailHtml } from "@/lib/finanzen/email";
 import { renderDokumentPdf, rechnungToPdfDoc } from "@/lib/finanzen/pdf";
 import { baseUrl } from "@/lib/angebot/email";
-import { sendTelegramMessage } from "@/lib/telegram";
+import { sendFinanzenTelegram } from "@/lib/telegram";
 import { eur } from "@/lib/angebot/format";
 import { freigabeFlowAktiv, createFreigabe } from "@/lib/finanzen/freigabe";
 
@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
   if (!updated) return NextResponse.json({ ok: false, error: "status_update_failed" }, { status: 500 });
 
   try {
-    await sendTelegramMessage(
+    await sendFinanzenTelegram(
       `🧾 <b>Rechnung gesendet</b>\n${r.kunde_firma || r.kunde_email} · ${eur(r.brutto)}\nNr. ${nummer} · fällig ${r.faellig_am || "—"}`,
     );
   } catch {

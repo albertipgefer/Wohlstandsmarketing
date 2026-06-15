@@ -7,7 +7,7 @@
  *
  * PostgREST-Muster wie lib/finanzen/ausgaben.ts; Tabelle public.finanzen_freigaben.
  */
-import { sendTelegramButtons, type InlineButton } from "@/lib/telegram";
+import { sendFinanzenTelegramButtons, type InlineButton } from "@/lib/telegram";
 import { sendMail } from "@/lib/angebot/email";
 import { getRechnungById, updateRechnung } from "@/lib/finanzen/db";
 import { getAngebotById, updateAngebot } from "@/lib/angebot/db";
@@ -294,7 +294,7 @@ export async function createFreigabe(input: {
     const fg = rows[0];
     if (!fg) return false;
 
-    const msgId = await sendTelegramButtons(vorschau(fg), buttons(fg.id));
+    const msgId = await sendFinanzenTelegramButtons(vorschau(fg), buttons(fg.id));
     if (msgId) await updateFreigabe(fg.id, { telegram_message_id: msgId });
     return true;
   } catch {

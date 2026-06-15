@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { isLoggedIn } from "@/lib/angebot/auth";
 import { getRechnungById, updateRechnung, dbReady } from "@/lib/finanzen/db";
 import { sendMail, mahnungEmailHtml } from "@/lib/finanzen/email";
-import { sendTelegramMessage } from "@/lib/telegram";
+import { sendFinanzenTelegram } from "@/lib/telegram";
 import { eur } from "@/lib/angebot/format";
 
 export async function POST(req: NextRequest) {
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
   // stattdessen interne Erinnerung: Fall ans Inkasso übergeben.
   if ((r.mahnstufe || 0) >= 2) {
     try {
-      await sendTelegramMessage(
+      await sendFinanzenTelegram(
         `🟥 <b>Inkasso fällig</b>\n${r.kunde_firma || r.kunde_email} · ${eur(r.brutto)} · Nr. ${r.nummer || "—"}\n2. Mahnung ist raus — bitte den Fall jetzt ans Inkasso übergeben (keine weitere Mahnung an den Kunden).`,
       );
     } catch {
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
   if (!updated) return NextResponse.json({ ok: false, error: "update_failed" }, { status: 500 });
 
   try {
-    await sendTelegramMessage(
+    await sendFinanzenTelegram(
       `⏰ <b>${stufe <= 1 ? "Zahlungserinnerung" : stufe + ". Mahnung"} gesendet</b>\n${r.kunde_firma || r.kunde_email} · ${eur(r.brutto)}\nNr. ${r.nummer || "—"}`,
     );
   } catch {

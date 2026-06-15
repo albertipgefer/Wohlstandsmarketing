@@ -1,18 +1,13 @@
 /**
- * Fireflies.ai — minimaler GraphQL-Client für Baustein A (Auto-Call-Doku).
+ * Fireflies-Call-Helfer (Baustein A — Auto-Call-Doku).
  *
- * Zweck: Nach einem Setting-/Closing-/Folgetermin die Meeting-Details holen,
- * den Call-Typ aus dem Titel ableiten und den Interessenten (nicht-interner
- * Teilnehmer) bestimmen. Die eigentliche Close-Notiz schreibt lib/close.ts.
- *
- * Auth: Bearer FIREFLIES_API_KEY (Fireflies Pro/Business — API-Zugriff nötig).
- *
- * Bewusst schlank: nur fetch, kein SDK. Fehler werfen NIE nach außen.
+ * Reine, key-freie Hilfsfunktionen: Call-Typ aus dem Titel ableiten und den
+ * Interessenten (nicht-interner Teilnehmer) bestimmen. Die Call-Daten selbst
+ * liefert ein lokaler `claude -p`-Job über den Fireflies-MCP (kein API-Key) und
+ * schickt sie an /api/calls/ingest. Das Schreiben nach Close macht lib/close.ts.
  */
 
 import type { CallType } from "@/lib/close";
-
-const FIREFLIES_GRAPHQL = "https://api.fireflies.ai/graphql";
 
 // Interne Team-Mails (= nie der Interessent). Default = Albert (beide Konten,
 // da Fireflies/Meet teils über das Gmail-Konto läuft). Via ENV überschreibbar.
@@ -46,7 +41,7 @@ export type FfAttendee = { displayName?: string | null; email?: string | null };
 export type FfTranscript = {
   id: string;
   title: string | null;
-  dateString: string | null;
+  dateString?: string | null;
   meeting_link?: string | null;
   participants?: string[] | null;
   meeting_attendees?: FfAttendee[] | null;
@@ -56,38 +51,6 @@ export type FfTranscript = {
     action_items?: string | null;
   } | null;
 };
-
-/** Holt ein Transcript per Meeting-/Transcript-ID. null bei Fehler/fehlendem Key. */
-export async function getTranscriptById(id: string): Promise<FfTranscript | null> {
-  const key = process.env.FIREFLIES_API_KEY;
-  if (!key) return null;
-  const query = `query Transcript($id: String!) {
-    transcript(id: $id) {
-      id
-      title
-      dateString
-      meeting_link
-      participants
-      meeting_attendees { displayName email }
-      summary { short_summary keywords action_items }
-    }
-  }`;
-  try {
-    const r = await fetch(FIREFLIES_GRAPHQL, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${key}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ query, variables: { id } }),
-    });
-    if (!r.ok) return null;
-    const json = (await r.json()) as { data?: { transcript?: FfTranscript } };
-    return json.data?.transcript ?? null;
-  } catch {
-    return null;
-  }
-}
 
 /** true, wenn eine echte Fireflies-Zusammenfassung vorliegt (sonst Call überspringen). */
 export function hasProcessedSummary(t: FfTranscript): boolean {

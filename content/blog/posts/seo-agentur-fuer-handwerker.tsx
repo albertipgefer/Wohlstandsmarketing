@@ -172,6 +172,10 @@ export default function Content() {
         Vertrauenssignale drittens. Alles andere ist Marketing-Theater.
       </p>
       <p>
+        Wie so eine lokale Stadt-Landingpage konkret aussieht, zeigt etwa
+        unsere Seite zu <a href="/seo/koeln">SEO in Köln</a>.
+      </p>
+      <p>
         Investier 2 Stunden in die Auswahl. Hol 3 Angebote ein, vergleiche
         sie nicht nach Preis, sondern nach klaren Kriterien. Die richtige
         Agentur bringt 5–20 zusätzliche Anfragen pro Monat — und amortisiert

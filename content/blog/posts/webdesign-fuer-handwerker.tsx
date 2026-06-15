@@ -217,6 +217,10 @@ export default function Content() {
         KI-Sichtbarkeit als ein Paket, speziell für lokalen Mittelstand
         im DACH-Raum.
       </p>
+      <p>
+        Für Betriebe in der Region zeigen wir das konkret auf unserer Seite
+        zu <a href="/webdesign/koblenz">Webdesign in Koblenz</a>.
+      </p>
     </>
   );
 }

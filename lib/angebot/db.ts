@@ -75,6 +75,12 @@ export type Angebot = {
   accept_name: string | null;
   accept_ip: string | null;
   close_lead_id: string | null;
+  // Auto-Follow-up: höchste erledigte Erinnerungsstufe (0–2), die gerade zur
+  // Telegram-Freigabe liegende Stufe (Sperre gegen tägliches Re-Pingen) und der
+  // Zeitpunkt der letzten gesendeten Erinnerung. Siehe lib/angebot/reminder.ts.
+  reminder_stufe: number;
+  reminder_pending: number | null;
+  last_reminder_at: string | null;
 };
 
 /** Felder, die beim Speichern/Anlegen erlaubt sind (kein id/Timestamps). */

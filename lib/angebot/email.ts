@@ -98,6 +98,48 @@ export function offerEmailHtml(a: Angebot, link: string): string {
 </td></tr>`);
 }
 
+/**
+ * Erinnerungs-Mail an den Kunden bei noch nicht angenommenem Angebot.
+ * Stufe 1 (Tag 5) freundlich-nachhörend, Stufe 2 (Tag 12) mit Ablauf-Dringlichkeit.
+ * Verlinkt nur die bestehende Online-Ansicht — kein Annehmen/Ablehnen-Button.
+ */
+export function reminderEmailHtml(a: Angebot, link: string, stufe: number): string {
+  const anrede = a.kunde_ansprech?.trim()
+    ? `Hallo ${escapeHtml(a.kunde_ansprech.trim())},`
+    : a.kunde_firma?.trim()
+      ? `Hallo Team ${escapeHtml(a.kunde_firma.trim())},`
+      : "Hallo,";
+  const gueltig = a.gueltig_bis ? deDate(a.gueltig_bis) : "";
+  const cta = (label: string) => `
+<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 22px;"><tr><td style="border-radius:10px;background:#1663de;">
+<a href="${escapeHtml(link)}" style="display:inline-block;padding:14px 28px;color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;">${label}</a>
+</td></tr></table>`;
+  const gruss = `<p style="font-size:13px;line-height:1.6;color:#71717a;margin:0 0 8px;">Herzliche Grüße<br>${escapeHtml(ANBIETER.name)} · Wohlstandsmarketing</p>`;
+
+  if (stufe <= 1) {
+    return SHELL(`
+<tr><td style="padding:24px 32px 0;">
+<h1 style="font-size:22px;font-weight:800;margin:0 0 12px;">Kurze Erinnerung an Ihr Angebot</h1>
+<p style="font-size:15px;line-height:1.6;color:#27272a;margin:0 0 16px;">${anrede}</p>
+<p style="font-size:15px;line-height:1.6;color:#27272a;margin:0 0 16px;">wir wollten kurz nachhören, ob unser Angebot ${escapeHtml(a.nummer || "")} (${escapeHtml(eur(a.brutto))}) alle Ihre Fragen beantwortet. Gerne können Sie es jederzeit bequem online einsehen:</p>
+${cta("Angebot ansehen →")}
+<p style="font-size:15px;line-height:1.6;color:#27272a;margin:0 0 16px;">Falls etwas unklar ist oder Sie einzelne Punkte anpassen möchten, antworten Sie einfach auf diese Mail — wir finden gemeinsam die passende Lösung.</p>
+${gueltig ? `<p style="font-size:13px;line-height:1.6;color:#71717a;margin:0 0 4px;">Das Angebot ist noch bis ${escapeHtml(gueltig)} gültig.</p>` : ""}
+${gruss}
+</td></tr>`);
+  }
+
+  return SHELL(`
+<tr><td style="padding:24px 32px 0;">
+<h1 style="font-size:22px;font-weight:800;margin:0 0 12px;">Ihr Angebot läuft bald aus</h1>
+<p style="font-size:15px;line-height:1.6;color:#27272a;margin:0 0 16px;">${anrede}</p>
+<p style="font-size:15px;line-height:1.6;color:#27272a;margin:0 0 16px;">wir möchten sichergehen, dass Ihnen unser Angebot ${escapeHtml(a.nummer || "")} (${escapeHtml(eur(a.brutto))}) nicht entgeht.${gueltig ? ` Die Gültigkeit endet am ${escapeHtml(gueltig)}.` : ""} Damit Sie sich Konditionen und Startzeitpunkt sichern, genügt ein Klick:</p>
+${cta("Angebot jetzt sichern →")}
+<p style="font-size:15px;line-height:1.6;color:#27272a;margin:0 0 16px;">Haben Sie noch offene Punkte? Schreiben Sie uns kurz zurück — wir melden uns umgehend.</p>
+${gruss}
+</td></tr>`);
+}
+
 /** Bestätigungs-Mail an den Kunden nach Annahme. */
 export function acceptedCustomerEmailHtml(a: Angebot): string {
   const anrede = a.kunde_ansprech?.trim()

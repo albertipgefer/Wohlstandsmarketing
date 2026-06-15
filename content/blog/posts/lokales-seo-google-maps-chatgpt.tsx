@@ -208,6 +208,10 @@ export default function Content() {
         <li>Lokale Kundenstimmen, idealerweise mit Stadt-Angabe</li>
         <li>Eingebettete Google Map mit deinem Standort</li>
       </ul>
+      <p>
+        Wie so eine Stadt-Landing-Page in der Praxis aussieht, siehst du am
+        Beispiel von <a href="/seo/koblenz">SEO in Koblenz</a>.
+      </p>
 
       <h2 id="schema">6. LocalBusiness-Schema vollständig</h2>
       <p>

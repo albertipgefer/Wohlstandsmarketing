@@ -4,6 +4,8 @@
  * 2) Auto-Mahnlauf: überfällige Rechnungen gestaffelt anmahnen
  *    (Stufe 1 ab 3 Tagen überfällig, danach alle 10 Tage, max. Stufe 3).
  * 3) Wiederkehrende Rechnungen fällig? → Entwurf erzeugen.
+ * 3b) Angebots-Follow-up: nicht angenommene Angebote nachfassen (Tag 5 + 12,
+ *     je als Telegram-Freigabe — Kundenmail erst auf Albert-Klick).
  * Abschluss: Telegram-Report an Albert.
  *
  * Auth: Header `Authorization: Bearer ${CRON_SECRET}`.
@@ -25,6 +27,7 @@ import {
 } from "@/lib/finanzen/recurring";
 import { sendMail, mahnungEmailHtml } from "@/lib/finanzen/email";
 import { syncAlleKonten, listKonten } from "@/lib/finanzen/bank";
+import { verarbeiteReminderLauf } from "@/lib/angebot/reminder";
 import { sendTelegramMessage } from "@/lib/telegram";
 
 const TAG = 24 * 60 * 60 * 1000;
@@ -114,6 +117,17 @@ export async function GET(req: NextRequest) {
     fehler.push(`Wiederkehrend: ${e instanceof Error ? e.message : "unknown"}`);
   }
 
+  // 3b) Angebots-Follow-up: nicht angenommene Angebote nachfassen (Tag 5 + 12).
+  //     Legt nur Telegram-Freigaben an — die Kundenmail geht erst auf Albert-Klick raus.
+  let reminderAngefragt = 0;
+  try {
+    const rem = await verarbeiteReminderLauf(now);
+    reminderAngefragt = rem.angefragt;
+    if (rem.fehler.length) fehler.push(...rem.fehler);
+  } catch (e) {
+    fehler.push(`Angebot-Reminder: ${e instanceof Error ? e.message : "unknown"}`);
+  }
+
   // 4) Bank-Sync (N26 via GoCardless) + 90-Tage-Reauth-Reminder
   let bankNeu = 0;
   const bankHinweise: string[] = [];
@@ -134,12 +148,13 @@ export async function GET(req: NextRequest) {
   }
 
   // Report
-  if (markedOverdue || mahnungen || wiederkehrend || bankNeu || bankHinweise.length || inkassoReif.length || fehler.length) {
+  if (markedOverdue || mahnungen || wiederkehrend || reminderAngefragt || bankNeu || bankHinweise.length || inkassoReif.length || fehler.length) {
     try {
       await sendTelegramMessage(
         `🧾 <b>Finanz-Lauf</b>\n` +
           `Überfällig markiert: ${markedOverdue}\n` +
           `Mahnungen gesendet: ${mahnungen}\n` +
+          `Angebots-Erinnerungen vorgelegt: ${reminderAngefragt}\n` +
           `Neue wiederkehrende Rechnungen: ${wiederkehrend}\n` +
           `Neue Bank-Umsätze: ${bankNeu}` +
           (inkassoReif.length
@@ -153,5 +168,5 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  return NextResponse.json({ ok: true, markedOverdue, mahnungen, wiederkehrend, bankNeu, bankHinweise, inkassoReif, fehler });
+  return NextResponse.json({ ok: true, markedOverdue, mahnungen, reminderAngefragt, wiederkehrend, bankNeu, bankHinweise, inkassoReif, fehler });
 }

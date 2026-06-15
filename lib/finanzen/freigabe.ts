@@ -25,7 +25,7 @@ export function freigabeFlowAktiv(): boolean {
   return process.env.FREIGABE_FLOW === "on" && !!URL && !!KEY;
 }
 
-export type FreigabeTyp = "rechnung" | "angebot" | "mahnung";
+export type FreigabeTyp = "rechnung" | "angebot" | "mahnung" | "angebot_reminder";
 export type Freigabe = {
   id: string;
   typ: FreigabeTyp;
@@ -96,7 +96,14 @@ export async function resetOffeneAnpassungen(): Promise<void> {
 }
 
 function vorschau(f: { typ: FreigabeTyp; empfaenger: string | null; betreff: string }): string {
-  const label = f.typ === "rechnung" ? "📄 Rechnung" : f.typ === "angebot" ? "📝 Angebot" : "🔔 Mahnung";
+  const label =
+    f.typ === "rechnung"
+      ? "📄 Rechnung"
+      : f.typ === "angebot"
+        ? "📝 Angebot"
+        : f.typ === "angebot_reminder"
+          ? "🔁 Angebots-Erinnerung"
+          : "🔔 Mahnung";
   return (
     `<b>Freigabe nötig — ${label}</b>\n` +
     `An: ${f.empfaenger || "—"}\n` +
@@ -165,7 +172,34 @@ export async function sendeFreigabe(f: Freigabe): Promise<{ ok: boolean; error?:
     }
   }
 
+  // Angebots-Erinnerung: kein status/sent_at-Update (würde die Tage-Berechnung
+  // brechen) — stattdessen die Erinnerungsstufe am Angebot als erledigt buchen.
+  if (res.ok && f.typ === "angebot_reminder") {
+    await finalisiereReminderFreigabe(f, true);
+  }
+
   return res;
+}
+
+/**
+ * Verbucht das Ergebnis einer Angebots-Erinnerungs-Freigabe am Angebot:
+ * die offene Stufe (reminder_pending) gilt als erledigt — egal ob gesendet
+ * oder übersprungen — und die Pending-Sperre fällt weg, sodass der Cron die
+ * nächste Stufe (oder den Stopp nach Stufe 2) erkennt. No-op für andere Typen.
+ */
+export async function finalisiereReminderFreigabe(f: Freigabe, gesendet: boolean): Promise<void> {
+  if (f.typ !== "angebot_reminder" || !f.ziel_id) return;
+  try {
+    const a = await getAngebotById(f.ziel_id);
+    if (!a || a.reminder_pending == null) return;
+    await updateAngebot(f.ziel_id, {
+      reminder_stufe: a.reminder_pending,
+      reminder_pending: null,
+      ...(gesendet ? { last_reminder_at: new Date().toISOString() } : {}),
+    });
+  } catch {
+    /* ignore */
+  }
 }
 
 const KI_MODEL = process.env.FINANZEN_KI_MODEL || "claude-sonnet-4-6";

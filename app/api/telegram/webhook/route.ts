@@ -22,6 +22,7 @@ import {
   freigabeButtons,
   vorschauText,
   resetOffeneAnpassungen,
+  finalisiereReminderFreigabe,
 } from "@/lib/finanzen/freigabe";
 import {
   answerCallback,
@@ -85,7 +86,14 @@ export async function POST(req: NextRequest) {
       );
     } else if (action === "no") {
       await updateFreigabe(id, { status: "abgelehnt" });
-      await editTelegramMessage(fg.telegram_message_id, `❌ Verworfen — es wurde nichts gesendet.`);
+      // Erinnerung übersprungen: Stufe trotzdem als erledigt buchen (sonst bleibt
+      // das Angebot via reminder_pending dauerhaft aus dem Cron gesperrt).
+      await finalisiereReminderFreigabe(fg, false);
+      const txt =
+        fg.typ === "angebot_reminder"
+          ? `✖️ Übersprungen — diese Erinnerung wurde nicht gesendet.`
+          : `❌ Verworfen — es wurde nichts gesendet.`;
+      await editTelegramMessage(fg.telegram_message_id, txt);
     }
     return ok();
   }

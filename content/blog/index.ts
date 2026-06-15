@@ -307,6 +307,7 @@ export function getRelaunchPosts(limit = 4) {
 export function getSeoPosts(limit = 4) {
   const slugs = [
     "seo-agentur-fuer-handwerker",
+    "seo-kosten-2026",
     "lokales-seo-google-maps-chatgpt-2026",
     "google-business-profile-12-optimierungen",
     "lokale-backlinks-mittelstand",
@@ -327,6 +328,7 @@ export function getSeoPosts(limit = 4) {
 export function getKiVisibilityPosts(limit = 4) {
   const slugs = [
     "ki-sichtbarkeit-chatgpt-2026",
+    "ki-sichtbarkeit-kosten",
     "chatgpt-optimierung-agentur",
     "ki-sichtbarkeit-agentur-vergleich",
     "aeo-agentur-deutschland",

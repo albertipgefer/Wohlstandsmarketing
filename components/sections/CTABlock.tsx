@@ -120,12 +120,14 @@ export default function CTABlock() {
           className="mt-14 flex flex-col items-center gap-4"
         >
           <a
-            href="#kontaktformular"
-            aria-label="Zum Kontaktformular springen und Erstgespräch sichern"
+            href="https://tidycal.com/albertipgefer/erstgespraech-mit-wohlstandsmarketing-2"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Kostenloses Erstgespräch buchen"
             className="group relative inline-flex w-full max-w-md items-center justify-center gap-2 overflow-hidden rounded-full bg-[var(--text)] px-9 py-5 text-base font-semibold text-white shadow-[0_14px_40px_-10px_rgba(22,99,222,0.55)] transition hover:shadow-[0_18px_50px_-10px_rgba(22,99,222,0.8)] sm:w-auto"
           >
             <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-dark)] transition-transform duration-500 ease-out group-hover:translate-y-0" />
-            <span className="relative z-10">Erstgespräch sichern</span>
+            <span className="relative z-10">Kostenloses Erstgespräch buchen</span>
             <span className="relative z-10 transition-transform group-hover:translate-x-1">
               →
             </span>

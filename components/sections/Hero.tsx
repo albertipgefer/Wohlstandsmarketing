@@ -211,23 +211,26 @@ export default function Hero() {
               className="mx-auto mt-8 flex w-full max-w-sm flex-col items-stretch gap-3 lg:mx-0"
             >
               <a
-                href="#strategie"
-                aria-label="Zum Strategie-Abschnitt springen und Erstgespräch sichern"
+                href="/sichtbarkeits-check"
+                aria-label="Kostenlosen KI-Sichtbarkeits-Check starten"
                 className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-[var(--text)] px-7 py-4 text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(22,99,222,0.5)] transition hover:shadow-[0_14px_40px_-10px_rgba(22,99,222,0.75)]"
               >
                 <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-dark)] transition-transform duration-500 ease-out group-hover:translate-y-0" />
-                <span className="relative z-10">Erstgespräch sichern</span>
+                <span className="relative z-10">Kostenlosen KI-Check machen</span>
                 <span className="relative z-10 transition-transform group-hover:translate-x-1">
                   →
                 </span>
               </a>
               <a
-                href="#methode"
+                href="https://tidycal.com/albertipgefer/erstgespraech-mit-wohlstandsmarketing-2"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Kostenloses Erstgespräch buchen"
                 className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full border border-[var(--border-strong)] bg-white/70 px-7 py-4 text-[15px] font-medium text-[var(--text)] backdrop-blur transition hover:border-transparent"
               >
                 <span className="absolute inset-0 -z-0 translate-x-[-101%] bg-[var(--text)] transition-transform duration-500 ease-out group-hover:translate-x-0" />
                 <span className="relative z-10 transition-colors group-hover:text-white">
-                  So funktioniert die WSM-Methode
+                  Kostenloses Erstgespräch buchen
                 </span>
               </a>
             </motion.div>
@@ -235,12 +238,12 @@ export default function Hero() {
             {/* Sekundärer CTA: KI-Check als Lead-Magnet — nur Desktop (auf Mobile/iPad versteckt) */}
             <motion.a
               variants={item}
-              href="/sichtbarkeits-check"
+              href="#methode"
               className="group mx-auto mt-5 hidden items-center gap-2 text-[13px] font-semibold text-[var(--text-muted)] transition hover:text-[var(--accent)] lg:mx-0 lg:inline-flex"
             >
-              <span aria-hidden className="text-[var(--accent)]">⚡</span>
+              <span aria-hidden className="text-[var(--accent)]">↓</span>
               <span className="underline-offset-4 group-hover:underline">
-                Oder mach den kostenlosen KI-Sichtbarkeits-Check
+                So funktioniert die WSM-Methode
               </span>
               <span className="transition-transform group-hover:translate-x-0.5">→</span>
             </motion.a>
@@ -303,11 +306,13 @@ export default function Hero() {
               className="mx-auto mt-7 flex w-full max-w-sm flex-col items-stretch gap-3 lg:hidden"
             >
               <a
-                href="#strategie"
+                href="https://tidycal.com/albertipgefer/erstgespraech-mit-wohlstandsmarketing-2"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-[var(--text)] px-7 py-4 text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(22,99,222,0.5)] transition hover:shadow-[0_14px_40px_-10px_rgba(22,99,222,0.75)]"
               >
                 <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-dark)] transition-transform duration-500 ease-out group-hover:translate-y-0" />
-                <span className="relative z-10">Jetzt unverbindliches Erstgespräch sichern</span>
+                <span className="relative z-10">Kostenloses Erstgespräch buchen</span>
                 <span className="relative z-10 transition-transform group-hover:translate-x-1">
                   →
                 </span>

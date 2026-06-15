@@ -57,21 +57,31 @@ export function hasProcessedSummary(t: FfTranscript): boolean {
   return Boolean(t.summary && (t.summary.short_summary || "").trim());
 }
 
+/** Parst den Interessenten-Namen aus dem Titel "… - <Name> und Albert Ipgefer". */
+export function nameFromTitle(title?: string | null): string | undefined {
+  if (!title) return undefined;
+  const m = title.match(/-\s*([^-–]+?)\s+und\s+Albert/i);
+  return m ? m[1].trim() : undefined;
+}
+
 /**
  * Bestimmt den Interessenten (erster nicht-interner Teilnehmer).
- * Nutzt meeting_attendees (mit Namen), Fallback participants.
+ * Nutzt meeting_attendees (mit Namen), Fallback participants. Der Name kommt aus
+ * displayName oder — wenn leer — aus dem Call-Titel (für robustes Lead-Matching).
  */
 export function extractProspect(
   t: FfTranscript,
 ): { email: string; name?: string } | null {
   const internal = internalEmails();
+  const titleName = nameFromTitle(t.title);
+
   const fromAttendees = (t.meeting_attendees || [])
     .filter((a) => a.email && !internal.has(a.email.toLowerCase()))
-    .map((a) => ({ email: a.email as string, name: a.displayName || undefined }));
+    .map((a) => ({ email: a.email as string, name: a.displayName || titleName }));
   if (fromAttendees.length) return fromAttendees[0];
 
   const fromParticipants = (t.participants || [])
     .filter((e) => e && !internal.has(e.toLowerCase()))
-    .map((email) => ({ email }));
+    .map((email) => ({ email, name: titleName }));
   return fromParticipants[0] || null;
 }

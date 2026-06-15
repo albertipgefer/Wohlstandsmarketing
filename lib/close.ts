@@ -357,12 +357,59 @@ export type CallNoteResult = {
   /** true, wenn kein passender Lead in Close gefunden wurde. */
   noLead?: boolean;
   reason?: string;
+  /** Wie der Lead gefunden wurde: "email" | "domain" | "name". */
+  matchedVia?: string;
   /** Im dryRun: die Notiz, die geschrieben WÜRDE. */
   preview?: string;
 };
 
 function esc(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+// Freemail-Domains: dafür KEIN Domain-Matching (sonst trifft es fremde Leads).
+const FREEMAIL = new Set([
+  "gmail.com", "googlemail.com", "web.de", "gmx.de", "gmx.net", "gmx.at",
+  "t-online.de", "yahoo.com", "yahoo.de", "outlook.com", "outlook.de",
+  "hotmail.com", "hotmail.de", "live.com", "live.de", "icloud.com", "me.com",
+  "aol.com", "mail.com", "freenet.de",
+]);
+
+/** Sucht den ersten Lead-Treffer für eine Close-Query (oder null). */
+async function searchLead(apiKey: string, query: string): Promise<CloseLead | null> {
+  const q = encodeURIComponent(query);
+  const r = await closeFetch(apiKey, `/lead/?query=${q}&_limit=1`);
+  if (!r.ok) return null;
+  const data = (await r.json()) as { data?: CloseLead[] };
+  return data.data && data.data.length > 0 ? data.data[0] : null;
+}
+
+/**
+ * Robustes Lead-Matching: zuerst exakte E-Mail, dann (bei Business-Domain) die
+ * E-Mail-Domain, dann der Name. So wird der Lead auch dann korrekt zugeordnet,
+ * wenn die Call-Mail von der im CRM hinterlegten Mail abweicht.
+ */
+async function findLeadFuzzy(
+  apiKey: string,
+  email: string,
+  name?: string,
+): Promise<{ lead: CloseLead; via: string } | null> {
+  const byEmail = await findLeadByEmail(apiKey, email);
+  if (byEmail) return { lead: byEmail, via: "email" };
+
+  const domain = email.split("@")[1]?.toLowerCase();
+  if (domain && !FREEMAIL.has(domain)) {
+    const byDomain = await searchLead(apiKey, `email_domain:"${domain}"`);
+    if (byDomain) return { lead: byDomain, via: "domain" };
+  }
+
+  const n = (name || "").trim();
+  if (n.length > 2) {
+    const byName = await searchLead(apiKey, `"${n}"`);
+    if (byName) return { lead: byName, via: "name" };
+  }
+
+  return null;
 }
 
 /**
@@ -392,22 +439,26 @@ export async function addCallNoteAndTask(
     `\n${marker}`,
   ]
     .filter((l) => l !== null)
-    .join("\n");
+    .join("\n")
+    // Markdown-Reste (z. B. **Name** aus Fireflies) entfernen — Close-Notizen sind Plain-Text.
+    .replace(/\*\*/g, "");
 
   if (input.dryRun) {
-    const lead = await findLeadByEmail(apiKey, input.email);
+    const match = await findLeadFuzzy(apiKey, input.email, input.prospectName);
     return {
       ok: true,
-      leadId: lead?.id,
-      noLead: !lead,
+      leadId: match?.lead.id,
+      matchedVia: match?.via,
+      noLead: !match,
       preview: note,
     };
   }
 
   try {
-    const lead = await findLeadByEmail(apiKey, input.email);
-    if (!lead) return { ok: true, noLead: true };
-    const leadId = lead.id;
+    const match = await findLeadFuzzy(apiKey, input.email, input.prospectName);
+    if (!match) return { ok: true, noLead: true };
+    const leadId = match.lead.id;
+    const matchedVia = match.via;
 
     // Idempotenz: existiert schon eine Notiz mit diesem Marker?
     try {
@@ -455,14 +506,15 @@ export async function addCallNoteAndTask(
     // Telegram-Ping (nie blockierend)
     try {
       const name = input.prospectName || input.email;
+      const viaHint = matchedVia !== "email" ? `\n<i>(zugeordnet über ${esc(matchedVia)})</i>` : "";
       await sendFirefliesTelegram(
-        `📞 <b>Call-Notiz erstellt</b>\n${esc(CALL_TYPE_LABEL[input.callType])} mit ${esc(name)}\n<a href="https://app.close.com/lead/${leadId}/">In Close öffnen</a>`,
+        `📞 <b>Call-Notiz erstellt</b>\n${esc(CALL_TYPE_LABEL[input.callType])} mit ${esc(name)}${viaHint}\n<a href="https://app.close.com/lead/${leadId}/">In Close öffnen</a>`,
       );
     } catch (e) {
       console.warn("Telegram-Notify (Call) Exception:", e);
     }
 
-    return { ok: true, leadId };
+    return { ok: true, leadId, matchedVia };
   } catch (e) {
     return { ok: false, reason: e instanceof Error ? e.message : "unknown" };
   }

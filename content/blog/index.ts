@@ -68,6 +68,8 @@ import * as kiAgenturVergleich from "./posts/ki-sichtbarkeit-agentur-vergleich";
 import * as chatgptAgentur from "./posts/chatgpt-optimierung-agentur";
 import * as landingpageKosten from "./posts/landingpage-erstellen-lassen-kosten";
 import * as relaunchKosten from "./posts/webseiten-relaunch-kosten";
+import * as seoKosten from "./posts/seo-kosten-2026";
+import * as kiSichtbarkeitKosten from "./posts/ki-sichtbarkeit-kosten";
 import * as wdCoaches2 from "./posts/webdesigner-fuer-coaches";
 import * as hochzeitsfotografen from "./posts/webseite-fuer-hochzeitsfotografen";
 import * as eventlocations from "./posts/webdesigner-fuer-eventlocations";
@@ -160,6 +162,8 @@ const modules: Array<{
   { meta: { ...chatgptAgentur.meta, popularity: 92 }, default: chatgptAgentur.default },
   { meta: { ...landingpageKosten.meta, popularity: 85 }, default: landingpageKosten.default },
   { meta: { ...relaunchKosten.meta, popularity: 80 }, default: relaunchKosten.default },
+  { meta: { ...seoKosten.meta, popularity: 90 }, default: seoKosten.default },
+  { meta: { ...kiSichtbarkeitKosten.meta, popularity: 92 }, default: kiSichtbarkeitKosten.default },
   { meta: { ...wdCoaches2.meta, popularity: 78 }, default: wdCoaches2.default },
   { meta: { ...hochzeitsfotografen.meta, popularity: 76 }, default: hochzeitsfotografen.default },
   { meta: { ...eventlocations.meta, popularity: 80 }, default: eventlocations.default },

@@ -108,7 +108,9 @@ export default async function SteuernSeite({ searchParams }: { searchParams: Pro
 
       <p style={S.note}>
         Alle Werte werden automatisch aus deinen Ein- und Ausgaben berechnet (Regelbesteuerung 19 %, Ist-Besteuerung) und sind eine
-        Orientierung — kein Steuerbescheid. Mit Überprüfen öffnest du die Detailansicht mit den Zahlen fürs ELSTER-Portal. Die ELSTER-Direkteinreichung folgt als eigene Phase.
+        Orientierung — kein Steuerbescheid. Der Gewinn folgt der amtlichen EÜR (USt als durchlaufender Posten); EÜR-Sonderkürzungen
+        (z. B. Bewirtung 70 %, Verpflegungspauschalen) sind nicht abgebildet — die finale EÜR erstellt der Steuerberater. Mit Überprüfen
+        öffnest du die Detailansicht mit den Zahlen fürs ELSTER-Portal. Die ELSTER-Direkteinreichung folgt als eigene Phase.
       </p>
     </FinanzShell>
   );

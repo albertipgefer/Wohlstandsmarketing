@@ -22,6 +22,27 @@ function ustDatum(r: Rechnung): string | null {
   return (r.bezahlt_am || r.rechnungsdatum || r.created_at) ?? null;
 }
 
+/**
+ * Stichtag der Ausgabe für die USt-Voranmeldung: erster Tag der explizit
+ * gesetzten USt-Periode ("YYYY-Qn"), sonst das Buchungsdatum. So landet die
+ * Vorsteuer im korrekten Voranmeldungszeitraum (auch bei Nacherfassung).
+ */
+function ustStichtagAusgabe(a: Ausgabe): string {
+  if (a.ust_periode) {
+    const m = /^(\d{4})-Q([1-4])$/.exec(a.ust_periode);
+    if (m) {
+      const monat = (Number(m[2]) - 1) * 3 + 1;
+      return `${m[1]}-${String(monat).padStart(2, "0")}-01`;
+    }
+  }
+  return a.datum;
+}
+
+/** Abziehbare Vorsteuer einer Ausgabe (Feld vorsteuer; Fallback voller USt-Betrag). */
+function abziehbareVorsteuer(a: Ausgabe): number {
+  return a.vorsteuer ?? a.ust;
+}
+
 export type UStVoranmeldung = {
   von: string;
   bis: string;
@@ -43,8 +64,8 @@ export function ustVoranmeldung(rechnungen: Rechnung[], ausgaben: Ausgabe[], von
   }
   let vorsteuer = 0;
   for (const a of ausgaben) {
-    if (!inRange(a.datum, von, bis)) continue;
-    vorsteuer += a.ust;
+    if (!inRange(ustStichtagAusgabe(a), von, bis)) continue;
+    vorsteuer += abziehbareVorsteuer(a);
   }
   umsatzNetto = round2(umsatzNetto);
   ustEingenommen = round2(ustEingenommen);
@@ -56,15 +77,30 @@ export type Euer = {
   jahr: number;
   einnahmenNetto: number;
   ausgabenNetto: number;
-  gewinn: number;
-  einnahmenMonat: number[]; // 12
-  ausgabenMonat: number[];  // 12
+  vereinnahmteUst: number;   // im Jahr vereinnahmte Umsatzsteuer (durchlaufend)
+  vorsteuer: number;         // im Jahr abziehbare Vorsteuer (durchlaufend)
+  gewinn: number;            // amtliche EÜR: USt als durchlaufender Posten
+  gewinnNetto: number;       // vereinfacht netto (Einnahmen − Ausgaben), nur zur Info
+  einnahmenMonat: number[];  // 12 (netto)
+  ausgabenMonat: number[];   // 12 (netto)
 };
 
-/** Einnahmen-Überschuss-Rechnung (EÜR), netto, für ein Jahr (Ist). */
+/**
+ * Einnahmen-Überschuss-Rechnung (EÜR) für ein Jahr (Ist-Besteuerung).
+ *
+ * Der ausgewiesene `gewinn` folgt der amtlichen EÜR-Logik (Anlage EÜR), bei der
+ * die Umsatzsteuer durchlaufend behandelt wird: vereinnahmte USt zählt als
+ * Einnahme, gezahlte Vorsteuer als Ausgabe (gezahlte USt-Vorauszahlungen sind
+ * bereits als Ausgaben erfasst). Das entspricht der Zahl, die in die
+ * Steuererklärung geht. Sonderkürzungen (Bewirtung 70 %, Verpflegungspauschalen,
+ * anteilige Kfz-/Telefonkosten) bildet diese Berechnung NICHT ab — sie ist eine
+ * verlässliche Orientierung; die finale EÜR erstellt der Steuerberater.
+ */
 export function euer(rechnungen: Rechnung[], ausgaben: Ausgabe[], jahr: number): Euer {
   const einnahmenMonat = new Array(12).fill(0) as number[];
   const ausgabenMonat = new Array(12).fill(0) as number[];
+  let vereinnahmteUst = 0;
+  let vorsteuer = 0;
   for (const r of rechnungen) {
     if (r.status !== "bezahlt") continue;
     const d = ustDatum(r);
@@ -72,15 +108,30 @@ export function euer(rechnungen: Rechnung[], ausgaben: Ausgabe[], jahr: number):
     const dt = new Date(d);
     if (dt.getFullYear() !== jahr) continue;
     einnahmenMonat[dt.getMonth()] += r.netto;
+    vereinnahmteUst += r.ust;
   }
   for (const a of ausgaben) {
     const dt = new Date(a.datum);
     if (Number.isNaN(dt.getTime()) || dt.getFullYear() !== jahr) continue;
     ausgabenMonat[dt.getMonth()] += a.betrag_netto;
+    vorsteuer += abziehbareVorsteuer(a);
   }
   const einnahmenNetto = round2(einnahmenMonat.reduce((s, v) => s + v, 0));
   const ausgabenNetto = round2(ausgabenMonat.reduce((s, v) => s + v, 0));
-  return { jahr, einnahmenNetto, ausgabenNetto, gewinn: round2(einnahmenNetto - ausgabenNetto), einnahmenMonat, ausgabenMonat };
+  vereinnahmteUst = round2(vereinnahmteUst);
+  vorsteuer = round2(vorsteuer);
+  const gewinn = round2(einnahmenNetto + vereinnahmteUst - ausgabenNetto - vorsteuer);
+  return {
+    jahr,
+    einnahmenNetto,
+    ausgabenNetto,
+    vereinnahmteUst,
+    vorsteuer,
+    gewinn,
+    gewinnNetto: round2(einnahmenNetto - ausgabenNetto),
+    einnahmenMonat,
+    ausgabenMonat,
+  };
 }
 
 /**

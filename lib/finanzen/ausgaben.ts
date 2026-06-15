@@ -28,6 +28,10 @@ export type Ausgabe = {
   betrag_netto: number;
   ust: number;
   betrag_brutto: number;
+  /** Abziehbare (erstattungsfähige) Vorsteuer für die USt-VA. Meist = ust; geringer bei teilweiser geschäftlicher Nutzung. */
+  vorsteuer: number | null;
+  /** USt-Voranmeldungsperiode (Format "YYYY-Qn"), in der die Vorsteuer gezogen wird. Kann vom Buchungsdatum-Quartal abweichen. */
+  ust_periode: string | null;
   bezahlt: boolean;
   notiz: string | null;
   beleg_url: string | null;

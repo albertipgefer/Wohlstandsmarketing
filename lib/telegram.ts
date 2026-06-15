@@ -49,6 +49,18 @@ export async function sendTelegramMessage(
   }
 }
 
+/**
+ * Wie sendTelegramMessage, aber über den eigenen Fireflies-Call-Doku-Bot
+ * (FIREFLIES_TELEGRAM_*). Fallback auf den Standard-Bot, solange der neue Bot
+ * noch nicht konfiguriert ist.
+ */
+export async function sendFirefliesTelegram(html: string): Promise<boolean> {
+  return sendTelegramMessage(html, {
+    token: process.env.FIREFLIES_TELEGRAM_BOT_TOKEN,
+    chatId: process.env.FIREFLIES_TELEGRAM_CHAT_ID,
+  });
+}
+
 export type InlineButton = { text: string; callback_data: string };
 
 /**
@@ -58,9 +70,10 @@ export type InlineButton = { text: string; callback_data: string };
 export async function sendTelegramButtons(
   html: string,
   buttons: InlineButton[][],
+  opts?: { token?: string; chatId?: string },
 ): Promise<number | null> {
-  const token = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
+  const token = opts?.token || process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = opts?.chatId || process.env.TELEGRAM_CHAT_ID;
   if (!token || !chatId) return null;
   try {
     const r = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
@@ -87,9 +100,10 @@ export async function editTelegramMessage(
   messageId: number,
   html: string,
   buttons?: InlineButton[][],
+  opts?: { token?: string; chatId?: string },
 ): Promise<boolean> {
-  const token = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
+  const token = opts?.token || process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = opts?.chatId || process.env.TELEGRAM_CHAT_ID;
   if (!token || !chatId) return false;
   try {
     const r = await fetch(`https://api.telegram.org/bot${token}/editMessageText`, {
@@ -111,8 +125,8 @@ export async function editTelegramMessage(
 }
 
 /** Beantwortet einen Button-Klick (entfernt die Lade-Animation, optional Toast). */
-export async function answerCallback(callbackId: string, text?: string): Promise<void> {
-  const token = process.env.TELEGRAM_BOT_TOKEN;
+export async function answerCallback(callbackId: string, text?: string, opts?: { token?: string }): Promise<void> {
+  const token = opts?.token || process.env.TELEGRAM_BOT_TOKEN;
   if (!token) return;
   try {
     await fetch(`https://api.telegram.org/bot${token}/answerCallbackQuery`, {
@@ -136,6 +150,36 @@ export async function sendOutreachTelegram(html: string): Promise<boolean> {
     token: process.env.OUTREACH_TELEGRAM_BOT_TOKEN,
     chatId: process.env.OUTREACH_TELEGRAM_CHAT_ID,
   });
+}
+
+/**
+ * Finanz-/Angebots-Modul (Rechnungen, Angebote, Mahnungen, 2FA-Login,
+ * Freigabe-Flow, Finanz-Cron) → DEDIZIERTER WSMFinanzenBot.
+ * Nutzt FINANZEN_TELEGRAM_BOT_TOKEN / FINANZEN_TELEGRAM_CHAT_ID; fällt auf den
+ * Standard-Bot (TELEGRAM_*) zurück, solange die Finanz-Variablen nicht gesetzt
+ * sind. So sind alle Finanz-/Angebots-Meldungen getrennt von den Lead-Alerts.
+ */
+export function finanzenTelegramConfig(): { token?: string; chatId?: string } {
+  return {
+    token: process.env.FINANZEN_TELEGRAM_BOT_TOKEN || process.env.TELEGRAM_BOT_TOKEN,
+    chatId: process.env.FINANZEN_TELEGRAM_CHAT_ID || process.env.TELEGRAM_CHAT_ID,
+  };
+}
+
+export async function sendFinanzenTelegram(html: string): Promise<boolean> {
+  return sendTelegramMessage(html, finanzenTelegramConfig());
+}
+
+export async function sendFinanzenTelegramButtons(html: string, buttons: InlineButton[][]): Promise<number | null> {
+  return sendTelegramButtons(html, buttons, finanzenTelegramConfig());
+}
+
+export async function editFinanzenTelegram(messageId: number, html: string, buttons?: InlineButton[][]): Promise<boolean> {
+  return editTelegramMessage(messageId, html, buttons, finanzenTelegramConfig());
+}
+
+export async function answerFinanzenCallback(callbackId: string, text?: string): Promise<void> {
+  return answerCallback(callbackId, text, { token: finanzenTelegramConfig().token });
 }
 
 export type LeadNotification = {

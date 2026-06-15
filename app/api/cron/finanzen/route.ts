@@ -28,7 +28,7 @@ import {
 import { sendMail, mahnungEmailHtml } from "@/lib/finanzen/email";
 import { syncAlleKonten, listKonten } from "@/lib/finanzen/bank";
 import { verarbeiteReminderLauf } from "@/lib/angebot/reminder";
-import { sendTelegramMessage } from "@/lib/telegram";
+import { sendFinanzenTelegram } from "@/lib/telegram";
 
 const TAG = 24 * 60 * 60 * 1000;
 
@@ -150,7 +150,7 @@ export async function GET(req: NextRequest) {
   // Report
   if (markedOverdue || mahnungen || wiederkehrend || reminderAngefragt || bankNeu || bankHinweise.length || inkassoReif.length || fehler.length) {
     try {
-      await sendTelegramMessage(
+      await sendFinanzenTelegram(
         `🧾 <b>Finanz-Lauf</b>\n` +
           `Überfällig markiert: ${markedOverdue}\n` +
           `Mahnungen gesendet: ${mahnungen}\n` +

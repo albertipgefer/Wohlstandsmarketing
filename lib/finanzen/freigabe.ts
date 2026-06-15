@@ -7,7 +7,7 @@
  *
  * PostgREST-Muster wie lib/finanzen/ausgaben.ts; Tabelle public.finanzen_freigaben.
  */
-import { sendTelegramButtons, type InlineButton } from "@/lib/telegram";
+import { sendFinanzenTelegramButtons, type InlineButton } from "@/lib/telegram";
 import { sendMail } from "@/lib/angebot/email";
 import { getRechnungById, updateRechnung } from "@/lib/finanzen/db";
 import { getAngebotById, updateAngebot } from "@/lib/angebot/db";
@@ -95,7 +95,38 @@ export async function resetOffeneAnpassungen(): Promise<void> {
   }
 }
 
-function vorschau(f: { typ: FreigabeTyp; empfaenger: string | null; betreff: string }): string {
+/** Escaped Text fürs Telegram-HTML-Parsing (nur die kritischen Zeichen). */
+function tgEscape(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+/**
+ * Grobe HTML→Text-Konvertierung für eine lesbare Inhalts-Vorschau in Telegram.
+ * Entfernt Markup, dekodiert die häufigsten Entities, kürzt auf sinnvolle Länge.
+ */
+function htmlToPreview(html: string | null | undefined, max = 700): string {
+  if (!html) return "";
+  let t = html
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<head[\s\S]*?<\/head>/gi, " ")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/(p|tr|h1|h2|h3|li|div|table)>/gi, "\n")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&#039;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/[ \t]+/g, " ")
+    .replace(/[ \t]*\n[ \t]*/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+  if (t.length > max) t = t.slice(0, max).trimEnd() + " …";
+  return t;
+}
+
+function vorschau(f: { typ: FreigabeTyp; empfaenger: string | null; betreff: string; html?: string | null }): string {
   const label =
     f.typ === "rechnung"
       ? "📄 Rechnung"
@@ -104,11 +135,13 @@ function vorschau(f: { typ: FreigabeTyp; empfaenger: string | null; betreff: str
         : f.typ === "angebot_reminder"
           ? "🔁 Angebots-Erinnerung"
           : "🔔 Mahnung";
+  const body = htmlToPreview(f.html);
   return (
     `<b>Freigabe nötig — ${label}</b>\n` +
-    `An: ${f.empfaenger || "—"}\n` +
-    `Betreff: ${f.betreff}\n\n` +
-    `Genehmigen verschickt die Mail an den Kunden. Anpassen = du schreibst mir, was zu ändern ist.`
+    `An: ${tgEscape(f.empfaenger || "—")}\n` +
+    `Betreff: ${tgEscape(f.betreff)}\n` +
+    (body ? `\n<b>Vorschau der Mail:</b>\n<i>${tgEscape(body)}</i>\n` : "") +
+    `\nGenehmigen verschickt die Mail an den Kunden. Anpassen = du schreibst mir, was zu ändern ist.`
   );
 }
 
@@ -294,7 +327,7 @@ export async function createFreigabe(input: {
     const fg = rows[0];
     if (!fg) return false;
 
-    const msgId = await sendTelegramButtons(vorschau(fg), buttons(fg.id));
+    const msgId = await sendFinanzenTelegramButtons(vorschau(fg), buttons(fg.id));
     if (msgId) await updateFreigabe(fg.id, { telegram_message_id: msgId });
     return true;
   } catch {

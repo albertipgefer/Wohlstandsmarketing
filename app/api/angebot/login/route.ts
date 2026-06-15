@@ -17,7 +17,7 @@ import {
   generate2faCode,
   create2faChallenge,
 } from "@/lib/angebot/auth";
-import { sendTelegramMessage } from "@/lib/telegram";
+import { sendFinanzenTelegram } from "@/lib/telegram";
 
 function setSession(res: NextResponse) {
   res.cookies.set(SESSION_COOKIE, createSession(), {
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
 
   // 2FA aktiv: Code erzeugen, per Telegram senden, Challenge-Cookie setzen.
   const code = generate2faCode();
-  const sent = await sendTelegramMessage(
+  const sent = await sendFinanzenTelegram(
     `🔐 <b>Login-Code Finanzen</b>\n<code>${code}</code>\nGültig 5 Minuten.\n` +
       `Wenn du das gerade NICHT warst, hat jemand dein Passwort — bitte sofort ändern.`,
   );

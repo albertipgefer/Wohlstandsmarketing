@@ -17,10 +17,28 @@ export default function Hero() {
 
   useEffect(() => {
     if (reduce) return;
-    const onMove = (e: MouseEvent) =>
-      setCursor({ x: e.clientX, y: e.clientY, visible: true });
-    window.addEventListener("mousemove", onMove);
-    return () => window.removeEventListener("mousemove", onMove);
+    // Cursor-Glow ist rein dekorativ und nur auf Desktop (lg:block) sichtbar.
+    // Daher den mousemove-Listener nur bei feiner Zeigereingabe + großem Viewport
+    // anhängen und per requestAnimationFrame drosseln → kein Re-Render pro Pixel (INP).
+    if (
+      typeof window === "undefined" ||
+      !window.matchMedia("(min-width: 1024px) and (pointer: fine)").matches
+    ) {
+      return;
+    }
+    let raf = 0;
+    const onMove = (e: MouseEvent) => {
+      if (raf) return;
+      raf = window.requestAnimationFrame(() => {
+        raf = 0;
+        setCursor({ x: e.clientX, y: e.clientY, visible: true });
+      });
+    };
+    window.addEventListener("mousemove", onMove, { passive: true });
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      if (raf) window.cancelAnimationFrame(raf);
+    };
   }, [reduce]);
 
   // LCP-kritisch: Hero-Content muss im SSR-HTML sofort sichtbar sein (opacity:1),

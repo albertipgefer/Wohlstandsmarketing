@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Hero from "@/components/sections/Hero";
 import Paradigmenwechsel from "@/components/sections/Paradigmenwechsel";
 import Problem from "@/components/sections/Problem";
@@ -17,6 +18,21 @@ import Testimonials from "@/components/sections/Testimonials";
 import LeadMagnetSection from "@/components/sections/LeadMagnetSection";
 import PreFooterCTA from "@/components/PreFooterCTA";
 import Footer from "@/components/sections/Footer";
+
+export const metadata: Metadata = {
+  // Eigene Startseiten-Metadata mit lokalem Money-Keyword (Title < 60 Zeichen).
+  // Ohne diesen Export erbt die Startseite nur den ortlosen Marken-Default aus layout.tsx.
+  title: "Webdesign- & SEO-Agentur Raum Koblenz | Wohlstandsmarketing",
+  description:
+    "Webdesign + KI-Sichtbarkeit für Mittelstand im Raum Koblenz, Bad Ems & Rhein-Lahn. In 90 Tagen auf Google, ChatGPT, Perplexity & Claude empfohlen.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "Webdesign- & SEO-Agentur Raum Koblenz | Wohlstandsmarketing",
+    description:
+      "Webdesign + KI-Sichtbarkeit für Mittelstand im Raum Koblenz, Bad Ems & Rhein-Lahn. In 90 Tagen auf Google & ChatGPT empfohlen.",
+    type: "website",
+  },
+};
 
 export default function Home() {
   return (

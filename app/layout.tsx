@@ -60,17 +60,33 @@ const orgSchema = {
   telephone: "+49 176 227 87 559",
   priceRange: "€€€",
   areaServed: [
+    { "@type": "AdministrativeArea", name: "Rhein-Lahn-Kreis" },
+    { "@type": "City", name: "Bad Ems" },
+    { "@type": "City", name: "Koblenz" },
+    { "@type": "AdministrativeArea", name: "Rheinland-Pfalz" },
     { "@type": "Country", name: "Deutschland" },
-    { "@type": "Country", name: "Österreich" },
-    { "@type": "Country", name: "Schweiz" },
   ],
   address: {
     "@type": "PostalAddress",
     streetAddress: "Vor der Loos 4e",
     postalCode: "56130",
     addressLocality: "Bad Ems",
+    addressRegion: "Rheinland-Pfalz",
     addressCountry: "DE",
   },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: 50.3504803,
+    longitude: 7.7224071,
+  },
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      opens: "09:00",
+      closes: "18:00",
+    },
+  ],
   sameAs: [
     REVIEW_PROFILE_URLS.google,
     REVIEW_PROFILE_URLS.trustpilot,

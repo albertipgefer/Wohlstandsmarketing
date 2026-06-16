@@ -26,7 +26,7 @@ export async function generateMetadata({
   const city = getCity(stadt);
   if (!city) return {};
   return {
-    title: `Webdesign in ${city.name} + KI-Sichtbarkeit · Wohlstandsmarketing`,
+    title: `Webdesign ${city.name} + KI-Sichtbarkeit · Wohlstandsmarketing`,
     description: city.description,
     keywords: [
       `Webdesign ${city.name}`,

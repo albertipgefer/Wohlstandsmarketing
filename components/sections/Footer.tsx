@@ -187,6 +187,25 @@ export default function Footer() {
               Kontakt
             </p>
             <ul className="mt-4 space-y-2.5 text-[14px] text-[var(--text-muted)]">
+              {/* Sitewide NAP (Name/Adresse/Telefon) — konsistent zu Schema + Impressum,
+                  wichtiges Vertrauenssignal für lokales SEO und KI-Suche */}
+              <li>
+                <address className="not-italic leading-relaxed">
+                  Wohlstandsmarketing
+                  <br />
+                  Vor der Loos 4e
+                  <br />
+                  56130 Bad Ems
+                </address>
+              </li>
+              <li>
+                <a
+                  href="tel:+4917622787559"
+                  className="transition hover:text-[var(--text)]"
+                >
+                  +49 176 227 87 559
+                </a>
+              </li>
               <li>
                 <a
                   href="mailto:info@wohlstandsmarketing.de"

@@ -38,6 +38,78 @@ export const cities: City[] = [
     ],
   },
   {
+    slug: "lahnstein",
+    name: "Lahnstein",
+    state: "Rheinland-Pfalz",
+    region: "Rhein-Lahn-Kreis",
+    postalCode: "56112",
+    geo: { lat: 50.309, lng: 7.6045 },
+    distanceFromHq: 10,
+    landmarks: ["Burg Lahneck", "Lahnmündung", "Martinsschloss"],
+    industries: [
+      "Industrie & Produktion",
+      "Handwerk",
+      "Handel",
+      "Tourismus",
+      "Dienstleistung",
+    ],
+    neighbours: ["bad-ems", "koblenz"],
+    description:
+      "Webdesign + KI-Sichtbarkeit in Lahnstein — für Mittelstand am Zusammenfluss von Rhein und Lahn. Lokal gefunden auf Google, Maps und in ChatGPT.",
+    intro:
+      "Lahnstein liegt nur wenige Minuten von unserem Sitz in Bad Ems entfernt — wir kennen den Markt zwischen Oberlahnstein, Niederlahnstein und dem Rheinufer aus erster Hand und betreuen lokalen Mittelstand auf kurzem Weg.",
+    economy:
+      "Lahnstein ist die größte Stadt im Rhein-Lahn-Kreis und liegt direkt an der Mündung der Lahn in den Rhein — verkehrsgünstig am Tor zum UNESCO-Welterbe Oberes Mittelrheintal. Die Stadt vereint produzierendes Gewerbe und Industrie mit einem breiten Mittelstand aus Handwerk, Handel und Dienstleistung. Der Tourismus rund um Burg Lahneck und das Rheintal sorgt für saisonale Zusatznachfrage. Viele Betriebe sind inhabergeführt und leben bislang stark von regionaler Stammkundschaft statt von planbarer Online-Nachfrage.",
+    districts: ["Oberlahnstein", "Niederlahnstein", "Friedrichssegen", "Nievern", "Braubach"],
+    relatedIndustries: ["handwerk", "maschinenbau", "immobilienmakler", "hotel", "steuerberater"],
+    localFaqs: [
+      {
+        q: "Betreut ihr Betriebe in Lahnstein persönlich vor Ort?",
+        a: "Ja. Unser Sitz in Bad Ems ist nur rund zehn Minuten entfernt — Kickoff und Strategie-Termine machen wir auf Wunsch persönlich in Lahnstein, die laufende Abstimmung remote. Kürzere Wege als jede Agentur aus Koblenz oder Frankfurt.",
+      },
+      {
+        q: "Lohnt sich lokale Sichtbarkeit in einer Stadt wie Lahnstein?",
+        a: "Gerade hier. In Lahnstein und im Rhein-Lahn-Kreis ist der Online-Wettbewerb deutlich geringer als in Koblenz — wer bei „Leistung + Lahnstein“ auf Google, in Maps und in KI-Antworten oben steht, greift die regionale Nachfrage ab, bevor Kunden überhaupt in die Großstadt ausweichen.",
+      },
+    ],
+  },
+  {
+    slug: "nassau",
+    name: "Nassau",
+    state: "Rheinland-Pfalz",
+    region: "Rhein-Lahn-Kreis",
+    postalCode: "56377",
+    geo: { lat: 50.3149, lng: 7.8001 },
+    distanceFromHq: 7,
+    landmarks: ["Burg Nassau", "Stein'sches Schloss", "Lahntal"],
+    industries: [
+      "Tourismus",
+      "Handwerk",
+      "Gesundheit",
+      "Handel",
+      "Dienstleistung",
+    ],
+    neighbours: ["bad-ems", "montabaur", "koblenz"],
+    description:
+      "Webdesign + KI-Sichtbarkeit in Nassau an der Lahn — für lokalen Mittelstand im Rhein-Lahn-Kreis. Sichtbar auf Google, Maps und in ChatGPT.",
+    intro:
+      "Nassau an der Lahn liegt direkt vor unserer Haustür in Bad Ems. Die Stammstadt des Hauses Nassau und Geburtsort des Freiherrn vom Stein ist ein kleiner, aber feiner Wirtschaftsstandort — den wir aus nächster Nähe kennen.",
+    economy:
+      "Nassau ist als historische Stammstadt des Adelshauses Nassau und Heimat des Freiherrn vom Stein touristisch geprägt — Burg Nassau, das Lahntal und der Naturpark Nassau ziehen Gäste an. Wirtschaftlich dominieren kleine, inhabergeführte Betriebe: Handwerk, Gesundheits- und Pflegedienstleister, Gastronomie und lokaler Handel rund um den Sitz der Verbandsgemeinde. Der Markt ist überschaubar und stark auf regionale Stammkundschaft ausgerichtet.",
+    districts: ["Scheuern", "Winden", "Obernhof", "Singhofen", "Dausenau"],
+    relatedIndustries: ["handwerk", "hotel", "arztpraxen", "physiotherapie", "immobilienmakler"],
+    localFaqs: [
+      {
+        q: "Ist eine professionelle Webseite für einen Betrieb in Nassau überhaupt nötig?",
+        a: "Ja — gerade in einem kleinen Markt. Wenn Kunden „Leistung + Nassau“ oder „in der Nähe“ googeln oder ChatGPT fragen, entscheidet die Online-Sichtbarkeit, wer angefragt wird. Wer dort sichtbar ist, gewinnt die regionale Nachfrage, während Wettbewerber ohne Auftritt unsichtbar bleiben.",
+      },
+      {
+        q: "Seid ihr aus der Region Nassau?",
+        a: "Direkt nebenan. Unser Sitz in Bad Ems liegt nur wenige Lahn-Kilometer entfernt — wir kennen Nassau, das Lahntal und den Rhein-Lahn-Kreis persönlich und sind für Vor-Ort-Termine schnell da.",
+      },
+    ],
+  },
+  {
     slug: "koblenz",
     name: "Koblenz",
     state: "Rheinland-Pfalz",

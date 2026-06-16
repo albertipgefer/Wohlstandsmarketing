@@ -86,7 +86,7 @@ export default function StandorteSektion() {
         </div>
 
         {/* Grid — auf der Startseite nur die ersten 6 Städte (HQ-Region).
-            Alle 13 Standorte sieht der User auf /standorte. */}
+            Alle Standorte sieht der User auf /standorte. */}
         <ul className="mt-10 grid gap-4 sm:grid-cols-2 md:mt-14 md:gap-5 lg:grid-cols-3">
           {cities.slice(0, 6).map((c) => (
             <li key={c.slug}>
@@ -155,7 +155,7 @@ export default function StandorteSektion() {
               href="/standorte"
               className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-medium text-[var(--text-muted)] transition hover:text-[var(--text)]"
             >
-              Alle 13 Standorte →
+              Alle {cities.length} Standorte →
             </Link>
           </div>
         </div>
@@ -198,7 +198,7 @@ export default function StandorteSektion() {
               href="/standorte"
               className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-[13px] font-medium text-[var(--text-muted)] transition hover:text-[var(--text)]"
             >
-              Alle 13 Standorte →
+              Alle {cities.length} Standorte →
             </Link>
           </div>
         </div>

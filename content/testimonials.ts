@@ -27,6 +27,28 @@ export interface Testimonial {
 
 export const testimonials: Testimonial[] = [
   {
+    id: "dirk-bender",
+    name: "Dirk Bender",
+    rating: 5,
+    date: "2026-06-09",
+    short:
+      "Vollumfängliche Empfehlung — sowohl im Social-Media-Bereich als auch bei der Erstellung einer hochwertigen Website hat uns Wohlstandsmarketing überzeugt.",
+    full: "Wir können die Firma Wohlstandsmarketing vollumfänglich empfehlen. Sowohl im Social Media Bereich als auch bei der Erstellung einer hochwertigen Website, haben Sie uns überzeugt.",
+    source: "google",
+    featured: false,
+  },
+  {
+    id: "simeon-giesbrecht",
+    name: "Simeon Giesbrecht",
+    rating: 5,
+    date: "2026-06-04",
+    short:
+      "Den Webseiten-Test von Albert getestet — echt gut und aufschlussreich. Hat mir geholfen, zu sehen, wo noch Verbesserungsbedarf ist.",
+    full: "Ich hab den Webseiten-Test von Albert getestet, und der war wirklich echt gut und aufschlussreich und hat mir auch dabei geholfen, zu sehen, wo noch Verbesserungsbedarf ist.",
+    source: "trustpilot",
+    featured: false,
+  },
+  {
     id: "maximilian-grabsch",
     name: "Maximilian Grabsch",
     rating: 5,

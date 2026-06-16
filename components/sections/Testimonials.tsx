@@ -130,11 +130,12 @@ function CompactCard({ t }: { t: Testimonial }) {
 
 function FullCard({ t }: { t: Testimonial }) {
   const [expanded, setExpanded] = useState(false);
+  // Grober Schwellenwert: lange Reviews werden eingeklappt (line-clamp) +
+  // bekommen den "komplett lesen"-Toggle. Kurze Reviews zeigen den vollen Text.
   const isLong = t.full.length > 360;
-  const shown = !expanded && isLong ? t.full.slice(0, 340).trimEnd() + "…" : t.full;
   const label = SOURCE_LABELS[t.source];
   return (
-    <div className="rounded-3xl border border-[var(--border)] bg-white p-6 shadow-[0_4px_24px_-12px_rgba(10,10,10,0.08)] sm:p-8">
+    <div className="flex h-full flex-col rounded-3xl border border-[var(--border)] bg-white p-6 shadow-[0_4px_24px_-12px_rgba(10,10,10,0.08)] sm:p-8">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
           <InitialsAvatar name={t.name} />
@@ -155,14 +156,18 @@ function FullCard({ t }: { t: Testimonial }) {
           </a>
         </div>
       </div>
-      <p className="mt-5 whitespace-pre-line text-[14.5px] leading-relaxed text-[var(--text)] sm:text-[15px]">
-        {shown}
+      <p
+        className={`mt-5 flex-1 whitespace-pre-line text-[14.5px] leading-relaxed text-[var(--text)] sm:text-[15px] ${
+          isLong && !expanded ? "line-clamp-[8]" : ""
+        }`}
+      >
+        {t.full}
       </p>
       {isLong && (
         <button
           type="button"
           onClick={() => setExpanded((e) => !e)}
-          className="mt-3 inline-flex items-center gap-1 text-[12.5px] font-semibold text-[var(--accent)] transition hover:underline"
+          className="mt-3 inline-flex shrink-0 items-center gap-1 self-start text-[12.5px] font-semibold text-[var(--accent)] transition hover:underline"
         >
           {expanded ? "Weniger anzeigen" : "Bewertung komplett lesen"}
           <span aria-hidden className={`transition-transform ${expanded ? "rotate-180" : ""}`}>↓</span>
@@ -262,7 +267,7 @@ export default function Testimonials({
             </div>
           </>
         ) : (
-          <div className="grid gap-5 lg:grid-cols-2 lg:gap-6">
+          <div className="grid auto-rows-fr items-stretch gap-5 md:grid-cols-2 lg:gap-6">
             {items.map((t, i) => (
               <motion.div
                 key={t.id}
@@ -270,6 +275,7 @@ export default function Testimonials({
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.5, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
+                className="h-full"
               >
                 <FullCard t={t} />
               </motion.div>

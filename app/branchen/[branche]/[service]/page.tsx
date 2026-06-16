@@ -172,6 +172,57 @@ export default async function IndustryServicePage({
         </div>
       </section>
 
+      {/* ── WAS BEI DIESER BRANCHE ANDERS IST (Branchen-USPs) ──── */}
+      <section className="border-t border-[var(--border)] py-20 md:py-28">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--gold-text)]">
+            Was für {industry.name} zählt
+          </p>
+          <h2
+            className="mt-4 max-w-3xl font-[family-name:var(--font-display)] font-black leading-[1.1] tracking-[-0.03em] text-[var(--text)]"
+            style={{ fontSize: "clamp(1.75rem, 4vw, 3rem)" }}
+          >
+            {svc.shortName} für {industry.name} — worauf es ankommt
+          </h2>
+          <p className="mt-5 max-w-3xl text-base leading-relaxed text-[var(--text-muted)] sm:text-lg">
+            Jede Branche tickt anders. Deshalb richten wir deine {svc.name} auf
+            genau die Punkte aus, die bei {industry.name} über Anfragen entscheiden:
+          </p>
+          <div className="mt-10 grid gap-4 sm:gap-6 md:grid-cols-3">
+            {industry.usps.map((u, idx) => (
+              <div
+                key={u.title}
+                className="rounded-3xl border border-[var(--border)] bg-white p-6 shadow-[0_10px_40px_-20px_rgba(10,10,10,0.12)] sm:p-8"
+              >
+                <span className="font-[family-name:var(--font-serif)] text-4xl font-bold italic text-[var(--accent)] sm:text-5xl">
+                  {String(idx + 1).padStart(2, "0")}
+                </span>
+                <h3 className="mt-3 font-[family-name:var(--font-display)] text-xl font-bold tracking-tight text-[var(--text)]">
+                  {u.title}
+                </h3>
+                <p className="mt-3 text-[14px] leading-relaxed text-[var(--text-muted)]">
+                  {u.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+          <ul className="mt-8 grid gap-3 sm:grid-cols-2">
+            {industry.bullets.map((b) => (
+              <li
+                key={b.strong}
+                className="flex items-start gap-3 text-[14px] leading-relaxed text-[var(--text-muted)] sm:text-[15px]"
+              >
+                <span aria-hidden className="mt-[2px] flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--accent)]/12 text-[12px] font-bold text-[var(--accent)]">›</span>
+                <span>
+                  <strong className="font-semibold text-[var(--text)]">{b.strong}</strong>
+                  {b.rest}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
       {/* ── WAS DU BEKOMMST (Service-Deliverables) ─────────────── */}
       <section className="border-t border-[var(--border)] py-20 md:py-28">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-12">

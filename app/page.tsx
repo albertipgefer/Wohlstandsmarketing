@@ -11,6 +11,7 @@ import FAQ from "@/components/sections/FAQ";
 import CTABlock from "@/components/sections/CTABlock";
 import BlogTeaser from "@/components/sections/BlogTeaser";
 import StandorteSektion from "@/components/sections/StandorteSektion";
+import BranchenSektion from "@/components/sections/BranchenSektion";
 import KiCheckCTA from "@/components/sections/KiCheckCTA";
 import Testimonials from "@/components/sections/Testimonials";
 import LeadMagnetSection from "@/components/sections/LeadMagnetSection";
@@ -32,6 +33,7 @@ export default function Home() {
       <Vergleich />
       <CTABlock />
       <KiCheckCTA />
+      <BranchenSektion />
       <StandorteSektion />
       <BlogTeaser />
       <LeadMagnetSection />

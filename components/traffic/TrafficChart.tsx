@@ -102,7 +102,7 @@ export default function TrafficChart({
           {n > 0 && (
             <>
               <path d={area} fill={`url(#tg-${metric})`} />
-              <path d={line} fill="none" stroke={color} strokeWidth="2.5" />
+              <path d={line} fill="none" stroke={color} strokeWidth="1.5" />
               {/* Hover-Markierung: vertikale Linie + Punkt */}
               {hover != null && (
                 <>
@@ -168,7 +168,7 @@ export default function TrafficChart({
             }}
           >
             <div style={S.tooltipDate}>{longDate(series[hover].date)}</div>
-            <div style={{ ...S.tooltipVal, color }}>
+            <div style={{ ...S.tooltipVal, color: "#fff" }}>
               {nf(hv)} {metric === "clicks" ? "Klicks" : "Impressionen"}
             </div>
           </div>

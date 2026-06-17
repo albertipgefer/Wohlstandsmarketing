@@ -1,15 +1,13 @@
 "use client";
 /**
- * Trend-Chart für /traffic — Tages-Zeitreihe aus der Search Console als
- * gefüllte SVG-Fläche (Muster wie components/finanzen/GewinnChart.tsx).
- * Zeigt die übergebene Metrik (Klicks oder Impressionen).
+ * Trend-Chart für /traffic — generische Tages-Zeitreihe als gefüllte SVG-Fläche
+ * (Muster wie components/finanzen/GewinnChart.tsx). Wird von beiden Ebenen
+ * genutzt (Google-Suche + Live & Verhalten).
  *
  * Interaktiv: Maus-Hover bzw. Touch (iPad/Handy) zeigt einen Tooltip mit
  * Datum + Wert und hebt den Punkt samt vertikaler Linie hervor.
  */
 import { useState } from "react";
-
-type Point = { date: string; clicks: number; impressions: number };
 
 function nf(n: number): string {
   return new Intl.NumberFormat("de-DE").format(n);
@@ -21,7 +19,7 @@ function shortDate(iso: string): string {
   return d && m ? `${d}.${m}.` : iso;
 }
 
-/** "2026-06-15" → "So, 15.06.2026" (für den Tooltip) */
+/** "2026-06-15" → "15.06.2026" (für den Tooltip) */
 function longDate(iso: string): string {
   const [y, m, d] = iso.split("-");
   if (!y || !m || !d) return iso;
@@ -29,15 +27,18 @@ function longDate(iso: string): string {
 }
 
 export default function TrafficChart({
-  series,
-  metric,
+  dates,
+  values,
+  label,
+  color,
 }: {
-  series: Point[];
-  metric: "clicks" | "impressions";
+  dates: string[];
+  values: number[];
+  label: string;
+  color: string;
 }) {
   const [hover, setHover] = useState<number | null>(null);
-  const color = metric === "clicks" ? "#1663de" : "#db6f16";
-  const vals = series.map((p) => p[metric]);
+  const gid = `tg-${label.replace(/[^a-zA-Z]/g, "")}`;
 
   const W = 720,
     H = 220,
@@ -47,14 +48,14 @@ export default function TrafficChart({
     padB = 24;
   const innerW = W - padL - padR,
     innerH = H - padT - padB;
-  const max = Math.max(1, ...vals);
-  const n = vals.length;
+  const max = Math.max(1, ...values);
+  const n = values.length;
   const x = (i: number) =>
     padL + (n <= 1 ? innerW / 2 : (i / (n - 1)) * innerW);
   const y = (v: number) => padT + innerH - (v / max) * innerH;
   const xPct = (i: number) => (x(i) / W) * 100;
 
-  const line = vals
+  const line = values
     .map((v, i) => `${i === 0 ? "M" : "L"}${x(i).toFixed(1)},${y(v).toFixed(1)}`)
     .join(" ");
   const area =
@@ -63,16 +64,14 @@ export default function TrafficChart({
       : "";
 
   const step = Math.max(1, Math.ceil(n / 8));
-  const hv = hover != null ? vals[hover] : null;
+  const hv = hover != null ? values[hover] : null;
 
   return (
     <div style={S.card}>
       <div style={S.titleRow}>
-        <span style={S.title}>
-          {metric === "clicks" ? "🖱️ Klicks" : "👁️ Impressionen"} pro Tag
-        </span>
+        <span style={S.title}>{label} pro Tag</span>
         <span style={{ fontWeight: 800, color }}>
-          Σ {nf(vals.reduce((a, b) => a + b, 0))}
+          Σ {nf(values.reduce((a, b) => a + b, 0))}
         </span>
       </div>
 
@@ -86,7 +85,7 @@ export default function TrafficChart({
           preserveAspectRatio="none"
         >
           <defs>
-            <linearGradient id={`tg-${metric}`} x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor={color} stopOpacity="0.26" />
               <stop offset="100%" stopColor={color} stopOpacity="0.02" />
             </linearGradient>
@@ -101,9 +100,8 @@ export default function TrafficChart({
           />
           {n > 0 && (
             <>
-              <path d={area} fill={`url(#tg-${metric})`} />
+              <path d={area} fill={`url(#${gid})`} />
               <path d={line} fill="none" stroke={color} strokeWidth="1.5" />
-              {/* Hover-Markierung: vertikale Linie + Punkt */}
               {hover != null && (
                 <>
                   <line
@@ -116,25 +114,25 @@ export default function TrafficChart({
                     strokeDasharray="3 3"
                     opacity="0.5"
                   />
-                  <circle cx={x(hover)} cy={y(vals[hover])} r="5" fill={color} />
+                  <circle cx={x(hover)} cy={y(values[hover])} r="5" fill={color} />
                 </>
               )}
               {hover == null && (
-                <circle cx={x(n - 1)} cy={y(vals[n - 1])} r="4" fill={color} />
+                <circle cx={x(n - 1)} cy={y(values[n - 1])} r="4" fill={color} />
               )}
             </>
           )}
-          {series.map((p, i) =>
+          {dates.map((d, i) =>
             i % step === 0 ? (
               <text
-                key={p.date}
+                key={`${d}-${i}`}
                 x={x(i)}
                 y={H - 6}
                 fontSize="10"
                 fill="#a1a1aa"
                 textAnchor="middle"
               >
-                {shortDate(p.date)}
+                {shortDate(d)}
               </text>
             ) : null,
           )}
@@ -142,9 +140,9 @@ export default function TrafficChart({
 
         {/* Unsichtbare Hover-/Touch-Zonen (eine pro Tag) */}
         <div style={S.zones}>
-          {series.map((p, i) => (
+          {dates.map((d, i) => (
             <div
-              key={p.date}
+              key={`${d}-${i}`}
               style={{ flex: 1, height: "100%", cursor: "crosshair" }}
               onMouseEnter={() => setHover(i)}
               onTouchStart={() => setHover(i)}
@@ -153,7 +151,6 @@ export default function TrafficChart({
           ))}
         </div>
 
-        {/* Tooltip */}
         {hover != null && hv != null && (
           <div
             style={{
@@ -167,9 +164,9 @@ export default function TrafficChart({
                     : "translateX(-50%)",
             }}
           >
-            <div style={S.tooltipDate}>{longDate(series[hover].date)}</div>
+            <div style={S.tooltipDate}>{longDate(dates[hover])}</div>
             <div style={{ ...S.tooltipVal, color: "#fff" }}>
-              {nf(hv)} {metric === "clicks" ? "Klicks" : "Impressionen"}
+              {nf(hv)} {label}
             </div>
           </div>
         )}

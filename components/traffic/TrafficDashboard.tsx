@@ -228,7 +228,12 @@ export default function TrafficDashboard({
             Impressionen
           </button>
         </div>
-        <TrafficChart series={data.series} metric={metric} />
+        <TrafficChart
+          dates={data.series.map((p) => p.date)}
+          values={data.series.map((p) => p[metric])}
+          label={metric === "clicks" ? "Klicks" : "Impressionen"}
+          color={metric === "clicks" ? "#1663de" : "#db6f16"}
+        />
       </div>
 
       {/* Tabellen */}

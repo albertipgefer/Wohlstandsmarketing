@@ -1,13 +1,14 @@
 /**
- * /traffic — Dashboard für den organischen Google-Traffic (Search Console).
- * Passwortgeschützt (isLoggedIn), Daten live aus lib/gsc.ts (getGscDashboard).
+ * /traffic — Cockpit für Website-Traffic. Zwei Ebenen:
+ *   🔍 Google-Suche (Search Console, lib/gsc.ts) · 📡 Live & Verhalten (PostHog).
+ * Passwortgeschützt (isLoggedIn). GSC-Daten serverseitig vorgeladen.
  */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { isLoggedIn } from "@/lib/traffic/auth";
 import { getGscDashboard } from "@/lib/gsc";
-import TrafficDashboard from "@/components/traffic/TrafficDashboard";
+import TrafficTabs from "@/components/traffic/TrafficTabs";
 import LogoutButton from "@/components/traffic/LogoutButton";
 import Logo from "@/components/Logo";
 
@@ -45,7 +46,7 @@ export default async function TrafficPage() {
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" />
             <span className="font-semibold text-[var(--gold-text)]">Intern</span>
             <span className="text-[var(--text-subtle)]">·</span>
-            Google Search Console
+            Search Console &amp; PostHog
           </span>
           <h1
             className="mt-5 font-[family-name:var(--font-display)] font-black leading-[1.05] tracking-[-0.03em] text-[var(--text)]"
@@ -54,9 +55,9 @@ export default async function TrafficPage() {
             WSM Traffic
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-[var(--text-muted)]">
-            Wie viel organischen Suchverkehr deine Website über Google bekommt —
-            Klicks, Impressionen, Klickrate und Position, mit Trend und deinen
-            stärksten Keywords und Seiten.
+            Dein Website-Cockpit: organischer Google-Suchverkehr (Klicks,
+            Impressionen, Position, Keywords) und — live — was Besucher auf der
+            Seite tun, woher sie kommen und welche Conversions entstehen.
           </p>
         </div>
       </section>
@@ -64,19 +65,7 @@ export default async function TrafficPage() {
       {/* Inhalt */}
       <section className="py-10 sm:py-14">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
-          {data ? (
-            <TrafficDashboard initial={data} />
-          ) : (
-            <div className="rounded-2xl border border-[var(--border)] bg-white p-8 text-center text-[var(--text-muted)]">
-              <p className="font-semibold text-[var(--text)]">
-                Keine Search-Console-Daten verfügbar.
-              </p>
-              <p className="mt-2 text-sm">
-                Die Verbindung (GSC_OAUTH_* / GSC_SITE_URL) ist nicht erreichbar.
-                Lokal: <code>vercel env pull</code>. Auf Vercel: Env prüfen.
-              </p>
-            </div>
-          )}
+          <TrafficTabs gsc={data} />
         </div>
       </section>
     </main>

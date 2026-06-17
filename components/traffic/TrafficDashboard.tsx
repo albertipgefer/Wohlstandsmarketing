@@ -316,10 +316,11 @@ const S: Record<string, React.CSSProperties> = {
   td: {
     padding: "7px 8px",
     borderBottom: "1px solid #f4f4f5",
-    maxWidth: 240,
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
+    wordBreak: "break-word",
+    overflowWrap: "anywhere",
+    verticalAlign: "top",
+    lineHeight: 1.35,
+    minWidth: 120,
   },
   tdNum: {
     padding: "7px 8px",

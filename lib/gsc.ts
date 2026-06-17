@@ -280,30 +280,21 @@ function rowsFrom(rows: SearchRow[]): GscRow[] {
   }));
 }
 
-/** Indexierte Seiten aus der Sitemaps-API (best effort, sonst null). */
+/**
+ * Anzahl Seiten mit Google-Suchpräsenz über die letzten 90 Tage — die beste
+ * Live-Annäherung an "indexierte Seiten". Hintergrund: Google bietet die
+ * Coverage-/Index-Zahl NICHT per API an, und das `indexed`-Feld der Sitemaps-
+ * API liefert seit ~2023 keine verlässlichen Werte mehr. Stattdessen zählen
+ * wir die eindeutigen Seiten, die in der Suche tatsächlich erschienen sind.
+ */
 async function getIndexedPages(token: string, site: string): Promise<number | null> {
-  try {
-    const sm = await fetch(`${SC_BASE}/sites/${encodeURIComponent(site)}/sitemaps`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!sm.ok) return null;
-    const d = (await sm.json()) as {
-      sitemap?: { contents?: { indexed?: string | number }[] }[];
-    };
-    let sum = 0;
-    let found = false;
-    for (const s of d.sitemap ?? []) {
-      for (const c of s.contents ?? []) {
-        if (c.indexed != null) {
-          sum += Number(c.indexed) || 0;
-          found = true;
-        }
-      }
-    }
-    return found ? sum : null;
-  } catch {
-    return null;
-  }
+  const rows = await searchAnalytics(token, site, {
+    startDate: isoDaysAgo(90),
+    endDate: isoDaysAgo(0),
+    dimensions: ["page"],
+    rowLimit: 5000,
+  });
+  return rows.length > 0 ? rows.length : null;
 }
 
 const ALLOWED_RANGES = [7, 28, 90] as const;

@@ -10,11 +10,10 @@ import { getGscDashboard } from "@/lib/gsc";
 import TrafficDashboard from "@/components/traffic/TrafficDashboard";
 import LogoutButton from "@/components/traffic/LogoutButton";
 import Logo from "@/components/Logo";
-import Footer from "@/components/sections/Footer";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
-  title: "Google-Traffic — Wohlstandsmarketing",
+  title: "WSM Traffic",
   robots: { index: false, follow: false },
 };
 
@@ -52,7 +51,7 @@ export default async function TrafficPage() {
             className="mt-5 font-[family-name:var(--font-display)] font-black leading-[1.05] tracking-[-0.03em] text-[var(--text)]"
             style={{ fontSize: "clamp(2rem, 4.5vw, 3.25rem)" }}
           >
-            Google-Traffic
+            WSM Traffic
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-[var(--text-muted)]">
             Wie viel organischen Suchverkehr deine Website über Google bekommt —
@@ -80,8 +79,6 @@ export default async function TrafficPage() {
           )}
         </div>
       </section>
-
-      <Footer />
     </main>
   );
 }

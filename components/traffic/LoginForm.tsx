@@ -36,7 +36,7 @@ export default function LoginForm() {
   return (
     <form onSubmit={submit} style={S.form}>
       <Logo size={48} withWordmark={false} />
-      <h1 style={S.h1}>Google-Traffic</h1>
+      <h1 style={S.h1}>WSM Traffic</h1>
       <p style={S.sub}>Interner Bereich — bitte einloggen.</p>
       <input
         type="password"

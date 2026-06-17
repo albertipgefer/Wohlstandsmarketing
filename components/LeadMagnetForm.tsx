@@ -17,6 +17,7 @@
  *   Defensive `!text-white` + `no-underline` (gegen prose-blog-Override).
  */
 
+import posthog from "posthog-js";
 import { useState } from "react";
 
 interface Props {
@@ -59,6 +60,7 @@ export default function LeadMagnetForm({
       if (res.ok && data.ok) {
         setSubmittedEmail(email);
         setState("success");
+        posthog.capture("lead_magnet_download", { quelle: source, newsletter });
         onSuccess?.();
       } else {
         setState("error");

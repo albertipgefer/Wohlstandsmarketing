@@ -156,6 +156,20 @@ export default function Datenschutz() {
           </div>
 
           <div>
+            <h2 className="font-semibold text-[var(--text)]">
+              Reichweitenmessung (PostHog)
+            </h2>
+            <p className="mt-2">
+              Zur Verbesserung unserer Website nutzen wir PostHog (EU-Server,
+              PostHog BV, Niederlande). Die Analyse erfolgt datensparsam:
+              anonyme Besucher werden nicht zu Personenprofilen zusammengeführt,
+              es findet keine Sitzungsaufzeichnung statt. Rechtsgrundlage ist
+              unser berechtigtes Interesse an einer anonymisierten
+              Reichweiten- und Nutzungsanalyse (Art. 6 Abs. 1 lit. f DSGVO).
+            </p>
+          </div>
+
+          <div>
             <h2 className="font-semibold text-[var(--text)]">Social-Media-Links</h2>
             <p className="mt-2">
               Verlinkungen zu Facebook, Instagram, LinkedIn und YouTube auf

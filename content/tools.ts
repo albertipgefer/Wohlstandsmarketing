@@ -121,6 +121,17 @@ export const TOOLS: Tool[] = [
 
   // ───────── Webseiten & SEO ─────────
   {
+    slug: "traffic",
+    name: "WSM Traffic",
+    description: "Website-Cockpit: Google-Suchverkehr (GSC) + live Besucher, Quellen, Conversions & Verhalten (PostHog).",
+    href: "/analytics",
+    icon: "📈",
+    category: "web",
+    status: "live",
+    internal: true,
+    access: "geschützt",
+  },
+  {
     slug: "fabrik",
     name: "Website-Fabrik",
     description: "Autonome Webseiten-Produktion: Intake → KI → Build → Freigabe → Go-Live.",

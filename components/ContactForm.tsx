@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import posthog from "posthog-js";
 import { useRef, useState } from "react";
 
 type Status = "idle" | "loading" | "success" | "error";
@@ -29,6 +30,7 @@ export default function ContactForm() {
       const json = await res.json().catch(() => ({}));
       if (res.ok && json.ok) {
         setStatus("success");
+        posthog.capture("kontaktformular_gesendet", { formular: "kontakt" });
         formRef.current?.reset();
       } else {
         setStatus("error");

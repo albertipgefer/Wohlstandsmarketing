@@ -93,7 +93,30 @@ function isoDaysAgo(days: number): string {
   return new Date(Date.now() - days * 86_400_000).toISOString().slice(0, 10);
 }
 
-type SearchRow = { keys?: string[]; clicks?: number; impressions?: number };
+type SearchRow = {
+  keys?: string[];
+  clicks?: number;
+  impressions?: number;
+  ctr?: number;
+  position?: number;
+};
+
+/** Access-Token aus den ENV holen (OAuth bevorzugt, Service-Account als Fallback). */
+async function resolveAccessToken(): Promise<string | null> {
+  const oauthId = process.env.GSC_OAUTH_CLIENT_ID;
+  const oauthSecret = process.env.GSC_OAUTH_CLIENT_SECRET;
+  const oauthRefresh = process.env.GSC_OAUTH_REFRESH_TOKEN;
+  const clientEmail = process.env.GSC_CLIENT_EMAIL;
+  const rawKey = process.env.GSC_PRIVATE_KEY;
+  if (oauthId && oauthSecret && oauthRefresh) {
+    return getAccessTokenOAuth(oauthId, oauthSecret, oauthRefresh);
+  }
+  if (clientEmail && rawKey) {
+    // Vercel speichert mehrzeilige Keys oft mit \n als Literal — zurückübersetzen.
+    return getAccessToken(clientEmail, rawKey.replace(/\\n/g, "\n"));
+  }
+  return null;
+}
 
 async function searchAnalytics(
   token: string,
@@ -130,22 +153,8 @@ export async function getGscSummary(): Promise<GscSummary | null> {
   const site = process.env.GSC_SITE_URL;
   if (!site) return null;
 
-  // Auth: OAuth-Refresh-Token bevorzugt, Service-Account als Fallback.
-  const oauthId = process.env.GSC_OAUTH_CLIENT_ID;
-  const oauthSecret = process.env.GSC_OAUTH_CLIENT_SECRET;
-  const oauthRefresh = process.env.GSC_OAUTH_REFRESH_TOKEN;
-  const clientEmail = process.env.GSC_CLIENT_EMAIL;
-  const rawKey = process.env.GSC_PRIVATE_KEY;
-
-  const hasOAuth = Boolean(oauthId && oauthSecret && oauthRefresh);
-  const hasSA = Boolean(clientEmail && rawKey);
-  if (!hasOAuth && !hasSA) return null;
-
   try {
-    const token = hasOAuth
-      ? await getAccessTokenOAuth(oauthId!, oauthSecret!, oauthRefresh!)
-      // Vercel speichert mehrzeilige Keys oft mit \n als Literal — zurückübersetzen.
-      : await getAccessToken(clientEmail!, rawKey!.replace(/\\n/g, "\n"));
+    const token = await resolveAccessToken();
     if (!token) return null;
 
     const end = isoDaysAgo(0);
@@ -214,6 +223,132 @@ export async function getGscSummary(): Promise<GscSummary | null> {
         page: r.keys?.[0] ?? "—",
         clicks: Math.round(r.clicks ?? 0),
       })),
+    };
+  } catch {
+    return null;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * Dashboard-Daten für /traffic (volle Kennzahlen + Zeitreihe über 7/28/90 Tage).
+ * Nutzt dieselbe Auth/Fetch-Basis wie getGscSummary, liefert aber CTR, Position
+ * und die Tages-Zeitreihe fürs Trend-Chart.
+ * ───────────────────────────────────────────────────────────────────────── */
+
+export type GscMetrics = {
+  clicks: number;
+  impressions: number;
+  ctr: number; // 0..1
+  position: number; // Ø-Position (kleiner = besser)
+};
+
+export type GscRow = {
+  key: string; // Suchanfrage oder Seiten-URL
+  clicks: number;
+  impressions: number;
+  ctr: number; // 0..1
+  position: number;
+};
+
+export type GscDashboard = {
+  rangeDays: number;
+  current: GscMetrics;
+  previous: GscMetrics; // gleich langer Zeitraum davor (Vergleich)
+  indexedPages: number | null;
+  series: { date: string; clicks: number; impressions: number }[];
+  topQueries: GscRow[];
+  topPages: GscRow[];
+};
+
+function metricsFrom(rows: SearchRow[]): GscMetrics {
+  const r = rows[0];
+  return {
+    clicks: Math.round(r?.clicks ?? 0),
+    impressions: Math.round(r?.impressions ?? 0),
+    ctr: r?.ctr ?? 0,
+    position: r?.position ?? 0,
+  };
+}
+
+function rowsFrom(rows: SearchRow[]): GscRow[] {
+  return rows.map((r) => ({
+    key: r.keys?.[0] ?? "—",
+    clicks: Math.round(r.clicks ?? 0),
+    impressions: Math.round(r.impressions ?? 0),
+    ctr: r.ctr ?? 0,
+    position: r.position ?? 0,
+  }));
+}
+
+/**
+ * Anzahl Seiten mit Google-Suchpräsenz über die letzten 90 Tage — die beste
+ * Live-Annäherung an "indexierte Seiten". Hintergrund: Google bietet die
+ * Coverage-/Index-Zahl NICHT per API an, und das `indexed`-Feld der Sitemaps-
+ * API liefert seit ~2023 keine verlässlichen Werte mehr. Stattdessen zählen
+ * wir die eindeutigen Seiten, die in der Suche tatsächlich erschienen sind.
+ */
+async function getIndexedPages(token: string, site: string): Promise<number | null> {
+  const rows = await searchAnalytics(token, site, {
+    startDate: isoDaysAgo(90),
+    endDate: isoDaysAgo(0),
+    dimensions: ["page"],
+    rowLimit: 5000,
+  });
+  return rows.length > 0 ? rows.length : null;
+}
+
+const ALLOWED_RANGES = [7, 28, 90] as const;
+
+/** Voll-Datensatz fürs /traffic-Dashboard. Null, wenn nicht konfiguriert/Fehler. */
+export async function getGscDashboard(rangeDays = 28): Promise<GscDashboard | null> {
+  const site = process.env.GSC_SITE_URL;
+  if (!site) return null;
+  const range = (ALLOWED_RANGES as readonly number[]).includes(rangeDays) ? rangeDays : 28;
+
+  try {
+    const token = await resolveAccessToken();
+    if (!token) return null;
+
+    const end = isoDaysAgo(0);
+    const start = isoDaysAgo(range);
+    const prevEnd = isoDaysAgo(range + 1);
+    const prevStart = isoDaysAgo(range * 2);
+
+    const [cur, prev, series, queries, pages] = await Promise.all([
+      searchAnalytics(token, site, { startDate: start, endDate: end, rowLimit: 1 }),
+      searchAnalytics(token, site, { startDate: prevStart, endDate: prevEnd, rowLimit: 1 }),
+      searchAnalytics(token, site, {
+        startDate: start,
+        endDate: end,
+        dimensions: ["date"],
+        rowLimit: 1000,
+      }),
+      searchAnalytics(token, site, {
+        startDate: start,
+        endDate: end,
+        dimensions: ["query"],
+        rowLimit: 100,
+      }),
+      searchAnalytics(token, site, {
+        startDate: start,
+        endDate: end,
+        dimensions: ["page"],
+        rowLimit: 100,
+      }),
+    ]);
+
+    return {
+      rangeDays: range,
+      current: metricsFrom(cur),
+      previous: metricsFrom(prev),
+      indexedPages: await getIndexedPages(token, site),
+      series: series.map((r) => ({
+        date: r.keys?.[0] ?? "",
+        clicks: Math.round(r.clicks ?? 0),
+        impressions: Math.round(r.impressions ?? 0),
+      })),
+      topQueries: rowsFrom(queries),
+      topPages: rowsFrom(pages),
     };
   } catch {
     return null;

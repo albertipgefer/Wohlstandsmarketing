@@ -10,7 +10,6 @@ import { TOOLS } from "@/content/tools";
 import ToolsGrid from "@/components/tools/ToolsGrid";
 import LogoutButton from "@/components/tools/LogoutButton";
 import Logo from "@/components/Logo";
-import Footer from "@/components/sections/Footer";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -65,8 +64,6 @@ export default async function ToolsPage() {
           <ToolsGrid tools={TOOLS} />
         </div>
       </section>
-
-      <Footer />
     </main>
   );
 }

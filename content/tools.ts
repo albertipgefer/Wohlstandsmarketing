@@ -121,6 +121,17 @@ export const TOOLS: Tool[] = [
 
   // ───────── Webseiten & SEO ─────────
   {
+    slug: "traffic",
+    name: "Google-Traffic",
+    description: "Organischer Suchverkehr live: Klicks, Impressionen, CTR, Position, Top-Keywords & -Seiten.",
+    href: "/traffic",
+    icon: "📈",
+    category: "web",
+    status: "live",
+    internal: true,
+    access: "geschützt",
+  },
+  {
     slug: "fabrik",
     name: "Website-Fabrik",
     description: "Autonome Webseiten-Produktion: Intake → KI → Build → Freigabe → Go-Live.",

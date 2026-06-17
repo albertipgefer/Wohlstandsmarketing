@@ -1,8 +1,8 @@
 "use client";
 /**
  * Ebenen-Umschalter im /traffic-Cockpit:
- *   🔍 Google-Suche  (Search Console, verzögert)
- *   📡 Live & Verhalten (PostHog, live)
+ *   Google-Suche  (Search Console, verzögert)
+ *   Live & Verhalten (PostHog, live)
  */
 import { useState } from "react";
 import type { GscDashboard } from "@/lib/gsc";
@@ -19,13 +19,13 @@ export default function TrafficTabs({ gsc }: { gsc: GscDashboard | null }) {
           onClick={() => setTab("suche")}
           style={{ ...S.tab, ...(tab === "suche" ? S.tabOn : {}) }}
         >
-          🔍 Google-Suche
+          Google-Suche
         </button>
         <button
           onClick={() => setTab("live")}
           style={{ ...S.tab, ...(tab === "live" ? S.tabOn : {}) }}
         >
-          📡 Live &amp; Verhalten
+          Live &amp; Verhalten
         </button>
       </div>
 

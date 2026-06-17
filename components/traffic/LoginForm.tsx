@@ -15,13 +15,13 @@ export default function LoginForm() {
     setBusy(true);
     setErr("");
     try {
-      const r = await fetch("/api/traffic/login", {
+      const r = await fetch("/api/analytics/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password: pw }),
       });
       if (r.ok) {
-        router.replace("/traffic");
+        router.replace("/analytics");
         router.refresh();
       } else {
         setErr("Falsches Passwort.");

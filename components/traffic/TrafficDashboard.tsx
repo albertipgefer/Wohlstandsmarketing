@@ -2,7 +2,7 @@
 /**
  * /traffic — Client-Dashboard für den organischen Google-Traffic (Search Console).
  * Bekommt Initialdaten serverseitig, lädt bei Zeitraumwechsel über
- * GET /api/traffic/data?range= nach. Reine SVG-Charts, keine externe Lib.
+ * GET /api/analytics/data?range= nach. Reine SVG-Charts, keine externe Lib.
  */
 import { useState } from "react";
 import type { GscDashboard, GscRow } from "@/lib/gsc";
@@ -142,7 +142,7 @@ export default function TrafficDashboard({
     setBusy(true);
     setErr("");
     try {
-      const res = await fetch(`/api/traffic/data?range=${r}`);
+      const res = await fetch(`/api/analytics/data?range=${r}`);
       const json = await res.json();
       if (json.ok) {
         setData(json.data);
@@ -238,8 +238,8 @@ export default function TrafficDashboard({
 
       {/* Tabellen */}
       <div style={S.tables}>
-        <Table title="🔍 Top-Suchanfragen" rows={data.topQueries} keyLabel="Suchanfrage" />
-        <Table title="📄 Top-Seiten" rows={data.topPages} keyLabel="Seite" isUrl />
+        <Table title="Top-Suchanfragen" rows={data.topQueries} keyLabel="Suchanfrage" />
+        <Table title="Top-Seiten" rows={data.topPages} keyLabel="Seite" isUrl />
       </div>
     </div>
   );

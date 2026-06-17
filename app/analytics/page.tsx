@@ -1,6 +1,6 @@
 /**
  * /traffic — Cockpit für Website-Traffic. Zwei Ebenen:
- *   🔍 Google-Suche (Search Console, lib/gsc.ts) · 📡 Live & Verhalten (PostHog).
+ *   Google-Suche (Search Console, lib/gsc.ts) · Live & Verhalten (PostHog).
  * Passwortgeschützt (isLoggedIn). GSC-Daten serverseitig vorgeladen.
  */
 import type { Metadata } from "next";
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 };
 
 export default async function TrafficPage() {
-  if (!(await isLoggedIn())) redirect("/traffic/login");
+  if (!(await isLoggedIn())) redirect("/analytics/login");
 
   const data = await getGscDashboard(28);
 
@@ -28,7 +28,7 @@ export default async function TrafficPage() {
       {/* Header */}
       <header className="sticky top-0 z-20 border-b border-[var(--border)] bg-[var(--bg)]/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6 md:px-12">
-          <Link href="/traffic" className="inline-flex items-center">
+          <Link href="/analytics" className="inline-flex items-center">
             <Logo size={32} withWordmark={false} />
           </Link>
           <LogoutButton />

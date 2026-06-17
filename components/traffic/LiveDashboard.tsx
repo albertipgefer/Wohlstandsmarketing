@@ -1,7 +1,7 @@
 "use client";
 /**
  * /traffic — Ebene „Live & Verhalten" (Datenquelle: PostHog, EU).
- * Lädt seine Daten lazy über GET /api/traffic/posthog?range= und zeigt
+ * Lädt seine Daten lazy über GET /api/analytics/posthog?range= und zeigt
  * Live-Besucher, Trend, Conversions, Top-Seiten, Quellen und Geräte.
  * Reine SVG-Charts (TrafficChart), keine externe Lib.
  */
@@ -109,7 +109,7 @@ export default function LiveDashboard() {
   useEffect(() => {
     let alive = true;
     setState("loading");
-    fetch(`/api/traffic/posthog?range=${range}`)
+    fetch(`/api/analytics/posthog?range=${range}`)
       .then((r) => r.json())
       .then((json) => {
         if (!alive) return;
@@ -211,7 +211,7 @@ export default function LiveDashboard() {
           {/* Conversions */}
           <div style={{ marginTop: 16 }}>
             <BarList
-              title="🎯 Conversions & wichtige Aktionen"
+              title="Conversions & wichtige Aktionen"
               rows={data.conversions.map((c) => ({
                 label: EVENT_LABEL[c.event] || c.event,
                 value: c.count,
@@ -222,20 +222,20 @@ export default function LiveDashboard() {
           {/* Top-Seiten + Quellen + Geräte */}
           <div style={S.grid3}>
             <BarList
-              title="📄 Top-Seiten"
+              title="Top-Seiten"
               rows={data.topPages
                 .slice(0, 12)
                 .map((p) => ({ label: p.path, value: p.views }))}
             />
             <BarList
-              title="🌐 Quellen"
+              title="Quellen"
               rows={data.sources.map((s) => ({
                 label: s.source,
                 value: s.count,
               }))}
             />
             <BarList
-              title="📱 Geräte"
+              title="Geräte"
               rows={data.devices.map((d) => ({
                 label: d.device,
                 value: d.count,
@@ -250,7 +250,7 @@ export default function LiveDashboard() {
             rel="noopener noreferrer"
             style={S.clarity}
           >
-            🔍 Heatmaps & Session-Aufnahmen in Microsoft Clarity öffnen ↗
+            Heatmaps & Session-Aufnahmen in Microsoft Clarity öffnen ↗
           </a>
         </>
       )}

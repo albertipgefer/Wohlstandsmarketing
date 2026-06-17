@@ -124,7 +124,7 @@ export const TOOLS: Tool[] = [
     slug: "traffic",
     name: "WSM Traffic",
     description: "Website-Cockpit: Google-Suchverkehr (GSC) + live Besucher, Quellen, Conversions & Verhalten (PostHog).",
-    href: "/traffic",
+    href: "/analytics",
     icon: "📈",
     category: "web",
     status: "live",

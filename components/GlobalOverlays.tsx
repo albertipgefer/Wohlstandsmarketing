@@ -19,7 +19,7 @@ const BARE_PREFIXES = [
   "/tools",
   "/rechner",
   "/outreach",
-  "/traffic",
+  "/analytics",
   "/finanzen",
   "/angebot",
 ];

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 export default async function TrafficLoginPage() {
-  if (await isLoggedIn()) redirect("/traffic");
+  if (await isLoggedIn()) redirect("/analytics");
 
   return (
     <main

@@ -3,6 +3,7 @@ import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import ClarityAnalytics from "@/components/ClarityAnalytics";
 import GlobalOverlays from "@/components/GlobalOverlays";
+import { PostHogProvider } from "@/components/PostHogProvider";
 import { REVIEW_PROFILE_URLS } from "@/content/testimonials";
 
 const inter = Inter({
@@ -181,7 +182,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
         />
-        {children}
+        <PostHogProvider>{children}</PostHogProvider>
         <GlobalOverlays />
         <ClarityAnalytics />
       </body>

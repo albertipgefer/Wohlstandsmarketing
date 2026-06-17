@@ -55,5 +55,47 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
     posthog.capture("$pageview");
   }, [pathname]);
 
+  // Zentrale Conversion-/Engagement-Events (DRY für überall verteilte Links):
+  // Erstgespräch-Klick (TidyCal/cal.com), Anruf, E-Mail, Scroll-Tiefe.
+  useEffect(() => {
+    if (isInternal(pathname)) return;
+    if (!posthog.__loaded) return;
+
+    const onClick = (e: MouseEvent) => {
+      const a = (e.target as HTMLElement | null)?.closest("a");
+      const href = a?.getAttribute("href") || "";
+      if (!href) return;
+      if (href.startsWith("tel:")) {
+        posthog.capture("anruf_klick", { href, seite: pathname });
+      } else if (href.startsWith("mailto:")) {
+        posthog.capture("email_klick", { href, seite: pathname });
+      } else if (/tidycal|cal\.com/i.test(href)) {
+        posthog.capture("erstgespraech_geklickt", { href, seite: pathname });
+      }
+    };
+    document.addEventListener("click", onClick, { capture: true });
+
+    // Scroll-Tiefe: jede Schwelle einmal pro Seitenaufruf.
+    const reached = new Set<number>();
+    const onScroll = () => {
+      const doc = document.documentElement;
+      const max = doc.scrollHeight - window.innerHeight;
+      if (max <= 0) return;
+      const pct = (doc.scrollTop / max) * 100;
+      for (const t of [25, 50, 75, 100]) {
+        if (pct >= t && !reached.has(t)) {
+          reached.add(t);
+          posthog.capture("scroll_tiefe", { tiefe: t, seite: pathname });
+        }
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    return () => {
+      document.removeEventListener("click", onClick, { capture: true });
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [pathname]);
+
   return <PHProvider client={posthog}>{children}</PHProvider>;
 }

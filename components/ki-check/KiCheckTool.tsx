@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import posthog from "posthog-js";
 import { motion, AnimatePresence } from "framer-motion";
 import type { KiCheckResult, UserAnswers } from "@/lib/ki-check/types";
 
@@ -201,6 +202,7 @@ export default function KiCheckTool() {
   async function runCheck() {
     setStep("loading");
     setError("");
+    posthog.capture("ki_check_gestartet", { ziel: answers.goal });
     const started = Date.now();
     try {
       const apiPromise = fetch("/api/ki-check", {
@@ -254,6 +256,7 @@ export default function KiCheckTool() {
         setSending(false);
         return;
       }
+      posthog.capture("ki_check_abgeschlossen", { score: result.score });
       // Redirect zur Danke-Seite (Vorname als Query-Param für Personalisierung)
       const params = new URLSearchParams({
         name: firstName,

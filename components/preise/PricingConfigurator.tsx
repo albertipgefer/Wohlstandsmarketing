@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import posthog from "posthog-js";
 import { useRouter } from "next/navigation";
 import {
   services,
@@ -52,6 +53,7 @@ export default function PricingConfigurator() {
 
   function calculate() {
     if (selectedCount === 0) return;
+    posthog.capture("preise_konfiguriert", { anzahl_leistungen: selectedCount });
     setSubmitting(true);
     const encoded = encodeSelections(Object.values(selections));
     router.push(`/preise/angebot?s=${encodeURIComponent(encoded)}`);

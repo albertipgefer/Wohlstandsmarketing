@@ -91,7 +91,7 @@ export default function AgenturVsInhousePage() {
     },
     {
       q: "Was kostet SEO bei euch?",
-      a: "Wir bieten SEO einmalig oder als Retainer über 6, 9 oder 12 Monate an — ab zwei Leistungen mit 5 % Bundle-Rabatt. Die konkrete Investition hängt von Wettbewerb, bestehender Substanz und Zielsetzung ab. Komplette Übersicht im Konfigurator auf der Preise-Seite, die ehrliche Einschätzung im 15-Minuten-Erstgespräch.",
+      a: "Wir bieten SEO einmalig oder als Retainer über 6, 9 oder 12 Monate an — ab drei Leistungen mit 10 % Paket-Rabatt. Die konkrete Investition hängt von Wettbewerb, bestehender Substanz und Zielsetzung ab. Komplette Übersicht im Konfigurator auf der Preise-Seite, die ehrliche Einschätzung im 15-Minuten-Erstgespräch.",
     },
   ];
 

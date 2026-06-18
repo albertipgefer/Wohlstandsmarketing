@@ -100,7 +100,7 @@ function renderAngebotHtml(
         <div style="display:flex;align-items:flex-start;gap:10px;">
           <div style="font-size:20px;">🎁</div>
           <div>
-            <div style="font-weight:700;font-size:14px;color:#065f46;">Bundle-Rabatt aktiv</div>
+            <div style="font-weight:700;font-size:14px;color:#065f46;">Paket-Rabatt aktiv</div>
             <div style="color:#047857;font-size:13px;margin-top:4px;">Du sparst <strong>${formatEuro(totals.discountAmount)}</strong> · ${Math.round(BUNDLE_DISCOUNT * 100)} % auf alle Leistungen.</div>
           </div>
         </div>
@@ -257,7 +257,7 @@ export async function POST(req: NextRequest) {
         <hr/>
         <p><strong>Einmalig:</strong> ${formatEuro(totals.oneTime)}${totals.hasBundle ? ` <span style="color:#a3a3a3;text-decoration:line-through;">${formatEuro(totals.oneTimeRaw)}</span>` : ""}</p>
         <p><strong>Monatlich:</strong> ${formatEuro(totals.monthly)}${totals.hasBundle ? ` <span style="color:#a3a3a3;text-decoration:line-through;">${formatEuro(totals.monthlyRaw)}</span>` : ""}</p>
-        ${totals.hasBundle ? `<p><strong>Bundle-Rabatt:</strong> ${Math.round(BUNDLE_DISCOUNT * 100)} % · gespart: ${formatEuro(totals.discountAmount)}</p>` : ""}
+        ${totals.hasBundle ? `<p><strong>Paket-Rabatt:</strong> ${Math.round(BUNDLE_DISCOUNT * 100)} % · gespart: ${formatEuro(totals.discountAmount)}</p>` : ""}
         <hr/>
         <p style="color:#737373;font-size:12px;">Angebot wurde dem Kunden bereits per E-Mail zugestellt.</p>
       `,

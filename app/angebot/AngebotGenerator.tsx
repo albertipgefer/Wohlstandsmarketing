@@ -265,7 +265,14 @@ export default function AngebotGenerator({ initial }: { initial?: EditorInitial 
           <h2>Bedingungen (eine pro Zeile)</h2>
           <textarea rows={6} value={bedingungen} onChange={(e) => setBedingungen(e.target.value)} />
         </section>
-        <div className="ag-summary-foot">Brutto gesamt: <strong>{eur(summen.brutto)}</strong></div>
+        <div className="ag-summary-foot">
+          {summen.hasPaket && (
+            <span style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#047857", marginBottom: 4 }}>
+              Paket-Rabatt {Math.round(summen.rabattRate * 100)} % aktiv · −{eur(summen.rabattBetrag)}
+            </span>
+          )}
+          Brutto gesamt: <strong>{eur(summen.brutto)}</strong>
+        </div>
       </aside>
 
       <main className="ag-doc-wrap">

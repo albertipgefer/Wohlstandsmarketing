@@ -64,17 +64,21 @@ export default function LeistungenPage() {
             <span className="text-[var(--text-subtle)]">·</span>
             Alles aus einer Hand
           </div>
-          <h1 className="mt-6 max-w-3xl font-[family-name:var(--font-display)] font-black leading-[1.04] tracking-[-0.04em] text-[var(--text)]" style={{ fontSize: "clamp(2.25rem, 6vw, 3.75rem)" }}>
-            Was wir für dich tun
+          <h1 className="mt-6 max-w-4xl font-[family-name:var(--font-display)] font-black leading-[1.04] tracking-[-0.04em] text-[var(--text)]" style={{ fontSize: "clamp(2.25rem, 6vw, 3.75rem)" }}>
+            Alles für deine{" "}
+            <span className="font-[family-name:var(--font-serif)] font-normal italic text-[var(--accent)]">
+              Sichtbarkeit &amp; Wachstum
+            </span>{" "}
+            — aus einer Hand.
           </h1>
           <p className="mt-6 max-w-2xl text-base leading-relaxed text-[var(--text-muted)] sm:text-lg">
-            Webdesign, SEO, KI-Sichtbarkeit, Content- und E-Mail-Marketing, KI-Optimierung und
-            individuelle Web-Apps — abgestimmt aufeinander, ausgelegt auf planbare Anfragen.
+            Von der Webseite über SEO und KI-Sichtbarkeit bis E-Mail-Marketing,
+            Content und Automatisierung — alle Leistungen greifen ineinander.
           </p>
         </div>
       </section>
 
-      <LeistungenUebersicht withEyebrow={false} />
+      <LeistungenUebersicht withEyebrow={false} withHeading={false} showDetailLink={false} />
 
       {/* ── GESAMTPAKET — farblich hervorgehoben ──────────────────── */}
       <section className="border-t border-[var(--border)] py-16 md:py-24">
@@ -99,13 +103,13 @@ export default function LeistungenPage() {
                 </p>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
                   <Link
-                    href="/preise"
-                    className="group inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-[15px] font-semibold text-[var(--accent)] outline-none transition hover:bg-[var(--gold)] hover:text-white focus-visible:outline-none"
+                    href="/preise?alle=1"
+                    className="group inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-7 py-3.5 text-[15px] font-semibold text-[var(--accent)] outline-none transition hover:bg-[var(--gold)] hover:text-white focus-visible:outline-none"
                   >
                     Unverbindliches Angebot anfragen
                     <span className="transition-transform group-hover:translate-x-0.5">→</span>
                   </Link>
-                  <span className="text-[13px] text-white/70">Individuell · in ~2 Minuten zusammengestellt</span>
+                  <span className="text-[13px] text-white/70">Alle Leistungen vorausgewählt · in ~2 Minuten</span>
                 </div>
               </div>
 

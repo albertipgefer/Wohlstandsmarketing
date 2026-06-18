@@ -15,6 +15,15 @@ type Range = (typeof RANGES)[number];
 function nf(n: number): string {
   return new Intl.NumberFormat("de-DE").format(n);
 }
+function pctNum(n: number): string {
+  return (n * 100).toFixed(1).replace(".", ",") + " %";
+}
+function fmtDur(sec: number): string {
+  if (sec <= 0) return "—";
+  const m = Math.floor(sec / 60);
+  const s = Math.round(sec % 60);
+  return m > 0 ? `${m}m ${s}s` : `${s}s`;
+}
 
 // Event-Name → lesbares Label fürs Cockpit
 const EVENT_LABEL: Record<string, string> = {
@@ -228,6 +237,40 @@ export default function LiveDashboard() {
                   : "—"
               }
             />
+            <Card label="Conversion-Rate" value={pctNum(data.conversionRate)} />
+            <Card label="Bounce-Rate" value={pctNum(data.bounceRate)} />
+            <Card label="Ø-Sitzungsdauer" value={fmtDur(data.avgSessionSec)} />
+          </div>
+
+          {/* Aus der Google-Suche → Conversions */}
+          <div style={{ marginTop: 16 }}>
+            <div style={S.tableCard}>
+              <div style={S.cardTitle}>Aus der Google-Suche</div>
+              <div style={{ fontSize: 12, color: "#71717a", margin: "-6px 0 14px" }}>
+                Wie viel der organische Google-Traffic wirklich bringt — Besucher,
+                die über die Google-Suche kamen, und ihre Lead-Aktionen.
+              </div>
+              <div style={{ display: "flex", gap: 28, flexWrap: "wrap" }}>
+                <div>
+                  <div style={S.cardLabel}>Besucher aus Google</div>
+                  <div style={S.cardValue}>{nf(data.googleVisitors)}</div>
+                </div>
+                <div>
+                  <div style={S.cardLabel}>davon mit Lead-Aktion</div>
+                  <div style={{ ...S.cardValue, color: "#16834a" }}>
+                    {nf(data.googleConversions)}
+                  </div>
+                </div>
+                <div>
+                  <div style={S.cardLabel}>Conversion-Rate (Google)</div>
+                  <div style={S.cardValue}>
+                    {data.googleVisitors > 0
+                      ? pctNum(data.googleConversions / data.googleVisitors)
+                      : "—"}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Trend mit Metrik-Umschalter */}

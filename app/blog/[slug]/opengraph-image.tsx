@@ -1,7 +1,10 @@
 import { ImageResponse } from "next/og";
 import { getPost } from "@/content/blog";
 
-export const runtime = "edge";
+// Node.js-Runtime statt "edge": Diese Route importiert über getPost den
+// kompletten Blog-Index (alle Post-Module) → der Edge-Bundle überschritt das
+// 1-MB-Edge-Function-Limit von Vercel. Node.js-Functions haben dieses Limit nicht.
+export const runtime = "nodejs";
 export const alt = "Wohlstandsmarketing Blog";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";

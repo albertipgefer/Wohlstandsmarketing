@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import {
   services,
   BUNDLE_DISCOUNT,
+  BUNDLE_MIN_ITEMS,
   encodeSelections,
   type Selection,
 } from "@/content/pricing";
@@ -324,9 +325,11 @@ export default function PricingConfigurator() {
               <span className="text-[var(--text-muted)]">
                 {selectedCount === 0 ? (
                   <>Wähle deine Leistungen</>
-                ) : selectedCount === 1 ? (
+                ) : selectedCount < BUNDLE_MIN_ITEMS ? (
                   <span>
-                    <strong className="text-[var(--text)]">1 Leistung</strong>{" "}
+                    <strong className="text-[var(--text)]">
+                      {selectedCount} {selectedCount === 1 ? "Leistung" : "Leistungen"}
+                    </strong>{" "}
                     <span className="hidden sm:inline">ausgewählt</span>
                   </span>
                 ) : (
@@ -336,7 +339,7 @@ export default function PricingConfigurator() {
                     </strong>{" "}
                     <span className="hidden sm:inline">·</span>{" "}
                     <span className="hidden sm:inline">
-                      {Math.round(BUNDLE_DISCOUNT * 100)} % Bundle-Rabatt
+                      {Math.round(BUNDLE_DISCOUNT * 100)} % Paket-Rabatt
                     </span>
                   </span>
                 )}

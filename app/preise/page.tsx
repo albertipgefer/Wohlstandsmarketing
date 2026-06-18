@@ -12,14 +12,14 @@ const SITE = "https://wohlstandsmarketing.de";
 export const metadata: Metadata = {
   title: "Angebot · Wohlstandsmarketing",
   description:
-    "Stelle dir in 2 Minuten unverbindlich dein Angebot zusammen: Webdesign, SEO, KI-Sichtbarkeit, Content, E-Mail-Marketing & Automatisierung — ab 2 Leistungen mit 5 % Bundle-Rabatt.",
+    "Stelle dir in 2 Minuten unverbindlich dein Angebot zusammen: Webdesign, SEO, KI-Sichtbarkeit, Content, E-Mail-Marketing & Automatisierung — ab 3 Leistungen mit 10 % Paket-Rabatt.",
   alternates: { canonical: "/preise" },
 };
 
 const FAQS = [
   {
-    q: "Warum gibt es 5 % Bundle-Rabatt?",
-    a: "Sobald du zwei oder mehr Leistungen kombinierst, sparen wir auf der gemeinsamen Abstimmung und können effizienter arbeiten. Den Effizienzgewinn geben wir 1:1 an dich weiter — automatisch 5 % auf alle ausgewählten Leistungen.",
+    q: "Warum gibt es 10 % Paket-Rabatt?",
+    a: "Sobald du drei oder mehr Leistungen kombinierst, wird daraus ein Paket: Wir sparen auf der gemeinsamen Abstimmung und können effizienter arbeiten. Den Effizienzgewinn geben wir 1:1 an dich weiter — automatisch 10 % auf alle ausgewählten Leistungen.",
   },
   {
     q: "Gibt es eine Mindestlaufzeit?",
@@ -129,7 +129,7 @@ export default function PreisePage() {
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" />
             <span className="font-semibold text-[var(--gold-text)]">Angebot</span>
             <span className="text-[var(--text-subtle)]">·</span>
-            Unverbindlich · In 2 Minuten · {Math.round(BUNDLE_DISCOUNT * 100)} % Bundle-Rabatt
+            Unverbindlich · In 2 Minuten · {Math.round(BUNDLE_DISCOUNT * 100)} % Paket-Rabatt
           </div>
 
           <h1
@@ -163,10 +163,10 @@ export default function PreisePage() {
 
           <p className="mt-6 max-w-2xl text-base leading-relaxed text-[var(--text-muted)] sm:text-lg">
             In nur 2 Minuten: Wähle die Leistungen, die du wirklich brauchst —
-            Webdesign, SEO, KI-Sichtbarkeit, Marketing oder Automatisierung. Ab 2
+            Webdesign, SEO, KI-Sichtbarkeit, Marketing oder Automatisierung. Ab 3
             Leistungen automatisch{" "}
             <strong className="text-[var(--text)]">
-              {Math.round(BUNDLE_DISCOUNT * 100)} % Bundle-Rabatt
+              {Math.round(BUNDLE_DISCOUNT * 100)} % Paket-Rabatt
             </strong>
             . Unverbindlich, kein Vertragsknoten, kein Sales-Druck.
           </p>
@@ -177,7 +177,7 @@ export default function PreisePage() {
               <span className="text-emerald-500">✓</span> Transparente Preise
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="text-emerald-500">✓</span> {Math.round(BUNDLE_DISCOUNT * 100)} % Bundle-Rabatt
+              <span className="text-emerald-500">✓</span> {Math.round(BUNDLE_DISCOUNT * 100)} % Paket-Rabatt
             </span>
             <span className="flex items-center gap-1.5">
               <span className="text-emerald-500">✓</span> Ergebnis-Garantie

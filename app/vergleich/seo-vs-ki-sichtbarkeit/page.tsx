@@ -102,7 +102,7 @@ export default function SeoVsKiSichtbarkeitPage() {
     },
     {
       q: "Was kostet das bei Wohlstandsmarketing?",
-      a: "Beide Leistungen gibt es einmalig oder als Retainer (KI-Sichtbarkeit 3/6/9/12 Monate, SEO 6/9/12 Monate) — ab zwei Leistungen mit 5 % Bundle-Rabatt. Die konkrete Kombination und Investition stimmen wir transparent im Erstgespräch ab. Komplette Übersicht im Konfigurator auf der Preise-Seite.",
+      a: "Beide Leistungen gibt es einmalig oder als Retainer (KI-Sichtbarkeit 3/6/9/12 Monate, SEO 6/9/12 Monate) — ab drei Leistungen mit 10 % Paket-Rabatt. Die konkrete Kombination und Investition stimmen wir transparent im Erstgespräch ab. Komplette Übersicht im Konfigurator auf der Preise-Seite.",
     },
   ];
 

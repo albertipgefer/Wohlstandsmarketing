@@ -47,7 +47,7 @@ function describeSelection(r: ResolvedSelection): string {
 const LOADING_PHASES = [
   { label: "Wir prüfen deine Auswahl …", detail: "Leistungen werden analysiert", duration: 1500 },
   { label: "Investitions-Plan wird zusammengestellt …", detail: "Einmalige + monatliche Kosten", duration: 1800 },
-  { label: "Bundle-Rabatt wird berechnet …", detail: "5 % bei 2+ Leistungen", duration: 1500 },
+  { label: "Paket-Rabatt wird berechnet …", detail: "10 % bei 3+ Leistungen", duration: 1500 },
   { label: "Dein individuelles Angebot wird vorbereitet …", detail: "Finale Übersicht generieren", duration: 2200 },
 ];
 
@@ -224,7 +224,7 @@ export default function AngebotView({ encoded }: { encoded: string }) {
             {totals.selected.length}{" "}
             {totals.selected.length === 1 ? "Leistung" : "Leistungen"}
             {totals.hasBundle &&
-              ` · ${Math.round(BUNDLE_DISCOUNT * 100)} % Bundle-Rabatt aktiv`}
+              ` · ${Math.round(BUNDLE_DISCOUNT * 100)} % Paket-Rabatt aktiv`}
           </p>
 
           <ul className="mt-5 space-y-3">

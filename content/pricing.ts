@@ -36,7 +36,8 @@ export type Selection = {
   durationMonths?: number; // Gewählte Laufzeit (SEO/KI Retainer)
 };
 
-export const BUNDLE_DISCOUNT = 0.05; // 5 % ab 2 ausgewählten Items
+export const BUNDLE_DISCOUNT = 0.10; // 10 % Paket-Rabatt ab 3 ausgewählten Leistungen
+export const BUNDLE_MIN_ITEMS = 3; // ab so vielen Leistungen wird daraus ein „Paket"
 export const EXTRA_PAGE_PRICE = 300; // pro zusätzliche Unterseite (Unternehmenswebseite)
 
 export const services: Service[] = [
@@ -52,7 +53,7 @@ export const services: Service[] = [
       "Mobile + iPad + Desktop optimiert",
       "Schema.org für Google",
     ],
-    oneTime: 1490,
+    oneTime: 3900,
     icon: "building",
     category: "webdesign",
     extraPageOption: { included: 5, pricePerExtra: EXTRA_PAGE_PRICE },
@@ -69,7 +70,7 @@ export const services: Service[] = [
       "Mobile-First",
       "Schnelle Ladezeit",
     ],
-    oneTime: 490,
+    oneTime: 1490,
     icon: "target",
     category: "webdesign",
     multiplyByQuantity: true,
@@ -86,7 +87,7 @@ export const services: Service[] = [
       "SEO-Migration ohne Ranking-Verlust",
       "Live in 7–14 Tagen",
     ],
-    oneTime: 1990,
+    oneTime: 2490,
     icon: "refresh",
     category: "webdesign",
   },
@@ -102,7 +103,7 @@ export const services: Service[] = [
       "Onpage für Top-Seiten",
       "Übergabe-Report",
     ],
-    oneTime: 490,
+    oneTime: 990,
     icon: "search",
     category: "optimierung",
   },
@@ -136,7 +137,7 @@ export const services: Service[] = [
       "Author-Entity + E-E-A-T-Signale",
       "Erste Erwähnungen in 4–8 Wochen",
     ],
-    oneTime: 490,
+    oneTime: 990,
     icon: "bolt",
     category: "optimierung",
   },
@@ -170,7 +171,9 @@ export const services: Service[] = [
       "Newsletter im Look deiner Marke",
       "Reporting: Öffnungen, Klicks, Umsatz",
     ],
-    onRequest: true,
+    monthly: 990,
+    durationMonths: 3,
+    durationOptions: [3, 6, 9, 12],
     icon: "mail",
     category: "marketing",
   },
@@ -186,7 +189,9 @@ export const services: Service[] = [
       "Interne Verlinkung auf Money-Pages",
       "Planbarer Redaktionsrhythmus",
     ],
-    onRequest: true,
+    monthly: 990,
+    durationMonths: 3,
+    durationOptions: [3, 6, 9, 12],
     icon: "pencil",
     category: "marketing",
   },
@@ -290,7 +295,7 @@ export function calcTotals(selections: Selection[]) {
 
   const oneTimeRaw = resolved.reduce((sum, r) => sum + r.oneTimeSum, 0);
   const monthlyRaw = resolved.reduce((sum, r) => sum + r.monthlySum, 0);
-  const hasBundle = resolved.length >= 2;
+  const hasBundle = resolved.length >= BUNDLE_MIN_ITEMS; // Paket = ab BUNDLE_MIN_ITEMS Leistungen
   const discountRate = hasBundle ? BUNDLE_DISCOUNT : 0;
   const oneTime = Math.round(oneTimeRaw * (1 - discountRate));
   const monthly = Math.round(monthlyRaw * (1 - discountRate));

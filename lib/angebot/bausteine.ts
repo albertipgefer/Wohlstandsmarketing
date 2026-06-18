@@ -16,6 +16,7 @@ export type Einheit = "einmalig" | "pro Monat";
 export type Kategorie =
   | "Webseite"
   | "SEO & KI-Sichtbarkeit"
+  | "Marketing"
   | "Wartung"
   | "Weitere / Bestandskunden";
 
@@ -35,6 +36,7 @@ export type Baustein = {
 export const KATEGORIEN: Kategorie[] = [
   "Webseite",
   "SEO & KI-Sichtbarkeit",
+  "Marketing",
   "Wartung",
   "Weitere / Bestandskunden",
 ];
@@ -175,6 +177,44 @@ export const BAUSTEINE: Baustein[] = [
       "Technisches SEO + Reporting",
     ],
     preisNetto: preis("seo-laufend"),
+    einheit: "pro Monat",
+    menge: 3,
+    ustSatz: UST_SATZ,
+  },
+
+  // ─── Marketing ──────────────────────────────────────────────
+  {
+    id: "content-marketing",
+    kategorie: "Marketing",
+    titel: "Content-Marketing",
+    kurz: "SEO- & KI-optimierter Content, der gefunden wird",
+    beschreibung:
+      "Redaktioneller Content, der bei Google rankt und von ChatGPT & Co. zitiert wird: Themen-/Keyword-Strategie entlang der Customer Journey, hochwertige Artikel, interne Verlinkung auf deine Money-Pages. Mindestlaufzeit 3 Monate (3/6/9/12 wählbar).",
+    leistungen: [
+      "Themen- & Keyword-Strategie (ToFu/MoFu/BoFu)",
+      "SEO- & GEO-optimierte Artikel",
+      "Interne Verlinkung auf Money-Pages",
+      "Planbarer Redaktionsrhythmus + Reporting",
+    ],
+    preisNetto: preis("content-marketing"),
+    einheit: "pro Monat",
+    menge: 3,
+    ustSatz: UST_SATZ,
+  },
+  {
+    id: "email-marketing",
+    kategorie: "Marketing",
+    titel: "E-Mail-Marketing",
+    kurz: "Newsletter & automatisierte Verkaufsstrecken",
+    beschreibung:
+      "E-Mail-Marketing, das aus Kontakten Umsatz macht: DSGVO-konformer Listenaufbau, automatisierte Willkommens- und Verkaufsstrecken, Newsletter im Look deiner Marke — inkl. Reporting. Mindestlaufzeit 3 Monate (3/6/9/12 wählbar).",
+    leistungen: [
+      "Liste + Automationen DSGVO-konform aufgebaut",
+      "Verkaufsstrecken, die rund um die Uhr arbeiten",
+      "Newsletter im Look deiner Marke",
+      "Reporting: Öffnungen, Klicks, Umsatz",
+    ],
+    preisNetto: preis("email-marketing"),
     einheit: "pro Monat",
     menge: 3,
     ustSatz: UST_SATZ,

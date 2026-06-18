@@ -61,6 +61,7 @@ export type PosthogDashboard = {
   conversions: { event: string; count: number }[];
   sources: { source: string; count: number }[];
   devices: { device: string; count: number }[];
+  funnel: { label: string; count: number }[];
 };
 
 /** Alle Kennzahlen der Live-/Verhaltens-Ebene. Null, wenn nicht konfiguriert. */
@@ -77,7 +78,7 @@ export async function getPosthogDashboard(
   const pvWindow = `event = '$pageview' AND timestamp >= now() - INTERVAL ${range} DAY`;
   const prevWindow = `event = '$pageview' AND timestamp < now() - INTERVAL ${range} DAY AND timestamp >= now() - INTERVAL ${range * 2} DAY`;
 
-  const [live, totals, prev, series, pages, conv, sources, devices] =
+  const [live, totals, prev, series, pages, conv, sources, devices, funnel] =
     await Promise.all([
       hogql(
         `SELECT uniq(person_id) FROM events WHERE timestamp >= now() - INTERVAL 5 MINUTE`,
@@ -103,6 +104,9 @@ export async function getPosthogDashboard(
       hogql(
         `SELECT coalesce(properties.$device_type, 'unbekannt') AS dev, count() AS c FROM events WHERE ${pvWindow} GROUP BY dev ORDER BY c DESC`,
       ),
+      hogql(
+        `SELECT uniqIf(person_id, event = '$pageview') AS besucher, uniqIf(person_id, event = '$pageview' AND properties.$pathname = '/preise') AS preise, uniqIf(person_id, event IN ('erstgespraech_geklickt','kontaktformular_gesendet')) AS lead FROM events WHERE timestamp >= now() - INTERVAL ${range} DAY`,
+      ),
     ]);
 
   return {
@@ -121,5 +125,10 @@ export async function getPosthogDashboard(
     conversions: conv.map((r) => ({ event: str(r[0]), count: num(r[1]) })),
     sources: sources.map((r) => ({ source: str(r[0]), count: num(r[1]) })),
     devices: devices.map((r) => ({ device: str(r[0]), count: num(r[1]) })),
+    funnel: [
+      { label: "Besucher", count: num(funnel[0]?.[0]) },
+      { label: "Preise angesehen", count: num(funnel[0]?.[1]) },
+      { label: "Lead (Erstgespräch / Kontakt)", count: num(funnel[0]?.[2]) },
+    ],
   };
 }

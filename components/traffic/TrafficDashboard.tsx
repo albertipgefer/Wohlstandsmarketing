@@ -5,7 +5,7 @@
  * GET /api/analytics/data?range= nach. Reine SVG-Charts, keine externe Lib.
  */
 import { useState } from "react";
-import type { GscDashboard, GscRow } from "@/lib/gsc";
+import type { GscDashboard, GscRow, GscOpportunity } from "@/lib/gsc";
 import TrafficChart from "./TrafficChart";
 
 const RANGES = [7, 28, 90] as const;
@@ -122,6 +122,55 @@ function prettyUrl(u: string): string {
   }
 }
 
+function OpportunityTable({ rows }: { rows: GscOpportunity[] }) {
+  return (
+    <div style={S.tableCard}>
+      <div style={S.title}>Keyword-Chancen — knapp vor Seite 1</div>
+      <div style={{ fontSize: 12, color: "#71717a", margin: "2px 0 12px" }}>
+        Suchbegriffe auf Position 4–20 mit ungenutztem Potenzial. Hier lohnt
+        sich Content-Optimierung am schnellsten — „Potenzial" = grob geschätzte
+        zusätzliche Klicks pro Zeitraum bei Sprung auf die Top-Plätze.
+      </div>
+      <div style={{ overflowX: "auto" }}>
+        <table style={S.table}>
+          <thead>
+            <tr>
+              <th style={S.th}>Suchanfrage</th>
+              <th style={S.thNum}>Pos.</th>
+              <th style={S.thNum}>Impr.</th>
+              <th style={S.thNum}>CTR</th>
+              <th style={S.thNum}>Potenzial</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r, i) => (
+              <tr key={i}>
+                <td style={S.td} title={r.key}>
+                  {r.key}
+                </td>
+                <td style={S.tdNum}>{pos(r.position)}</td>
+                <td style={S.tdNum}>{nf(r.impressions)}</td>
+                <td style={S.tdNum}>{pct(r.ctr)}</td>
+                <td style={{ ...S.tdNum, color: "#16834a", fontWeight: 700 }}>
+                  +{nf(r.potential)}
+                </td>
+              </tr>
+            ))}
+            {rows.length === 0 && (
+              <tr>
+                <td style={{ ...S.td, color: "#a1a1aa" }} colSpan={5}>
+                  Aktuell keine Keywords in Reichweite (Position 4–20) — kommt
+                  mit wachsender Sichtbarkeit.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 export default function TrafficDashboard({
   initial,
 }: {
@@ -234,6 +283,11 @@ export default function TrafficDashboard({
           label={metric === "clicks" ? "Klicks" : "Impressionen"}
           color={metric === "clicks" ? "#1663de" : "#db6f16"}
         />
+      </div>
+
+      {/* Keyword-Chancen */}
+      <div style={{ marginTop: 16 }}>
+        <OpportunityTable rows={data.opportunities} />
       </div>
 
       {/* Tabellen */}

@@ -98,6 +98,55 @@ function BarList({
   );
 }
 
+function Funnel({ steps }: { steps: { label: string; count: number }[] }) {
+  const max = Math.max(1, steps[0]?.count ?? 1);
+  return (
+    <div style={S.tableCard}>
+      <div style={S.cardTitle}>Conversion-Funnel</div>
+      <div style={{ fontSize: 12, color: "#71717a", margin: "-6px 0 12px" }}>
+        Vom Besucher zum Lead — die Prozentzahl zeigt, wie viele von der
+        vorigen Stufe weiterkommen (wo Besucher abspringen).
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        {steps.map((s, i) => {
+          const prevCount = i > 0 ? steps[i - 1].count : null;
+          const rate =
+            prevCount && prevCount > 0
+              ? Math.min(100, (s.count / prevCount) * 100)
+              : null;
+          return (
+            <div key={i}>
+              <div style={S.barRow}>
+                <span style={S.barLabel} title={s.label}>
+                  {s.label}
+                </span>
+                <span style={S.barVal}>
+                  {nf(s.count)}
+                  {rate != null && (
+                    <span style={{ color: "#71717a", fontWeight: 500 }}>
+                      {" "}
+                      · {rate.toFixed(0)} %
+                    </span>
+                  )}
+                </span>
+              </div>
+              <div style={S.barTrack}>
+                <div
+                  style={{
+                    ...S.barFill,
+                    width: `${(s.count / max) * 100}%`,
+                    background: "#0d9488",
+                  }}
+                />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default function LiveDashboard() {
   const [data, setData] = useState<PosthogDashboard | null>(null);
   const [range, setRange] = useState<Range>(28);
@@ -206,6 +255,11 @@ export default function LiveDashboard() {
               label={metric === "visitors" ? "Besucher" : "Seitenaufrufe"}
               color={metric === "visitors" ? "#0d9488" : "#1663de"}
             />
+          </div>
+
+          {/* Conversion-Funnel */}
+          <div style={{ marginTop: 16 }}>
+            <Funnel steps={data.funnel} />
           </div>
 
           {/* Conversions */}

@@ -83,33 +83,33 @@ export default function LeistungenPage() {
       {/* ── GESAMTPAKET — farblich hervorgehoben ──────────────────── */}
       <section className="border-t border-[var(--border)] py-16 md:py-24">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
-          <div className="relative overflow-hidden rounded-[2rem] border border-[var(--accent)]/40 bg-gradient-to-br from-[var(--accent)] to-[var(--accent-dark)] p-8 text-white shadow-[0_30px_80px_-30px_rgba(22,99,222,0.6)] md:p-12">
-            <div aria-hidden className="pointer-events-none absolute -right-16 -top-16 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0)_70%)]" />
-            <div aria-hidden className="pointer-events-none absolute -bottom-20 -left-10 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(219,111,22,0.28)_0%,rgba(219,111,22,0)_70%)]" />
+          <div className="relative overflow-hidden rounded-[1.5rem] border border-[var(--accent)]/40 bg-gradient-to-br from-[var(--accent)] to-[var(--accent-dark)] p-6 text-white shadow-[0_30px_80px_-30px_rgba(22,99,222,0.6)] sm:rounded-[2rem] sm:p-8 md:p-12">
+            <div aria-hidden className="pointer-events-none absolute -right-16 -top-16 h-60 w-60 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0)_70%)] sm:h-72 sm:w-72" />
+            <div aria-hidden className="pointer-events-none absolute -bottom-20 -left-10 h-60 w-60 rounded-full bg-[radial-gradient(circle,rgba(219,111,22,0.28)_0%,rgba(219,111,22,0)_70%)] sm:h-72 sm:w-72" />
             <div className="relative grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
               <div>
                 <span className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white backdrop-blur">
                   <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" />
                   Gesamtpaket
                 </span>
-                <h2 className="mt-5 font-[family-name:var(--font-display)] font-black leading-[1.05] tracking-[-0.03em]" style={{ fontSize: "clamp(1.9rem, 4vw, 3rem)" }}>
+                <h2 className="mt-5 font-[family-name:var(--font-display)] font-black leading-[1.1] tracking-[-0.03em]" style={{ fontSize: "clamp(1.6rem, 5vw, 3rem)" }}>
                   Alles in einem Paket — dein kompletter Wachstums-Motor
                 </h2>
-                <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-white/85 sm:text-base">
+                <p className="mt-5 max-w-xl text-[14.5px] leading-relaxed text-white/85 sm:text-base">
                   Webseite, SEO, KI-Sichtbarkeit, Content, E-Mail-Marketing, KI-Optimierung
                   und individuelle Web-Apps — alle Leistungen abgestimmt aus einer Hand,
                   statt teurer Einzelstücke. Einzeln gebucht zahlst du drauf; im Gesamtpaket
                   greift alles ineinander.
                 </p>
-                <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+                <div className="mt-8 flex flex-col items-start gap-3">
                   <Link
                     href="/preise?alle=1"
-                    className="group inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white px-7 py-3.5 text-[15px] font-semibold text-[var(--accent)] outline-none transition hover:bg-[var(--gold)] hover:text-white focus-visible:outline-none"
+                    className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-[15px] font-semibold text-[var(--accent)] outline-none transition hover:bg-[var(--gold)] hover:text-white focus-visible:outline-none sm:w-auto sm:whitespace-nowrap"
                   >
                     Unverbindliches Angebot anfragen
                     <span className="transition-transform group-hover:translate-x-0.5">→</span>
                   </Link>
-                  <span className="text-[13px] text-white/70">Alle Leistungen vorausgewählt · in ~2 Minuten</span>
+                  <span className="text-[13px] leading-relaxed text-white/70">Alle Leistungen vorausgewählt · in ~2 Minuten</span>
                 </div>
               </div>
 

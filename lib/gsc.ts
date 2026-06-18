@@ -250,6 +250,9 @@ export type GscRow = {
   position: number;
 };
 
+/** Keyword-Chance (Striking Distance) mit geschätztem ungenutztem Klick-Potenzial. */
+export type GscOpportunity = GscRow & { potential: number };
+
 export type GscDashboard = {
   rangeDays: number;
   current: GscMetrics;
@@ -258,6 +261,7 @@ export type GscDashboard = {
   series: { date: string; clicks: number; impressions: number }[];
   topQueries: GscRow[];
   topPages: GscRow[];
+  opportunities: GscOpportunity[]; // Keyword-Chancen, Position 5–15
 };
 
 function metricsFrom(rows: SearchRow[]): GscMetrics {
@@ -278,6 +282,23 @@ function rowsFrom(rows: SearchRow[]): GscRow[] {
     ctr: r.ctr ?? 0,
     position: r.position ?? 0,
   }));
+}
+
+/**
+ * Keyword-Chancen ("Striking Distance"): Suchanfragen knapp vor/auf Seite 1
+ * (Ø-Position 5–15) mit nennenswerten Impressionen. Sortiert nach geschätztem
+ * ungenutztem Potenzial = Impressionen × 10 % (CTR-Richtwert für Top-Plätze)
+ * minus aktuelle Klicks. Das sind die schnellsten Ranking-Hebel.
+ */
+function opportunitiesFrom(rows: GscRow[]): GscOpportunity[] {
+  return rows
+    .filter((r) => r.position >= 4 && r.position <= 20 && r.impressions >= 5)
+    .map((r) => ({
+      ...r,
+      potential: Math.max(0, Math.round(r.impressions * 0.1 - r.clicks)),
+    }))
+    .sort((a, b) => b.potential - a.potential)
+    .slice(0, 25);
 }
 
 /**
@@ -327,7 +348,7 @@ export async function getGscDashboard(rangeDays = 28): Promise<GscDashboard | nu
         startDate: start,
         endDate: end,
         dimensions: ["query"],
-        rowLimit: 100,
+        rowLimit: 1000,
       }),
       searchAnalytics(token, site, {
         startDate: start,
@@ -337,6 +358,7 @@ export async function getGscDashboard(rangeDays = 28): Promise<GscDashboard | nu
       }),
     ]);
 
+    const allQueries = rowsFrom(queries);
     return {
       rangeDays: range,
       current: metricsFrom(cur),
@@ -347,8 +369,9 @@ export async function getGscDashboard(rangeDays = 28): Promise<GscDashboard | nu
         clicks: Math.round(r.clicks ?? 0),
         impressions: Math.round(r.impressions ?? 0),
       })),
-      topQueries: rowsFrom(queries),
+      topQueries: allQueries.slice(0, 100),
       topPages: rowsFrom(pages),
+      opportunities: opportunitiesFrom(allQueries),
     };
   } catch {
     return null;

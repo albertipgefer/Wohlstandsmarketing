@@ -23,6 +23,7 @@ function formatEuro(n: number) {
 }
 
 function describeSelection(r: ResolvedSelection): string {
+  if (r.service.onRequest) return "individuell · auf Anfrage";
   const parts: string[] = [];
   if (r.service.multiplyByQuantity && r.selection.quantity && r.selection.quantity > 1) {
     parts.push(`${r.selection.quantity}× Landingpage`);
@@ -267,6 +268,16 @@ export default function AngebotView({ encoded }: { encoded: string }) {
 
             <div className="relative mt-6">
               <div className="space-y-4 select-none blur-[8px]">
+                {totals.oneTimeRaw === 0 && totals.monthlyRaw === 0 && (
+                  <div className="flex items-baseline justify-between border-b border-[var(--border)] pb-4">
+                    <div className="text-[12px] uppercase tracking-[0.14em] text-[var(--text-subtle)]">
+                      Investition
+                    </div>
+                    <div className="font-[family-name:var(--font-display)] text-2xl font-black md:text-3xl">
+                      auf Anfrage
+                    </div>
+                  </div>
+                )}
                 {totals.oneTimeRaw > 0 && (
                   <div className="flex items-baseline justify-between border-b border-[var(--border)] pb-4">
                     <div className="text-[12px] uppercase tracking-[0.14em] text-[var(--text-subtle)]">

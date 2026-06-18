@@ -10,12 +10,16 @@ const SERVICES = [
   { label: "KI-Sichtbarkeit", href: "/ki-sichtbarkeit", desc: "Auf ChatGPT, Perplexity & Claude empfohlen" },
   { label: "SEO-Optimierung", href: "/seo", desc: "Technisch + lokal + Content-Cluster" },
   { label: "Webseiten-Relaunch", href: "/relaunch", desc: "Aus alt mach KI-empfehlbar" },
+  { label: "E-Mail-Marketing", href: "/e-mail-marketing", desc: "Newsletter & automatisierte Verkaufsstrecken" },
+  { label: "Content-Marketing", href: "/content-marketing", desc: "SEO- & KI-optimierter Content, der rankt" },
+  { label: "KI-Optimierung", href: "/ki-optimierung", desc: "KI in deine Prozesse — Chatbots & Automation" },
+  { label: "Web-Apps & Automatisierung", href: "/web-apps", desc: "Individuelle Software auf Anfrage" },
 ] as const;
 
 const TOP_NAV = [
   { label: "Branchen", href: "/branchen" },
   { label: "KI-Check", href: "/sichtbarkeits-check" },
-  { label: "Preise", href: "/preise" },
+  { label: "Angebot", href: "/preise" },
   { label: "Blog", href: "/blog" },
 ] as const;
 
@@ -74,9 +78,8 @@ export default function BlogNav() {
                 onMouseEnter={() => setDropOpen(true)}
                 onMouseLeave={() => setDropOpen(false)}
               >
-                <button
-                  type="button"
-                  onClick={() => setDropOpen((o) => !o)}
+                <Link
+                  href="/leistungen"
                   aria-haspopup="true"
                   aria-expanded={dropOpen}
                   className={`inline-flex items-center gap-1 rounded-full px-4 py-2 text-[13px] font-medium transition ${
@@ -96,7 +99,7 @@ export default function BlogNav() {
                   >
                     <path d="M2 4l3 3 3-3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
-                </button>
+                </Link>
 
                 <AnimatePresence>
                   {dropOpen && (
@@ -208,6 +211,13 @@ export default function BlogNav() {
                       className="overflow-hidden"
                     >
                       <div className="mt-2 flex flex-col gap-1.5 rounded-2xl border border-[var(--border)] bg-white p-2">
+                        <Link
+                          href="/leistungen"
+                          onClick={() => setMenuOpen(false)}
+                          className="rounded-xl px-4 py-3 text-[15px] font-semibold text-[var(--accent)] transition hover:bg-[var(--surface-2)]"
+                        >
+                          Alle Leistungen ansehen →
+                        </Link>
                         {SERVICES.map((s) => (
                           <Link
                             key={s.href}

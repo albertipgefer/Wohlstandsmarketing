@@ -6,6 +6,7 @@ import Angebot from "@/components/sections/Angebot";
 import Methode from "@/components/sections/Methode";
 import VorherNachher from "@/components/sections/VorherNachher";
 import WasDuBekommst from "@/components/sections/WasDuBekommst";
+import LeistungenUebersicht from "@/components/sections/LeistungenUebersicht";
 import UeberAlbert from "@/components/sections/UeberAlbert";
 import Vergleich from "@/components/sections/Vergleich";
 import FAQ from "@/components/sections/FAQ";
@@ -44,6 +45,7 @@ export default function Home() {
       <Methode />
       <VorherNachher />
       <WasDuBekommst />
+      <LeistungenUebersicht />
       <UeberAlbert />
       <Testimonials variant="compact" />
       <Vergleich />

@@ -9,7 +9,11 @@ type IconName =
   | "chart"
   | "bolt"
   | "trending"
-  | "wrench";
+  | "wrench"
+  | "mail"
+  | "pencil"
+  | "cpu"
+  | "code";
 
 const PATHS: Record<IconName, React.ReactNode> = {
   building: (
@@ -64,6 +68,31 @@ const PATHS: Record<IconName, React.ReactNode> = {
     <>
       <path d="M14.7 6.3a4 4 0 0 0 5 5l-9.4 9.4a2.83 2.83 0 0 1-4-4l9.4-9.4z" />
       <path d="M16 8 8 16" />
+    </>
+  ),
+  mail: (
+    <>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="m3 7 9 6 9-6" />
+    </>
+  ),
+  pencil: (
+    <>
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
+    </>
+  ),
+  cpu: (
+    <>
+      <rect x="6" y="6" width="12" height="12" rx="2" />
+      <rect x="9.5" y="9.5" width="5" height="5" rx="1" />
+      <path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2" />
+    </>
+  ),
+  code: (
+    <>
+      <path d="m16 18 6-6-6-6" />
+      <path d="m8 6-6 6 6 6" />
     </>
   ),
 };

@@ -55,6 +55,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE}/ki-sichtbarkeit`, lastModified: CONTENT_REVISED, changeFrequency: "monthly", priority: 0.9 },
     { url: `${SITE}/seo`, lastModified: CONTENT_REVISED, changeFrequency: "monthly", priority: 0.9 },
     { url: `${SITE}/relaunch`, lastModified: CONTENT_REVISED, changeFrequency: "monthly", priority: 0.85 },
+    { url: `${SITE}/leistungen`, lastModified: CONTENT_REVISED, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${SITE}/content-marketing`, lastModified: CONTENT_REVISED, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${SITE}/e-mail-marketing`, lastModified: CONTENT_REVISED, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${SITE}/ki-optimierung`, lastModified: CONTENT_REVISED, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${SITE}/web-apps`, lastModified: CONTENT_REVISED, changeFrequency: "monthly", priority: 0.85 },
     { url: `${SITE}/vergleich/seo-vs-ki-sichtbarkeit`, lastModified: CONTENT_REVISED, changeFrequency: "monthly", priority: 0.85 },
     { url: `${SITE}/vergleich/landingpage-vs-unternehmenswebsite`, lastModified: CONTENT_REVISED, changeFrequency: "monthly", priority: 0.85 },
     { url: `${SITE}/vergleich/relaunch-vs-neue-webseite`, lastModified: CONTENT_REVISED, changeFrequency: "monthly", priority: 0.85 },
@@ -98,6 +103,29 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.85,
   }));
 
+  // Stadt-Routen der NEUEN Leistungen (E-Mail-Marketing, Content-Marketing,
+  // KI-Optimierung, Web-Apps). Die Seiten existieren und sind intern über die
+  // Hubs verlinkt — werden aber bewusst NICHT sofort gesammelt in die Sitemap
+  // eingereicht (Crawl-Budget bündeln, siehe oben). Flag auf true setzen, sobald
+  // die Hub-Seiten indexiert sind und Domain-Autorität steigt (spätere Welle).
+  const INCLUDE_NEW_SERVICE_CITY_ROUTES = false;
+  const newServiceCitySlugs = [
+    "e-mail-marketing",
+    "content-marketing",
+    "ki-optimierung",
+    "web-apps",
+  ];
+  const newServiceCityRoutes: MetadataRoute.Sitemap = INCLUDE_NEW_SERVICE_CITY_ROUTES
+    ? newServiceCitySlugs.flatMap((svc) =>
+        cities.map((c) => ({
+          url: `${SITE}/${svc}/${c.slug}`,
+          lastModified: CONTENT_REVISED,
+          changeFrequency: "monthly" as const,
+          priority: 0.8,
+        })),
+      )
+    : [];
+
   // Welle 1: nur Branche×Service-Kombis der primären ICP-Branchen einreichen.
   const industryServiceRoutes: MetadataRoute.Sitemap = industries
     .filter((i) => WAVE_INDUSTRY_SERVICE_SLUGS.has(i.slug))
@@ -118,5 +146,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...seoCityRoutes,
     ...industryRoutes,
     ...industryServiceRoutes,
+    ...newServiceCityRoutes,
   ];
 }

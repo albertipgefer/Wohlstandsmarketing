@@ -47,10 +47,10 @@ export default function SichtbarkeitsCheckPage() {
             className="mt-6 font-[family-name:var(--font-display)] font-black leading-[1.04] tracking-[-0.03em] text-[var(--text)]"
             style={{ fontSize: "clamp(2.1rem, 5.5vw, 4.25rem)" }}
           >
-            Wird deine Webseite von{" "}
+            Wird deine Webseite von der{" "}
             <span className="relative inline-block">
               <span className="font-[family-name:var(--font-serif)] font-normal italic text-[var(--accent)]">
-                ChatGPT
+                KI
               </span>
               <svg
                 className="absolute -bottom-1 left-0 w-full"

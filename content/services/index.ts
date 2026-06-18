@@ -129,6 +129,94 @@ export const services: Service[] = [
       { q: "Bietet ihr SEO einmalig oder nur als Abo?", a: "Beides. Du kannst eine einmalige SEO-Optimierung buchen oder einen laufenden Retainer (6 / 9 / 12 Monate) mit kontinuierlicher Arbeit und monatlichem Reporting. Was sinnvoll ist, hängt von deinem Ziel ab — das klären wir ehrlich im Erstgespräch." },
     ],
   },
+  {
+    slug: "e-mail-marketing",
+    name: "E-Mail-Marketing",
+    shortName: "E-Mail-Marketing",
+    hub: "/e-mail-marketing",
+    h1Tail: "das aus Kontakten Umsatz macht",
+    intro:
+      "E-Mail-Marketing ist dein direktester Draht zu Interessenten und Kunden — ohne Algorithmus dazwischen. Wir bauen Newsletter und automatisierte Strecken, die aus Kontakten planbar Anfragen und Wiederkäufe machen.",
+    deliverables: [
+      "Strategie + Aufbau deiner E-Mail-Liste — DSGVO-konform mit Double-Opt-in",
+      "Automatisierte Willkommens- und Verkaufsstrecken, die rund um die Uhr arbeiten",
+      "Newsletter-Konzept im Look deiner Marke — geplant statt zufällig",
+      "Betreff- und Inhalts-Optimierung für hohe Öffnungs- und Klickraten",
+      "Reporting: Öffnungen, Klicks und Umsatz pro Kampagne — transparent nachvollziehbar",
+    ],
+    metaLead: "E-Mail-Marketing",
+    faqs: [
+      { q: "Lohnt sich E-Mail-Marketing für mein Unternehmen überhaupt noch?", a: "Mehr denn je. E-Mail ist der einzige Kanal, der dir direkt gehört — keine Plattform kann dir deine Liste wegnehmen oder die Reichweite drosseln. Richtig aufgesetzt, ist es einer der profitabelsten Kanäle überhaupt, weil du Menschen erreichst, die dich bereits kennen." },
+      { q: "Ich habe noch keine E-Mail-Liste — ist das ein Problem?", a: "Nein. Genau da fangen wir an: Wir bauen die Liste DSGVO-konform über deine Webseite auf (z. B. mit einem nützlichen Lead-Magneten) und richten von Beginn an die Automationen ein, die neue Kontakte aufwärmen. So wächst die Liste, während sie schon verkauft." },
+      { q: "Wer schreibt die E-Mails — ich oder ihr?", a: "Wir. Du gibst die Eckpunkte, wir übernehmen Konzept, Text, Aufbau und Versand. Auf Wunsch stimmen wir jede Kampagne vorher mit dir ab — du behältst die Kontrolle, ohne die Arbeit zu haben." },
+    ],
+  },
+  {
+    slug: "content-marketing",
+    name: "Content-Marketing",
+    shortName: "Content-Marketing",
+    hub: "/content-marketing",
+    h1Tail: "das dich gefunden und empfohlen macht",
+    intro:
+      "Guter Content bringt dir Anfragen, ohne für jeden Klick zu zahlen — und macht dich zur Autorität in deinem Markt. Wir produzieren SEO- und KI-optimierte Inhalte (Blog, Ratgeber, Money-Pages), die bei Google ranken und von ChatGPT, Perplexity & Co. zitiert werden.",
+    deliverables: [
+      "Themen- und Keyword-Strategie entlang der Customer Journey (ToFu / MoFu / BoFu)",
+      "Redaktionell hochwertige Artikel — SEO- und GEO-optimiert",
+      "Saubere interne Verlinkung, die Autorität auf deine Money-Pages lenkt",
+      "Schema.org + klare Struktur, damit Google und KI deine Inhalte verstehen",
+      "Planbarer Redaktionsrhythmus statt Content nach Lust und Laune",
+    ],
+    metaLead: "Content-Marketing",
+    faqs: [
+      { q: "Wie schnell bringt Content-Marketing Ergebnisse?", a: "Content ist ein Vermögenswert, kein Strohfeuer: Erste Rankings siehst du oft nach einigen Wochen, die volle Wirkung baut sich über Monate auf. Dafür arbeitet ein einmal geschriebener Artikel danach dauerhaft für dich — ohne dass du pro Klick zahlst." },
+      { q: "Was ist der Unterschied zu klassischem SEO?", a: "SEO ist das Fundament (Technik, Struktur, Keywords), Content-Marketing ist der Inhalt, der darauf rankt und Vertrauen aufbaut. Beides greift ineinander — wir denken Content von Anfang an SEO- und KI-optimiert, damit er nicht nur gut klingt, sondern auch gefunden wird." },
+      { q: "Schreibt ihr den Content mit KI?", a: "Wir nutzen KI als Werkzeug für Tempo und Recherche, aber jeder Artikel wird redaktionell geprüft, mit echtem Fachwissen angereichert und auf deine Marke abgestimmt. Reiner KI-Massentext rankt nicht und schadet dem Vertrauen — Qualität bleibt die Grundlage." },
+    ],
+  },
+  {
+    slug: "ki-optimierung",
+    name: "KI-Optimierung",
+    shortName: "KI-Optimierung",
+    hub: "/ki-optimierung",
+    h1Tail: "die deine Abläufe automatisiert",
+    intro:
+      "KI ist kein Spielzeug, sondern ein Hebel: richtig eingesetzt, übernimmt sie wiederkehrende Aufgaben und schafft dir Zeit fürs Wesentliche. Wir bringen KI direkt in deine Prozesse — von Chatbots über KI-Assistenten bis zu automatisierten Workflows.",
+    deliverables: [
+      "Analyse deiner Abläufe: Wo KI dir echte Zeit und Kosten spart",
+      "KI-Chatbots & Assistenten für Webseite, Support oder interne Aufgaben",
+      "Automatisierte Workflows (z. B. Anfragen, Angebote, Datenpflege)",
+      "Einbindung in deine bestehenden Tools statt teurer Insellösungen",
+      "Schulung deines Teams, damit die KI im Alltag auch wirklich genutzt wird",
+    ],
+    metaLead: "KI-Optimierung",
+    faqs: [
+      { q: "Was ist der Unterschied zwischen KI-Optimierung und KI-Sichtbarkeit?", a: "KI-Sichtbarkeit sorgt dafür, dass dein Unternehmen von ChatGPT & Co. empfohlen wird (nach außen). KI-Optimierung bringt KI in deine internen Abläufe (nach innen) — sie automatisiert Aufgaben und spart dir Zeit. Das eine bringt Anfragen, das andere Effizienz." },
+      { q: "Ist KI nicht zu kompliziert für ein kleines Unternehmen?", a: "Genau deshalb begleiten wir dich. Du brauchst kein technisches Wissen — wir analysieren deine Abläufe, setzen die passende Lösung um und schulen dein Team. Der Maßstab ist immer: Spart es dir spürbar Zeit oder Geld? Wenn nicht, machen wir es nicht." },
+      { q: "Was kann KI in meinem Betrieb konkret übernehmen?", a: "Typische Beispiele: Anfragen automatisch beantworten und qualifizieren, Angebote vorbereiten, Daten zwischen Tools synchronisieren, Texte und Reportings erstellen, einen Chatbot auf der Webseite betreiben. Wir starten dort, wo der Hebel am größten ist." },
+    ],
+  },
+  {
+    slug: "web-apps",
+    name: "Web-Apps & Automatisierung",
+    shortName: "Web-Apps",
+    hub: "/web-apps",
+    h1Tail: "die genau deinen Engpass löst",
+    intro:
+      "Wenn Standard-Software nicht passt, bauen wir dir die Lösung: individuelle Web-Apps und Automatisierungen, exakt auf deinen Prozess zugeschnitten. Vom internen Tool bis zur Kundenplattform — entwickelt, gehostet und gewartet, individuell auf Anfrage.",
+    deliverables: [
+      "Individuelle Web-App, exakt auf deinen Prozess zugeschnitten",
+      "Automatisierung manueller, wiederkehrender Abläufe",
+      "Anbindung an deine bestehenden Systeme und Schnittstellen",
+      "Moderner, schneller Tech-Stack (Next.js) — wartbar und skalierbar",
+      "Umsetzung individuell auf Anfrage — vom Konzept bis zum laufenden Betrieb",
+    ],
+    metaLead: "individuelle Web-Apps & Automatisierungen",
+    faqs: [
+      { q: "Woher weiß ich, ob sich eine individuelle Web-App lohnt?", a: "Immer dann, wenn dich ein manueller Prozess regelmäßig Zeit kostet oder Standard-Software an deine Grenzen stößt. Im Erstgespräch rechnen wir ehrlich durch, ob sich die Entwicklung für dich rechnet — wenn nicht, sagen wir es dir." },
+      { q: "Was kostet eine individuelle Web-App?", a: "Das hängt vollständig vom Umfang ab — deshalb arbeiten wir hier mit einem individuellen Angebot auf Anfrage. Wir definieren mit dir den kleinstmöglichen sinnvollen ersten Schritt, damit du früh einen Nutzen siehst, statt monatelang ins Blaue zu entwickeln." },
+      { q: "Wem gehört die fertige Lösung?", a: "Dir. Du bekommst eine saubere, wartbare Lösung auf modernem Stack — ohne Abhängigkeit von intransparenten Baukästen. Auf Wunsch übernehmen wir Hosting und Wartung, damit du dich um nichts kümmern musst." },
+    ],
+  },
 ];
 
 export const getService = (slug: string) =>

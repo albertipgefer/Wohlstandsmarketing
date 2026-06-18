@@ -275,7 +275,7 @@ export default async function IndustryPage({
           </div>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/preise" className="group inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-5 py-2.5 text-[14px] font-medium text-[var(--text)] transition hover:border-transparent hover:bg-[var(--text)] hover:text-white">
-              Preise & Pakete
+              Angebot
               <span className="transition-transform group-hover:translate-x-0.5">→</span>
             </Link>
             <Link href="/sichtbarkeits-check" className="group inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-5 py-2.5 text-[14px] font-medium text-[var(--text)] transition hover:border-transparent hover:bg-[var(--text)] hover:text-white">

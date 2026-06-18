@@ -10,9 +10,9 @@ import { services, BUNDLE_DISCOUNT } from "@/content/pricing";
 const SITE = "https://wohlstandsmarketing.de";
 
 export const metadata: Metadata = {
-  title: "Preise & Pakete · Wohlstandsmarketing",
+  title: "Angebot · Wohlstandsmarketing",
   description:
-    "Transparente Preise für Webdesign, Landingpages, SEO, KI-Sichtbarkeit und Wartung. Stell dir dein Paket selbst zusammen — mit 5 % Bundle-Rabatt.",
+    "Stelle dir in 2 Minuten unverbindlich dein Angebot zusammen: Webdesign, SEO, KI-Sichtbarkeit, Content, E-Mail-Marketing & Automatisierung — ab 2 Leistungen mit 5 % Bundle-Rabatt.",
   alternates: { canonical: "/preise" },
 };
 
@@ -81,7 +81,7 @@ const breadcrumbSchema = {
   "@type": "BreadcrumbList",
   itemListElement: [
     { "@type": "ListItem", position: 1, name: "Startseite", item: SITE },
-    { "@type": "ListItem", position: 2, name: "Preise", item: `${SITE}/preise` },
+    { "@type": "ListItem", position: 2, name: "Angebot", item: `${SITE}/preise` },
   ],
 };
 
@@ -122,24 +122,24 @@ export default function PreisePage() {
               Startseite
             </Link>
             <span>/</span>
-            <span className="text-[var(--text)]">Preise</span>
+            <span className="text-[var(--text)]">Angebot</span>
           </nav>
 
           <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white px-4 py-1.5 text-[11px] font-medium tracking-wide text-[var(--text-muted)] shadow-[0_4px_20px_-6px_rgba(10,10,10,0.08)]">
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)]" />
-            <span className="font-semibold text-[var(--gold-text)]">Preise</span>
+            <span className="font-semibold text-[var(--gold-text)]">Angebot</span>
             <span className="text-[var(--text-subtle)]">·</span>
-            Transparent · Modular · {Math.round(BUNDLE_DISCOUNT * 100)} % Bundle-Rabatt
+            Unverbindlich · In 2 Minuten · {Math.round(BUNDLE_DISCOUNT * 100)} % Bundle-Rabatt
           </div>
 
           <h1
             className="mt-6 max-w-4xl font-[family-name:var(--font-display)] font-black leading-[1.05] tracking-[-0.03em] text-[var(--text)]"
             style={{ fontSize: "clamp(2.25rem, 5vw, 3.75rem)" }}
           >
-            Stell dir dein{" "}
+            Stelle dir unverbindlich dein{" "}
             <span className="relative inline-block">
               <span className="font-[family-name:var(--font-serif)] font-normal italic text-[var(--accent)]">
-                Paket
+                Angebot
               </span>
               <svg
                 className="absolute -bottom-1 left-0 w-full"
@@ -158,16 +158,17 @@ export default function PreisePage() {
                 />
               </svg>
             </span>{" "}
-            selbst zusammen.
+            zusammen.
           </h1>
 
           <p className="mt-6 max-w-2xl text-base leading-relaxed text-[var(--text-muted)] sm:text-lg">
-            Wähle die Leistungen, die du wirklich brauchst — Webdesign, SEO,
-            KI-Sichtbarkeit oder Wartung. Ab 2 Leistungen automatisch{" "}
+            In nur 2 Minuten: Wähle die Leistungen, die du wirklich brauchst —
+            Webdesign, SEO, KI-Sichtbarkeit, Marketing oder Automatisierung. Ab 2
+            Leistungen automatisch{" "}
             <strong className="text-[var(--text)]">
               {Math.round(BUNDLE_DISCOUNT * 100)} % Bundle-Rabatt
             </strong>
-            . Kein Vertragsknoten, kein Sales-Druck.
+            . Unverbindlich, kein Vertragsknoten, kein Sales-Druck.
           </p>
 
           {/* Trust-Row */}

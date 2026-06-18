@@ -44,7 +44,7 @@ const CATEGORY_LINKS: Record<
   Conversion: [
     { label: "Webdesign", href: "/webdesign" },
     { label: "Landingpage oder Website?", href: "/vergleich/landingpage-vs-unternehmenswebsite", gold: true },
-    { label: "Preise & Pakete", href: "/preise" },
+    { label: "Angebot", href: "/preise" },
   ],
 };
 

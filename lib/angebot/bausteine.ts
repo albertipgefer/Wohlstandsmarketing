@@ -5,8 +5,8 @@
  * Albert kann Preis/Wording pro Angebot trotzdem überschreiben.
  *
  * Reihenfolge der Gruppen = Reihenfolge im Generator.
- * Meta-/Google-Ads stehen unter „Weitere / Bestandskunden" — kein Neukunden-
- * Standard mehr (laut CLAUDE.md), aber für Legacy-Verträge weiter nutzbar.
+ * Kein Performance-Marketing (Meta/Google Ads) mehr — bewusst aus dem Angebot
+ * entfernt (laut CLAUDE.md). Leistungen spiegeln /leistungen auf der Website.
  */
 import { services } from "@/content/pricing";
 import { UST_SATZ } from "./stammdaten";
@@ -17,8 +17,8 @@ export type Kategorie =
   | "Webseite"
   | "SEO & KI-Sichtbarkeit"
   | "Marketing"
-  | "Wartung"
-  | "Weitere / Bestandskunden";
+  | "Automatisierung"
+  | "Wartung";
 
 export type Baustein = {
   id: string;
@@ -37,8 +37,8 @@ export const KATEGORIEN: Kategorie[] = [
   "Webseite",
   "SEO & KI-Sichtbarkeit",
   "Marketing",
+  "Automatisierung",
   "Wartung",
-  "Weitere / Bestandskunden",
 ];
 
 /** Kanonischen Preis aus content/pricing.ts ziehen (einmalig ODER monatlich). */
@@ -240,77 +240,41 @@ export const BAUSTEINE: Baustein[] = [
     ustSatz: UST_SATZ,
   },
 
-  // ─── Weitere / Bestandskunden (Ads — kein Neukunden-Standard) ─
+  // ─── Automatisierung (auf Anfrage — individueller Preis pro Angebot) ─
   {
-    id: "ads-setup",
-    kategorie: "Weitere / Bestandskunden",
-    titel: "Technisches Setup · Meta, Google & Tracking",
-    kurz: "Einmalige Einrichtung der Werbe-Infrastruktur (Legacy)",
+    id: "ki-optimierung",
+    kategorie: "Automatisierung",
+    titel: "KI-Optimierung",
+    kurz: "KI in deine Prozesse — Chatbots, Assistenten, Automation",
     beschreibung:
-      "Einmalige technische Einrichtung der gesamten Werbe-Infrastruktur — sauberes Tracking als Fundament, bevor Kampagnen live gehen. Fällig bei Auftragserteilung.",
+      "KI direkt in deine Abläufe gebracht: Analyse, wo KI dir Zeit spart, plus Chatbots, KI-Assistenten und automatisierte Workflows — eingebunden in deine bestehenden Tools, inkl. Team-Schulung. Umfang und Preis individuell pro Projekt.",
     leistungen: [
-      "Meta Business Manager & Werbekonto, Pixel + Conversion API + Event-Tracking",
-      "Google Ads-Konto inkl. Kampagnenstruktur, Tag Manager + GA4",
-      "Google Search Console einrichten & verifizieren",
-      "Conversion-Tracking inkl. Zielvorhaben, Endtest vor Go-Live",
+      "Analyse: Wo KI Zeit & Kosten spart",
+      "Chatbots & KI-Assistenten",
+      "Automatisierte Workflows",
+      "Einbindung in bestehende Tools + Schulung",
     ],
-    preisNetto: 3499,
+    preisNetto: preis("ki-optimierung"),
     einheit: "einmalig",
     menge: 1,
     ustSatz: UST_SATZ,
   },
   {
-    id: "ads-growth",
-    kategorie: "Weitere / Bestandskunden",
-    titel: "Growth-Paket · Meta + Google + KI-Sichtbarkeit",
-    kurz: "Laufende Betreuung aller Kanäle im Paket (Legacy)",
+    id: "web-apps",
+    kategorie: "Automatisierung",
+    titel: "Web-Apps & Automatisierung",
+    kurz: "Individuelle Software, exakt auf deinen Prozess",
     beschreibung:
-      "Laufende Betreuung im Paket: Meta Ads, Google Ads und KI-Optimierung (GEO) aus einer Hand. Werbebudget wird zusätzlich direkt an die Plattformen gezahlt.",
+      "Wenn Standard-Software nicht passt: individuelle Web-Apps und Automatisierungen auf modernem Stack (Next.js) — vom internen Tool bis zur Kundenplattform, entwickelt, gehostet und gewartet. Umfang und Preis individuell pro Projekt.",
     leistungen: [
-      "Meta Ads: bis zu 10 Creatives/Monat, laufende Hook- & Angle-Tests",
-      "Google Ads: Keyword-Recherche, Suchkampagnen, Gebots-Optimierung",
-      "KI-Optimierung (GEO) für ChatGPT, Perplexity, Claude & Gemini",
-      "Bis zu 2 Strategie-Meetings/Monat, WhatsApp-Support, monatliches Reporting",
+      "Individuelle Web-App auf deinen Prozess",
+      "Automatisierung wiederkehrender Abläufe",
+      "Anbindung an bestehende Systeme",
+      "Wartbar & skalierbar (Next.js)",
     ],
-    preisNetto: 2999,
-    einheit: "pro Monat",
-    menge: 6,
-    ustSatz: UST_SATZ,
-  },
-  {
-    id: "ads-meta",
-    kategorie: "Weitere / Bestandskunden",
-    titel: "Meta Ads (Facebook + Instagram) — Betreuung",
-    kurz: "Laufende Kampagnen zur Neukundengewinnung (Legacy)",
-    beschreibung:
-      "Laufende Werbekampagnen auf Facebook und Instagram. Werbebudget wird zusätzlich direkt an Meta gezahlt.",
-    leistungen: [
-      "Bis zu 10 Creatives pro Monat (nicht genutzte verfallen)",
-      "Laufende Creative-Tests mit verschiedenen Hooks und Angles",
-      "Abstimmung zu Creatives und Tonalität",
-      "WhatsApp-Support, monatliches Reporting",
-    ],
-    preisNetto: 1500,
-    einheit: "pro Monat",
-    menge: 6,
-    ustSatz: UST_SATZ,
-  },
-  {
-    id: "ads-google",
-    kategorie: "Weitere / Bestandskunden",
-    titel: "Google Ads (Search) — Betreuung",
-    kurz: "Suchkampagnen mit regionalem Fokus (Legacy)",
-    beschreibung:
-      "Laufende Google-Suchkampagnen zur Gewinnung neuer Anfragen mit regionalem Fokus. Werbebudget wird zusätzlich direkt an Google gezahlt.",
-    leistungen: [
-      "Keyword-Recherche & laufende Kampagnenstruktur",
-      "Such-Kampagnen mit regionalem Fokus",
-      "Gebotsstrategie, Suchbegriffs-Reports, negative Keywords",
-      "Anzeigentext-Tests, monatliches Reporting",
-    ],
-    preisNetto: 1500,
-    einheit: "pro Monat",
-    menge: 6,
+    preisNetto: preis("web-apps"),
+    einheit: "einmalig",
+    menge: 1,
     ustSatz: UST_SATZ,
   },
 ];

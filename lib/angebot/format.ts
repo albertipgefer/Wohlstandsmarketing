@@ -3,6 +3,7 @@
  * Genutzt von Generator (Client), öffentlicher Ansicht (Server) und Routen.
  */
 import type { AngebotPosition } from "./db";
+import { BUNDLE_DISCOUNT, BUNDLE_MIN_ITEMS } from "@/content/pricing";
 
 export const eur = (n: number) =>
   (Number.isFinite(n) ? n : 0).toLocaleString("de-DE", {
@@ -25,18 +26,31 @@ export const isoPlusDays = (days: number) => {
   return d.toISOString().slice(0, 10);
 };
 
-/** Netto/USt./Brutto aus Positionen berechnen (Einheit „pro Monat" = preis × Monate). */
+/**
+ * Netto/USt./Brutto aus Positionen berechnen (Einheit „pro Monat" = preis × Monate).
+ * Paket-Rabatt automatisch: ab BUNDLE_MIN_ITEMS Positionen → BUNDLE_DISCOUNT auf
+ * netto + USt (identische Logik wie der Website-Konfigurator, content/pricing.ts).
+ */
 export function computeTotals(positionen: AngebotPosition[]) {
-  let netto = 0;
-  let ust = 0;
+  let nettoRaw = 0;
+  let ustRaw = 0;
   for (const p of positionen) {
     const gesamt = (p.preisNetto || 0) * (p.menge || 0);
-    netto += gesamt;
-    ust += (gesamt * (p.ustSatz || 0)) / 100;
+    nettoRaw += gesamt;
+    ustRaw += (gesamt * (p.ustSatz || 0)) / 100;
   }
+  const hasPaket = positionen.length >= BUNDLE_MIN_ITEMS;
+  const rabattRate = hasPaket ? BUNDLE_DISCOUNT : 0;
+  const r2 = (n: number) => Math.round(n * 100) / 100;
+  const netto = nettoRaw * (1 - rabattRate);
+  const ust = ustRaw * (1 - rabattRate);
   return {
-    netto: Math.round(netto * 100) / 100,
-    ust: Math.round(ust * 100) / 100,
-    brutto: Math.round((netto + ust) * 100) / 100,
+    nettoRaw: r2(nettoRaw),
+    netto: r2(netto),
+    ust: r2(ust),
+    brutto: r2(netto + ust),
+    hasPaket,
+    rabattRate,
+    rabattBetrag: r2(nettoRaw - netto),
   };
 }

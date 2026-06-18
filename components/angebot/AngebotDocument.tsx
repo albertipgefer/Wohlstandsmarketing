@@ -164,6 +164,16 @@ export default function AngebotDocument({ data }: { data: DocData }) {
 
         <div className="ag-totals">
           <div className="ag-totals-inner">
+            {summen.hasPaket && (
+              <>
+                <div className="ag-t-label">Zwischensumme (netto)</div>
+                <div className="ag-t-value">{eur(summen.nettoRaw)}</div>
+                <div className="ag-t-label">
+                  Paket-Rabatt ({Math.round(summen.rabattRate * 100)} %)
+                </div>
+                <div className="ag-t-value">−{eur(summen.rabattBetrag)}</div>
+              </>
+            )}
             <div className="ag-t-label">Nettobetrag</div>
             <div className="ag-t-value">{eur(summen.netto)}</div>
             <div className="ag-t-label">Umsatzsteuer ({UST_SATZ} %)</div>

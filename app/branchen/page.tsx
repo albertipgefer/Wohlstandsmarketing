@@ -12,7 +12,7 @@ const SITE = "https://wohlstandsmarketing.de";
 export const metadata: Metadata = {
   title: "Webdesign & KI-Sichtbarkeit nach Branche · Wohlstandsmarketing",
   description:
-    "Webseite, SEO und KI-Sichtbarkeit — zugeschnitten auf deine Branche: Handwerk, Steuerberater, Arztpraxen, Maschinenbau, Immobilienmakler. In 90 Tagen sichtbar.",
+    "Webseite, SEO, KI-Sichtbarkeit, Content & Marketing — zugeschnitten auf deine Branche: Handwerk, Steuerberater, Arztpraxen, Maschinenbau, Immobilienmakler. In 90 Tagen sichtbar.",
   keywords: [
     "Webdesign nach Branche",
     "Webseite für Mittelstand",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Webdesign & KI-Sichtbarkeit nach Branche",
     description:
-      "Webseite, SEO und KI-Sichtbarkeit — zugeschnitten auf deine Branche. In 90 Tagen sichtbar auf Google und in der KI.",
+      "Webseite, SEO, KI-Sichtbarkeit, Content & Marketing — zugeschnitten auf deine Branche. In 90 Tagen sichtbar auf Google und in der KI.",
     type: "website",
   },
 };
@@ -78,13 +78,13 @@ export default function BranchenOverviewPage() {
             className="mt-6 max-w-4xl font-[family-name:var(--font-display)] font-black leading-[1.04] tracking-[-0.04em] text-[var(--text)]"
             style={{ fontSize: "clamp(2rem, 5.2vw, 3.5rem)" }}
           >
-            Webseite, SEO & KI-Sichtbarkeit für{" "}
+            Webseite, SEO, KI & Marketing für{" "}
             <span className="font-[family-name:var(--font-serif)] font-normal italic text-[var(--accent)]">
               deine Branche
             </span>
           </h1>
           <p className="mt-6 max-w-2xl text-base leading-relaxed text-[var(--text-muted)] sm:text-lg">
-            Jede Branche hat eigene Kunden, eigene Suchanfragen und eigene Hürden. Wir bauen deinen Auftritt genau darauf zugeschnitten — und machen dich in 90 Tagen auf Google, ChatGPT, Perplexity und Claude sichtbar.
+            Jede Branche hat eigene Kunden, eigene Suchanfragen und eigene Hürden. Wir bauen deinen Auftritt genau darauf zugeschnitten — Webseite, SEO, KI-Sichtbarkeit, Content, E-Mail-Marketing und Automatisierung. In 90 Tagen sichtbar auf Google, ChatGPT, Perplexity und Claude.
           </p>
 
           <div className="mt-7 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[12px] text-[var(--text-muted)] lg:justify-start">

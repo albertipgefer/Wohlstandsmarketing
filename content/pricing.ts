@@ -18,7 +18,9 @@ export type Service = {
   /** Footnote für besondere Bedingungen */
   note?: string;
   icon: string;
-  category: "webdesign" | "optimierung" | "wartung";
+  category: "webdesign" | "optimierung" | "marketing" | "automatisierung" | "wartung";
+  /** Wenn true: kein Festpreis — Kachel zeigt „auf Anfrage", fließt nicht in die Summe. */
+  onRequest?: boolean;
   /** Wenn true: Kunde kann Anzahl wählen, Preis = oneTime × quantity */
   multiplyByQuantity?: boolean;
   /** Bei Services mit Inklusiv-Unterseiten + optionalen Extra-Seiten */
@@ -155,6 +157,70 @@ export const services: Service[] = [
     durationOptions: [3, 6, 9, 12],
     icon: "trending",
     category: "optimierung",
+  },
+  {
+    id: "email-marketing",
+    name: "E-Mail-Marketing",
+    short: "Newsletter & automatisierte Verkaufsstrecken",
+    description:
+      "E-Mail-Marketing, das aus Kontakten Umsatz macht: Listenaufbau (DSGVO-konform), automatisierte Willkommens- und Verkaufsstrecken, Newsletter im Look deiner Marke — inkl. Reporting.",
+    benefits: [
+      "Liste + Automationen DSGVO-konform aufgebaut",
+      "Verkaufsstrecken, die rund um die Uhr arbeiten",
+      "Newsletter im Look deiner Marke",
+      "Reporting: Öffnungen, Klicks, Umsatz",
+    ],
+    onRequest: true,
+    icon: "mail",
+    category: "marketing",
+  },
+  {
+    id: "content-marketing",
+    name: "Content-Marketing",
+    short: "SEO- & KI-optimierter Content, der gefunden wird",
+    description:
+      "Redaktioneller Content, der bei Google rankt und von ChatGPT & Co. zitiert wird: Themen-/Keyword-Strategie entlang der Customer Journey, hochwertige Artikel, interne Verlinkung auf deine Money-Pages.",
+    benefits: [
+      "Themen- & Keyword-Strategie (ToFu/MoFu/BoFu)",
+      "SEO- & GEO-optimierte Artikel",
+      "Interne Verlinkung auf Money-Pages",
+      "Planbarer Redaktionsrhythmus",
+    ],
+    onRequest: true,
+    icon: "pencil",
+    category: "marketing",
+  },
+  {
+    id: "ki-optimierung",
+    name: "KI-Optimierung",
+    short: "KI in deine Prozesse — Chatbots, Assistenten, Automation",
+    description:
+      "KI direkt in deine Abläufe gebracht: Analyse, wo KI dir Zeit spart, plus Chatbots, KI-Assistenten und automatisierte Workflows — eingebunden in deine bestehenden Tools, inkl. Team-Schulung.",
+    benefits: [
+      "Analyse: Wo KI Zeit & Kosten spart",
+      "Chatbots & KI-Assistenten",
+      "Automatisierte Workflows",
+      "Einbindung in bestehende Tools + Schulung",
+    ],
+    onRequest: true,
+    icon: "cpu",
+    category: "automatisierung",
+  },
+  {
+    id: "web-apps",
+    name: "Web-Apps & Automatisierung",
+    short: "Individuelle Software, exakt auf deinen Prozess",
+    description:
+      "Wenn Standard-Software nicht passt: individuelle Web-Apps und Automatisierungen auf modernem Stack (Next.js) — vom internen Tool bis zur Kundenplattform, entwickelt, gehostet und gewartet.",
+    benefits: [
+      "Individuelle Web-App auf deinen Prozess",
+      "Automatisierung wiederkehrender Abläufe",
+      "Anbindung an bestehende Systeme",
+      "Wartbar & skalierbar (Next.js)",
+    ],
+    onRequest: true,
+    icon: "code",
+    category: "automatisierung",
   },
   {
     id: "wartung",

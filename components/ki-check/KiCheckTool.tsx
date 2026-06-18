@@ -668,35 +668,71 @@ export default function KiCheckTool() {
             <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl font-black tracking-tight md:text-4xl">
               4 Säulen · 20+ Prüfpunkte · 1 Score
             </h2>
+            <p className="mx-auto mt-4 max-w-xl text-[14px] leading-relaxed text-[var(--text-muted)] sm:text-[15px]">
+              Kein oberflächlicher Scan: Wir analysieren deine Seite live entlang
+              der vier Dimensionen, die darüber entscheiden, ob KI dich findet,
+              versteht und empfiehlt.
+            </p>
           </div>
-          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="mx-auto mt-12 grid max-w-4xl gap-5 sm:grid-cols-2">
             {[
               {
                 title: "KI-Crawler & Auffindbarkeit",
                 body: "Dürfen GPTBot, ClaudeBot, PerplexityBot deine Seite lesen? Gibt es eine llms.txt mit Hints?",
+                icon: (
+                  <>
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="m20 20-3.5-3.5" />
+                  </>
+                ),
               },
               {
                 title: "Schema.org",
                 body: "Strukturierte Daten (Organization, Person, FAQ, Article) — die KI versteht, was du bist.",
+                icon: (
+                  <>
+                    <path d="m16 18 6-6-6-6" />
+                    <path d="m8 6-6 6 6 6" />
+                  </>
+                ),
               },
               {
                 title: "SEO-Fundament",
                 body: "Title, Meta, OG-Image, Canonical, Sitemap — die Grundlage, damit du überhaupt indexiert wirst.",
+                icon: (
+                  <>
+                    <path d="M3 3v18h18" />
+                    <path d="M7 16V10M12 16V6M17 16v-4" />
+                  </>
+                ),
               },
               {
                 title: "Performance & Trust",
                 body: "Core Web Vitals via Lighthouse, Impressum, About-Seite, Social-Profile (E-E-A-T).",
+                icon: (
+                  <>
+                    <path d="m13 2-8 12h6l-1 8 8-12h-6l1-8z" />
+                  </>
+                ),
               },
             ].map((p, i) => (
               <div
                 key={i}
-                className="rounded-3xl border border-[var(--border)] bg-[var(--bg)] p-6"
+                className="group relative overflow-hidden rounded-3xl border border-[var(--border)] bg-white p-7 shadow-[0_10px_40px_-22px_rgba(10,10,10,0.18)] transition hover:-translate-y-0.5 hover:border-[var(--accent)]/40 hover:shadow-[0_18px_44px_-22px_rgba(22,99,222,0.28)]"
               >
-                <div className="font-[family-name:var(--font-display)] text-[28px] font-black text-[var(--accent)]">
-                  0{i + 1}
+                <div aria-hidden className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-[radial-gradient(circle,rgba(22,99,222,0.08)_0%,rgba(22,99,222,0)_70%)]" />
+                <div className="relative flex items-start justify-between gap-4">
+                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--accent)]/[0.08] text-[var(--accent)] transition group-hover:bg-[var(--accent)] group-hover:text-white">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                      {p.icon}
+                    </svg>
+                  </span>
+                  <span className="font-[family-name:var(--font-serif)] text-4xl font-bold italic text-[var(--accent)]/30">
+                    0{i + 1}
+                  </span>
                 </div>
-                <div className="mt-3 font-semibold text-[var(--text)]">{p.title}</div>
-                <div className="mt-2 text-[13px] leading-relaxed text-[var(--text-muted)]">
+                <div className="relative mt-4 font-[family-name:var(--font-display)] text-[17px] font-bold tracking-tight text-[var(--text)]">{p.title}</div>
+                <div className="relative mt-2 text-[13.5px] leading-relaxed text-[var(--text-muted)]">
                   {p.body}
                 </div>
               </div>

@@ -14,6 +14,8 @@ import ServiceIcon from "./ServiceIcon";
 const CATEGORY_LABELS: Record<string, string> = {
   webdesign: "Webdesign",
   optimierung: "Optimierung",
+  marketing: "Marketing",
+  automatisierung: "KI & Automatisierung",
   wartung: "Wartung",
 };
 
@@ -269,6 +271,12 @@ export default function PricingConfigurator() {
                       </div>
                     )}
 
+                    {s.onRequest && (
+                      <div className="pointer-events-none relative z-0 mt-4 border-t border-[var(--border)] pt-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--accent)]">
+                        Preis auf Anfrage
+                      </div>
+                    )}
+
                     {s.note && !active && (
                       <div className="pointer-events-none relative z-0 mt-4 border-t border-[var(--border)] pt-3 text-[11px] text-[var(--gold-text)]">
                         {s.note}
@@ -326,7 +334,7 @@ export default function PricingConfigurator() {
             >
               <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-dark,_#0a4bb8)] transition-transform duration-500 ease-out group-hover:translate-y-0" />
               <span className="relative z-10">
-                {submitting ? "Wird berechnet …" : "Preis berechnen"}
+                {submitting ? "Wird erstellt …" : "Angebot erstellen"}
               </span>
               <span className="relative z-10 transition-transform group-hover:translate-x-0.5">
                 →

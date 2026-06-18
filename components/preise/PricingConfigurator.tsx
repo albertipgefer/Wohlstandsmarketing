@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import posthog from "posthog-js";
 import { useRouter } from "next/navigation";
 import {
@@ -24,6 +24,23 @@ export default function PricingConfigurator() {
   /** Selections gemappt nach Service-ID für schnelles Lookup */
   const [selections, setSelections] = useState<Record<string, Selection>>({});
   const [submitting, setSubmitting] = useState(false);
+
+  // Gesamtpaket-Link (/preise?alle=1): alle Leistungen vorauswählen,
+  // damit der Kunde nur noch auf „Angebot erstellen" klicken muss.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("alle") !== "1") return;
+    const all: Record<string, Selection> = {};
+    for (const s of services) {
+      all[s.id] = {
+        id: s.id,
+        ...(s.multiplyByQuantity ? { quantity: 1 } : {}),
+        ...(s.extraPageOption ? { extraPages: 0 } : {}),
+        ...(s.durationOptions ? { durationMonths: s.durationMonths } : {}),
+      };
+    }
+    setSelections(all);
+  }, []);
 
   const selectedCount = Object.keys(selections).length;
 

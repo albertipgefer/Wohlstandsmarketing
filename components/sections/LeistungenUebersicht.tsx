@@ -12,8 +12,12 @@ import SectionEyebrow from "./_shared/SectionEyebrow";
  */
 export default function LeistungenUebersicht({
   withEyebrow = true,
+  withHeading = true,
+  showDetailLink = true,
 }: {
   withEyebrow?: boolean;
+  withHeading?: boolean;
+  showDetailLink?: boolean;
 }) {
   return (
     <section
@@ -21,6 +25,8 @@ export default function LeistungenUebersicht({
       className="relative overflow-hidden border-t border-[var(--border)] bg-[var(--surface-2)]/40 py-24 md:py-32"
     >
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
+        {withHeading && (
+        <>
         {withEyebrow && <SectionEyebrow index="08" label="Leistungen" />}
 
         <motion.h2
@@ -66,6 +72,8 @@ export default function LeistungenUebersicht({
           Von der Webseite über SEO und KI-Sichtbarkeit bis E-Mail-Marketing,
           Content und Automatisierung — alle Leistungen greifen ineinander.
         </motion.p>
+        </>
+        )}
 
         <div className="mt-12 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
           {serviceHubs.map((s, i) => (
@@ -112,13 +120,15 @@ export default function LeistungenUebersicht({
             Unverbindliches Angebot zusammenstellen
             <span className="transition-transform group-hover:translate-x-0.5">→</span>
           </Link>
-          <Link
-            href="/leistungen"
-            className="group inline-flex items-center gap-2 rounded-full border border-[var(--border-strong)] bg-white px-6 py-3 text-[14px] font-medium text-[var(--text)] outline-none transition hover:border-transparent hover:bg-[var(--text)] hover:text-white focus-visible:outline-none"
-          >
-            Alle Leistungen im Detail
-            <span className="transition-transform group-hover:translate-x-0.5">→</span>
-          </Link>
+          {showDetailLink && (
+            <Link
+              href="/leistungen"
+              className="group inline-flex items-center gap-2 rounded-full border border-[var(--border-strong)] bg-white px-6 py-3 text-[14px] font-medium text-[var(--text)] outline-none transition hover:border-transparent hover:bg-[var(--text)] hover:text-white focus-visible:outline-none"
+            >
+              Alle Leistungen im Detail
+              <span className="transition-transform group-hover:translate-x-0.5">→</span>
+            </Link>
+          )}
         </div>
       </div>
     </section>

@@ -1,22 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Logo from "@/components/Logo";
 
-const SERVICES = [
-  { label: "Webdesign", href: "/webdesign", desc: "Unternehmenswebsite, Landingpage, Relaunch" },
-  { label: "KI-Sichtbarkeit", href: "/ki-sichtbarkeit", desc: "Auf ChatGPT, Perplexity & Claude empfohlen" },
-  { label: "SEO-Optimierung", href: "/seo", desc: "Technisch + lokal + Content-Cluster" },
-  { label: "Webseiten-Relaunch", href: "/relaunch", desc: "Aus alt mach KI-empfehlbar" },
-  { label: "E-Mail-Marketing", href: "/e-mail-marketing", desc: "Newsletter & automatisierte Verkaufsstrecken" },
-  { label: "Content-Marketing", href: "/content-marketing", desc: "SEO- & KI-optimierter Content, der rankt" },
-  { label: "KI-Optimierung", href: "/ki-optimierung", desc: "KI in deine Prozesse — Chatbots & Automation" },
-  { label: "Web-Apps & Automatisierung", href: "/web-apps", desc: "Individuelle Software auf Anfrage" },
-] as const;
-
 const TOP_NAV = [
+  { label: "Leistungen", href: "/leistungen" },
   { label: "Branchen", href: "/branchen" },
   { label: "KI-Check", href: "/sichtbarkeits-check" },
   { label: "Angebot", href: "/preise" },
@@ -24,14 +14,11 @@ const TOP_NAV = [
 ] as const;
 
 /**
- * SiteNav for all sub-pages. Identical visual style to homepage Hero nav.
- * "Leistungen" is a hover/click-dropdown on desktop, accordion on mobile.
+ * SiteNav für alle Unterseiten. Gleicher Look wie die Homepage-Hero-Nav.
+ * "Leistungen" führt direkt auf die /leistungen-Übersichtsseite (kein Dropdown).
  */
 export default function BlogNav() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [dropOpen, setDropOpen] = useState(false);
-  const [mobileLeistungenOpen, setMobileLeistungenOpen] = useState(false);
-  const dropRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
@@ -39,27 +26,6 @@ export default function BlogNav() {
       document.body.style.overflow = "";
     };
   }, [menuOpen]);
-
-  // Click outside closes desktop dropdown
-  useEffect(() => {
-    if (!dropOpen) return;
-    function onDoc(e: MouseEvent) {
-      if (dropRef.current && !dropRef.current.contains(e.target as Node)) {
-        setDropOpen(false);
-      }
-    }
-    window.addEventListener("mousedown", onDoc);
-    return () => window.removeEventListener("mousedown", onDoc);
-  }, [dropOpen]);
-
-  // ESC closes
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setDropOpen(false);
-    }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
 
   return (
     <>
@@ -71,63 +37,7 @@ export default function BlogNav() {
             </Link>
 
             {/* Desktop Nav */}
-            <nav className="hidden items-center gap-1 md:flex" ref={dropRef}>
-              {/* Leistungen dropdown */}
-              <div
-                className="relative"
-                onMouseEnter={() => setDropOpen(true)}
-                onMouseLeave={() => setDropOpen(false)}
-              >
-                <Link
-                  href="/leistungen"
-                  aria-haspopup="true"
-                  aria-expanded={dropOpen}
-                  className={`inline-flex items-center gap-1 rounded-full px-4 py-2 text-[13px] font-medium transition ${
-                    dropOpen
-                      ? "bg-[var(--surface-2)] text-[var(--text)]"
-                      : "text-[var(--text-muted)] hover:bg-[var(--surface-2)] hover:text-[var(--text)]"
-                  }`}
-                >
-                  Leistungen
-                  <svg
-                    className={`transition-transform ${dropOpen ? "rotate-180" : ""}`}
-                    width="10"
-                    height="10"
-                    viewBox="0 0 10 10"
-                    fill="none"
-                    aria-hidden
-                  >
-                    <path d="M2 4l3 3 3-3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </Link>
-
-                <AnimatePresence>
-                  {dropOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 8 }}
-                      transition={{ duration: 0.18 }}
-                      className="absolute left-1/2 top-full z-50 mt-3 w-[320px] -translate-x-1/2 rounded-2xl border border-[var(--border)] bg-white p-2 shadow-[0_20px_60px_-15px_rgba(10,10,10,0.25)]"
-                    >
-                      {SERVICES.map((s) => (
-                        <Link
-                          key={s.href}
-                          href={s.href}
-                          onClick={() => setDropOpen(false)}
-                          className="group flex flex-col gap-0.5 rounded-xl px-3 py-2.5 transition hover:bg-[var(--surface-2)]"
-                        >
-                          <span className="text-[14px] font-semibold text-[var(--text)] group-hover:text-[var(--accent)]">
-                            {s.label}
-                          </span>
-                          <span className="text-[12px] text-[var(--text-subtle)]">{s.desc}</span>
-                        </Link>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
+            <nav className="hidden items-center gap-1 md:flex">
               {TOP_NAV.map((item) => (
                 <Link
                   key={item.label}
@@ -181,60 +91,6 @@ export default function BlogNav() {
             className="fixed inset-0 z-40 overflow-y-auto bg-white/95 backdrop-blur-xl md:hidden"
           >
             <div className="flex min-h-full flex-col items-center justify-start gap-4 px-6 pb-12 pt-24">
-              {/* Leistungen accordion */}
-              <div className="w-full max-w-sm">
-                <button
-                  type="button"
-                  onClick={() => setMobileLeistungenOpen((o) => !o)}
-                  aria-expanded={mobileLeistungenOpen}
-                  className="flex w-full items-center justify-center gap-2 rounded-2xl border border-[var(--border)] bg-white px-5 py-4 text-center font-[family-name:var(--font-display)] text-xl font-bold tracking-tight text-[var(--text)]"
-                >
-                  Leistungen
-                  <svg
-                    className={`transition-transform ${mobileLeistungenOpen ? "rotate-180" : ""}`}
-                    width="14"
-                    height="14"
-                    viewBox="0 0 14 14"
-                    fill="none"
-                    aria-hidden
-                  >
-                    <path d="M3 5l4 4 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
-                <AnimatePresence>
-                  {mobileLeistungenOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.22 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="mt-2 flex flex-col gap-1.5 rounded-2xl border border-[var(--border)] bg-white p-2">
-                        <Link
-                          href="/leistungen"
-                          onClick={() => setMenuOpen(false)}
-                          className="rounded-xl px-4 py-3 text-[15px] font-semibold text-[var(--accent)] transition hover:bg-[var(--surface-2)]"
-                        >
-                          Alle Leistungen ansehen →
-                        </Link>
-                        {SERVICES.map((s) => (
-                          <Link
-                            key={s.href}
-                            href={s.href}
-                            onClick={() => setMenuOpen(false)}
-                            className="flex flex-col gap-0.5 rounded-xl px-4 py-3 transition hover:bg-[var(--surface-2)]"
-                          >
-                            <span className="text-[15px] font-semibold text-[var(--text)]">{s.label}</span>
-                            <span className="text-[12px] text-[var(--text-subtle)]">{s.desc}</span>
-                          </Link>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
               {TOP_NAV.map((item, i) => (
                 <motion.div
                   key={item.label}

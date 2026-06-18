@@ -95,6 +95,15 @@ import * as architektIngWeb from "./posts/webseite-architekt-ingenieur";
 import * as physioWeb from "./posts/webseite-fuer-physiotherapie";
 import * as logistikWeb from "./posts/webseite-fuer-logistik";
 
+// ── Neue Leistungen — Charge 1 (E-Mail/Content/KI, Juni 2026) ─────────
+import * as emailMarketingGuide from "./posts/was-ist-e-mail-marketing";
+import * as kiProzesse from "./posts/ki-prozesse-automatisieren-2026";
+import * as emailToolsVergleich from "./posts/e-mail-marketing-tools-vergleich";
+import * as kiOptOderSichtbar from "./posts/ki-optimierung-oder-ki-sichtbarkeit";
+import * as emailAgentur from "./posts/e-mail-marketing-agentur";
+import * as kiBeratungKmu from "./posts/ki-beratung-kmu";
+import * as emailHandwerker from "./posts/e-mail-marketing-handwerker";
+
 const modules: Array<{
   meta: Post["meta"];
   default: () => React.ReactNode;
@@ -186,6 +195,14 @@ const modules: Array<{
   { meta: { ...architektIngWeb.meta, popularity: 78 }, default: architektIngWeb.default },
   { meta: { ...physioWeb.meta, popularity: 80 }, default: physioWeb.default },
   { meta: { ...logistikWeb.meta, popularity: 79 }, default: logistikWeb.default },
+  // Neue Leistungen — Charge 1 (Juni 2026)
+  { meta: { ...emailMarketingGuide.meta, popularity: 80 }, default: emailMarketingGuide.default },
+  { meta: { ...kiProzesse.meta, popularity: 82 }, default: kiProzesse.default },
+  { meta: { ...emailToolsVergleich.meta, popularity: 74 }, default: emailToolsVergleich.default },
+  { meta: { ...kiOptOderSichtbar.meta, popularity: 78 }, default: kiOptOderSichtbar.default },
+  { meta: { ...emailAgentur.meta, popularity: 76 }, default: emailAgentur.default },
+  { meta: { ...kiBeratungKmu.meta, popularity: 79 }, default: kiBeratungKmu.default },
+  { meta: { ...emailHandwerker.meta, popularity: 72 }, default: emailHandwerker.default },
 ];
 
 /** Posts sorted by date descending (newest first) */
@@ -197,6 +214,7 @@ export const posts = modules.sort(
 export const CATEGORIES = [
   "Alle",
   "KI-Sichtbarkeit",
+  "KI & Automatisierung",
   "Technisches SEO",
   "Lokales SEO",
   "Webdesign",

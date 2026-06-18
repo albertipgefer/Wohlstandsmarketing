@@ -64,6 +64,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE}/vergleich/landingpage-vs-unternehmenswebsite`, lastModified: CONTENT_REVISED, changeFrequency: "monthly", priority: 0.85 },
     { url: `${SITE}/vergleich/relaunch-vs-neue-webseite`, lastModified: CONTENT_REVISED, changeFrequency: "monthly", priority: 0.85 },
     { url: `${SITE}/vergleich/agentur-vs-inhouse-seo`, lastModified: CONTENT_REVISED, changeFrequency: "monthly", priority: 0.85 },
+    { url: `${SITE}/vergleich/ki-optimierung-vs-ki-sichtbarkeit`, lastModified: CONTENT_REVISED, changeFrequency: "monthly", priority: 0.85 },
     { url: `${SITE}/impressum`, lastModified: CONTENT_REVISED, changeFrequency: "yearly", priority: 0.3 },
     { url: `${SITE}/datenschutz`, lastModified: CONTENT_REVISED, changeFrequency: "yearly", priority: 0.3 },
   ];

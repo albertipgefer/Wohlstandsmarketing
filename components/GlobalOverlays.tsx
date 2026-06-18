@@ -14,6 +14,7 @@ import { usePathname } from "next/navigation";
 import CookieBanner from "@/components/CookieBanner";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import MarketingOverlays from "@/components/MarketingOverlays";
+import CursorGlow from "@/components/CursorGlow";
 
 const BARE_PREFIXES = [
   "/tools",
@@ -30,6 +31,7 @@ export default function GlobalOverlays() {
 
   return (
     <>
+      <CursorGlow />
       <WhatsAppButton />
       <MarketingOverlays />
       <CookieBanner />

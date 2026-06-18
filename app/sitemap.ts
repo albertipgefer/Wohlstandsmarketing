@@ -16,7 +16,7 @@ const SITE = "https://wohlstandsmarketing.de";
  * Diesen Wert nur dann hochsetzen, wenn der Seiten-Content (Templates/Daten)
  * inhaltlich überarbeitet wurde. Blog-Artikel nutzen ihr eigenes `meta.date`.
  */
-const CONTENT_REVISED = new Date("2026-06-16");
+const CONTENT_REVISED = new Date("2026-06-18");
 
 /**
  * Crawl-Budget-Strategie (Stand 16.06.2026):

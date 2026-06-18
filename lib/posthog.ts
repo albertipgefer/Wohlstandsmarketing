@@ -62,7 +62,16 @@ export type PosthogDashboard = {
   sources: { source: string; count: number }[];
   devices: { device: string; count: number }[];
   funnel: { label: string; count: number }[];
+  bounceRate: number; // 0..1 (Sitzungen mit nur einem Seitenaufruf)
+  avgSessionSec: number; // Ø-Sitzungsdauer in Sekunden
+  conversionRate: number; // 0..1 (Besucher mit Lead-Aktion / alle Besucher)
+  googleVisitors: number; // Besucher, die über die Google-Suche kamen
+  googleConversions: number; // davon mit Lead-Aktion
 };
+
+// Echte Lead-Signale (für Conversion-Rate + Google-Conversions).
+const CONV =
+  "'erstgespraech_geklickt','kontaktformular_gesendet','ki_check_abgeschlossen','lead_magnet_download','anruf_klick','email_klick'";
 
 /** Alle Kennzahlen der Live-/Verhaltens-Ebene. Null, wenn nicht konfiguriert. */
 export async function getPosthogDashboard(
@@ -78,8 +87,19 @@ export async function getPosthogDashboard(
   const pvWindow = `event = '$pageview' AND timestamp >= now() - INTERVAL ${range} DAY`;
   const prevWindow = `event = '$pageview' AND timestamp < now() - INTERVAL ${range} DAY AND timestamp >= now() - INTERVAL ${range * 2} DAY`;
 
-  const [live, totals, prev, series, pages, conv, sources, devices, funnel] =
-    await Promise.all([
+  const [
+    live,
+    totals,
+    prev,
+    series,
+    pages,
+    conv,
+    sources,
+    devices,
+    funnel,
+    sessions,
+    google,
+  ] = await Promise.all([
       hogql(
         `SELECT uniq(person_id) FROM events WHERE timestamp >= now() - INTERVAL 5 MINUTE`,
       ),
@@ -107,6 +127,12 @@ export async function getPosthogDashboard(
       hogql(
         `SELECT uniqIf(person_id, event = '$pageview') AS besucher, uniqIf(person_id, event = '$pageview' AND properties.$pathname = '/preise') AS preise, uniqIf(person_id, event IN ('erstgespraech_geklickt','kontaktformular_gesendet')) AS lead FROM events WHERE timestamp >= now() - INTERVAL ${range} DAY`,
       ),
+      hogql(
+        `SELECT count() AS s, countIf(pv <= 1) AS b, avg(dur) AS d FROM (SELECT properties.$session_id AS sid, countIf(event = '$pageview') AS pv, dateDiff('second', min(timestamp), max(timestamp)) AS dur FROM events WHERE timestamp >= now() - INTERVAL ${range} DAY AND properties.$session_id != '' GROUP BY sid)`,
+      ),
+      hogql(
+        `SELECT uniqIf(person_id, from_google = 1) AS gv, uniqIf(person_id, from_google = 1 AND conv > 0) AS gc, uniqIf(person_id, has_pv = 1 AND conv > 0) AS converter, uniqIf(person_id, has_pv = 1) AS pv_visitors FROM (SELECT person_id, maxIf(1, event = '$pageview' AND properties.$referring_domain LIKE '%google%') AS from_google, maxIf(1, event = '$pageview') AS has_pv, countIf(event IN (${CONV})) AS conv FROM events WHERE timestamp >= now() - INTERVAL ${range} DAY GROUP BY person_id)`,
+      ),
     ]);
 
   return {
@@ -130,5 +156,32 @@ export async function getPosthogDashboard(
       { label: "Preise angesehen", count: num(funnel[0]?.[1]) },
       { label: "Lead (Erstgespräch / Kontakt)", count: num(funnel[0]?.[2]) },
     ],
+    bounceRate:
+      num(sessions[0]?.[0]) > 0
+        ? num(sessions[0]?.[1]) / num(sessions[0]?.[0])
+        : 0,
+    avgSessionSec: Math.round(num(sessions[0]?.[2])),
+    conversionRate:
+      num(google[0]?.[3]) > 0 ? num(google[0]?.[2]) / num(google[0]?.[3]) : 0,
+    googleVisitors: num(google[0]?.[0]),
+    googleConversions: num(google[0]?.[1]),
   };
+}
+
+/**
+ * Tages-Check für den Einbruch-Alarm: gestrige Seitenaufrufe vs.
+ * Tagesdurchschnitt der 7 Tage davor. Null, wenn nicht konfiguriert/Fehler.
+ */
+export async function getDailyTrafficCheck(): Promise<{
+  yesterday: number;
+  avg7: number;
+} | null> {
+  if (!process.env.POSTHOG_PERSONAL_API_KEY || !process.env.POSTHOG_PROJECT_ID) {
+    return null;
+  }
+  const rows = await hogql(
+    `SELECT countIf(toDate(timestamp) = today() - 1) AS y, countIf(toDate(timestamp) >= today() - 8 AND toDate(timestamp) <= today() - 2) AS week FROM events WHERE event = '$pageview' AND timestamp >= now() - INTERVAL 9 DAY`,
+  );
+  if (!rows.length) return null;
+  return { yesterday: num(rows[0]?.[0]), avg7: num(rows[0]?.[1]) / 7 };
 }

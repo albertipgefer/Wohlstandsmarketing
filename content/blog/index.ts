@@ -104,6 +104,31 @@ import * as emailAgentur from "./posts/e-mail-marketing-agentur";
 import * as kiBeratungKmu from "./posts/ki-beratung-kmu";
 import * as emailHandwerker from "./posts/e-mail-marketing-handwerker";
 
+// ── Neue Leistungen — Charge 2 (23, Juni 2026) ────────────────────────
+import * as newsletterKanal from "./posts/newsletter-wertvollster-kanal";
+import * as contentErklaert from "./posts/content-marketing-einfach-erklaert";
+import * as tofuMofuBofu from "./posts/tofu-mofu-bofu-content";
+import * as kiChatbotUeberblick from "./posts/ki-chatbot-ueberblick";
+import * as prozessEinstieg from "./posts/prozessautomatisierung-einstieg";
+import * as standardVsWebapp from "./posts/standardsoftware-vs-individuelle-web-app";
+import * as dsgvoEmail from "./posts/dsgvo-e-mail-marketing";
+import * as geoStattSeo from "./posts/geo-statt-seo";
+import * as willkommensStrecke from "./posts/willkommens-strecke-aufbauen";
+import * as contentSelbstAgentur from "./posts/content-selbst-oder-agentur";
+import * as blogArtikelRanken from "./posts/blog-artikel-die-ranken";
+import * as kiContentVsRedaktionell from "./posts/ki-content-vs-redaktionell";
+import * as kiChatbotKostenNutzen from "./posts/ki-chatbot-kosten-nutzen";
+import * as makeZapier from "./posts/make-zapier-oder-eigene-loesung";
+import * as webappAblauf from "./posts/web-app-entwickeln-lassen-ablauf";
+import * as kanaeleKombinieren from "./posts/e-mail-seo-content-kombinieren";
+import * as emailKosten from "./posts/e-mail-marketing-kosten";
+import * as contentAgentur from "./posts/content-marketing-agentur";
+import * as contentKosten from "./posts/content-marketing-kosten";
+import * as kiChatbotErstellen from "./posts/ki-chatbot-erstellen-lassen";
+import * as webappKosten from "./posts/web-app-entwickeln-lassen-kosten";
+import * as contentSteuerberater from "./posts/content-marketing-steuerberater";
+import * as prozesseHandwerk from "./posts/prozesse-automatisieren-handwerk";
+
 const modules: Array<{
   meta: Post["meta"];
   default: () => React.ReactNode;
@@ -203,6 +228,30 @@ const modules: Array<{
   { meta: { ...emailAgentur.meta, popularity: 76 }, default: emailAgentur.default },
   { meta: { ...kiBeratungKmu.meta, popularity: 79 }, default: kiBeratungKmu.default },
   { meta: { ...emailHandwerker.meta, popularity: 72 }, default: emailHandwerker.default },
+  // Neue Leistungen — Charge 2 (23, Juni 2026)
+  { meta: { ...newsletterKanal.meta, popularity: 73 }, default: newsletterKanal.default },
+  { meta: { ...contentErklaert.meta, popularity: 74 }, default: contentErklaert.default },
+  { meta: { ...tofuMofuBofu.meta, popularity: 68 }, default: tofuMofuBofu.default },
+  { meta: { ...kiChatbotUeberblick.meta, popularity: 76 }, default: kiChatbotUeberblick.default },
+  { meta: { ...prozessEinstieg.meta, popularity: 72 }, default: prozessEinstieg.default },
+  { meta: { ...standardVsWebapp.meta, popularity: 66 }, default: standardVsWebapp.default },
+  { meta: { ...dsgvoEmail.meta, popularity: 70 }, default: dsgvoEmail.default },
+  { meta: { ...geoStattSeo.meta, popularity: 82 }, default: geoStattSeo.default },
+  { meta: { ...willkommensStrecke.meta, popularity: 71 }, default: willkommensStrecke.default },
+  { meta: { ...contentSelbstAgentur.meta, popularity: 69 }, default: contentSelbstAgentur.default },
+  { meta: { ...blogArtikelRanken.meta, popularity: 75 }, default: blogArtikelRanken.default },
+  { meta: { ...kiContentVsRedaktionell.meta, popularity: 78 }, default: kiContentVsRedaktionell.default },
+  { meta: { ...kiChatbotKostenNutzen.meta, popularity: 74 }, default: kiChatbotKostenNutzen.default },
+  { meta: { ...makeZapier.meta, popularity: 70 }, default: makeZapier.default },
+  { meta: { ...webappAblauf.meta, popularity: 68 }, default: webappAblauf.default },
+  { meta: { ...kanaeleKombinieren.meta, popularity: 72 }, default: kanaeleKombinieren.default },
+  { meta: { ...emailKosten.meta, popularity: 80 }, default: emailKosten.default },
+  { meta: { ...contentAgentur.meta, popularity: 76 }, default: contentAgentur.default },
+  { meta: { ...contentKosten.meta, popularity: 78 }, default: contentKosten.default },
+  { meta: { ...kiChatbotErstellen.meta, popularity: 77 }, default: kiChatbotErstellen.default },
+  { meta: { ...webappKosten.meta, popularity: 75 }, default: webappKosten.default },
+  { meta: { ...contentSteuerberater.meta, popularity: 74 }, default: contentSteuerberater.default },
+  { meta: { ...prozesseHandwerk.meta, popularity: 73 }, default: prozesseHandwerk.default },
 ];
 
 /** Posts sorted by date descending (newest first) */

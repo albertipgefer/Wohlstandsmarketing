@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
+import { ServiceHeroImageDesktop, ServiceHeroImageMobile } from "@/components/ServiceHeroImage";
 import { cities, getCity, getNeighbourCities } from "@/content/cities";
 import { getIndustry } from "@/content/industries";
 import { getKiVisibilityPosts } from "@/content/blog";
@@ -236,20 +236,8 @@ export default async function KiSichtbarkeitCityPage({
                 <span className="font-semibold text-[var(--text)]">erste Wahl deiner Region</span> empfohlen.
               </p>
 
-              {/* Mobile/iPad photo — BETWEEN subtitle and CTAs */}
-              <div className="mx-auto mt-8 w-full max-w-md overflow-hidden rounded-3xl lg:hidden">
-                <Image
-                  src="/albert-portrait.jpg"
-                  alt={`Albert Ipgefer — KI-Sichtbarkeits-Partner für Mittelstand in ${city.name}`}
-                  width={1226}
-                  height={1300}
-                  priority
-                  fetchPriority="high"
-                  quality={75}
-                  sizes="(max-width: 640px) 360px, 480px"
-                  className="h-auto w-full"
-                />
-              </div>
+              {/* Mobile/iPad Hero-Visual — BETWEEN subtitle and CTAs */}
+              <ServiceHeroImageMobile src="/hero/ki-sichtbarkeit.webp" alt={`KI-Sichtbarkeit in ${city.name} — Wohlstandsmarketing`} />
 
               <div className="mt-8 flex w-full max-w-sm flex-col items-stretch gap-3">
                 <Link
@@ -322,23 +310,8 @@ export default async function KiSichtbarkeitCityPage({
               </div>
             </div>
 
-            {/* Right column: Albert portrait — Desktop only */}
-            <div className="relative order-2 mx-auto hidden aspect-[4/5] w-full max-w-[440px] overflow-hidden rounded-3xl lg:block">
-              <Image
-                src="/albert-portrait.jpg"
-                alt={`Albert Ipgefer — KI-Sichtbarkeits-Partner für Mittelstand in ${city.name}`}
-                fill
-                priority
-                fetchPriority="high"
-                quality={85}
-                sizes="440px"
-                className="object-cover object-[50%_35%]"
-              />
-              <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-[var(--bg)] to-transparent" />
-              <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-[var(--bg)] to-transparent" />
-              <div aria-hidden className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-[var(--bg)] to-transparent" />
-              <div aria-hidden className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-[var(--bg)] to-transparent" />
-            </div>
+            {/* Right column: Hero-Visual — Desktop only */}
+            <ServiceHeroImageDesktop src="/hero/ki-sichtbarkeit.webp" alt={`KI-Sichtbarkeit in ${city.name} — Wohlstandsmarketing`} />
           </div>
         </div>
       </section>

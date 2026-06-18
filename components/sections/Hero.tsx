@@ -1,46 +1,11 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import ReviewBadges from "@/components/ReviewBadges";
 import BlogNav from "@/components/blog/BlogNav";
 
 export default function Hero() {
-  const reduce = useReducedMotion();
-  const [mounted, setMounted] = useState(false);
-  const [cursor, setCursor] = useState({ x: 0, y: 0, visible: false });
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (reduce) return;
-    // Cursor-Glow ist rein dekorativ und nur auf Desktop (lg:block) sichtbar.
-    // Daher den mousemove-Listener nur bei feiner Zeigereingabe + großem Viewport
-    // anhängen und per requestAnimationFrame drosseln → kein Re-Render pro Pixel (INP).
-    if (
-      typeof window === "undefined" ||
-      !window.matchMedia("(min-width: 1024px) and (pointer: fine)").matches
-    ) {
-      return;
-    }
-    let raf = 0;
-    const onMove = (e: MouseEvent) => {
-      if (raf) return;
-      raf = window.requestAnimationFrame(() => {
-        raf = 0;
-        setCursor({ x: e.clientX, y: e.clientY, visible: true });
-      });
-    };
-    window.addEventListener("mousemove", onMove, { passive: true });
-    return () => {
-      window.removeEventListener("mousemove", onMove);
-      if (raf) window.cancelAnimationFrame(raf);
-    };
-  }, [reduce]);
-
   // LCP-kritisch: Hero-Content muss im SSR-HTML sofort sichtbar sein (opacity:1),
   // sonst bleibt die Headline bis zur JS-Hydration unsichtbar → LCP-Killer auf Mobile.
   // Entrance bleibt als dezenter Slide (y) erhalten; nur das paint-blockierende Fade entfällt.
@@ -75,15 +40,6 @@ export default function Hero() {
         aria-hidden
         className="pointer-events-none absolute inset-0 z-0 opacity-60 [background-image:linear-gradient(rgba(10,10,10,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(10,10,10,0.035)_1px,transparent_1px)] [background-size:56px_56px] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_75%)]"
       />
-
-      {/* Cursor-Glow desktop */}
-      {mounted && cursor.visible && (
-        <div
-          aria-hidden
-          className="pointer-events-none fixed z-[60] hidden h-[360px] w-[360px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(22,99,222,0.10)_0%,rgba(22,99,222,0)_70%)] blur-2xl lg:block"
-          style={{ left: cursor.x, top: cursor.y }}
-        />
-      )}
 
       <BlogNav />
 

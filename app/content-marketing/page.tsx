@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
+import { ServiceHeroImageDesktop, ServiceHeroImageMobile } from "@/components/ServiceHeroImage";
 import { cities } from "@/content/cities";
 import BlogNav from "@/components/blog/BlogNav";
 import InlineCTA from "@/components/blog/InlineCTA";
@@ -129,9 +129,7 @@ export default function ContentMarketingHubPage() {
                 <span className="font-semibold text-[var(--text)]">zur Autorität in deinem Markt</span> machen.
               </p>
 
-              <div className="mx-auto mt-8 w-full max-w-md overflow-hidden rounded-3xl lg:hidden">
-                <Image src="/albert-portrait.jpg" alt="Albert Ipgefer — Content-Marketing für Mittelstand" width={1226} height={1300} priority fetchPriority="high" quality={75} sizes="(max-width: 640px) 360px, 480px" className="h-auto w-full" />
-              </div>
+              <ServiceHeroImageMobile src="/hero/content-marketing.webp" alt="Content-Marketing für Mittelstand — Wohlstandsmarketing" />
 
               <div className="mt-8 flex w-full max-w-sm flex-col items-stretch gap-3">
                 <Link href="/#strategie" aria-label="Erstgespräch zu Content-Marketing sichern" className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-[var(--text)] px-7 py-4 text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(22,99,222,0.5)] transition hover:shadow-[0_14px_40px_-10px_rgba(22,99,222,0.75)]">
@@ -166,13 +164,7 @@ export default function ContentMarketingHubPage() {
               </div>
             </div>
 
-            <div className="relative order-2 mx-auto hidden aspect-[4/5] w-full max-w-[440px] overflow-hidden rounded-3xl lg:block">
-              <Image src="/albert-portrait.jpg" alt="Albert Ipgefer — Content-Marketing für Mittelstand" fill priority fetchPriority="high" quality={85} sizes="440px" className="object-cover object-[50%_35%]" />
-              <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-[var(--bg)] to-transparent" />
-              <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-[var(--bg)] to-transparent" />
-              <div aria-hidden className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-[var(--bg)] to-transparent" />
-              <div aria-hidden className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-[var(--bg)] to-transparent" />
-            </div>
+            <ServiceHeroImageDesktop src="/hero/content-marketing.webp" alt="Content-Marketing für Mittelstand — Wohlstandsmarketing" />
           </div>
         </div>
       </section>

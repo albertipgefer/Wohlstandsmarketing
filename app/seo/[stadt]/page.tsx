@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { cities, getCity, getNeighbourCities } from "@/content/cities";
 import { getIndustry } from "@/content/industries";
 import { getSeoPosts } from "@/content/blog";
+import { ServiceHeroImageDesktop, ServiceHeroImageMobile } from "@/components/ServiceHeroImage";
 import BlogNav from "@/components/blog/BlogNav";
 import InlineCTA from "@/components/blog/InlineCTA";
 import PreFooterCTA from "@/components/PreFooterCTA";
@@ -235,19 +235,7 @@ export default async function SeoCityPage({
               </p>
 
               {/* Mobile/iPad photo */}
-              <div className="mx-auto mt-8 w-full max-w-md overflow-hidden rounded-3xl lg:hidden">
-                <Image
-                  src="/albert-portrait.jpg"
-                  alt={`Albert Ipgefer — SEO-Partner für Mittelstand in ${city.name}`}
-                  width={1226}
-                  height={1300}
-                  priority
-                  fetchPriority="high"
-                  quality={75}
-                  sizes="(max-width: 640px) 360px, 480px"
-                  className="h-auto w-full"
-                />
-              </div>
+              <ServiceHeroImageMobile src="/hero/seo.webp" alt={`SEO-Optimierung in ${city.name} — Wohlstandsmarketing`} />
 
               <div className="mt-8 flex w-full max-w-sm flex-col items-stretch gap-3">
                 <Link
@@ -320,23 +308,8 @@ export default async function SeoCityPage({
               </div>
             </div>
 
-            {/* Right column: Albert portrait — Desktop only */}
-            <div className="relative order-2 mx-auto hidden aspect-[4/5] w-full max-w-[440px] overflow-hidden rounded-3xl lg:block">
-              <Image
-                src="/albert-portrait.jpg"
-                alt={`Albert Ipgefer — SEO-Partner für Mittelstand in ${city.name}`}
-                fill
-                priority
-                fetchPriority="high"
-                quality={85}
-                sizes="440px"
-                className="object-cover object-[50%_35%]"
-              />
-              <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-[var(--bg)] to-transparent" />
-              <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-[var(--bg)] to-transparent" />
-              <div aria-hidden className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-[var(--bg)] to-transparent" />
-              <div aria-hidden className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-[var(--bg)] to-transparent" />
-            </div>
+            {/* Right column: Service hero — Desktop only */}
+            <ServiceHeroImageDesktop src="/hero/seo.webp" alt={`SEO-Optimierung in ${city.name} — Wohlstandsmarketing`} />
           </div>
         </div>
       </section>

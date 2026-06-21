@@ -75,8 +75,12 @@ export default async function IndustryServicePage({
 
   const combo = getIndustryServiceContent(industry.slug, svc.slug);
 
-  const otherServices = services.filter((s) => s.slug !== svc.slug);
-  const otherIndustries = industries.filter((i) => i.slug !== industry.slug);
+  const otherServices = services.filter(
+    (s) => s.slug !== svc.slug && industry.serviceSlugs.includes(s.slug),
+  );
+  const otherIndustries = industries.filter(
+    (i) => i.slug !== industry.slug && i.serviceSlugs.includes(svc.slug),
+  );
   const relevantPosts = getServicePosts(svc.slug);
   const deliverables = combo
     ? [...combo.deliverables, ...svc.deliverables]

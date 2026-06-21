@@ -184,6 +184,103 @@ const industryServiceContent: Record<string, IndustryServiceContent> = {
     ],
   },
 
+  /* ──────────────────────── ARZTPRAXEN × SERVICES ────────────────── */
+
+  'arztpraxen/unternehmenswebsite': {
+    uniqueAngle: `Deine Praxis-Webseite ist mehr als eine digitale Visitenkarte — sie ist die erste Anlaufstelle für Patienten, die sich noch vor der Terminanfrage ein Bild machen wollen: Wer sind die Ärzte? Was sind die Leistungen? Kann ich hier direkt einen Termin anfragen? Wir bauen den Fundament-Auftritt, der Vertrauen schafft, dein Leistungsspektrum klar strukturiert und eine Online-Terminanfrage so einfach macht, dass das Telefon an der Anmeldung spürbar ruhiger wird. Barrierefrei, datenschutzkonform und HWG-konform von Anfang an — damit du nichts riskierst und dein Team entlastet wird.`,
+    deliverables: [
+      `Leistungsseiten je Fachgebiet und Behandlungsangebot — strukturiert für Neu- und Bestandspatienten, sachlich und HWG-konform formuliert`,
+      `Online-Terminanfrage direkt eingebunden — DSGVO-konform, mobil optimiert und so gestaltet, dass das Praxisteam weniger Anrufe bearbeiten muss`,
+      `Team- und Praxisprofil mit Qualifikationen, Sprechzeiten und Anfahrt — die Informationen, die Patienten zuerst suchen, sofort sichtbar`,
+    ],
+    faqs: [
+      {
+        q: `Darf meine Praxis-Webseite aktiv auf neue Patienten hinweisen?`,
+        a: `Ja — sachliche Information über Leistungen, Sprechzeiten und dein Team ist ausdrücklich erlaubt. Das Heilmittelwerbegesetz (HWG) verbietet Heilversprechen und irreführende Aussagen über Behandlungsergebnisse, nicht aber seriöse Praxisdarstellung. Wir formulieren jeden Text bewusst so, dass er informiert und Vertrauen aufbaut — ohne rechtliche Graubereiche.`,
+      },
+      {
+        q: `Muss eine Praxis-Webseite barrierefrei sein?`,
+        a: `Das Barrierefreiheitsstärkungsgesetz (BFSG) trifft viele Unternehmen ab 2025 — für Gesundheitsdienstleister empfehlen wir Barrierefreiheit nach WCAG grundsätzlich, unabhängig von der konkreten Pflicht: Sie erleichtert älteren Patienten und Menschen mit Einschränkungen die Nutzung deutlich und senkt die Abbruchrate bei der Terminanfrage. Wir bauen von Anfang an barrierefrei.`,
+      },
+    ],
+  },
+
+  'arztpraxen/landingpage': {
+    uniqueAngle: `Nicht jede Praxisleistung gehört auf die allgemeine Webseite — Selbstzahler-Angebote und IGeL-Leistungen wie Stoßwellentherapie, ästhetische Medizin oder präventive Check-ups funktionieren auf einer eigenen Landingpage deutlich besser: klare Leistungsbeschreibung, Nutzenargumente und eine direkte Terminanfrage, ohne dass der Besucher durch Sprechzeiten und Anfahrtsbeschreibungen klicken muss. Das ist besonders wertvoll, wenn du eine Leistung gezielt ausbauen, eine neue Zielgruppe ansprechen oder den Privatpatienten-Anteil erhöhen möchtest — ohne die gesamte Webseite umzubauen.`,
+    deliverables: [
+      `Eigenständige Seite ohne ablenkende Navigation, vollständig auf eine Leistung oder Zielgruppe ausgerichtet — z. B. „IGeL-Leistungen [Praxis]" oder „Präventions-Check-up ab 40"`,
+      `HWG-konforme Leistungsbeschreibung mit klaren Nutzenargumenten — sachlich, vertrauensbildend und ohne unzulässige Wirkungsversprechen`,
+      `Terminanfrage-Formular direkt auf der Seite — DSGVO-konform, niedrigschwellig und messbar in der Anfrage-Rate`,
+    ],
+    faqs: [
+      {
+        q: `Für welche Praxis-Leistungen eignet sich eine Landingpage besonders?`,
+        a: `Vor allem für Selbstzahler-Angebote und IGeL-Leistungen, die nicht durch die Krankenkasse erstattet werden — etwa ästhetische Behandlungen, Sport- oder Reisemedizin, Präventions-Check-ups oder spezielle Diagnostikleistungen. Diese Patienten suchen aktiv und entscheiden selbst: Eine fokussierte Seite, die klar erklärt und direkt zur Terminanfrage führt, holt sie zuverlässig ab.`,
+      },
+      {
+        q: `Wie stellen wir sicher, dass die Landingpage das Heilmittelwerbegesetz einhält?`,
+        a: `Das HWG ist bei Landingpages für medizinische Leistungen der wichtigste rechtliche Rahmen. Wir schreiben ausschließlich sachliche, belegbare Aussagen — keine Heilversprechen, keine Vorher-Nachher-Vergleiche ohne ärztliche Grundlage, keine Aussagen über sicher zu erwartende Behandlungsergebnisse. Alle Formulierungen stimmen wir mit dir inhaltlich ab, bevor die Seite live geht.`,
+      },
+    ],
+  },
+
+  'arztpraxen/relaunch': {
+    uniqueAngle: `Viele Praxen haben eine Webseite, die vor Jahren jemand gebaut hat — seitdem läuft sie irgendwie, aber bringt nichts mehr: keine Online-Terminanfrage, langsames Laden auf dem Handy, kein strukturiertes Leistungsangebot. Patienten, die sich online vorinformieren, springen ab, bevor sie die Telefonnummer gesucht haben. Ein Relaunch holt diesen Verlust auf: moderne Darstellung, Terminanfrage direkt auf der Startseite und eine Struktur, die Fragen beantwortet, bevor sie jemand stellt — alles ohne dass die Praxis dabei für Suchmaschinen unsichtbar wird.`,
+    deliverables: [
+      `Audit der bestehenden Seite: Welche Inhalte, Verlinkungen und etwaige Rankings übernommen werden müssen — und was entfernt oder neu strukturiert wird`,
+      `Modernisierter Auftritt mit Online-Terminanfrage, klarer Leistungsdarstellung und barrierefreier Bedienung nach WCAG`,
+      `Lückenloses Redirect-Konzept für alle bestehenden Seiten-URLs, damit keine Patienten-Verweise ins Leere laufen`,
+    ],
+    faqs: [
+      {
+        q: `Was passiert mit dem Kontaktformular und dem Buchungssystem, das unsere Patienten kennen?`,
+        a: `Diese Verknüpfungen erfassen wir im Audit als kritische Pfade und überführen sie gezielt in den neuen Auftritt. Patienten-Bookmarks, Links aus Arztbriefen oder Verweise auf dein bestehendes Buchungssystem bleiben funktionsfähig. Gleichzeitig nutzen wir den Relaunch, um das Terminanfrage-Erlebnis zu verbessern — nicht nur zu erhalten.`,
+      },
+      {
+        q: `Unsere Seite ist veraltet, hat aber kaum Anfragen gebracht — warum sollte ein Relaunch daran etwas ändern?`,
+        a: `Eine alte Seite, die keine Anfragen bringt, hat meist klare strukturelle Ursachen: keine sichtbare Terminanfrage, schlechte Mobil-Darstellung oder ein Leistungsangebot, das Patienten nicht sofort verstehen. Der Relaunch ist kein kosmetisches Update — wir analysieren zuerst, was Anfragen kostet, und beheben genau das. Ergebnis ist eine Seite, die als aktives Praxiswerkzeug funktioniert, nicht nur als digitale Broschüre.`,
+      },
+    ],
+  },
+
+  'arztpraxen/seo': {
+    uniqueAngle: `Wer heute einen Zahnarzt, Orthopäden oder Allgemeinmediziner sucht, tippt selten einen Namen ein — sondern „[Facharzt] [Stadt]" oder „Arzt in der Nähe". Gerade bei Fachärzten kommt hinzu, dass Patienten spezifisch nach einer Spezialisierung suchen: „Sportmediziner [Stadt]" oder „Praxis für Naturheilkunde [Region]". Wir bringen deine Praxis für genau diese Kombis nach vorn, optimieren dein Google Business Profile und Google Maps-Profil und sorgen dafür, dass deine Fachkompetenz lokal gefunden wird — von Patienten, die bereits einen Termin buchen wollen.`,
+    deliverables: [
+      `Facharzt- und Standort-Keyword-Recherche: Welche Suchbegriffe Patienten in deiner Region tatsächlich verwenden — und wie umkämpft sie sind`,
+      `Google Business Profile und Maps vollständig optimiert — mit Öffnungszeiten, Leistungen, Fotos und Bewertungsstrategie`,
+      `Lokale Leistungsseiten für deine Fachgebiete und Behandlungsschwerpunkte — auffindbar für Suchende mit konkretem Bedarf`,
+    ],
+    faqs: [
+      {
+        q: `Wie unterscheidet sich SEO für Arztpraxen von SEO für andere Branchen?`,
+        a: `Zwei Punkte sind entscheidend: Erstens sind die Suchanfragen sehr lokal — Patienten suchen fast ausschließlich in ihrer Nähe, der Radius ist kleiner als in den meisten Branchen. Zweitens gibt es klare HWG-Grenzen bei der inhaltlichen Optimierung: Leistungsseiten müssen sachlich bleiben, keine Wirkungsversprechen enthalten und dürfen Patienten nicht in eine bestimmte Behandlung drängen. Wir kennen diese Grenzen und bauen deine SEO so, dass sie rechtlich sauber und gleichzeitig wirksam ist.`,
+      },
+      {
+        q: `Kann SEO auch dabei helfen, qualifiziertes Praxispersonal (MFAs) zu gewinnen?`,
+        a: `Ja — über Karriere-Seiten und gezielte Such-Optimierung für Begriffe wie „MFA Stelle [Stadt]" oder „Arzthelfer/in Job [Region]". Gerade in der Kombination aus Patienten-SEO und Bewerber-SEO lässt sich die Praxisseite als vollständiges Recruiting-Werkzeug nutzen, ohne getrennte Investitionen in Jobbörsen.`,
+      },
+    ],
+  },
+
+  'arztpraxen/ki-sichtbarkeit': {
+    uniqueAngle: `Patienten, die umziehen, einen neuen Spezialisten suchen oder nach einer IGeL-Leistung fragen, nutzen immer häufiger ChatGPT oder Perplexity statt nur Google — und fragen direkt: „Welcher Hautarzt in Stuttgart hat gute Bewertungen?" oder „Gibt es einen Internisten in Köln, der auf Diabetes spezialisiert ist?" KI-Systeme antworten mit Praxen, die ihnen bekannt sind, mit klaren Informationen über Fachgebiet, Standort und Spezialisierung — alle anderen bleiben unsichtbar. Mit einem vollständigen schema.org-Entity-Profil, strukturierten Antwortinhalten und KI-Crawler-Freigaben sorgen wir dafür, dass ChatGPT, Perplexity und die Google AI Overviews deine Praxis als Anlaufstelle für Patienten in deiner Region kennen und nennen.`,
+    deliverables: [
+      `Vollständiges schema.org-Entity-Profil für deine Praxis: Fachgebiet, Spezialisierungen, Standort, Sprechzeiten und Kontaktdaten — strukturiert lesbar für KI-Systeme`,
+      `Answer Engine Optimization für häufige Patientenfragen deiner Fachrichtung (z. B. „Was behandelt ein Orthopäde?" oder „Wann brauche ich einen Facharzt für ...?") — als zitierfähige Antworten auf deiner Webseite`,
+      `llms.txt-Konfiguration und KI-Crawler-Freigabe für GPTBot, ClaudeBot, PerplexityBot — damit KI-Systeme deine Praxis vollständig einlesen und korrekt einordnen können`,
+    ],
+    faqs: [
+      {
+        q: `Welche Patienten nutzen ChatGPT für die Arztsuche?`,
+        a: `Vor allem technikaffine Patienten zwischen 25 und 55, die recherchieren statt nur zu googeln — und besonders die, die nach einer Spezialisierung oder einer Selbstzahler-Leistung suchen. Gerade bei IGeL oder Privatleistungen ist die KI-Suche relevant, weil Patienten dort intensiver vergleichen. Für Fachärzte in Nischen mit wenig Wettbewerb kann ein frühes KI-Profil den entscheidenden Unterschied machen.`,
+      },
+      {
+        q: `Ist KI-Sichtbarkeit für Praxen rechtlich unbedenklich?`,
+        a: `Ja, wenn die Grundlage stimmt: Wir bauen das Profil ausschließlich auf sachlichen, belegbaren Informationen — Fachgebiet, Qualifikationen, Leistungsangebot, Standort. Keine Behandlungsversprechen, keine Rangvergleiche, keine Superlative. Genau das ist es, was KI-Systeme ohnehin bevorzugen: klare, strukturierte Fakten statt Werbesprache. Damit bewegen wir uns im HWG-konformen Rahmen und bauen gleichzeitig ein glaubwürdiges Profil auf.`,
+      },
+    ],
+  },
+
   'steuerberater/content-marketing': {
     uniqueAngle: `Mandanten vertrauen dem Steuerberater, der komplexe Themen verständlich erklärt — noch bevor sie das erste Gespräch führen. Ratgeber-Artikel zu Themen wie „GmbH gründen: was ist steuerlich zu beachten?” oder „Betriebsausgaben für Freiberufler — was zählt wirklich?” beantworten Fragen, die deine Wunsch-Mandanten ohnehin stellen. Du positionierst dich dabei als Experte, wirst bei Google für diese Suchanfragen gefunden und baust gleichzeitig den Expertenstatus auf, den KI-Systeme als Empfehlungsgrundlage nutzen. Content-Marketing für Kanzleien ist kein Selbstzweck — es ist der verlässlichste Weg, Vertrauen zu skalieren, ohne für jeden Kontakt aktiv Zeit zu investieren.`,
     deliverables: [

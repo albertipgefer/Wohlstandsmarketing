@@ -421,7 +421,7 @@ const industryServiceContent: Record<string, IndustryServiceContent> = {
   'immobilienmakler/relaunch': {
     uniqueAngle: `Eigentümer, die ein Objekt im Wert von mehreren hunderttausend Euro verkaufen wollen, wählen ihren Makler mit höchster Sorgfalt — und ein veralteter Webauftritt ist das erste, das sie rausfallen lässt. Ein Makler mit einer Webseite aus 2016 wirkt nicht etabliert, sondern überholt — selbst wenn hinter dem Logo jahrelange Marktkenntnis steckt. Ein Relaunch modernisiert nicht nur das Erscheinungsbild, sondern macht aus einer digitalen Bürde ein aktives Akquise-Werkzeug: Bewertungsanfrage prominent platziert, verkaufte Objekte als Beweis inszeniert, Ladezeiten auf Smartphone-Level — und das alles, ohne dass bisherige Seitenstrukturen und Verlinkungen verloren gehen.`,
     deliverables: [
-      `Audit des bestehenden Auftritts mit Fokus auf Eigentümer-Conversion: Wo verlässt dich ein verkaufswilliger Eigentümer gerade wieder, bevor er eine Anfrage stellt`,
+      `Audit des bestehenden Auftritts mit Fokus auf Eigentümer-Conversion: Wo verlässt dich ein verkaufswilliger Eigentümer gerade wieder, bevor er eine Anfrage stellt?`,
       `Modernisierter Auftritt mit Objekt-Referenzen, Markt-Positionierung und prominent gesetzter Bewertungsanfrage — visuell auf Premium-Anspruch der Eigentümer abgestimmt`,
       `Vollständiges Redirect-Konzept, das alle bestehenden URLs, Portals-Verlinkungen und bisherige SEO-Signale auf den neuen Auftritt überträgt`,
     ],
@@ -441,7 +441,7 @@ const industryServiceContent: Record<string, IndustryServiceContent> = {
     uniqueAngle: `Für Immobilienmakler gibt es zwei grundlegend verschiedene SEO-Ziele: Käufer finden Objekte über Portale — aber Eigentümer, die verkaufen wollen, suchen aktiv nach dem richtigen Makler oder nach einer Immobilienbewertung. Genau diese zweite Gruppe ist die, die über SEO den höchsten Provisionswert pro Anfrage bringt. Wer bei „Immobilienmakler [Stadt]", „Haus verkaufen [Stadt]" oder „Immobilienbewertung [Stadtbezirk]" auf Seite 1 erscheint, erreicht Eigentümer im Moment ihrer höchsten Kaufbereitschaft — und wird in deren Shortlist aufgenommen, bevor der erste Anruf getätigt wird.`,
     deliverables: [
       `Eigentümer-orientierte Keyword-Strategie: „Haus verkaufen [Stadt]", „Immobilienbewertung [Bezirk]", „Wohnung verkaufen [Region]" — Suchanfragen mit direktem Mandat-Potenzial`,
-      `Stadtteil- und Objekt-Seiten für dein Einzugsgebiet: Marktberichte, lokale Preisentwicklung und Verkaufs-Expertise nach Bezirk — sowohl für Google als auch für KI-Antworten zitierfähig`,
+      `Stadtteil- und Objekt-Seiten für dein Einzugsgebiet: Marktberichte, lokale Preisentwicklung und Verkaufs-Expertise nach Bezirk — die Suchanfragen verkaufswilliger Eigentümer gezielt abdecken`,
       `Google Business Profile vollständig optimiert als lokale Vertrauensanker — mit Transaktionsnachweisen, Bewertungen und Spezialgebieten`,
     ],
     faqs: [

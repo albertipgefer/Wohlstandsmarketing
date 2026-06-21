@@ -136,8 +136,8 @@ const industryServiceContent: Record<string, IndustryServiceContent> = {
     ],
     faqs: [
       {
-        q: `Verliere ich durch den Relaunch Positionen bei Google, die ich mir erarbeitet habe?`,
-        a: `Nein — wenn der Relaunch sauber umgesetzt wird. Wir überführen alle bestehenden URLs mit einem 301-Redirect-Konzept, übernehmen relevante Inhalte und schützen aufgebaute Sichtbarkeit. Ein gut gemachter Relaunch verbessert deine Auffindbarkeit typischerweise, statt sie zu gefährden.`,
+        q: `Verliere ich durch den Relaunch meine bisherigen Mandantenanfragen aus dem Web?`,
+        a: `Nicht, wenn der Übergang sorgfältig geplant wird. Für Kanzleien ist dabei besonders wichtig: externe Verlinkungen auf dein DATEV-Mandantenportal, Onboarding-Formulare und Anmeldeseiten müssen erreichbar bleiben — ein Redirect auf die falsche Seite kostet echte Mandanten. Wir erfassen alle kritischen Pfade vorab im Audit und leiten sie gezielt um. Gleichzeitig prüfen wir, ob dein Impressum die Pflichtangaben für Berufsträger vollständig enthält (Kammerzulassung, Berufshaftpflicht-Hinweis) — denn ein lückenhaftes Impressum schadet dem Vertrauenseindruck, den ein professioneller Relaunch aufbauen soll.`,
       },
       {
         q: `Meine aktuelle Webseite bringt kaum Anfragen — liegt das wirklich am Design?`,
@@ -156,7 +156,7 @@ const industryServiceContent: Record<string, IndustryServiceContent> = {
     faqs: [
       {
         q: `Wie lange dauert es, bis meine Kanzlei bei Google sichtbar wird?`,
-        a: `Für weniger umkämpfte Nischen-Kombinationen (z. B. „Steuerberater Lohnbuchhaltung [mittelgroße Stadt]”) sind erste Bewegungen oft in wenigen Wochen sichtbar. Stark umkämpfte Begriffe in Großstädten brauchen länger. Wir starten bewusst mit den Anfragen, bei denen du am schnellsten Wirkung siehst.`,
+        a: `Das hängt stark davon ab, wie du positioniert bist. Wer auf eine thematische Nische setzt — etwa „Steuerberater für Ärzte [Stadt]” oder „Steuerberater E-Commerce [Region]” — trifft auf deutlich weniger Wettbewerb als bei der generischen Suche. Gleichzeitig sind diese Mandanten oft wertvoller und die Abschlussquote höher. In solchen Segmenten entstehen messbare Bewegungen oft schneller, als es bei breiten Keywords der Fall wäre. Und selbst wenn du in einer Großstadt arbeitest, hat die Nischen-Spezialisierung einen klaren Vorteil: Google und deine Wunsch-Mandanten verstehen sofort, wofür du stehst.`,
       },
       {
         q: `Lohnt sich SEO, wenn ich bereits voll ausgelastet bin?`,
@@ -166,7 +166,7 @@ const industryServiceContent: Record<string, IndustryServiceContent> = {
   },
 
   'steuerberater/ki-sichtbarkeit': {
-    uniqueAngle: `Mandanten fragen heute nicht mehr nur Google — sie fragen ChatGPT: „Welcher Steuerberater in München ist auf GmbHs spezialisiert?” oder „Wer kennt sich mit DATEV und digitalem Belegwesen aus?” Die KI antwortet mit Kanzleien, die ihr bekannt sind — und ignoriert alle anderen vollständig. KI-Sichtbarkeit für Steuerberater bedeutet: Wir bauen das Entity-Profil deiner Kanzlei mit schema.org-Markup, E-E-A-T-Signalen und klaren Antwortformaten so auf, dass ChatGPT, Perplexity und die Google AI Overviews deine Kanzlei als vertrauenswürdige Anlaufstelle für Mandanten in deiner Region und deiner Nische kennen und empfehlen.`,
+    uniqueAngle: `Mandanten fragen heute nicht mehr nur Google — sie fragen ChatGPT: „Welcher Steuerberater in München ist auf GmbHs spezialisiert?” oder „Gibt es eine Kanzlei in Köln, die sich auf Freiberufler konzentriert?” Die KI antwortet mit Kanzleien, die ihr bekannt sind — und ignoriert alle anderen vollständig. KI-Sichtbarkeit für Steuerberater bedeutet: Wir bauen das Entity-Profil deiner Kanzlei mit schema.org-Markup, E-E-A-T-Signalen und klaren Antwortformaten so auf, dass ChatGPT, Perplexity und die Google AI Overviews deine Kanzlei als vertrauenswürdige Anlaufstelle für Mandanten in deiner Region und deiner Nische kennen und empfehlen.`,
     deliverables: [
       `Vollständiges schema.org-Entity-Profil: Kanzleiname, Standort, Fachberater-Qualifikationen, Leistungsschwerpunkte — strukturiert lesbar für KI-Systeme`,
       `Answer Engine Optimization für typische Mandantenfragen (z. B. „Was kostet ein Steuerberater für eine GmbH?”) — als zitierfähige Antworten auf deiner Webseite`,
@@ -188,7 +188,7 @@ const industryServiceContent: Record<string, IndustryServiceContent> = {
     uniqueAngle: `Mandanten vertrauen dem Steuerberater, der komplexe Themen verständlich erklärt — noch bevor sie das erste Gespräch führen. Ratgeber-Artikel zu Themen wie „GmbH gründen: was ist steuerlich zu beachten?” oder „Betriebsausgaben für Freiberufler — was zählt wirklich?” beantworten Fragen, die deine Wunsch-Mandanten ohnehin stellen. Du positionierst dich dabei als Experte, wirst bei Google für diese Suchanfragen gefunden und baust gleichzeitig den Expertenstatus auf, den KI-Systeme als Empfehlungsgrundlage nutzen. Content-Marketing für Kanzleien ist kein Selbstzweck — es ist der verlässlichste Weg, Vertrauen zu skalieren, ohne für jeden Kontakt aktiv Zeit zu investieren.`,
     deliverables: [
       `Mandantenorientierte Themen- und Keyword-Strategie: Welche Fragen stellen deine Wunsch-Mandanten bei Google — und welche beantworten wir als Erste?`,
-      `Redaktionell hochwertige Fachbeiträge mit echter Tiefe — kein KI-Massentext, sondern substanzstarker Inhalt, der Vertrauen schafft und rankt`,
+      `Faktengeprüfte, redaktionell betreute Fachbeiträge mit echter inhaltlicher Tiefe — substanzstarker Inhalt, der Vertrauen schafft und rankt`,
       `Internes Verlinkungskonzept, das Ratgeber-Inhalte auf deine Leistungsseiten lenkt und Anfrage-Impulse setzt`,
     ],
     faqs: [

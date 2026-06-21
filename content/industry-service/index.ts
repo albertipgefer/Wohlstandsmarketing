@@ -378,6 +378,103 @@ const industryServiceContent: Record<string, IndustryServiceContent> = {
     ],
   },
 
+  /* ─────────────────── IMMOBILIENMAKLER × SERVICES ──────────────── */
+
+  'immobilienmakler/unternehmenswebsite': {
+    uniqueAngle: `Als Immobilienmakler gewinnst du Mandate nicht durch Inserate, sondern durch Vertrauen — und das beginnt heute, bevor ein Eigentümer die Telefonnummer wählt. Wer sein Haus oder seine Eigentumswohnung verkaufen möchte, sucht online nach dem Makler, der in der Region als Platzhirsch gilt, und bewertet dessen Professionalität am Auftritt. Eine starke Makler-Webseite zeigt deine verkauften Objekte, deine Marktkenntnis und dein Bewertungsangebot — und macht Eigentümern klar, warum gerade du ihr Mandat bekommen solltest. Wer diesen ersten Eindruck nicht beherrscht, verliert das Mandat, noch bevor der erste Besichtigungstermin je stattgefunden hat.`,
+    deliverables: [
+      `Referenz-Galerie mit verkauften Objekten (Erzielter Preis, Verkaufszeit, Stadtbezirk) — konkrete Beweise für deine Marktleistung, nicht leere Versprechen`,
+      `Integriertes Immobilienbewertungs-Tool oder Bewertungsanfrage — der stärkste Lead-Magnet für Eigentümer, direkt auf der Startseite sichtbar`,
+      `Über-dich-Seite mit regionaler Spezialisierung, Transaktionshistorie und persönlichem Vertrauensaufbau — denn Eigentümer vergeben Mandate an Menschen, nicht an Logos`,
+    ],
+    faqs: [
+      {
+        q: `Reicht nicht ein Profil auf ImmoScout oder Immowelt für meine Sichtbarkeit?`,
+        a: `Portale helfen dir, vorhandene Objekte an Käufer zu bringen — aber sie helfen dir nicht dabei, neue Mandate von Eigentümern zu gewinnen. Ein Eigentümer, der seinen Hausverkauf plant, googelt nicht nach einem Portal, sondern nach dem besten Makler in seiner Stadt. Dort braucht du eine eigene Webseite, die dich als Experten positioniert. Wer kein eigenes Fundament hat, steht auf dem Boden der Plattform und zahlt deren Regeln.`,
+      },
+      {
+        q: `Wie zeige ich meine bisherigen Verkaufserfolge, ohne Datenschutzprobleme zu bekommen?`,
+        a: `Referenzen veröffentlichst du auf Stadtbezirk- oder Straßennamen-Ebene, nicht mit vollständiger Adresse. Angaben wie „4-Zimmer-Wohnung in Köln-Lindenthal, verkauft in 3 Wochen, 8 % über Angebotspreis" sind aussagekräftig und problemlos datenschutzkonform. Wir formulieren deine Referenzen so, dass sie maximale Überzeugungskraft haben — und rechtlich sauber bleiben.`,
+      },
+    ],
+  },
+
+  'immobilienmakler/landingpage': {
+    uniqueAngle: `Der rentabelste Lead, den ein Immobilienmakler gewinnen kann, ist ein Eigentümer, der eine kostenlose Immobilienbewertung anfragt — denn dahinter steckt in den meisten Fällen ein konkreter Verkaufswunsch. Eine fokussierte Bewertungs-Landingpage hat genau dieses eine Ziel: Eigentümer, die „Haus verkaufen [Stadt]" oder „Immobilienbewertung [Stadt]" suchen, landen auf einer Seite ohne Ablenkungen, verstehen sofort den Mehrwert und tragen sich ein. Statt einer langen Makler-Webseite, die viele Themen gleichzeitig bedient, bündelt diese Seite die gesamte Conversion-Kraft auf den einen Einstieg in deine Eigentümer-Akquise.`,
+    deliverables: [
+      `Bewertungsanfrage-Formular als zentrales Conversion-Element — mehrstufig, niedrigschwellig und auf Eigentümer-Psychologie ausgelegt (Immobilientyp, Lage, Kontaktdaten in sinnvoller Reihenfolge)`,
+      `Vertrauenssignale speziell für Eigentümer: Anzahl erfolgreicher Verkäufe, durchschnittliche Verkaufszeit, Kundenstimmen von Verkäufern — kein allgemeines Makler-Marketing`,
+      `Suchbegriff-Fokus auf Eigentümer-Suchanfragen wie „Immobilienbewertung [Stadt]" oder „Haus verkaufen [Stadt]" — technisch und inhaltlich darauf ausgerichtet`,
+    ],
+    faqs: [
+      {
+        q: `Warum eine eigene Landingpage für die Bewertung, wenn das auch auf meiner Hauptseite stehen kann?`,
+        a: `Eine Webseite bedient viele Besucher gleichzeitig — Käufer, Mieter, Eigentümer. Wer eine Bewertungsanfrage auf der Startseite unterbringt, konkurriert dort mit Objektinseraten, dem Über-uns-Link und allem anderen. Eine dedizierte Landingpage lenkt jeden Eigentümer, der von einer Anzeige oder aus der Suche kommt, auf exakt eine Entscheidung: Bewertung anfragen — ja oder nein. Diese Klarheit erhöht die Anfrage-Rate messbar.`,
+      },
+      {
+        q: `Funktioniert die Landingpage auch ohne geschaltete Anzeigen?`,
+        a: `Ja — wenn sie sauber auf Eigentümer-Suchbegriffe optimiert ist. „Immobilienbewertung kostenlos [Stadt]" oder „Haus verkaufen ohne Makler Kosten [Stadt]" sind Suchanfragen mit klarer Kaufbereitschaft und vergleichsweise wenig Wettbewerb unter regionalen Maklern. Wir bauen die Seite so, dass sie sowohl aus der organischen Suche als auch aus bezahlten Kampagnen heraus konvertiert — du kannst mit dem organischen Kanal starten und später skalieren.`,
+      },
+    ],
+  },
+
+  'immobilienmakler/relaunch': {
+    uniqueAngle: `Eigentümer, die ein Objekt im Wert von mehreren hunderttausend Euro verkaufen wollen, wählen ihren Makler mit höchster Sorgfalt — und ein veralteter Webauftritt ist das erste, das sie rausfallen lässt. Ein Makler mit einer Webseite aus 2016 wirkt nicht etabliert, sondern überholt — selbst wenn hinter dem Logo jahrelange Marktkenntnis steckt. Ein Relaunch modernisiert nicht nur das Erscheinungsbild, sondern macht aus einer digitalen Bürde ein aktives Akquise-Werkzeug: Bewertungsanfrage prominent platziert, verkaufte Objekte als Beweis inszeniert, Ladezeiten auf Smartphone-Level — und das alles, ohne dass bisherige Seitenstrukturen und Verlinkungen verloren gehen.`,
+    deliverables: [
+      `Audit des bestehenden Auftritts mit Fokus auf Eigentümer-Conversion: Wo verlässt dich ein verkaufswilliger Eigentümer gerade wieder, bevor er eine Anfrage stellt`,
+      `Modernisierter Auftritt mit Objekt-Referenzen, Markt-Positionierung und prominent gesetzter Bewertungsanfrage — visuell auf Premium-Anspruch der Eigentümer abgestimmt`,
+      `Vollständiges Redirect-Konzept, das alle bestehenden URLs, Portals-Verlinkungen und bisherige SEO-Signale auf den neuen Auftritt überträgt`,
+    ],
+    faqs: [
+      {
+        q: `Kann ich beim Relaunch meine bestehenden Objekt-Listings und Exposé-Links erhalten?`,
+        a: `Ja — und genau das ist beim Makler-Relaunch besonders wichtig. Objekt-URLs sind oft auf externen Portalen, in E-Mails an Interessenten oder in Exposés verlinkt. Diese Pfade erfassen wir im Audit vollständig und stellen sicher, dass Interessenten nicht auf eine Fehlerseite stoßen, sondern auf das aktualisierte Objekt oder eine sinnvolle Weiterleitung. Ein abgebrochener Aufruf bei einem hochpreisigen Objekt ist ein verlorener Lead.`,
+      },
+      {
+        q: `Mein bisheriger Auftritt hat funktioniert — was bringt ein Relaunch wirklich?`,
+        a: `Die Frage ist nicht, ob dein Auftritt „funktioniert", sondern wie viele Eigentümer du verlierst, bevor sie dich je kontaktieren. Ein potenzieller Auftraggeber mit einem Objekt für 600.000 € schaut sich online 3–5 Makler an und entscheidet dann. Wenn dein Auftritt bei diesem Vergleich nicht überzeugt, bekommst du die Anfrage gar nicht erst — und weißt es nie. Ein Relaunch ist also kein Reparieren von Sichtbarem, sondern das Schließen einer unsichtbaren Lücke in deiner Eigentümer-Pipeline.`,
+      },
+    ],
+  },
+
+  'immobilienmakler/seo': {
+    uniqueAngle: `Für Immobilienmakler gibt es zwei grundlegend verschiedene SEO-Ziele: Käufer finden Objekte über Portale — aber Eigentümer, die verkaufen wollen, suchen aktiv nach dem richtigen Makler oder nach einer Immobilienbewertung. Genau diese zweite Gruppe ist die, die über SEO den höchsten Provisionswert pro Anfrage bringt. Wer bei „Immobilienmakler [Stadt]", „Haus verkaufen [Stadt]" oder „Immobilienbewertung [Stadtbezirk]" auf Seite 1 erscheint, erreicht Eigentümer im Moment ihrer höchsten Kaufbereitschaft — und wird in deren Shortlist aufgenommen, bevor der erste Anruf getätigt wird.`,
+    deliverables: [
+      `Eigentümer-orientierte Keyword-Strategie: „Haus verkaufen [Stadt]", „Immobilienbewertung [Bezirk]", „Wohnung verkaufen [Region]" — Suchanfragen mit direktem Mandat-Potenzial`,
+      `Stadtteil- und Objekt-Seiten für dein Einzugsgebiet: Marktberichte, lokale Preisentwicklung und Verkaufs-Expertise nach Bezirk — sowohl für Google als auch für KI-Antworten zitierfähig`,
+      `Google Business Profile vollständig optimiert als lokale Vertrauensanker — mit Transaktionsnachweisen, Bewertungen und Spezialgebieten`,
+    ],
+    faqs: [
+      {
+        q: `Wie unterscheidet sich SEO für Makler von SEO für andere lokale Dienstleister?`,
+        a: `Der entscheidende Unterschied liegt im Ziel: Makler müssen primär Eigentümer ansprechen, nicht Käufer. Käufer kommen über Portale — das ist ein Kanal, der bereits besetzt ist. Eigentümer hingegen suchen aktiv nach dem besten Ansprechpartner in ihrer Region und bewerten dabei Marktkenntnis, Reputation und Professionalität. Die richtigen Keywords, Landingpages und Marktberichte für dieses Segment werden von den meisten Maklern nicht besetzt — obwohl genau hier die Mandats-Entscheidung fällt.`,
+      },
+      {
+        q: `Bringt lokales SEO auch Vorteile in benachbarten Stadtteilen oder Gemeinden?`,
+        a: `Ja, wenn du es gezielt aufbaust. Ein Makler, der für „Immobilienmakler Bonn-Bad Godesberg", „Immobilienmakler Bonn-Beuel" und „Haus verkaufen Bonn" gleichzeitig sichtbar ist, dominiert die Region flächendeckend — während Wettbewerber nur im Stadtzentrum präsent sind. Wir planen den Seitenaufbau so, dass du Schritt für Schritt dein Einzugsgebiet digital als Territorium markierst.`,
+      },
+    ],
+  },
+
+  'immobilienmakler/ki-sichtbarkeit': {
+    uniqueAngle: `Wer heute in ChatGPT oder Perplexity fragt „Welcher Immobilienmakler ist der beste in München-Schwabing?" oder „Wer kennt sich mit Eigentumswohnungen in Düsseldorf aus?", bekommt eine Empfehlung — oder gar keine. Makler, die in KI-Antworten auftauchen, werden als Marktautoritäten wahrgenommen, noch bevor ein erstes Gespräch stattfindet. Das ist besonders wertvoll in einer Branche, in der Vertrauen und regionaler Ruf die Mandat-Entscheidung treffen. Wir bauen dein Entity-Profil mit vollständigem schema.org-Markup, Answer Engine Optimization und strukturierten Marktberichten so auf, dass ChatGPT, Perplexity und Google AI Overviews dich als Anlaufstelle für Eigentümer in deiner Region kennen und empfehlen.`,
+    deliverables: [
+      `Vollständiges schema.org-Entity-Profil: Maklerbezeichnung, Standort, Spezialisierungen (z. B. Wohnimmobilien, Gewerbe, Luxussegment), Einzugsgebiet und Kontakt — strukturiert für KI-Lesbarkeit`,
+      `Answer Engine Optimization für typische Eigentümer-Fragen: „Was kostet ein Makler beim Hausverkauf?", „Wie läuft ein Immobilienverkauf ab?", „Wann ist der beste Zeitpunkt zum Verkaufen?" — als zitierfähige Antworten mit deiner Expertise hinterlegt`,
+      `llms.txt-Konfiguration und Crawler-Freigabe für GPTBot, ClaudeBot, PerplexityBot und OAI-SearchBot`,
+    ],
+    faqs: [
+      {
+        q: `Nutzen Eigentümer wirklich ChatGPT für die Makler-Auswahl?`,
+        a: `Noch ist es eine Minderheit — aber genau diese Minderheit besteht aus digitalaffinen Eigentümern, die recherchieren statt nur zu googeln. In einer Branche, in der ein einziges gewonnenes Mandat 10.000–30.000 € Provision bedeuten kann, lohnt sich der Aufbau dieses Kanals auch dann, wenn er dir pro Monat nur eine oder zwei Anfragen zusätzlich bringt. Und der Zeitpunkt ist günstig: Die meisten Maklerhäuser haben kein strukturiertes KI-Profil.`,
+      },
+      {
+        q: `Was unterscheidet KI-Sichtbarkeit für Makler von klassischer Online-Reputation?`,
+        a: `Online-Reputation sind Bewertungen auf Google oder Immobilienportalen — extern, wenig steuerbar. KI-Sichtbarkeit bedeutet, dass dein Wissen, deine Marktexpertise und dein Einzugsgebiet so strukturiert auf deiner eigenen Webseite hinterlegt sind, dass KI-Systeme daraus eine klare Empfehlung ableiten können. Du baust damit ein digitales Autoritätsprofil auf deiner eigenen Infrastruktur auf — unabhängig davon, ob jemand eine Bewertung hinterlassen hat oder nicht.`,
+      },
+    ],
+  },
+
   'steuerberater/content-marketing': {
     uniqueAngle: `Mandanten vertrauen dem Steuerberater, der komplexe Themen verständlich erklärt — noch bevor sie das erste Gespräch führen. Ratgeber-Artikel zu Themen wie „GmbH gründen: was ist steuerlich zu beachten?” oder „Betriebsausgaben für Freiberufler — was zählt wirklich?” beantworten Fragen, die deine Wunsch-Mandanten ohnehin stellen. Du positionierst dich dabei als Experte, wirst bei Google für diese Suchanfragen gefunden und baust gleichzeitig den Expertenstatus auf, den KI-Systeme als Empfehlungsgrundlage nutzen. Content-Marketing für Kanzleien ist kein Selbstzweck — es ist der verlässlichste Weg, Vertrauen zu skalieren, ohne für jeden Kontakt aktiv Zeit zu investieren.`,
     deliverables: [

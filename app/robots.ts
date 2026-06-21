@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       // Default: allow all — interner Tool-Bereich ausgenommen
-      { userAgent: "*", allow: "/", disallow: ["/tools"] },
+      { userAgent: "*", allow: "/", disallow: ["/tools", "/*?s="] },
       // Explicitly allow major AI crawlers
       { userAgent: "GPTBot", allow: "/" },
       { userAgent: "OAI-SearchBot", allow: "/" },

@@ -276,7 +276,7 @@ const industryServiceContent: Record<string, IndustryServiceContent> = {
       },
       {
         q: `Ist KI-Sichtbarkeit für Praxen rechtlich unbedenklich?`,
-        a: `Ja, wenn die Grundlage stimmt: Wir bauen das Profil ausschließlich auf sachlichen, belegbaren Informationen — Fachgebiet, Qualifikationen, Leistungsangebot, Standort. Keine Behandlungsversprechen, keine Rangvergleiche, keine Superlative. Genau das ist es, was KI-Systeme ohnehin bevorzugen: klare, strukturierte Fakten statt Werbesprache. Damit bewegen wir uns im HWG-konformen Rahmen und bauen gleichzeitig ein glaubwürdiges Profil auf.`,
+        a: `Ja, wenn die Grundlage stimmt: Wir bauen das Profil ausschließlich auf sachlichen, belegbaren Informationen — Fachgebiet, Qualifikationen, Leistungsangebot, Standort. Keine Behandlungsversprechen, keine Rangvergleiche, keine Superlative. Gerade bei Gesundheitsthemen sind KI-Systeme besonders vorsichtig und stützen sich nur auf überprüfbare, seriöse Angaben — genau dieses verlässliche Praxis-Profil bauen wir auf, vollständig im HWG-konformen Rahmen.`,
       },
     ],
   },

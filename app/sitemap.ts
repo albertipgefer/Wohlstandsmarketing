@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { posts } from "@/content/blog";
 import { cities } from "@/content/cities";
 import { industries } from "@/content/industries";
-import { services } from "@/content/services";
+import { hasIndustryServiceContent } from "@/content/industry-service";
 
 const SITE = "https://wohlstandsmarketing.de";
 
@@ -19,29 +19,15 @@ const SITE = "https://wohlstandsmarketing.de";
 const CONTENT_REVISED = new Date("2026-06-18");
 
 /**
- * Crawl-Budget-Strategie (Stand 16.06.2026):
+ * Crawl-Budget-Strategie (Stand 21.06.2026):
  *
- * Die Domain ist jung und hat wenig Autorität → Google rationiert das Crawlen.
- * 264 URLs lagen als „Gefunden – zurzeit nicht indexiert" brach, weil zu viele
- * dünne, sehr ähnliche Branche×Service-Kombis (150 Stück) gleichzeitig in der
- * Sitemap standen. Lösung: Crawl-Budget BÜNDELN statt verteilen.
- *
- * Hier reichen wir die Branche×Service-Seiten nur für die primären ICP-Branchen
- * ein (Welle 1). Die übrigen Kombis bleiben online und intern verlinkt (über
- * /branchen), werden aber NICHT aktiv in der Sitemap eingereicht. Sobald Welle 1
- * indexiert ist und die Domain-Autorität steigt, weitere Branchen-Slugs in
- * WAVE_INDUSTRY_SERVICE_SLUGS aufnehmen (Welle 2, 3, …).
+ * Branche×Service-Kombis kommen nur in die Sitemap, wenn `hasIndustryServiceContent`
+ * true zurückgibt (Content-Gate). Dünne Fallback-Seiten ohne einzigartigen Content
+ * werden bewusst ausgelassen — Crawl-Budget bündeln statt verteilen.
  *
  * Branche-Hubs (/branchen/[branche]) und Stadt-Seiten bleiben vollständig drin —
  * sie tragen eigenständigen Unique-Content (USPs, Bullets, FAQs) und ranken bereits.
  */
-const WAVE_INDUSTRY_SERVICE_SLUGS = new Set<string>([
-  "handwerk",
-  "steuerberater",
-  "arztpraxen",
-  "maschinenbau",
-  "immobilienmakler",
-]);
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -127,17 +113,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       )
     : [];
 
-  // Welle 1: nur Branche×Service-Kombis der primären ICP-Branchen einreichen.
-  const industryServiceRoutes: MetadataRoute.Sitemap = industries
-    .filter((i) => WAVE_INDUSTRY_SERVICE_SLUGS.has(i.slug))
-    .flatMap((i) =>
-      services.map((s) => ({
-        url: `${SITE}/branchen/${i.slug}/${s.slug}`,
+  // Nur Kombis mit einzigartigem Content kommen in die Sitemap (Content-Gate).
+  // Verhindert das Einreichen dünner Seiten (Crawl-Budget bündeln).
+  const industryServiceRoutes: MetadataRoute.Sitemap = industries.flatMap((i) =>
+    i.serviceSlugs
+      .filter((slug) => hasIndustryServiceContent(i.slug, slug))
+      .map((slug) => ({
+        url: `${SITE}/branchen/${i.slug}/${slug}`,
         lastModified: CONTENT_REVISED,
         changeFrequency: "monthly" as const,
         priority: 0.8,
       })),
-    );
+  );
 
   return [
     ...staticRoutes,

@@ -281,6 +281,103 @@ const industryServiceContent: Record<string, IndustryServiceContent> = {
     ],
   },
 
+  /* ─────────────────── MASCHINENBAU × SERVICES ──────────────────── */
+
+  'maschinenbau/unternehmenswebsite': {
+    uniqueAngle: `Im Maschinenbau entscheidet nicht der Preisvergleich, sondern der Vertrauensaufbau — und der beginnt heute beim ersten Blick auf deine Webseite. Technische Einkäufer und Projektingenieure recherchieren online, bevor sie überhaupt Kontakt aufnehmen: Sie suchen nach Referenzen aus ihrer Branche, nach Zertifizierungen, nach technischen Daten und nach Hinweisen darauf, ob dein Betrieb die nötige Erfahrung mitbringt. Eine Industrie-Webseite, die diese Fragen beantwortet, ist kein Marketingaufwand — sie ist die Vorstufe zum Angebot. Gleichzeitig hilft ein professioneller Auftritt dabei, qualifizierte Ingenieure und Fachkräfte anzusprechen, die sich vor der Bewerbung genau ansehen, wo sie arbeiten werden.`,
+    deliverables: [
+      `Referenz- und Case-Study-Bereich strukturiert nach Branchen und Anwendungsfall — damit Einkäufer sofort sehen, ob ihr Einsatzfeld abgedeckt ist`,
+      `Technische Produkt- und Leistungsseiten mit Download-Datenblättern, Spezifikationstabellen und klarem Anfrage-CTA für Angebotsgespräche`,
+      `Karriere-Sektion für Ingenieure und Facharbeiter — strukturierter Bewerbungskanal, der die Arbeitgeber-Qualitäten konkret kommuniziert`,
+    ],
+    faqs: [
+      {
+        q: `Wir verkaufen über den Vertrieb — was bringt uns eine aufwendigere Webseite?`,
+        a: `Euer Vertrieb und eure Webseite arbeiten parallel: Bevor ein Einkäufer euren Außendienst zurückruft oder zum Messestand kommt, hat er eure Webseite bereits bewertet. Ein unmoderner oder dünn bestückter Auftritt scheidet in dieser Phase stillschweigend aus der Auswahl aus. Ein überzeugender Auftritt hingegen verkürzt die Qualifizierungsphase des Vertriebs, weil Interessenten schon vorinformiert und grundsätzlich überzeugt ankommen.`,
+      },
+      {
+        q: `Wie präsentieren wir Sondermaschinenbau verständlich, wenn jede Anlage ein Unikat ist?`,
+        a: `Indem wir nicht die Maschinen beschreiben, sondern die Probleme, die ihr löst — strukturiert nach Branche und Prozess. Technische Tiefe behalten wir in Datenblättern und Downloads; die Seite selbst führt den Entscheider schnell zum Wesentlichen: Wer hat eine ähnliche Anlage bei euch gebaut, was war das Ergebnis, und wie kommt ein Erstgespräch zustande?`,
+      },
+    ],
+  },
+
+  'maschinenbau/relaunch': {
+    uniqueAngle: `Ein veralteter Industrie-Auftritt signalisiert technischen Einkäufern unbewusst, dass die Innovationskraft des Unternehmens stagniert — selbst wenn die Maschinen auf dem Hallenfloor Weltklasse sind. Im B2B ist der Relaunch keine kosmetische Maßnahme, sondern ein strategischer Schritt: Produktsortiment und Referenzliste wachsen, Exportmärkte kommen hinzu, neue Ansprechpartner werden gesucht. Der bestehende Auftritt hält damit nicht mehr Schritt und kostet euch aktiv Anfragen, ohne dass ihr es merkt. Wir modernisieren euren Auftritt gezielt für die Zielgruppe der technischen Entscheider — und übertragen dabei alle bestehenden Seiten und Rankings lückenlos, damit der Wechsel keine Sichtbarkeitslücke hinterlässt.`,
+    deliverables: [
+      `Technischer Audit: Welche bestehenden Seiten, Produktdaten und Rankings erhalten, umstrukturiert oder ersetzt werden — inklusive Redirect-Mapping aller relevanten URLs`,
+      `Neuer Auftritt mit klarer Produkt- und Referenzstruktur, die technische Entscheider durch den Sales-Funnel führt — statt generischer Unternehmensbeschreibung`,
+      `Internationalisierungs-Check: Ob bestehende englischsprachige Inhalte übernommen oder als eigenständiger Sprachbereich neu aufgebaut werden sollten`,
+    ],
+    faqs: [
+      {
+        q: `Unsere Webseite hat kaum externe Verlinkungen — müssen wir das Redirect-Konzept trotzdem aufwendig planen?`,
+        a: `Ja, aber aus einem anderen Grund: Im B2B sind oft interne Dokumente, Kataloge, Partner-Intranets oder Messe-Unterlagen direkt auf bestimmte URLs eurer Seite verlinkt. Diese Pfade zu kennen und korrekt zu übergeben ist entscheidend — ein toter Link in einem Einkäufer-Bookmark oder einem digitalen Messekatalog kostet euch eine Anfrage, die ihr nie seht. Wir erfassen diese Pfade im Audit und behandeln sie wie kritische Infrastruktur.`,
+      },
+      {
+        q: `Wie gehen wir mit mehrsprachigen Inhalten um, wenn wir auch ins Ausland exportieren?`,
+        a: `Das klären wir im Audit: Haben bestehende englische Seiten organische Sichtbarkeit, behalten wir sie und überführen sie strukturiert. Fehlt ein belastbarer englischer Bereich noch, empfehlen wir, ihn als eigenen Kanal mit dem Relaunch aufzubauen — Exportmärkte und internationale Einkäufer sind oft der wichtigste Wachstumshebel, und eine schlecht gepflegte englische Unterseite schadet mehr als keine.`,
+      },
+    ],
+  },
+
+  'maschinenbau/seo': {
+    uniqueAngle: `SEO im Maschinenbau funktioniert grundlegend anders als im Konsumgütermarkt: Die Suchvolumina für spezifische Begriffe wie „Sondermaschine Pharmaindustrie" oder „Prüfstand Antriebsstrang" sind klein, aber wer sucht, ist kurz davor, eine ernsthafte Investitionsentscheidung zu treffen. Gleichzeitig gibt es für viele Nischen-Keywords kaum Wettbewerb, weil die meisten Industrieunternehmen ihre SEO vernachlässigen. Wir identifizieren die Suchbegriffe, mit denen eure Wunschkunden in der Recherchephase unterwegs sind — inklusive internationaler Begriffe, wenn Exportmärkte relevant sind — und bauen dafür thematisch klar positionierte Seiten, die bei exakt diesen Anfragen gefunden werden.`,
+    deliverables: [
+      `Nischen-Keyword-Recherche für eure Produkte, Technologien und Zielbranchen — auch englischsprachige Begriffe für internationale Suchende`,
+      `Produkt- und Anwendungsseiten, die bei technischen Suchanfragen ranken und als Erstkontakt für Einkäufer dienen`,
+      `Technisches SEO-Audit: interne Verlinkungsstruktur, Crawlbarkeit und Ladezeiten — Faktoren, die bei größeren Industrie-Webseiten oft der eigentliche Engpass sind`,
+    ],
+    faqs: [
+      {
+        q: `Lohnt sich SEO überhaupt, wenn unser Produkt nur von einer Handvoll Unternehmen gesucht wird?`,
+        a: `Gerade dann. Wer eine Sondermaschine oder ein Spezialbauteil benötigt, sucht aktiv und hat eine klare Kaufabsicht — das Suchvolumen ist gering, aber der Auftragswert dahinter ist hoch. Wenn ihr die einzigen seid, die für diesen Begriff auffindbar sind, habt ihr keinen Wettbewerb zu schlagen. SEO-Dominanz in einer kleinen Nische ist einfacher zu erreichen und langfristig stabiler als in breiten Märkten.`,
+      },
+      {
+        q: `Wie lange dauert es, bis erste Anfragen über SEO reinkommen?`,
+        a: `In Nischen mit wenig Wettbewerb entstehen messbare Rankingbewegungen oft deutlich früher als in umkämpften Consumer-Märkten. Wie schnell das zu konkreten Anfragen führt, hängt auch vom Sales-Zyklus ab — im Maschinenbau können zwischen erster Recherche und Anfrage Wochen bis Monate liegen. Das bedeutet: Wer früh sichtbar ist, ist auch früh in der Recherchephase präsent, lange bevor die Entscheidung fällt.`,
+      },
+    ],
+  },
+
+  'maschinenbau/ki-sichtbarkeit': {
+    uniqueAngle: `Technische Einkäufer und Projektingenieure nutzen ChatGPT und Perplexity zunehmend als Recherche-Tool: „Welche Anbieter für Vakuumhandling in der Automobilindustrie gibt es?" oder „Wer baut Sondermaschinen für die Lebensmittelverarbeitung?" — die KI antwortet mit konkreten Unternehmen. Wer dort nicht auftaucht, ist in dieser Recherchephase schlicht nicht existent. KI-Sichtbarkeit im Maschinenbau bedeutet, das Entity-Profil eures Unternehmens mit schema.org-Markup, strukturierten Produkt- und Referenzdaten sowie zitierfähigen Fachartikeln so aufzubauen, dass KI-Systeme euch nicht nur kennen, sondern als kompetente Quelle für eure Technologienische einordnen und nennen.`,
+    deliverables: [
+      `Vollständiges schema.org-Entity-Profil: Unternehmensname, Technologieschwerpunkte, Zielbranchen, Zertifizierungen, Standort und internationale Präsenz — strukturiert lesbar für KI-Systeme`,
+      `Answer Engine Optimization für technische Recherchefragen eurer Einkäufer (z. B. „Was ist der Unterschied zwischen Portalmessmaschine und KMG?" oder „Wann lohnt sich Sondermaschinen statt Standardautomatisierung?") — als zitierfähige Fachinhalte auf eurer Webseite`,
+      `llms.txt-Konfiguration und KI-Crawler-Freigabe für GPTBot, ClaudeBot, PerplexityBot und OAI-SearchBot`,
+    ],
+    faqs: [
+      {
+        q: `Suchen technische Einkäufer wirklich in ChatGPT nach Maschinenlieferanten?`,
+        a: `Noch nicht flächendeckend — aber die Adoption wächst schnell, besonders bei jüngeren Ingenieuren und bei frühen Recherchephasen, in denen man noch nicht genau weiß, wie die Lösung aussehen soll. Gerade für euch als Nischenanbieter ist der Zeitpunkt jetzt günstig: Eure Wettbewerber haben kaum ein strukturiertes KI-Profil. Wer jetzt sein Entity aufbaut, hat einen Vorsprung, der sich in einem B2B-Markt mit langen Sales-Zyklen über Monate und Jahre auszahlt.`,
+      },
+      {
+        q: `Unterscheidet sich KI-Sichtbarkeit für B2B-Anbieter von der für lokale Dienstleister?`,
+        a: `Ja, erheblich. Lokale Dienstleister profitieren vor allem von geo-bezogenen KI-Antworten. Im Maschinenbau sind die Fragen technischer Natur und thematisch: Welche Technologie löst Problem X, welche Unternehmen sind in Nische Y etabliert, wer hat Referenzen in Branche Z. Wir bauen das KI-Profil deshalb entlang eurer Technologiethemen und Zielbranchen auf — nicht primär regional, sondern inhaltlich positioniert.`,
+      },
+    ],
+  },
+
+  'maschinenbau/content-marketing': {
+    uniqueAngle: `Im langen B2B-Sales-Zyklus des Maschinenbaus fallen Entscheidungen nicht nach einem Webseitenbesuch — sie reifen über Wochen und Monate, in denen Einkäufer und Ingenieure recherchieren, vergleichen und intern abstimmen. Fachartikel, Case Studies und technische Ratgeber sind in dieser Phase der verlässlichste Hebel: Sie zeigen Kompetenz, bevor ein Angebot auf dem Tisch liegt, und halten euer Unternehmen im Kopf der Entscheider, auch wenn der konkrete Projektbedarf noch nicht akut ist. Gleichzeitig sind technisch fundierte Inhalte der stärkste Signal für Google und KI-Systeme, dass ihr die Experten in eurer Technologienische seid — was direkt in Rankings und KI-Nennungen fließt.`,
+    deliverables: [
+      `Technische Content-Strategie: Welche Themen, Anwendungsfälle und Branchen eure Wunschkunden in der Recherchephase beschäftigen — und für welche Begriffe ihr mit Fachartikeln ranken könnt`,
+      `Fachartikel, Anwendungsberichte und Case Studies mit echter technischer Tiefe — recherchiert mit eurem Team, redaktionell aufbereitet und SEO-optimiert`,
+      `Content-Distribution: Verlinkung von Artikeln auf Produkt- und Referenzseiten sowie Formatierung für maximale Zitierbarkeit durch KI-Systeme`,
+    ],
+    faqs: [
+      {
+        q: `Unsere Produkte sind erklärungsbedürftig — können externe Texter das wirklich abbilden?`,
+        a: `Technische Tiefe bringt ihr; den redaktionellen Aufbau übernehmen wir. Der Prozess ist kollaborativ: Wir führen ein strukturiertes Briefing-Gespräch mit eurem Fachteam, schreiben den Artikel daraus auf und stimmen ihn inhaltlich mit euch ab, bevor er online geht. Das Ergebnis ist ein Text, der eure Fachkenntnis authentisch wiedergibt und trotzdem so aufgebaut ist, dass ihn auch Entscheider ohne Detailwissen schnell einordnen können.`,
+      },
+      {
+        q: `Was ist der Unterschied zu den technischen Texten, die wir schon auf der Webseite haben?`,
+        a: `Produktbeschreibungen und Datenblätter beschreiben, was ihr macht. Content Marketing erklärt, warum das für einen konkreten Anwendungsfall die beste Lösung ist — mit Kontext, Problemstellung, Vergleich zu Alternativen und einem nachvollziehbaren Ergebnis. Dieser Unterschied entscheidet darüber, ob ein Artikel bei Google für Recherchefragen rankt, ob er als Quelle von KI-Systemen zitiert wird und ob ein Einkäufer ihn bis zum Ende liest und danach eine Anfrage stellt.`,
+      },
+    ],
+  },
+
   'steuerberater/content-marketing': {
     uniqueAngle: `Mandanten vertrauen dem Steuerberater, der komplexe Themen verständlich erklärt — noch bevor sie das erste Gespräch führen. Ratgeber-Artikel zu Themen wie „GmbH gründen: was ist steuerlich zu beachten?” oder „Betriebsausgaben für Freiberufler — was zählt wirklich?” beantworten Fragen, die deine Wunsch-Mandanten ohnehin stellen. Du positionierst dich dabei als Experte, wirst bei Google für diese Suchanfragen gefunden und baust gleichzeitig den Expertenstatus auf, den KI-Systeme als Empfehlungsgrundlage nutzen. Content-Marketing für Kanzleien ist kein Selbstzweck — es ist der verlässlichste Weg, Vertrauen zu skalieren, ohne für jeden Kontakt aktiv Zeit zu investieren.`,
     deliverables: [

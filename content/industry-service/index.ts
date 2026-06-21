@@ -105,6 +105,103 @@ const industryServiceContent: Record<string, IndustryServiceContent> = {
       },
     ],
   },
+
+  /* ──────────────────── STEUERBERATER × SERVICES ─────────────────── */
+
+  'steuerberater/unternehmenswebsite': {
+    uniqueAngle: `Eine Kanzlei-Webseite ist kein digitales Aushängeschild — sie ist die Entscheidungsgrundlage deiner nächsten Mandanten. Wer heute einen Steuerberater sucht, vergleicht online, bevor er anruft, und zieht aus dem Auftritt sofort Rückschlüsse auf Seriosität und Kompetenz. Wir bauen den Fundament-Auftritt, der deine fachlichen Schwerpunkte klar kommuniziert, Vertrauen in den ersten Sekunden schafft und Mandanten- wie Mitarbeiter-Anfragen gleichermaßen anzieht. Denn wer wächst, braucht beides: die richtigen Mandate und die richtigen Kräfte dahinter.`,
+    deliverables: [
+      `Leistungsseiten je Schwerpunkt (z. B. GmbH-Beratung, Freiberufler, Lohnbuchhaltung) — klar getrennt statt im Einheitsbrei`,
+      `Kanzlei-Profil mit Team, Qualifikationen und echten Vertrauenssignalen (Berufszulassung, Fachberater-Titel o. ä.)`,
+      `Karriere-Sektion für Initiativbewerbungen und offene Stellen — strukturierter Kanal statt E-Mail-Chaos`,
+    ],
+    faqs: [
+      {
+        q: `Darf meine Kanzlei-Webseite Mandanten aktiv ansprechen?`,
+        a: `Ja. Sachliche, berufsbezogene Information über deine Leistungen ist nach Berufsrecht ausdrücklich erlaubt. Verboten ist nur irreführende oder reißerische Werbung. Wir bauen deinen Auftritt bewusst seriös und substanzstark — Vertrauen entsteht über klare Kompetenz, nicht über laute Versprechen.`,
+      },
+      {
+        q: `Wie zeige ich auf der Webseite, auf welche Mandate ich spezialisiert bin?`,
+        a: `Indem jeder Schwerpunkt eine eigene Seite bekommt: klar beschrieben, mit typischen Fragen deiner Wunsch-Mandanten und einer direkten Anfrage-Möglichkeit. So findet jemand, der gezielt einen Steuerberater für E-Commerce oder für Ärzte sucht, sofort das Richtige — und du bekommst die Anfragen, die wirklich zu dir passen.`,
+      },
+    ],
+  },
+
+  'steuerberater/relaunch': {
+    uniqueAngle: `Ein veralteter Kanzlei-Auftritt kostet dich Mandate, bevor das erste Gespräch stattfindet. Wer auf eine langsame, unstrukturierte oder optisch überholte Seite stößt, zweifelt unbewusst an der Kompetenz — und klickt weiter. Ein Relaunch modernisiert nicht nur das Design, sondern macht deine Kanzlei wieder konkurrenzfähig: klarere Positionierung, bessere Lesbarkeit auf dem Smartphone und eine Struktur, die Mandantenanfragen aktiv einsammelt. Dabei gehen keine bestehenden Verlinkungen und Empfehlungs-Flows verloren — denn wer dich bisher kannte, soll dich nach dem Relaunch erst recht finden.`,
+    deliverables: [
+      `Audit des bestehenden Auftritts: Was kostet gerade Mandate — Ladezeit, Struktur, Mobile-Darstellung, fehlende Kontakt-Strecken`,
+      `Modernisierter Auftritt mit klarer Positionierung, deinen Schwerpunkten und DSGVO-konformer Kontaktführung`,
+      `Lückenloses Redirect-Konzept, das alle bestehenden Seiten, Verlinkungen und etwaige Rankings überträgt`,
+    ],
+    faqs: [
+      {
+        q: `Verliere ich durch den Relaunch Positionen bei Google, die ich mir erarbeitet habe?`,
+        a: `Nein — wenn der Relaunch sauber umgesetzt wird. Wir überführen alle bestehenden URLs mit einem 301-Redirect-Konzept, übernehmen relevante Inhalte und schützen aufgebaute Sichtbarkeit. Ein gut gemachter Relaunch verbessert deine Auffindbarkeit typischerweise, statt sie zu gefährden.`,
+      },
+      {
+        q: `Meine aktuelle Webseite bringt kaum Anfragen — liegt das wirklich am Design?`,
+        a: `Oft nicht nur daran. Häufigere Ursachen sind: fehlende klare Botschaft, keine direkte Anfrage-Möglichkeit, schlechte Darstellung auf dem Smartphone oder unklare Positionierung. Im Audit zeigen wir dir konkret, was Anfragen kostet — und beheben genau das, nicht mehr und nicht weniger.`,
+      },
+    ],
+  },
+
+  'steuerberater/seo': {
+    uniqueAngle: `„Steuerberater [Stadt]” — wer bei dieser Suche nicht auf Seite 1 erscheint, existiert für einen Großteil der Suchenden schlicht nicht. Dazu kommen immer mehr Nischen-Suchanfragen: Mandanten suchen gezielt nach Kanzleien für Ärzte, für GmbHs oder für Freiberufler — oft mit deutlich geringerer Konkurrenz als die generische Suche. Wir bringen deine Kanzlei für die lokalen und thematischen Suchanfragen nach vorn, bei denen Interesse und Mandatsbereitschaft direkt zusammenfallen. So kommen Anfragen von Menschen, die genau das suchen, was du anbietest.`,
+    deliverables: [
+      `Lokales SEO: Google Business Profile, Maps-Präsenz und standortbezogene Optimierung für deine Stadt und Region`,
+      `Thematische Keyword-Seiten für deine Mandanten-Nischen (z. B. „Steuerberater für Ärzte [Stadt]” oder „GmbH-Beratung [Region]”)`,
+      `On-Page-Optimierung der bestehenden Kanzlei-Seiten für Suchbegriffe mit echter Mandats-Absicht`,
+    ],
+    faqs: [
+      {
+        q: `Wie lange dauert es, bis meine Kanzlei bei Google sichtbar wird?`,
+        a: `Für weniger umkämpfte Nischen-Kombinationen (z. B. „Steuerberater Lohnbuchhaltung [mittelgroße Stadt]”) sind erste Bewegungen oft in wenigen Wochen sichtbar. Stark umkämpfte Begriffe in Großstädten brauchen länger. Wir starten bewusst mit den Anfragen, bei denen du am schnellsten Wirkung siehst.`,
+      },
+      {
+        q: `Lohnt sich SEO, wenn ich bereits voll ausgelastet bin?`,
+        a: `Dann ist es der beste Zeitpunkt. Zum einen kannst du mit mehr Anfragen wählerischer werden und nur die Mandate annehmen, die wirklich passen. Zum anderen schwanken Auslastungen — wer erst optimiert, wenn es ruhiger wird, hat Monate Vorlaufzeit verloren. Sichtbarkeit baut man auf, wenn man Zeit hat, nicht wenn man sie braucht.`,
+      },
+    ],
+  },
+
+  'steuerberater/ki-sichtbarkeit': {
+    uniqueAngle: `Mandanten fragen heute nicht mehr nur Google — sie fragen ChatGPT: „Welcher Steuerberater in München ist auf GmbHs spezialisiert?” oder „Wer kennt sich mit DATEV und digitalem Belegwesen aus?” Die KI antwortet mit Kanzleien, die ihr bekannt sind — und ignoriert alle anderen vollständig. KI-Sichtbarkeit für Steuerberater bedeutet: Wir bauen das Entity-Profil deiner Kanzlei mit schema.org-Markup, E-E-A-T-Signalen und klaren Antwortformaten so auf, dass ChatGPT, Perplexity und die Google AI Overviews deine Kanzlei als vertrauenswürdige Anlaufstelle für Mandanten in deiner Region und deiner Nische kennen und empfehlen.`,
+    deliverables: [
+      `Vollständiges schema.org-Entity-Profil: Kanzleiname, Standort, Fachberater-Qualifikationen, Leistungsschwerpunkte — strukturiert lesbar für KI-Systeme`,
+      `Answer Engine Optimization für typische Mandantenfragen (z. B. „Was kostet ein Steuerberater für eine GmbH?”) — als zitierfähige Antworten auf deiner Webseite`,
+      `llms.txt-Konfiguration und Crawler-Freigabe für GPTBot, ClaudeBot, PerplexityBot und OAI-SearchBot`,
+    ],
+    faqs: [
+      {
+        q: `Fragt wirklich jemand ChatGPT nach einem Steuerberater?`,
+        a: `Ja — und besonders die Zielgruppe, die du als Kanzlei willst: Unternehmer und Freiberufler, die schnell und präzise Empfehlungen suchen, statt zehn Google-Ergebnisse zu vergleichen. Die KI-Suche wächst in diesem Segment rasant, und wer jetzt sein Kanzlei-Profil aufbaut, hat einen konkreten Vorsprung vor Wettbewerbern, die das verschlafen.`,
+      },
+      {
+        q: `Ist KI-Sichtbarkeit vereinbar mit dem Berufsrecht für Steuerberater?`,
+        a: `Ja. Wir bauen dein KI-Profil ausschließlich auf sachlichen, belegbaren Aussagen über deine Qualifikationen, Schwerpunkte und Leistungen — keine Superlative, keine Vergleiche, keine Heilsversprechen. Das entspricht dem Berufsrecht und ist gleichzeitig das, was KI-Systeme ohnehin bevorzugen: klare, glaubwürdige Fakten statt Werbesprache.`,
+      },
+    ],
+  },
+
+  'steuerberater/content-marketing': {
+    uniqueAngle: `Mandanten vertrauen dem Steuerberater, der komplexe Themen verständlich erklärt — noch bevor sie das erste Gespräch führen. Ratgeber-Artikel zu Themen wie „GmbH gründen: was ist steuerlich zu beachten?” oder „Betriebsausgaben für Freiberufler — was zählt wirklich?” beantworten Fragen, die deine Wunsch-Mandanten ohnehin stellen. Du positionierst dich dabei als Experte, wirst bei Google für diese Suchanfragen gefunden und baust gleichzeitig den Expertenstatus auf, den KI-Systeme als Empfehlungsgrundlage nutzen. Content-Marketing für Kanzleien ist kein Selbstzweck — es ist der verlässlichste Weg, Vertrauen zu skalieren, ohne für jeden Kontakt aktiv Zeit zu investieren.`,
+    deliverables: [
+      `Mandantenorientierte Themen- und Keyword-Strategie: Welche Fragen stellen deine Wunsch-Mandanten bei Google — und welche beantworten wir als Erste?`,
+      `Redaktionell hochwertige Fachbeiträge mit echter Tiefe — kein KI-Massentext, sondern substanzstarker Inhalt, der Vertrauen schafft und rankt`,
+      `Internes Verlinkungskonzept, das Ratgeber-Inhalte auf deine Leistungsseiten lenkt und Anfrage-Impulse setzt`,
+    ],
+    faqs: [
+      {
+        q: `Darf ich als Steuerberater Fachthemen auf meiner Webseite publizieren?`,
+        a: `Ja. Sachliche, informative Inhalte zu steuerrechtlichen Themen sind ausdrücklich erlaubt — sie gelten als Berufsausübung, nicht als verbotene Werbung. Im Gegenteil: ein gut geführter Ratgeber-Bereich stärkt deinen Ruf als Experte und zieht genau die Mandanten an, die inhaltliche Tiefe schätzen.`,
+      },
+      {
+        q: `Wer schreibt die Inhalte — brauche ich dafür viel Zeit?`,
+        a: `Wir schreiben. Du gibst uns deine Schwerpunkte und nimmst dir einmalig kurz Zeit für eine inhaltliche Abstimmung — den Rest übernehmen wir. Jeder Artikel wird vor Veröffentlichung mit dir abgestimmt, damit er fachlich passt und deiner Kanzlei entspricht. Dein Aufwand bleibt minimal.`,
+      },
+    ],
+  },
 };
 
 export const getIndustryServiceContent = (

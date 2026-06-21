@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { industries, getIndustry } from "@/content/industries";
 import { services, getService } from "@/content/services";
+import { getIndustryServiceContent } from "@/content/industry-service";
 import {
   getWebdesignPosts,
   getRelaunchPosts,
@@ -19,7 +20,7 @@ const SITE = "https://wohlstandsmarketing.de";
 
 export async function generateStaticParams() {
   return industries.flatMap((i) =>
-    services.map((s) => ({ branche: i.slug, service: s.slug })),
+    i.serviceSlugs.map((slug) => ({ branche: i.slug, service: slug })),
   );
 }
 
@@ -70,11 +71,23 @@ export default async function IndustryServicePage({
   const industry = getIndustry(branche);
   const svc = getService(service);
   if (!industry || !svc) notFound();
+  if (!industry.serviceSlugs.includes(svc.slug)) notFound();
 
-  const otherServices = services.filter((s) => s.slug !== svc.slug);
-  const otherIndustries = industries.filter((i) => i.slug !== industry.slug);
+  const combo = getIndustryServiceContent(industry.slug, svc.slug);
+
+  const otherServices = services.filter(
+    (s) => s.slug !== svc.slug && industry.serviceSlugs.includes(s.slug),
+  );
+  const otherIndustries = industries.filter(
+    (i) => i.slug !== industry.slug && i.serviceSlugs.includes(svc.slug),
+  );
   const relevantPosts = getServicePosts(svc.slug);
-  const faqs = [...svc.faqs, ...industry.faqs.slice(0, 3)];
+  const deliverables = combo
+    ? [...combo.deliverables, ...svc.deliverables]
+    : svc.deliverables;
+  const faqs = combo
+    ? [...combo.faqs, ...svc.faqs, ...industry.faqs.slice(0, 2)]
+    : [...svc.faqs, ...industry.faqs.slice(0, 3)];
 
   /* ── JSON-LD Schemas ────────────────────────────────────────────────── */
   const businessSchema = {
@@ -172,6 +185,19 @@ export default async function IndustryServicePage({
         </div>
       </section>
 
+      {combo && (
+        <section className="border-t border-[var(--border)] py-20 md:py-24">
+          <div className="mx-auto max-w-3xl px-4 sm:px-6 md:px-12">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
+              {svc.shortName} für {industry.shortName} — im Detail
+            </p>
+            <p className="mt-6 text-lg leading-relaxed text-[var(--text)]">
+              {combo.uniqueAngle}
+            </p>
+          </div>
+        </section>
+      )}
+
       {/* ── WAS BEI DIESER BRANCHE ANDERS IST (Branchen-USPs) ──── */}
       <section className="border-t border-[var(--border)] py-20 md:py-28">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-12">
@@ -236,7 +262,7 @@ export default async function IndustryServicePage({
             {svc.name} für {industry.name} — konkret
           </h2>
           <ul className="mt-10 grid gap-4 sm:grid-cols-2">
-            {svc.deliverables.map((d) => (
+            {deliverables.map((d) => (
               <li
                 key={d}
                 className="flex items-start gap-3 rounded-3xl border border-[var(--border)] bg-white p-6 shadow-[0_10px_40px_-20px_rgba(10,10,10,0.1)]"

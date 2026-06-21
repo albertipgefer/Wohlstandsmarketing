@@ -33,7 +33,7 @@ const industryServiceContent: Record<string, IndustryServiceContent> = {
   'handwerk/landingpage': {
     uniqueAngle: `Nicht jeder Handwerksbetrieb braucht sofort eine vollständige Webseite — manchmal reicht eine einzige, klar fokussierte Seite, um ein bestimmtes Gewerk oder eine Kampagne zum Laufen zu bringen. Eine Landingpage konzentriert sich auf genau einen Auftrag: der Besucher kommt, versteht sofort was du anbietest, und trägt sich ein. Kein Klicken durch fünf Unterseiten, kein Suchen nach der Telefonnummer. Das ist ideal, wenn du einen Notdienst anbieten, ein neues Gewerk testen oder in einem neuen Einzugsgebiet Fuß fassen willst — ohne gleich alles neu zu bauen.`,
     deliverables: [
-      `Fokusseite für ein einzelnes Gewerk oder einen Notdienst (z. B. „Rohrreinigung [Stadt]" oder „Heizung Notdienst") mit direktem Anfrage-Formular`,
+      `Eigenständige Seite ohne Navigation oder weiterführende Links — ausschließlich auf eine einzige Handlung optimiert (z. B. „Rohrreinigung [Stadt]" oder „Heizung Notdienst"): Besucher sehen das Angebot, füllen das Formular aus — fertig. Kein Absprung, kein Suchen. Anfrage-Rate ist direkt messbar.`,
       `Klare Vertrauenssignale: Betriebslogo, Einsatzgebiet, Reaktionszeit, Bewertungen — alles auf einen Blick`,
       `Auf Wunsch ausbaubar zur vollständigen Unternehmenswebsite — kein Wegwerfen, nur Erweitern`,
     ],
@@ -44,7 +44,7 @@ const industryServiceContent: Record<string, IndustryServiceContent> = {
       },
       {
         q: `Hilft eine Landingpage auch dabei, bei Google gefunden zu werden?`,
-        a: `Ja — wenn sie sauber auf den richtigen Begriff optimiert ist. Wir bauen die Seite von Anfang an mit dem passenden Keyword im Fokus (z. B. „Elektriker Notdienst [Stadt]"), sauberem Schema-Markup und technisch so, dass Google und KI-Systeme sie verstehen. Für stark umkämpfte Begriffe ergänzen wir mit SEO — aber für viele Nischen-Anfragen reicht eine saubere Landingpage allein.`,
+        a: `Ja — wenn sie sauber auf den richtigen Begriff optimiert ist. Wir bauen die Seite von Anfang an mit dem passenden Keyword im Fokus (z. B. „Elektriker Notdienst [Stadt]") und technisch so, dass Google sie korrekt einordnen kann. Der entscheidende Unterschied zur Unternehmenswebsite: Jeder Besucher, der ankommt, sieht nur ein Ziel — und du siehst direkt, wie viele Anfragen diese eine Seite bringt. Für stark umkämpfte Begriffe ergänzen wir mit SEO — aber für viele Nischen-Anfragen reicht eine saubere Landingpage allein.`,
       },
     ],
   },
@@ -78,7 +78,7 @@ const industryServiceContent: Record<string, IndustryServiceContent> = {
     faqs: [
       {
         q: `Fragt wirklich jemand ChatGPT nach einem Handwerker?`,
-        a: `Ja — und es wird mehr. Gerade die jüngere Generation greift direkt zur KI, wenn sie einen Handwerker sucht. Die KI-Suche wächst rasant, und wer jetzt sein Profil aufbaut, hat einen Vorsprung vor allen Betrieben, die das verschlafen. Die Anfragen darüber sind qualifizierter als viele Google-Klicks, weil die KI schon vorsortiert hat.`,
+        a: `Ja — und es wird mehr. Gerade die jüngere Generation greift direkt zur KI, wenn sie einen Handwerker sucht. Die KI-Suche wächst rasant, und wer jetzt sein Profil aufbaut, hat einen Vorsprung vor allen Betrieben, die das verschlafen. Die Anfragen können dabei qualifizierter sein als viele klassische Google-Klicks — weil die KI bereits eine Empfehlung ausspricht und der Nutzer gezielt mit Kaufabsicht klickt, statt noch mehrere Ergebnisse zu vergleichen.`,
       },
       {
         q: `Ist KI-Sichtbarkeit etwas anderes als SEO?`,

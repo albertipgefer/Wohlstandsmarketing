@@ -43,6 +43,8 @@ export type Industry = {
   bullets: IndustryBullet[];
   /** 6-8 industry-specific FAQ items (rendered + FAQPage schema) */
   faqs: IndustryFAQ[];
+  /** Welche Service-Slugs für diese Branche angeboten werden (kuratiert, nicht alle 9) */
+  serviceSlugs: string[];
 };
 
 export const getIndustry = (slug: string, list: Industry[]) =>

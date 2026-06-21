@@ -19,7 +19,7 @@ const SITE = "https://wohlstandsmarketing.de";
 
 export async function generateStaticParams() {
   return industries.flatMap((i) =>
-    services.map((s) => ({ branche: i.slug, service: s.slug })),
+    i.serviceSlugs.map((slug) => ({ branche: i.slug, service: slug })),
   );
 }
 
@@ -70,6 +70,7 @@ export default async function IndustryServicePage({
   const industry = getIndustry(branche);
   const svc = getService(service);
   if (!industry || !svc) notFound();
+  if (!industry.serviceSlugs.includes(svc.slug)) notFound();
 
   const otherServices = services.filter((s) => s.slug !== svc.slug);
   const otherIndustries = industries.filter((i) => i.slug !== industry.slug);

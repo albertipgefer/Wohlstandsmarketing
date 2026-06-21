@@ -72,7 +72,7 @@ export default async function IndustryPage({
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name: `Webseite + KI-Sichtbarkeit für ${industry.name}`,
-      itemListElement: services.map((s) => ({
+      itemListElement: services.filter((s) => industry.serviceSlugs.includes(s.slug)).map((s) => ({
         "@type": "Offer",
         itemOffered: {
           "@type": "Service",
@@ -255,7 +255,7 @@ export default async function IndustryPage({
             Eine neue Webseite ohne KI-Sichtbarkeit ist halbes Geschäft. Wir verzahnen alle Leistungen direkt ab Tag 1 — hier im Detail für deine Branche:
           </p>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {services.map((s) => (
+            {services.filter((s) => industry.serviceSlugs.includes(s.slug)).map((s) => (
               <Link
                 key={s.slug}
                 href={`/branchen/${industry.slug}/${s.slug}`}

@@ -54,6 +54,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT meinen Betrieb empfiehlt?", a: "KI-Sichtbarkeit entsteht nicht zufällig. Wir setzen schema.org-Markup, Answer Engine Optimization (AEO), zitierfähige Inhalte und ein sauberes lokales Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und die Google AI Overviews, um regionale Anbieter zu empfehlen." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "landingpage", "relaunch", "seo", "ki-sichtbarkeit"],
   },
 
   /* ──────────────────── STEUERBERATER & KANZLEIEN ────────────────── */
@@ -108,6 +109,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT meine Kanzlei empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Fachinhalte und ein klares Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um seriöse regionale Kanzleien zu nennen — ein Kanal, den die wenigsten Wettbewerber bisher bespielen." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "relaunch", "seo", "ki-sichtbarkeit", "content-marketing"],
   },
 
   /* ───────────────────────── ARZTPRAXEN ──────────────────────────── */
@@ -162,6 +164,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT meine Praxis empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, klare Leistungsinhalte und ein sauberes lokales Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um regionale Praxen zu nennen — ein Kanal, den die wenigsten Praxen bisher bedienen." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "landingpage", "relaunch", "seo", "ki-sichtbarkeit"],
   },
 
   /* ─────────────────── MASCHINENBAU & INDUSTRIE ──────────────────── */
@@ -216,6 +219,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT unser Unternehmen empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige technische Inhalte und ein klares Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um Anbieter zu nennen — im B2B ein noch fast leerer Kanal mit großem Vorsprungs-Potenzial." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "relaunch", "seo", "ki-sichtbarkeit", "content-marketing"],
   },
 
   /* ──────────────────────── IMMOBILIENMAKLER ─────────────────────── */
@@ -270,6 +274,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT mich empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Inhalte und ein sauberes lokales Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um regionale Makler zu empfehlen — ein Kanal, den die wenigsten Maklerhäuser bisher bespielen." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "landingpage", "relaunch", "seo", "ki-sichtbarkeit"],
   },
 
   /* ─────────────────── AUTOHÄUSER & KFZ-BETRIEBE ─────────────────── */
@@ -315,6 +320,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT mein Autohaus empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Inhalte und ein sauberes lokales Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um regionale Anbieter zu nennen." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "landingpage", "relaunch", "seo", "ki-sichtbarkeit"],
   },
 
   /* ─────────────────── HOTELS & GASTGEWERBE ──────────────────────── */
@@ -360,6 +366,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT mein Haus empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Inhalte und ein sauberes lokales Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um regionale Unterkünfte und Lokale zu nennen." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "landingpage", "relaunch", "seo", "ki-sichtbarkeit"],
   },
 
   /* ─────────────────────── FITNESSSTUDIOS ────────────────────────── */
@@ -405,6 +412,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT mein Studio empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Inhalte und ein sauberes lokales Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um regionale Studios zu nennen." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "landingpage", "relaunch", "seo", "ki-sichtbarkeit"],
   },
 
   /* ─────────── PFLEGEDIENSTE & PFLEGEEINRICHTUNGEN ────────────────── */
@@ -450,6 +458,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT meinen Pflegedienst empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Inhalte und ein sauberes lokales Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um regionale Pflegedienste zu nennen." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "landingpage", "relaunch", "seo", "ki-sichtbarkeit"],
   },
 
   /* ─────────────── PHOTOVOLTAIK & SOLARTEURE ─────────────────────── */
@@ -495,6 +504,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT meinen Betrieb empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Inhalte und ein sauberes lokales Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um regionale Solar-Betriebe zu nennen — im wachsenden Markt ein starker Vorsprung." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "landingpage", "relaunch", "seo", "ki-sichtbarkeit"],
   },
 
   /* ───────────────────────── ZAHNÄRZTE ───────────────────────────── */
@@ -532,6 +542,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT meine Praxis empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Inhalte und ein sauberes lokales Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um regionale Praxen zu nennen." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "landingpage", "relaunch", "seo", "ki-sichtbarkeit"],
   },
 
   /* ──────────────── RECHTSANWÄLTE & ANWALTSKANZLEIEN ─────────────── */
@@ -569,6 +580,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT meine Kanzlei empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Fachinhalte und ein klares Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um seriöse regionale Kanzleien zu nennen." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "relaunch", "seo", "ki-sichtbarkeit", "content-marketing"],
   },
 
   /* ─────────────────── RESTAURANTS & GASTRONOMIE ─────────────────── */
@@ -606,6 +618,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT mein Restaurant empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Inhalte und ein sauberes lokales Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um regionale Lokale zu empfehlen." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "landingpage", "relaunch", "seo", "ki-sichtbarkeit"],
   },
 
   /* ───────────────────── FRISEURE & BEAUTY-SALONS ────────────────── */
@@ -643,6 +656,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT meinen Salon empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Inhalte und ein sauberes lokales Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um regionale Salons zu nennen." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "landingpage", "relaunch", "seo", "ki-sichtbarkeit"],
   },
 
   /* ───────────── SANITÄR, HEIZUNG & KLIMA (SHK) ──────────────────── */
@@ -680,6 +694,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT meinen Betrieb empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Inhalte und ein sauberes lokales Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um regionale Betriebe zu nennen." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "landingpage", "relaunch", "seo", "ki-sichtbarkeit"],
   },
 
   /* ────────────────────── ELEKTROBETRIEBE ────────────────────────── */
@@ -717,6 +732,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT meinen Betrieb empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Inhalte und ein sauberes lokales Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um regionale Betriebe zu nennen." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "landingpage", "relaunch", "seo", "ki-sichtbarkeit"],
   },
 
   /* ──────────────── GARTEN- & LANDSCHAFTSBAU ─────────────────────── */
@@ -754,6 +770,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT meinen Betrieb empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Inhalte und ein sauberes lokales Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um regionale Betriebe zu nennen." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "landingpage", "relaunch", "seo", "ki-sichtbarkeit"],
   },
 
   /* ───────────────────────── ARCHITEKTEN ─────────────────────────── */
@@ -791,6 +808,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT mein Büro empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Inhalte und ein klares Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um regionale Büros zu nennen." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "landingpage", "relaunch", "seo", "ki-sichtbarkeit"],
   },
 
   /* ───────────────────────── INGENIEURBÜROS ──────────────────────── */
@@ -828,6 +846,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT mein Büro empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Fachinhalte und ein klares Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um Büros zu nennen — im B2B ein noch fast leerer Kanal." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "relaunch", "seo", "ki-sichtbarkeit", "content-marketing"],
   },
 
   /* ─────────────────── UNTERNEHMENSBERATUNG ──────────────────────── */
@@ -865,6 +884,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT meine Beratung empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Fachinhalte und ein klares Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um Berater zu nennen — ein Kanal mit großem Vorsprungs-Potenzial." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "relaunch", "seo", "ki-sichtbarkeit", "content-marketing"],
   },
 
   /* ───────────────────── VERSICHERUNGSMAKLER ─────────────────────── */
@@ -902,6 +922,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT mich empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Inhalte und ein sauberes lokales Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um regionale Makler zu nennen." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "landingpage", "relaunch", "seo", "ki-sichtbarkeit"],
   },
 
   /* ──────────────── FINANZ- & ANLAGEBERATER ──────────────────────── */
@@ -939,6 +960,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT mich empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Inhalte und ein sauberes Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um seriöse Berater zu nennen." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "landingpage", "relaunch", "seo", "ki-sichtbarkeit"],
   },
 
   /* ──────────────────── LOGISTIK & SPEDITION ─────────────────────── */
@@ -976,6 +998,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT meine Spedition empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Inhalte und ein klares Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um Anbieter zu nennen — im B2B ein noch fast leerer Kanal." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "relaunch", "seo", "ki-sichtbarkeit", "content-marketing"],
   },
 
   /* ─────────────────── ONLINE-SHOPS & E-COMMERCE ─────────────────── */
@@ -1013,6 +1036,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT meinen Shop empfiehlt?", a: "Über schema.org-Produkt-Markup, Answer Engine Optimization, zitierfähige Inhalte und ein klares Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um Shops und Produkte zu nennen." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "landingpage", "relaunch", "ki-sichtbarkeit", "web-apps"],
   },
 
   /* ───────────────────────── TIERARZTPRAXEN ──────────────────────── */
@@ -1050,6 +1074,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT meine Praxis empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Inhalte und ein sauberes lokales Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um regionale Praxen zu nennen." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "landingpage", "relaunch", "seo", "ki-sichtbarkeit"],
   },
 
   /* ───────────────────── PHYSIOTHERAPIE-PRAXEN ───────────────────── */
@@ -1087,6 +1112,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT meine Praxis empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Inhalte und ein sauberes lokales Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um regionale Praxen zu nennen." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "landingpage", "relaunch", "seo", "ki-sichtbarkeit"],
   },
 
   /* ──────────────── KOSMETIK- & BEAUTYSTUDIOS ────────────────────── */
@@ -1124,6 +1150,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT mein Studio empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Inhalte und ein sauberes lokales Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um regionale Studios zu nennen." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "landingpage", "relaunch", "seo", "ki-sichtbarkeit"],
   },
 
   /* ──────────────────────── GEBÄUDEREINIGUNG ─────────────────────── */
@@ -1161,6 +1188,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT meine Firma empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Inhalte und ein sauberes lokales Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um regionale Anbieter zu nennen." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "landingpage", "relaunch", "seo", "ki-sichtbarkeit"],
   },
 
   /* ───────────────────── BESTATTUNGSUNTERNEHMEN ──────────────────── */
@@ -1198,6 +1226,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT mein Unternehmen empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Inhalte und ein sauberes lokales Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um regionale Anbieter zu nennen." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "relaunch", "seo", "ki-sichtbarkeit"],
   },
 
   /* ──────────────── MALER- & LACKIERBETRIEBE ─────────────────────── */
@@ -1235,6 +1264,7 @@ export const industries: Industry[] = [
       { q: "Wie sorgt ihr dafür, dass ChatGPT meinen Betrieb empfiehlt?", a: "Über schema.org-Markup, Answer Engine Optimization, zitierfähige Inhalte und ein sauberes lokales Entity-Profil. Diese Signale nutzen ChatGPT, Perplexity, Claude und Google AI Overviews, um regionale Betriebe zu nennen." },
       { q: "Gibt es eine Ergebnis-Garantie?", a: "Ja. Werden die vereinbarten Ziele nicht erreicht, arbeiten wir ohne Mehrkosten weiter, bis sie erreicht sind — vorausgesetzt, du hältst dich an die strategischen Empfehlungen aus dem Erstgespräch." },
     ],
+    serviceSlugs: ["unternehmenswebsite", "landingpage", "relaunch", "seo", "ki-sichtbarkeit"],
   },
 ];
 

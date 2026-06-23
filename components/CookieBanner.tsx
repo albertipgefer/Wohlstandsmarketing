@@ -28,8 +28,14 @@ export default function CookieBanner() {
   if (hidden) return null;
 
   function persist(decision: "accept" | "decline") {
+    const previous = getConsent();
     setConsent(decision);
     setVisible(false);
+    // Echter Widerruf nach erteilter Einwilligung → Reload für sauberen
+    // Teardown von PostHog/Clarity (kein Unload-API vorhanden).
+    if (decision === "decline" && previous === "accept") {
+      window.location.reload();
+    }
   }
 
   return (

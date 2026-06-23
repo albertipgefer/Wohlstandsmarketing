@@ -25,7 +25,7 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (isInternalRoute(pathname)) return;
 
-    const initIfAllowed = () => {
+    const initIfAllowed = (fireInitialPageview: boolean) => {
       if (getConsent() !== "accept") return;
       const key = process.env.NEXT_PUBLIC_POSTHOG_KEY;
       if (!key || posthog.__loaded) return;
@@ -37,12 +37,15 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
         capture_pageleave: true,
         disable_session_recording: true, // Clarity übernimmt Heatmaps/Replays
       });
-      posthog.capture("$pageview"); // erster Pageview direkt nach späterem Opt-in
+      // Beim Mount-Init übernimmt der reguläre Pageview-Effekt den ersten
+      // Pageview. Nur beim späten Opt-in (Subscription) feuern wir ihn hier,
+      // weil der Pageview-Effekt mangels pathname-Wechsel nicht erneut läuft.
+      if (fireInitialPageview) posthog.capture("$pageview");
     };
 
-    initIfAllowed();
+    initIfAllowed(false);
     return subscribeConsent((d) => {
-      if (d === "accept") initIfAllowed();
+      if (d === "accept") initIfAllowed(true);
     });
   }, [pathname]);
 

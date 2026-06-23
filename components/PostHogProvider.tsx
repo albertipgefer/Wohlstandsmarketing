@@ -9,48 +9,46 @@
  *   (person_profiles: 'identified_only'), Session-Recording aus (das macht
  *   bereits Microsoft Clarity).
  * - Pageviews werden im App Router manuell bei jedem Routenwechsel erfasst.
+ * - Init erst nach Einwilligung (DSGVO).
  */
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-
-// Interne Routen, auf denen NICHT getrackt wird (gleich wie GlobalOverlays).
-const BARE_PREFIXES = [
-  "/tools",
-  "/rechner",
-  "/outreach",
-  "/analytics",
-  "/finanzen",
-  "/angebot",
-];
-
-function isInternal(path: string | null): boolean {
-  return !!path && BARE_PREFIXES.some((p) => path.startsWith(p));
-}
+import { getConsent, subscribeConsent } from "@/lib/consent";
+import { isInternalRoute } from "@/lib/tracking-routes";
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
-  // Init genau einmal — nur auf öffentlichen Seiten.
+  // Init genau einmal — nur auf öffentlichen Seiten UND nach Einwilligung.
   useEffect(() => {
-    if (isInternal(pathname)) return;
-    const key = process.env.NEXT_PUBLIC_POSTHOG_KEY;
-    if (!key || posthog.__loaded) return;
-    posthog.init(key, {
-      api_host: "/ingest",
-      ui_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
-      person_profiles: "identified_only",
-      capture_pageview: false, // App Router → manuell (siehe unten)
-      capture_pageleave: true,
-      disable_session_recording: true, // Clarity übernimmt Heatmaps/Replays
+    if (isInternalRoute(pathname)) return;
+
+    const initIfAllowed = () => {
+      if (getConsent() !== "accept") return;
+      const key = process.env.NEXT_PUBLIC_POSTHOG_KEY;
+      if (!key || posthog.__loaded) return;
+      posthog.init(key, {
+        api_host: "/ingest",
+        ui_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+        person_profiles: "identified_only",
+        capture_pageview: false, // App Router → manuell (siehe unten)
+        capture_pageleave: true,
+        disable_session_recording: true, // Clarity übernimmt Heatmaps/Replays
+      });
+      posthog.capture("$pageview"); // erster Pageview direkt nach späterem Opt-in
+    };
+
+    initIfAllowed();
+    return subscribeConsent((d) => {
+      if (d === "accept") initIfAllowed();
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   // Pageview bei jedem Routenwechsel — außer auf internen Seiten.
   useEffect(() => {
-    if (isInternal(pathname)) return;
+    if (isInternalRoute(pathname)) return;
     if (!posthog.__loaded) return;
     posthog.capture("$pageview");
   }, [pathname]);
@@ -58,7 +56,7 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
   // Zentrale Conversion-/Engagement-Events (DRY für überall verteilte Links):
   // Erstgespräch-Klick (TidyCal/cal.com), Anruf, E-Mail, Scroll-Tiefe.
   useEffect(() => {
-    if (isInternal(pathname)) return;
+    if (isInternalRoute(pathname)) return;
     if (!posthog.__loaded) return;
 
     const onClick = (e: MouseEvent) => {

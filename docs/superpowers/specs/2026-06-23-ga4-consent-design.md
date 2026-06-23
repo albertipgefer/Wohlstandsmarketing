@@ -133,8 +133,11 @@ Zentrales Consent-Modul (Framework-agnostisch, ohne React-Abhängigkeit im Kern)
      granted`, PostHog + Clarity initialisieren.
    - **„Nur notwendige"** → `setConsent("decline")` → Status bleibt; GA4 weiter
      cookieless, PostHog/Clarity bleiben aus.
-5. Späterer Widerruf über „Cookie-Einstellungen" → Banner erneut → neue
-   Entscheidung greift ohne Reload.
+5. Späterer Widerruf über „Cookie-Einstellungen" → Banner erneut. Erteilen
+   („accept") greift live ohne Reload (Tools initialisieren via Pub/Sub).
+   Echter Widerruf („accept" → „decline") löst einen Reload aus, da PostHog
+   und Clarity kein sauberes Unload-API haben — danach lädt nichts mehr ohne
+   Einwilligung, GA4 fällt auf cookieless zurück.
 
 ## Fehlerfälle / Edge Cases
 

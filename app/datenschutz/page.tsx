@@ -147,11 +147,58 @@ export default function Datenschutz() {
 
           <div>
             <h2 className="font-semibold text-[var(--text)]">
-              Google Analytics
+              Google Analytics 4
             </h2>
             <p className="mt-2">
-              Webseitenanalyse durch Google Ireland Limited auf Grundlage von
-              Art. 6 Abs. 1 lit. a DSGVO.
+              Diese Website nutzt Google Analytics 4, einen
+              Webanalysedienst der Google Ireland Limited (Gordon House,
+              Barrow Street, Dublin 4, Irland). Google verarbeitet die Daten
+              ggf. auch auf Servern der Google LLC in den USA.
+            </p>
+            <p className="mt-2">
+              <span className="font-medium text-[var(--text)]">Zweck:</span>{" "}
+              Analyse des Nutzungsverhaltens zur Verbesserung unseres Angebots
+              (Reichweiten- und Performance-Messung).
+            </p>
+            <p className="mt-2">
+              <span className="font-medium text-[var(--text)]">
+                Rechtsgrundlage:
+              </span>{" "}
+              Soweit Sie über unseren Cookie-Banner eingewilligt haben, erfolgt
+              die Verarbeitung auf Grundlage Ihrer Einwilligung (Art. 6 Abs. 1
+              lit. a DSGVO i. V. m. § 25 Abs. 1 TDDDG). Ohne Einwilligung
+              wird Google Analytics im „Consent Mode" ohne Cookies und ohne
+              dauerhafte Kennungen betrieben; dabei werden anonymisierte,
+              aggregierte Signale übertragen.
+            </p>
+            <p className="mt-2">
+              <span className="font-medium text-[var(--text)]">
+                Datenübermittlung in die USA:
+              </span>{" "}
+              Google ist nach dem EU-US Data Privacy Framework zertifiziert.
+              Es kann nicht ausgeschlossen werden, dass US-Behörden Zugriff
+              auf übermittelte Daten nehmen.
+            </p>
+            <p className="mt-2">
+              <span className="font-medium text-[var(--text)]">Widerruf:</span>{" "}
+              Sie können Ihre Einwilligung jederzeit über den Link
+              „Cookie-Einstellungen" im Footer mit Wirkung für die Zukunft
+              widerrufen.
+            </p>
+            <p className="mt-2">
+              <span className="font-medium text-[var(--text)]">
+                Weitere Informationen:
+              </span>{" "}
+              Datenschutzerklärung von Google unter{" "}
+              <a
+                href="https://policies.google.com/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[var(--accent)] hover:underline"
+              >
+                policies.google.com/privacy
+              </a>
+              .
             </p>
           </div>
 

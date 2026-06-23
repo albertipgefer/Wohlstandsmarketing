@@ -5,6 +5,7 @@ import "./globals.css";
 import ClarityAnalytics from "@/components/ClarityAnalytics";
 import GlobalOverlays from "@/components/GlobalOverlays";
 import { PostHogProvider } from "@/components/PostHogProvider";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { REVIEW_PROFILE_URLS } from "@/content/testimonials";
 
 const inter = Inter({
@@ -187,6 +188,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
         />
+        <GoogleAnalytics />
         <PostHogProvider>{children}</PostHogProvider>
         <GlobalOverlays />
         <ClarityAnalytics />

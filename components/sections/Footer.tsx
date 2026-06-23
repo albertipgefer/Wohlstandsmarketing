@@ -1,6 +1,7 @@
 import Logo from "@/components/Logo";
 import ReviewBadges from "@/components/ReviewBadges";
 import LeadMagnetTrigger from "@/components/LeadMagnetTrigger";
+import CookieSettingsLink from "@/components/CookieSettingsLink";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -116,6 +117,7 @@ export default function Footer() {
             <ul className="mt-4 space-y-2.5 text-[14px] text-[var(--text-muted)]">
               <li><a href="/impressum" className="transition hover:text-[var(--text)]">Impressum</a></li>
               <li><a href="/datenschutz" className="transition hover:text-[var(--text)]">Datenschutz</a></li>
+              <li><CookieSettingsLink className="transition hover:text-[var(--text)]" /></li>
             </ul>
           </div>
         </div>

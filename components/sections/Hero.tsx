@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import ReviewBadges from "@/components/ReviewBadges";
 import BlogNav from "@/components/blog/BlogNav";
+import { useFeatureFlagVariantKey } from "posthog-js/react";
 
 export default function Hero() {
   // LCP-kritisch: Hero-Content muss im SSR-HTML sofort sichtbar sein (opacity:1),
@@ -24,6 +25,15 @@ export default function Hero() {
       transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const },
     },
   };
+
+  // A/B-Test (PostHog-Flag "hero-cta-copy"): primärer Erstgespräch-CTA.
+  // "outcome" = outcome-gerahmte Copy gegen die Kontrolle. Flag lädt erst nach
+  // Consent (PostHog gated) → undefined fällt sauber auf die Kontrolle zurück.
+  const heroCtaVariant = useFeatureFlagVariantKey("hero-cta-copy");
+  const erstgespraechCta =
+    heroCtaVariant === "outcome"
+      ? "In 90 Tagen sichtbar – Gespräch sichern"
+      : "Kostenloses Erstgespräch buchen";
 
   return (
     <section className="relative min-h-screen w-full overflow-hidden bg-[var(--bg)]">
@@ -199,12 +209,12 @@ export default function Hero() {
                 href="https://tidycal.com/albertipgefer/erstgespraech-mit-wohlstandsmarketing-2"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Kostenloses Erstgespräch buchen"
+                aria-label={erstgespraechCta}
                 className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full border border-[var(--border-strong)] bg-white/70 px-7 py-4 text-[15px] font-medium text-[var(--text)] backdrop-blur transition hover:border-transparent"
               >
                 <span className="absolute inset-0 -z-0 translate-x-[-101%] bg-[var(--text)] transition-transform duration-500 ease-out group-hover:translate-x-0" />
                 <span className="relative z-10 transition-colors group-hover:text-white">
-                  Kostenloses Erstgespräch buchen
+                  {erstgespraechCta}
                 </span>
               </a>
             </motion.div>
@@ -286,7 +296,7 @@ export default function Hero() {
                 className="group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-[var(--text)] px-7 py-4 text-[15px] font-semibold text-white shadow-[0_10px_30px_-10px_rgba(22,99,222,0.5)] transition hover:shadow-[0_14px_40px_-10px_rgba(22,99,222,0.75)]"
               >
                 <span className="absolute inset-0 -z-0 translate-y-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-dark)] transition-transform duration-500 ease-out group-hover:translate-y-0" />
-                <span className="relative z-10">Kostenloses Erstgespräch buchen</span>
+                <span className="relative z-10">{erstgespraechCta}</span>
                 <span className="relative z-10 transition-transform group-hover:translate-x-1">
                   →
                 </span>

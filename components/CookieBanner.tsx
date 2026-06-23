@@ -4,8 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-
-const STORAGE_KEY = "wsm-cookie-consent";
+import { getConsent, setConsent, subscribeOpenSettings } from "@/lib/consent";
 
 // Interne, passwortgeschützte Tools — dort ist der Cookie-Hinweis fehl am Platz.
 const HIDDEN_PREFIXES = ["/outreach", "/angebot", "/finanzen"];
@@ -17,25 +16,19 @@ export default function CookieBanner() {
 
   useEffect(() => {
     if (hidden) return;
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (!stored) setVisible(true);
-    } catch {
-      /* localStorage blocked → don't show */
-    }
+    if (getConsent() === null) setVisible(true);
+  }, [hidden]);
+
+  // Erneutes Einblenden bei Klick auf "Cookie-Einstellungen" (Widerruf).
+  useEffect(() => {
+    if (hidden) return;
+    return subscribeOpenSettings(() => setVisible(true));
   }, [hidden]);
 
   if (hidden) return null;
 
   function persist(decision: "accept" | "decline") {
-    try {
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify({ decision, at: new Date().toISOString() })
-      );
-    } catch {
-      /* noop */
-    }
+    setConsent(decision);
     setVisible(false);
   }
 

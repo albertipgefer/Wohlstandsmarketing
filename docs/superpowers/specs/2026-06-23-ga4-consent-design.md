@@ -35,17 +35,18 @@ GA4 ergänzt nur die Google-Datenebene.
    KPIs + A/B-Tests bleiben bei PostHog.
 2. **Voller Consent-Umbau** statt Insellösung — die Seite ist Agentur-Referenz
    und muss vorzeigbar sauber sein.
-3. **Verhalten ohne Einwilligung (bewusste Risiko-Entscheidung des Inhabers):**
-   - **GA4:** Google **Consent Mode v2 (advanced)**. gtag lädt immer, Default =
-     `denied` → cookielose Pings auch ohne Einwilligung. Bei „Alle akzeptieren"
-     → `update` auf `granted` (volle Messung inkl. Cookies).
-   - **PostHog & Clarity:** laden **erst nach Einwilligung** (kein sauberer
-     Cookieless-Modus vorhanden).
-   - ⚠️ **Dokumentiertes Restrisiko:** Cookielose GA4-Pings übertragen weiterhin
-     die IP-Adresse an Google (USA). Das ist personenbezogen und in DE rechtlich
-     eine Grauzone — nicht garantiert abmahnsicher. Der Inhaber hat dies nach
-     ausdrücklichem Hinweis bewusst gewählt (Option „B"), um mehr GA4-Daten zu
-     erhalten. Alternative „kein Tracking ohne Consent" wurde verworfen.
+3. **Verhalten ohne Einwilligung — strikter Opt-in (alle Tools einheitlich):**
+   - **GA4, PostHog, Clarity, Seenpilot:** laden **erst nach Einwilligung**.
+     Vor „Alle akzeptieren" wird nichts geladen und nichts übertragen.
+   - GA4 wird bei Einwilligung mit Consent Mode v2 (`granted`) geladen.
+   - **Revision 2026-06-23 (Abend):** Ursprünglich war GA4 als Consent Mode
+     „advanced" mit cookielosen Pings vor Einwilligung gebaut (Option „B",
+     Grauzone). Nachdem klar wurde, dass GA4 für die eigene Seite nicht
+     entscheidungsrelevant ist (PostHog trägt KPIs + A/B-Tests, GSC liefert
+     Suchanfragen standalone), wurde GA4 auf strikten Opt-in umgestellt: das
+     Restrisiko (IP-Transfer USA vor Consent) lohnt sich nicht für Daten, die
+     nicht genutzt werden. Ergebnis: einheitlich opt-in, maximal abmahnsicher,
+     saubere Kunden-Referenz.
 4. **Keine granulare Kategorie-Auswahl** (YAGNI). Die bestehende
    Zwei-Button-Logik „Nur notwendige / Alle akzeptieren" ist rechtlich
    ausreichend und einfacher.

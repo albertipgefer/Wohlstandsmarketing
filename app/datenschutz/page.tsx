@@ -138,14 +138,6 @@ export default function Datenschutz() {
           </div>
 
           <div>
-            <h2 className="font-semibold text-[var(--text)]">Facebook Pixel</h2>
-            <p className="mt-2">
-              Konversionsmessungsdienst auf Grundlage von Art. 6 Abs. 1 lit. a
-              DSGVO.
-            </p>
-          </div>
-
-          <div>
             <h2 className="font-semibold text-[var(--text)]">
               Google Analytics 4
             </h2>
@@ -164,12 +156,11 @@ export default function Datenschutz() {
               <span className="font-medium text-[var(--text)]">
                 Rechtsgrundlage:
               </span>{" "}
-              Soweit Sie über unseren Cookie-Banner eingewilligt haben, erfolgt
-              die Verarbeitung auf Grundlage Ihrer Einwilligung (Art. 6 Abs. 1
-              lit. a DSGVO i. V. m. § 25 Abs. 1 TDDDG). Ohne Einwilligung
-              wird Google Analytics im „Consent Mode" ohne Cookies und ohne
-              dauerhafte Kennungen betrieben; dabei werden anonymisierte,
-              aggregierte Signale übertragen.
+              Die Verarbeitung erfolgt ausschließlich auf Grundlage Ihrer
+              Einwilligung (Art. 6 Abs. 1 lit. a DSGVO i. V. m. § 25 Abs. 1
+              TDDDG). Google Analytics wird erst geladen, nachdem Sie über
+              unseren Cookie-Banner zugestimmt haben; ohne Einwilligung findet
+              keine Übertragung an Google statt.
             </p>
             <p className="mt-2">
               <span className="font-medium text-[var(--text)]">
@@ -182,7 +173,7 @@ export default function Datenschutz() {
             <p className="mt-2">
               <span className="font-medium text-[var(--text)]">Widerruf:</span>{" "}
               Sie können Ihre Einwilligung jederzeit über den Link
-              „Cookie-Einstellungen" im Footer mit Wirkung für die Zukunft
+              „Cookie-Einstellungen“ im Footer mit Wirkung für die Zukunft
               widerrufen.
             </p>
             <p className="mt-2">

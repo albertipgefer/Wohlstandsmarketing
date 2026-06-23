@@ -1,16 +1,18 @@
 "use client";
 /**
- * Google Analytics 4 mit Consent Mode v2 (advanced).
+ * Google Analytics 4 — strikter Opt-in (lädt erst nach Einwilligung).
  *
- * - Default: alle Consent-Signale "denied" → GA sendet cookielose Pings, auch
- *   ohne Einwilligung (bewusste Risiko-Entscheidung, siehe Spec 2026-06-23).
- * - Nach Einwilligung ("Alle akzeptieren") → consent update "granted".
+ * - Vor "Alle akzeptieren" wird NICHTS geladen und NICHTS übertragen (kein
+ *   gtag.js, keine Pings). Einheitlich mit PostHog/Clarity → maximal
+ *   abmahnsicher (siehe Spec 2026-06-23, von Cookieless auf strikt opt-in
+ *   umgestellt, da GA4 für die eigene Seite nicht entscheidungsrelevant ist).
+ * - Bei Einwilligung wird gtag mit Consent Mode "granted" geladen.
  * - Pageviews bei jedem Routenwechsel (App Router); interne Seiten ausgenommen.
  * - No-op, wenn NEXT_PUBLIC_GA_ID fehlt.
  */
 import Script from "next/script";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { isInternalRoute } from "@/lib/tracking-routes";
 import { getConsent, subscribeConsent } from "@/lib/consent";
 
@@ -23,21 +25,24 @@ declare global {
   }
 }
 
-const GRANTED = {
-  ad_storage: "granted",
-  analytics_storage: "granted",
-  ad_user_data: "granted",
-  ad_personalization: "granted",
-} as const;
-
 export default function GoogleAnalytics() {
   const pathname = usePathname();
+  const [allowed, setAllowed] = useState(false);
   const ready = useRef(false);
 
-  // 1) Bootstrap: dataLayer + Consent-Default (denied) + config. Genau einmal,
-  //    VOR den Pageview-Effekten (Effekte laufen in Deklarationsreihenfolge).
+  // Einwilligung beobachten — erst dann GA4 aktivieren.
   useEffect(() => {
-    if (!GA_ID || ready.current) return;
+    if (!GA_ID) return;
+    if (getConsent() === "accept") setAllowed(true);
+    return subscribeConsent((d) => {
+      if (d === "accept") setAllowed(true);
+    });
+  }, []);
+
+  // Bootstrap erst nach Einwilligung: dataLayer + Consent "granted" + config.
+  // VOR dem Pageview-Effekt deklariert (Effekte laufen in Reihenfolge).
+  useEffect(() => {
+    if (!GA_ID || !allowed || ready.current) return;
     window.dataLayer = window.dataLayer || [];
     function gtag() {
       // eslint-disable-next-line prefer-rest-params
@@ -45,41 +50,28 @@ export default function GoogleAnalytics() {
     }
     window.gtag = window.gtag || (gtag as Window["gtag"]);
     window.gtag("consent", "default", {
-      ad_storage: "denied",
-      analytics_storage: "denied",
-      ad_user_data: "denied",
-      ad_personalization: "denied",
+      ad_storage: "granted",
+      analytics_storage: "granted",
+      ad_user_data: "granted",
+      ad_personalization: "granted",
     });
     window.gtag("js", new Date());
     window.gtag("config", GA_ID, { send_page_view: false });
-    if (getConsent() === "accept") {
-      window.gtag("consent", "update", GRANTED);
-    }
     ready.current = true;
-  }, []);
+  }, [allowed]);
 
-  // 2) Nachträgliche Einwilligung in dieser Session.
+  // Pageview pro Routenwechsel (nach Einwilligung) — interne Seiten ausgenommen.
   useEffect(() => {
-    if (!GA_ID) return;
-    return subscribeConsent((d) => {
-      if (d === "accept" && typeof window.gtag === "function") {
-        window.gtag("consent", "update", GRANTED);
-      }
-    });
-  }, []);
-
-  // 3) Pageview pro Routenwechsel (inkl. erstem) — interne Seiten ausgenommen.
-  useEffect(() => {
-    if (!GA_ID || isInternalRoute(pathname)) return;
+    if (!GA_ID || !allowed || isInternalRoute(pathname)) return;
     if (typeof window.gtag !== "function") return;
     window.gtag("event", "page_view", {
       page_path: pathname,
       page_location: window.location.href,
       page_title: document.title,
     });
-  }, [pathname]);
+  }, [allowed, pathname]);
 
-  if (!GA_ID) return null;
+  if (!GA_ID || !allowed) return null;
 
   return (
     <Script

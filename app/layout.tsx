@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import ClarityAnalytics from "@/components/ClarityAnalytics";
+import SeenpilotAnalytics from "@/components/SeenpilotAnalytics";
 import GlobalOverlays from "@/components/GlobalOverlays";
 import { PostHogProvider } from "@/components/PostHogProvider";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
@@ -166,10 +166,6 @@ export default function RootLayout({
       className={`${inter.variable} ${playfair.variable} antialiased`}
     >
       <body className="bg-[var(--bg)] text-[var(--text)]">
-        <Script
-          src="https://seenpilot.com/snippet/csk_b2028487-1f91-4b95-8d6f-bfe994cd2819.CJNagiYtfr2oRx6yA4GhmS67YtgPsZxo.js"
-          strategy="beforeInteractive"
-        />
         <link rel="preconnect" href="https://scripts.clarity.ms" />
         <link rel="dns-prefetch" href="https://scripts.clarity.ms" />
         <script
@@ -192,6 +188,7 @@ export default function RootLayout({
         <PostHogProvider>{children}</PostHogProvider>
         <GlobalOverlays />
         <ClarityAnalytics />
+        <SeenpilotAnalytics />
       </body>
     </html>
   );

@@ -77,7 +77,7 @@ function renderText(bodyCore: string, checkLink: string, email: string): string 
     .replace(/\{\{check_link\}\}/g, checkLink);
   return (
     body +
-    `\n\n—\nWohlstandsmarketing · Albert Ipgefer · Vor der Loos 4e · 56130 Bad Ems · +49 176 227 87 559\n` +
+    `\n\n\nWohlstandsmarketing · Albert Ipgefer · Vor der Loos 4e · 56130 Bad Ems · +49 176 227 87 559\n` +
     `Abmelden: ${unsubUrl(email)}`
   );
 }
@@ -111,10 +111,10 @@ function greeting(p: Prospect): string {
 function followupBody(p: Prospect, step: number): string {
   const g = greeting(p);
   const t: Record<number, string> = {
-    1: `${g},\n\nkurz zum Nachklang meiner ChatGPT-Frage.\n\nDie drei, die genannt wurden, sind nicht größer als Sie. Nicht besser. Nur für die KI besser lesbar.\n\nDas ist der ganze Unterschied — und er lässt sich ändern.\n\nWo Sie heute stehen: {{cta:in 3 Minuten sehen}}`,
-    2: `${g},\n\nstellen Sie sich vor, ein Eigentümer mit einem Objekt für 800.000 € tippt heute Abend in ChatGPT: „Wer verkauft mein Haus?"\n\nDrei Namen. Ein Anruf. Ein Auftrag.\n\nDie Frage ist nur, ob Ihrer dabei ist.\n\nIn 3 Minuten wissen Sie es: {{cta:jetzt prüfen}}`,
-    3: `${g},\n\ndas wird nicht weniger. In zwölf Monaten fragt so der Großteil der Eigentümer nach seinem Makler.\n\nWer dann sichtbar ist, nimmt die Anfragen fast ohne Wettbewerb mit.\n\nDer Vorsprung entsteht jetzt — oder er entsteht für jemand anderen.\n\nIhr Stand heute: {{cta:hier sehen}}`,
-    4: `${g},\n\nich lasse die Sache mit ChatGPT jetzt ruhen — das ist meine letzte Mail dazu.\n\nFalls es Sie doch interessiert, wer statt Ihnen empfohlen wird und woran es liegt: {{cta:ein letzter Blick}}\n\nAnsonsten weiterhin gute Abschlüsse — und kein böses Blut.`,
+    1: `${g},\n\nkurz zum Nachklang meiner letzten Mail.\n\nEs liegt selten an der Größe und selten am Ruf. Meist liegt es daran, wie gut die Seite für Eigentümer und für die KI lesbar ist.\n\nGenau das lässt sich ändern.\n\nSoll ich Ihnen kurz zeigen, woran es bei Ihnen liegt?`,
+    2: `${g},\n\nstellen Sie sich vor, ein Eigentümer mit einem hochwertigen Objekt sucht heute Abend online nach einem Makler.\n\nEr vergleicht zwei, drei Namen und entscheidet sich für einen. Die Frage ist nur, ob Ihrer dabei ist.\n\nSoll ich Ihnen den kurzen Befund dazu schicken?`,
+    3: `${g},\n\ndas wird nicht weniger. Immer mehr Eigentümer suchen ihren Makler zuerst online.\n\nWer dann sichtbar ist, nimmt die Anfragen fast ohne Wettbewerb mit. Der Vorsprung entsteht jetzt, oder er entsteht für jemand anderen.\n\nWollen Sie wissen, wo Sie heute stehen?`,
+    4: `${g},\n\nich lasse das Thema jetzt ruhen, das ist meine letzte Mail dazu.\n\nFalls es Sie doch interessiert, woran es liegt: eine kurze Antwort genügt.\n\nAnsonsten weiterhin gute Abschlüsse und kein böses Blut.`,
   };
   return (t[step] || t[1]) + `\n\nBeste Grüße\nAlbert Ipgefer · Wohlstandsmarketing`;
 }

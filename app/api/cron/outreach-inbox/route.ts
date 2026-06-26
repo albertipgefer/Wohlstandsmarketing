@@ -59,6 +59,8 @@ function extractReplyText(raw: string): string {
 
 /** Versendet genehmigte Befund-Entwürfe (status=approved, send_at erreicht) als Thread-Antwort. */
 async function sendApprovedBefunde(inboxes: Inbox[]): Promise<number> {
+  // Sicherheits-Gate wie beim Kaltversand: Befunde gehen erst nach Go-Live raus.
+  if (process.env.OUTREACH_SEND_ENABLED !== "1") return 0;
   const pendings = await getApprovedDuePending();
   let sent = 0;
   for (const pr of pendings) {
@@ -100,8 +102,8 @@ export async function GET(req: NextRequest) {
   // 1) genehmigte Befunde versenden
   const befundeSent = await sendApprovedBefunde(inboxes);
 
-  // 2) Postfächer pollen
-  const since = new Date(Date.now() - 2 * 3600 * 1000);
+  // 2) Postfächer pollen (Fenster knapp über dem 30-Min-Pinger -> wenig Überlappung)
+  const since = new Date(Date.now() - 50 * 60 * 1000);
   let replies = 0, bounces = 0, scanned = 0;
 
   for (const ib of inboxes) {
@@ -139,9 +141,12 @@ export async function GET(req: NextRequest) {
 
           const p = from ? await getProspectByEmail(from) : null;
           if (p && !["replied", "converted", "unsubscribed", "bounced"].includes(p.status)) {
-            const bodyLower = raw.toLowerCase();
+            // WICHTIG: nur den eigentlichen Antworttext prüfen, NICHT die ganze Roh-Mail.
+            // Unsere zitierte Originalmail enthält im Footer das Wort "Abmelden" — auf raw
+            // angewendet würde jede positive Antwort fälschlich als negativ gewertet.
+            const replyText = extractReplyText(raw);
             const isNegative =
-              /(kein interesse|nicht interessiert|kein bedarf|bitte keine|keine weiteren|abmelden|austragen|unsubscribe|nehmen sie mich (raus|heraus)|entfernen sie|streichen sie|kein\s*danke|nicht kontaktieren)/.test(bodyLower);
+              /(kein interesse|nicht interessiert|kein bedarf|bitte keine|keine weiteren|bitte.{0,12}(abmelden|austragen)|nehmen sie mich (raus|heraus)|entfernen sie|streichen sie|kein\s*danke|nicht kontaktieren)/.test(replyText.toLowerCase());
 
             if (isNegative) {
               await setStatusByEmail(from, "unsubscribed");
@@ -153,7 +158,6 @@ export async function GET(req: NextRequest) {
               await setStatusByEmail(from, "replied");
               await logEvent(p.id, "reply", { ab_arm: p.ab_arm, sequence_step: p.sequence_step });
               replies++;
-              const replyText = extractReplyText(raw);
 
               // Lead sofort in Close (HOT-Task + Telefon + Notiz)
               try {

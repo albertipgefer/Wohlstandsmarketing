@@ -27,7 +27,7 @@ function ready(): boolean {
 
 export type ProspectStatus =
   | "active" | "paused" | "replied" | "converted"
-  | "bounced" | "unsubscribed" | "exhausted";
+  | "bounced" | "unsubscribed" | "exhausted" | "suppressed";
 
 export type EventType =
   | "sent" | "delivered" | "bounce" | "click"

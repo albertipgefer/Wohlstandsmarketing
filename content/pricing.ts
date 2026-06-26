@@ -36,7 +36,7 @@ export type Selection = {
   durationMonths?: number; // Gewählte Laufzeit (SEO/KI Retainer)
 };
 
-export const BUNDLE_DISCOUNT = 0.10; // 10 % Paket-Rabatt ab 3 ausgewählten Leistungen
+export const BUNDLE_DISCOUNT = 0.05; // 5 % Paket-Rabatt ab 3 ausgewählten Leistungen
 export const BUNDLE_MIN_ITEMS = 3; // ab so vielen Leistungen wird daraus ein „Paket"
 export const EXTRA_PAGE_PRICE = 300; // pro zusätzliche Unterseite (Unternehmenswebseite)
 

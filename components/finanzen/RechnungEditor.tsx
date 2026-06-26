@@ -83,7 +83,7 @@ export default function RechnungEditor({ initial, kunden = [], preisliste = [] }
   const [rechnungsdatum, setRechnungsdatum] = useState(
     initial?.rechnungsdatum || new Date().toISOString().slice(0, 10),
   );
-  const [zielTage, setZielTage] = useState(initial?.zahlungsziel_tage ?? 14);
+  const [zielTage, setZielTage] = useState(initial?.zahlungsziel_tage ?? 7);
   const [anmerkungen, setAnmerkungen] = useState(initial?.anmerkungen || "");
   const [bedingungen, setBedingungen] = useState(initial?.bedingungen || "");
   const [busy, setBusy] = useState<null | "draft" | "send">(null);
@@ -161,7 +161,7 @@ export default function RechnungEditor({ initial, kunden = [], preisliste = [] }
           anmerkungen,
           bedingungen,
           rechnungsdatum,
-          zahlungsziel_tage: Number(zielTage) || 14,
+          zahlungsziel_tage: Number(zielTage) || 7,
         }),
       });
       const data = await r.json().catch(() => ({}));

@@ -11,13 +11,27 @@ export const runtime = "nodejs";
 import { NextRequest, NextResponse } from "next/server";
 import { isLoggedIn } from "@/lib/angebot/auth";
 import { getAngebotById, getAngebotByToken } from "@/lib/angebot/db";
-import { getRechnungById, getRechnungByToken } from "@/lib/finanzen/db";
+import { getRechnungById, getRechnungByToken, type Rechnung } from "@/lib/finanzen/db";
 import {
   renderDokumentPdf,
   angebotToPdfDoc,
   rechnungToPdfDoc,
   type PdfDoc,
 } from "@/lib/finanzen/pdf";
+
+/** Rechnung → PdfDoc inkl. Angebotsnummer-Bezug (per angebot_id nachgeladen). */
+async function rechnungDoc(r: Rechnung): Promise<PdfDoc> {
+  let angebotNummer: string | null = null;
+  if (r.angebot_id) {
+    try {
+      const a = await getAngebotById(r.angebot_id);
+      angebotNummer = a?.nummer ?? null;
+    } catch {
+      /* Bezug optional — bei Fehler ohne Angebotsnummer rendern */
+    }
+  }
+  return rechnungToPdfDoc(r, angebotNummer);
+}
 
 function pdfResponse(buf: Buffer, filename: string): NextResponse {
   return new NextResponse(new Uint8Array(buf), {
@@ -44,7 +58,7 @@ export async function GET(req: NextRequest) {
     if (rTok) {
       const r = await getRechnungByToken(rTok);
       if (!r) return NextResponse.json({ error: "not_found" }, { status: 404 });
-      doc = rechnungToPdfDoc(r);
+      doc = await rechnungDoc(r);
       filename = `Rechnung-${r.nummer || r.id}.pdf`;
     } else if (aTok) {
       const a = await getAngebotByToken(aTok);
@@ -57,7 +71,7 @@ export async function GET(req: NextRequest) {
       if (rId) {
         const r = await getRechnungById(rId);
         if (!r) return NextResponse.json({ error: "not_found" }, { status: 404 });
-        doc = rechnungToPdfDoc(r);
+        doc = await rechnungDoc(r);
         filename = `Rechnung-${r.nummer || r.id}.pdf`;
       } else if (aId) {
         const a = await getAngebotById(aId);

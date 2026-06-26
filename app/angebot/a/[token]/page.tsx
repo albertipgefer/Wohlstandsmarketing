@@ -72,11 +72,11 @@ export default async function PublicAngebotPage({
         <PrintButton />
       </div>
 
-      <div className="ag-doc-wrap" style={{ padding: 28, display: "flex", justifyContent: "center", overflowX: "auto" }}>
+      <div className="ag-doc-wrap" style={{ padding: "clamp(10px, 3vw, 28px)", display: "flex", justifyContent: "center", overflowX: "auto" }}>
         <AngebotDocument data={data} />
       </div>
 
-      <div className="ag-no-print" style={{ padding: "0 28px 40px" }}>
+      <div className="ag-no-print" style={{ padding: "0 clamp(10px, 3vw, 28px) 40px" }}>
         <AcceptBar token={token} accepted={a.status === "angenommen"} acceptName={a.accept_name} />
       </div>
     </main>

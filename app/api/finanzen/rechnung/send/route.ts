@@ -13,7 +13,7 @@ import {
   nextRechnungsnummer,
   dbReady,
 } from "@/lib/finanzen/db";
-import { newPublicToken } from "@/lib/angebot/db";
+import { newPublicToken, getAngebotById } from "@/lib/angebot/db";
 import { sendMail, rechnungEmailHtml } from "@/lib/finanzen/email";
 import { renderDokumentPdf, rechnungToPdfDoc } from "@/lib/finanzen/pdf";
 import { baseUrl } from "@/lib/angebot/email";
@@ -43,13 +43,27 @@ export async function POST(req: NextRequest) {
   const token = r.public_token || newPublicToken();
   const merged = { ...r, nummer, public_token: token };
 
-  // PDF rendern (gekapselt — bei Fehler trotzdem ohne Anhang senden).
-  let attachments: { filename: string; content: string }[] | undefined;
+  // Angebotsnummer-Bezug laden (optional, für den PDF-Kopf).
+  let angebotNummer: string | null = null;
+  if (merged.angebot_id) {
+    try {
+      const a = await getAngebotById(merged.angebot_id);
+      angebotNummer = a?.nummer ?? null;
+    } catch {
+      /* Bezug optional */
+    }
+  }
+
+  // PDF rendern — eine Rechnung ohne PDF wird NICHT versendet.
+  let attachments: { filename: string; content: string }[];
   try {
-    const buf = await renderDokumentPdf(rechnungToPdfDoc(merged));
+    const buf = await renderDokumentPdf(rechnungToPdfDoc(merged, angebotNummer));
     attachments = [{ filename: `Rechnung-${nummer}.pdf`, content: buf.toString("base64") }];
-  } catch {
-    attachments = undefined;
+  } catch (e) {
+    return NextResponse.json(
+      { ok: false, error: "pdf_render_failed", detail: e instanceof Error ? e.message : "unknown" },
+      { status: 500 },
+    );
   }
   const link = `${baseUrl()}/finanzen/r/${token}`;
   const betreff = `Ihre Rechnung von Wohlstandsmarketing — ${nummer}`;

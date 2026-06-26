@@ -232,7 +232,7 @@ export function rechnungFromAngebot(
     abschlagProzent?: number;
   },
 ): RechnungInput {
-  const ziel = opts?.zahlungszielTage ?? 14;
+  const ziel = opts?.zahlungszielTage ?? 7;
   const heute = new Date();
   const faellig = new Date(heute.getTime() + ziel * 24 * 60 * 60 * 1000);
 

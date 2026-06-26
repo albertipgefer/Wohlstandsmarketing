@@ -15,14 +15,18 @@ import {
 } from "@react-pdf/renderer";
 import { ANBIETER } from "@/lib/angebot/stammdaten";
 import { LOGO_PNG_DATA_URI } from "@/lib/finanzen/logo-data";
-import { eur, deDate } from "@/lib/angebot/format";
+import { eur, deDate, computeTotals } from "@/lib/angebot/format";
 import type { Angebot, AngebotPosition } from "@/lib/angebot/db";
 import type { Rechnung } from "@/lib/finanzen/db";
 
 export type PdfDoc = {
   art: "Angebot" | "Rechnung";
   nummer: string;
+  /** Bei Rechnung: Nummer des zugrunde liegenden Angebots (Bezug). */
+  angebotNummer?: string | null;
   datum: string | null;
+  /** Bei Rechnung: Leistungsdatum/-zeitraum (Pflichtangabe §14 UStG). */
+  leistungsdatum?: string | null;
   faellig?: string | null;
   gueltigBis?: string | null;
   kundeFirma?: string | null;
@@ -35,6 +39,10 @@ export type PdfDoc = {
   positionen: AngebotPosition[];
   anmerkungen?: string | null;
   bedingungen?: string | null;
+  /** Netto vor Paket-Rabatt (für transparente Rabatt-Zeile). */
+  nettoRaw?: number;
+  rabattRate?: number;
+  rabattBetrag?: number;
   netto: number;
   ust: number;
   brutto: number;
@@ -52,10 +60,11 @@ const s = StyleSheet.create({
   brandAccent: { color: ACCENT },
   senderSmall: { fontSize: 8, color: "#6b6b6b", marginTop: 4, lineHeight: 1.5 },
   metaBox: { alignItems: "flex-end" },
-  metaTitle: { fontSize: 18, fontFamily: "Helvetica-Bold", color: "#0a0a0a" },
+  metaTitle: { fontSize: 18, fontFamily: "Helvetica-Bold", color: "#0a0a0a", lineHeight: 1, marginBottom: 8 },
   metaLine: { fontSize: 9, color: "#52525b", marginTop: 3 },
   addressRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: 26 },
-  toBlock: { maxWidth: 260 },
+  fromBlock: { maxWidth: 240 },
+  toBlock: { maxWidth: 240 },
   label: { fontSize: 7.5, color: "#9a9a9a", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 3 },
   strong: { fontFamily: "Helvetica-Bold" },
   intro: { marginBottom: 16, color: "#27272a" },
@@ -94,20 +103,20 @@ function DokumentPdf({ d }: { d: PdfDoc }) {
       <Page size="A4" style={s.page}>
         {/* Kopf */}
         <View style={s.headerRow}>
-          <View>
-            <View style={s.brandRow}>
-              {/* eslint-disable-next-line jsx-a11y/alt-text */}
-              <Image style={s.brandLogo} src={LOGO_PNG_DATA_URI} />
-            </View>
-            <Text style={s.senderSmall}>
-              {ANBIETER.name} · {ANBIETER.strasse} · {ANBIETER.plzOrt}
-              {"\n"}{ANBIETER.email} · {ANBIETER.telefon}
-            </Text>
+          <View style={s.brandRow}>
+            {/* eslint-disable-next-line jsx-a11y/alt-text */}
+            <Image style={s.brandLogo} src={LOGO_PNG_DATA_URI} />
           </View>
           <View style={s.metaBox}>
             <Text style={s.metaTitle}>{d.art}</Text>
             <Text style={s.metaLine}>Nr. {d.nummer || "—"}</Text>
+            {d.art === "Rechnung" && d.angebotNummer ? (
+              <Text style={s.metaLine}>zu Angebot {d.angebotNummer}</Text>
+            ) : null}
             <Text style={s.metaLine}>Datum: {deDate(d.datum)}</Text>
+            {d.art === "Rechnung" ? (
+              <Text style={s.metaLine}>Leistungsdatum: {deDate(d.leistungsdatum || d.datum)}</Text>
+            ) : null}
             {d.art === "Rechnung" && d.faellig ? (
               <Text style={s.metaLine}>Fällig: {deDate(d.faellig)}</Text>
             ) : null}
@@ -117,10 +126,19 @@ function DokumentPdf({ d }: { d: PdfDoc }) {
           </View>
         </View>
 
-        {/* Empfänger */}
+        {/* Absender (Von) + Empfänger (An) nebeneinander */}
         <View style={s.addressRow}>
+          <View style={s.fromBlock}>
+            <Text style={s.label}>Von</Text>
+            <Text style={s.strong}>{ANBIETER.firma}</Text>
+            <Text>{ANBIETER.name}</Text>
+            <Text>{ANBIETER.strasse}</Text>
+            <Text>{ANBIETER.plzOrt}</Text>
+            <Text>{ANBIETER.email}</Text>
+            <Text>{ANBIETER.telefon}</Text>
+          </View>
           <View style={s.toBlock}>
-            <Text style={s.label}>Empfänger</Text>
+            <Text style={s.label}>An</Text>
             {empf.length ? (
               empf.map((l, i) => (
                 <Text key={i} style={i === 0 ? s.strong : undefined}>{l}</Text>
@@ -160,10 +178,27 @@ function DokumentPdf({ d }: { d: PdfDoc }) {
 
         {/* Summen */}
         <View style={s.totals}>
-          <View style={s.totalRow}>
-            <Text style={s.totalLabel}>Zwischensumme (netto)</Text>
-            <Text>{eur(d.netto)}</Text>
-          </View>
+          {d.rabattRate && d.rabattRate > 0 ? (
+            <>
+              <View style={s.totalRow}>
+                <Text style={s.totalLabel}>Zwischensumme (netto)</Text>
+                <Text>{eur(d.nettoRaw ?? d.netto)}</Text>
+              </View>
+              <View style={s.totalRow}>
+                <Text style={s.totalLabel}>Paket-Rabatt ({Math.round(d.rabattRate * 100)} %)</Text>
+                <Text>−{eur(d.rabattBetrag ?? 0)}</Text>
+              </View>
+              <View style={s.totalRow}>
+                <Text style={s.totalLabel}>Netto nach Rabatt</Text>
+                <Text>{eur(d.netto)}</Text>
+              </View>
+            </>
+          ) : (
+            <View style={s.totalRow}>
+              <Text style={s.totalLabel}>Zwischensumme (netto)</Text>
+              <Text>{eur(d.netto)}</Text>
+            </View>
+          )}
           <View style={s.totalRow}>
             <Text style={s.totalLabel}>zzgl. USt</Text>
             <Text>{eur(d.ust)}</Text>
@@ -176,7 +211,7 @@ function DokumentPdf({ d }: { d: PdfDoc }) {
 
         {/* Zahlungshinweis (Rechnung) */}
         {d.zahlungshinweis ? (
-          <View style={s.payBox}>
+          <View style={s.payBox} wrap={false}>
             <Text style={s.sectionTitle}>Zahlung</Text>
             <Text style={s.small}>
               Bitte überweisen Sie {eur(d.brutto)} bis {deDate(d.faellig)} auf:
@@ -207,7 +242,7 @@ function DokumentPdf({ d }: { d: PdfDoc }) {
         {/* Footer */}
         <View style={s.footer} fixed>
           <Text>{ANBIETER.firma} · {ANBIETER.website}</Text>
-          <Text>Steuernr. {ANBIETER.steuernummer}</Text>
+          <Text>Steuernr. {ANBIETER.steuernummer} · USt-IdNr {ANBIETER.ustIdNr}</Text>
         </View>
       </Page>
     </Document>
@@ -219,6 +254,7 @@ export async function renderDokumentPdf(d: PdfDoc): Promise<Buffer> {
 }
 
 export function angebotToPdfDoc(a: Angebot): PdfDoc {
+  const t = computeTotals(a.positionen || []);
   return {
     art: "Angebot",
     nummer: a.nummer || "",
@@ -234,6 +270,9 @@ export function angebotToPdfDoc(a: Angebot): PdfDoc {
     positionen: a.positionen || [],
     anmerkungen: a.anmerkungen,
     bedingungen: a.bedingungen,
+    nettoRaw: t.nettoRaw,
+    rabattRate: t.rabattRate,
+    rabattBetrag: t.rabattBetrag,
     netto: a.netto,
     ust: a.ust,
     brutto: a.brutto,
@@ -241,22 +280,38 @@ export function angebotToPdfDoc(a: Angebot): PdfDoc {
   };
 }
 
-export function rechnungToPdfDoc(r: Rechnung): PdfDoc {
+/**
+ * Rechnung → PDF-Dokument. `angebotNummer` (optional) stellt den Bezug zum
+ * Angebot her und wird von der aufrufenden Route via angebot_id geladen.
+ */
+export function rechnungToPdfDoc(r: Rechnung, angebotNummer?: string | null): PdfDoc {
+  const t = computeTotals(r.positionen || []);
+  const datum = r.rechnungsdatum || r.created_at;
   return {
     art: "Rechnung",
     nummer: r.nummer || "",
-    datum: r.rechnungsdatum || r.created_at,
+    angebotNummer: angebotNummer ?? null,
+    datum,
+    leistungsdatum: datum,
     faellig: r.faellig_am,
     kundeFirma: r.kunde_firma,
     kundeAnsprech: r.kunde_ansprech,
     kundeStrasse: r.kunde_strasse,
     kundePlzOrt: r.kunde_plz_ort,
     kundeLand: r.kunde_land,
-    titel: r.titel,
+    // Rechnungen tragen keinen Marketing-Titel (Entscheidung Albert).
+    titel: null,
     einleitung: r.einleitung,
     positionen: r.positionen || [],
-    anmerkungen: r.anmerkungen,
-    bedingungen: r.bedingungen,
+    // Fallback-Anmerkung mit klarer 7-Tage-Zahlungsfrist, falls keine gesetzt.
+    anmerkungen:
+      r.anmerkungen?.trim() ||
+      `Zahlbar ohne Abzug innerhalb von 7 Tagen, bis zum ${deDate(r.faellig_am)}.`,
+    // Keine Bedingungen auf der Rechnung.
+    bedingungen: null,
+    nettoRaw: t.nettoRaw,
+    rabattRate: t.rabattRate,
+    rabattBetrag: t.rabattBetrag,
     netto: r.netto,
     ust: r.ust,
     brutto: r.brutto,

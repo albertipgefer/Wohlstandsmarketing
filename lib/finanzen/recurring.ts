@@ -163,7 +163,7 @@ export function rechnungAusWiederkehrend(
   now: number,
 ): RechnungInput {
   const heute = new Date(now);
-  const faellig = new Date(now + (w.zahlungsziel_tage || 14) * 24 * 60 * 60 * 1000);
+  const faellig = new Date(now + (w.zahlungsziel_tage || 7) * 24 * 60 * 60 * 1000);
   return {
     nummer,
     typ: w.abschlag_modus ? "abschlag" : "rechnung",

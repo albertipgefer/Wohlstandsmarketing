@@ -82,9 +82,9 @@ function renderText(bodyCore: string, checkLink: string, email: string): string 
   );
 }
 
-/** Schlankes HTML in Plain-Text-Optik: ein verlinktes Wort (CTA) + dezenter grauer Footer
- *  (Impressum + Abmelden) + unsichtbarer Open-Tracking-Pixel. */
-function renderHtml(bodyCore: string, checkLink: string, email: string, pid: string): string {
+/** Schlankes HTML in Plain-Text-Optik: dezenter grauer Footer (Impressum + Abmelden).
+ *  v3: KEIN Tracking-Pixel und in der Kaltsequenz keine Links (beste Zustellbarkeit). */
+function renderHtml(bodyCore: string, checkLink: string, email: string): string {
   const hl = checkLink.replace(/&/g, "&amp;");
   const esc = escapeHtml(bodyCore)
     .replace(/\{\{cta:([^}]*)\}\}/g, (_m, label) => `<a href="${hl}" style="color:#2563eb;">${label}</a>`)
@@ -97,10 +97,9 @@ function renderHtml(bodyCore: string, checkLink: string, email: string, pid: str
     `<p style="margin:26px 0 0;font-size:11px;line-height:1.5;color:#9aa3b2;">` +
     `Wohlstandsmarketing · Albert Ipgefer · Vor der Loos 4e · 56130 Bad Ems · +49&nbsp;176&nbsp;227&nbsp;87&nbsp;559<br>` +
     `<a href="${unsubUrl(email).replace(/&/g, "&amp;")}" style="color:#9aa3b2;text-decoration:underline;">Abmelden</a></p>`;
-  const pixel = `<img src="${SITE}/api/outreach/pixel?pid=${pid}" width="1" height="1" alt="" style="display:block;width:1px;height:1px;border:0;opacity:0;">`;
   return (
     `<div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:#222;max-width:560px;">` +
-    paras + footer + pixel + `</div>`
+    paras + footer + `</div>`
   );
 }
 
@@ -126,6 +125,12 @@ export async function GET(req: NextRequest) {
   }
   const dryrun = req.nextUrl.searchParams.get("dryrun") === "1";
   const force = req.nextUrl.searchParams.get("force") === "1";
+
+  // Sicherheits-Schalter: echter Versand nur bei OUTREACH_SEND_ENABLED=1.
+  // Default (nicht gesetzt) = pausiert. Dryrun bleibt zum Testen erlaubt.
+  if (!dryrun && process.env.OUTREACH_SEND_ENABLED !== "1") {
+    return NextResponse.json({ ok: true, paused: "send_disabled" });
+  }
 
   if (!force && !inWindow()) {
     return NextResponse.json({ ok: true, skipped: "outside_window" });
@@ -162,6 +167,11 @@ export async function GET(req: NextRequest) {
   let rr = 0; // Round-Robin-Zeiger
 
   for (const p of due) {
+    // E-Mail-Format validieren (ungültige überspringen, keine Bounces produzieren)
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(p.email)) {
+      results.push({ email: p.email, step: p.sequence_step, sent: false });
+      continue;
+    }
     // Postfach mit freier Kapazität finden (Rotation)
     let chosen: Inbox | null = null;
     for (let k = 0; k < inboxes.length; k++) {
@@ -175,11 +185,13 @@ export async function GET(req: NextRequest) {
     const subject = step === 0
       ? p.mail1_subject || "Ihre Sichtbarkeit bei ChatGPT"
       : `Re: ${p.mail1_subject || "Ihre Sichtbarkeit bei ChatGPT"}`;
+    // v3: personalisierte Follow-ups aus der DB (mail2..5_body), Fallback = altes Template.
+    const personalizedFollowups = [null, p.mail2_body, p.mail3_body, p.mail4_body, p.mail5_body];
     const bodyCore = step === 0
       ? (p.mail1_body || "")
-      : followupBody(p, step);
+      : (personalizedFollowups[step] || followupBody(p, step));
     const text = renderText(bodyCore, checkLink, p.email);
-    const html = renderHtml(bodyCore, checkLink, p.email, p.id);
+    const html = renderHtml(bodyCore, checkLink, p.email);
 
     if (dryrun) {
       results.push({ email: p.email, step, inbox: chosen.user, sent: false });
@@ -194,6 +206,10 @@ export async function GET(req: NextRequest) {
         subject,
         text,
         html,
+        headers: {
+          "List-Unsubscribe": `<${unsubUrl(p.email)}>`,
+          "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        },
         ...(step > 0 && p.thread_message_id
           ? { inReplyTo: p.thread_message_id, references: p.thread_message_id }
           : {}),

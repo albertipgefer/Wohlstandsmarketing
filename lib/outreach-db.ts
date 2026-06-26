@@ -45,10 +45,32 @@ export type Prospect = {
   status: ProspectStatus;
   mail1_subject?: string | null;
   mail1_body?: string | null;
+  mail2_body?: string | null;
+  mail3_body?: string | null;
+  mail4_body?: string | null;
+  mail5_body?: string | null;
+  bucket?: string | null;
+  signal_fact?: string | null;
+  strength?: string | null;
+  enrich_status?: string | null;
+  suppressed_reason?: string | null;
   thread_message_id?: string | null;
   sent_from_inbox?: string | null;
   next_send_at?: string | null;
   [k: string]: unknown;
+};
+
+export type PendingReply = {
+  id: string;
+  prospect_id: string | null;
+  reply_text?: string | null;
+  draft_subject?: string | null;
+  draft_body?: string | null;
+  status: "awaiting" | "revising" | "approved" | "sent" | "rejected";
+  revision_notes?: string | null;
+  telegram_message_id?: number | null;
+  thread_message_id?: string | null;
+  send_at?: string | null;
 };
 
 /** Prospect per E-Mail holen (für Conversion-Match / Reply-Match). Null bei Fehler/kein Treffer. */
@@ -279,5 +301,158 @@ export async function statusCounts(): Promise<Record<string, number>> {
     return counts;
   } catch {
     return {};
+  }
+}
+
+/* ───────────────────────── Dashboard v3 (vertieft) ───────────────────────── */
+
+/** Letzte Antworten mit Lead-Kontext (für die Antworten-Liste im Dashboard). */
+export async function getRepliesWithDetails(limit = 25): Promise<
+  { created_at: string; meta: unknown; company: string | null; email: string | null; salutation: string | null; phone: string | null; bucket: string | null }[]
+> {
+  if (!ready()) return [];
+  try {
+    const q =
+      `select=created_at,meta,outreach_prospects(company,email,salutation,phone,bucket)` +
+      `&type=eq.reply&order=created_at.desc&limit=${limit}`;
+    const r = await fetch(`${URL}/rest/v1/outreach_events?${q}`, { headers: headers() });
+    if (!r.ok) return [];
+    const rows = (await r.json()) as { created_at: string; meta: unknown; outreach_prospects: Record<string, string | null> | null }[];
+    return rows.map((row) => ({
+      created_at: row.created_at, meta: row.meta,
+      company: row.outreach_prospects?.company ?? null,
+      email: row.outreach_prospects?.email ?? null,
+      salutation: row.outreach_prospects?.salutation ?? null,
+      phone: row.outreach_prospects?.phone ?? null,
+      bucket: row.outreach_prospects?.bucket ?? null,
+    }));
+  } catch {
+    return [];
+  }
+}
+
+/** Events je Tag (Versand/Antworten/Conversions) für den Zeitverlauf. */
+export async function eventsByDay(days = 30): Promise<Record<string, Record<string, number>>> {
+  if (!ready()) return {};
+  try {
+    const since = new Date(Date.now() - days * 86400000).toISOString();
+    const q = `select=type,created_at&created_at=gte.${since}&order=created_at.asc`;
+    const r = await fetch(`${URL}/rest/v1/outreach_events?${q}`, { headers: headers() });
+    if (!r.ok) return {};
+    const rows = (await r.json()) as { type: string; created_at: string }[];
+    const out: Record<string, Record<string, number>> = {};
+    for (const row of rows) {
+      const day = row.created_at.slice(0, 10);
+      (out[day] ??= {})[row.type] = (out[day][row.type] || 0) + 1;
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}
+
+/** Prospects je Bucket mit Status (zeigt, welcher Befund antwortet/konvertiert). */
+export async function bucketBreakdown(): Promise<Record<string, { total: number; replied: number; converted: number }>> {
+  if (!ready()) return {};
+  try {
+    const r = await fetch(`${URL}/rest/v1/outreach_prospects?select=bucket,status`, { headers: headers() });
+    if (!r.ok) return {};
+    const rows = (await r.json()) as { bucket: string | null; status: string }[];
+    const out: Record<string, { total: number; replied: number; converted: number }> = {};
+    for (const row of rows) {
+      const b = row.bucket || "—";
+      const e = (out[b] ??= { total: 0, replied: 0, converted: 0 });
+      e.total++;
+      if (row.status === "replied") e.replied++;
+      if (row.status === "converted") e.converted++;
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}
+
+/** Anreicherungs-Status der Leads (wie viele auf v3-Copy umgestellt). */
+export async function enrichStatusCounts(): Promise<Record<string, number>> {
+  if (!ready()) return {};
+  try {
+    const r = await fetch(`${URL}/rest/v1/outreach_prospects?select=enrich_status`, { headers: headers() });
+    if (!r.ok) return {};
+    const rows = (await r.json()) as { enrich_status: string | null }[];
+    const counts: Record<string, number> = {};
+    for (const row of rows) { const k = row.enrich_status || "—"; counts[k] = (counts[k] || 0) + 1; }
+    return counts;
+  } catch {
+    return {};
+  }
+}
+
+/* ─────────────────── Pending Replies (Befund-Freigabe-Loop) ─────────────────── */
+
+export async function insertPendingReply(p: Partial<PendingReply>): Promise<string | null> {
+  if (!ready()) return null;
+  try {
+    const r = await fetch(`${URL}/rest/v1/outreach_pending_replies`, {
+      method: "POST",
+      headers: headers({ Prefer: "return=representation" }),
+      body: JSON.stringify({ status: "awaiting", ...p }),
+    });
+    if (!r.ok) return null;
+    const rows = (await r.json()) as PendingReply[];
+    return rows[0]?.id ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export async function getPendingReply(id: string): Promise<PendingReply | null> {
+  if (!ready()) return null;
+  try {
+    const r = await fetch(`${URL}/rest/v1/outreach_pending_replies?id=eq.${id}&limit=1`, { headers: headers() });
+    if (!r.ok) return null;
+    return ((await r.json()) as PendingReply[])[0] || null;
+  } catch {
+    return null;
+  }
+}
+
+/** Jüngsten Entwurf in einem Status holen (für freie Textnachricht = Anpassungswunsch). */
+export async function getLatestPendingByStatus(status: PendingReply["status"]): Promise<PendingReply | null> {
+  if (!ready()) return null;
+  try {
+    const q = `status=eq.${status}&order=created_at.desc&limit=1`;
+    const r = await fetch(`${URL}/rest/v1/outreach_pending_replies?${q}`, { headers: headers() });
+    if (!r.ok) return null;
+    return ((await r.json()) as PendingReply[])[0] || null;
+  } catch {
+    return null;
+  }
+}
+
+export async function updatePendingReply(id: string, fields: Partial<PendingReply>): Promise<boolean> {
+  if (!ready()) return false;
+  try {
+    const r = await fetch(`${URL}/rest/v1/outreach_pending_replies?id=eq.${id}`, {
+      method: "PATCH",
+      headers: headers({ Prefer: "return=minimal" }),
+      body: JSON.stringify({ ...fields, updated_at: new Date().toISOString() }),
+    });
+    return r.ok;
+  } catch {
+    return false;
+  }
+}
+
+/** Genehmigte Entwürfe, deren Sendezeit erreicht ist (für den Sender). */
+export async function getApprovedDuePending(): Promise<PendingReply[]> {
+  if (!ready()) return [];
+  try {
+    const nowIso = new Date().toISOString();
+    const q = `status=eq.approved&send_at=lte.${nowIso}&order=send_at.asc&limit=10`;
+    const r = await fetch(`${URL}/rest/v1/outreach_pending_replies?${q}`, { headers: headers() });
+    if (!r.ok) return [];
+    return (await r.json()) as PendingReply[];
+  } catch {
+    return [];
   }
 }

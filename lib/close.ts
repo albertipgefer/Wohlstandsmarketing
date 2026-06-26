@@ -45,13 +45,14 @@ const ASSIGNEE_USER_ID =
 // Der Report selbst stuft < 60 als "deutliche Lücken" bis "kritisch" ein.
 const HOT_KICHECK_MAX_SCORE = 60;
 
-export type LeadSource = "ki-check" | "kontakt" | "angebot" | "lead-magnet";
+export type LeadSource = "ki-check" | "kontakt" | "angebot" | "lead-magnet" | "cold-outreach";
 
 const SOURCE_LABEL: Record<LeadSource, string> = {
   "ki-check": "KI-Sichtbarkeitscheck",
   kontakt: "Kontaktformular",
   angebot: "Angebots-Konfigurator",
   "lead-magnet": "Lead-Magnet (PDF)",
+  "cold-outreach": "Cold-Outreach (Antwort)",
 };
 
 // Zusätzliche Leadquelle-Werte je Weg (zu "Webseite", das immer gesetzt wird)
@@ -60,14 +61,17 @@ const SOURCE_EXTRA_LEADQUELLE: Record<LeadSource, string[]> = {
   kontakt: [],
   angebot: [],
   "lead-magnet": ["Lead Magnet"],
+  "cold-outreach": [],
 };
 
-// Wert im Feld "Website-Formular" je Weg (muss exakt den Choice-Werten entsprechen)
+// Wert im Feld "Website-Formular" je Weg (muss exakt den Choice-Werten entsprechen).
+// Leerer Wert (cold-outreach) → Feld wird nicht gesetzt (kein ungültiger Choice).
 const SOURCE_FORMULAR: Record<LeadSource, string> = {
   "ki-check": "KI-Sichtbarkeitscheck",
   kontakt: "Kontaktformular",
   angebot: "Angebots-Konfigurator",
   "lead-magnet": "Lead-Magnet",
+  "cold-outreach": "",
 };
 
 function authHeader(apiKey: string): string {
@@ -150,6 +154,7 @@ export type CloseSyncResult = {
  */
 function isHotLead(input: SyncLeadInput): boolean {
   if (input.source === "angebot") return true;
+  if (input.source === "cold-outreach") return true; // positive Cold-Antwort = sofort anrufen
   if (
     input.source === "ki-check" &&
     typeof input.kiScore === "number" &&
@@ -209,7 +214,7 @@ export async function syncLeadToClose(
   const contactName = personName || input.company?.trim() || input.email;
 
   const leadquelleAdd = ["Webseite", ...SOURCE_EXTRA_LEADQUELLE[input.source]];
-  const formularAdd = [SOURCE_FORMULAR[input.source]];
+  const formularAdd = SOURCE_FORMULAR[input.source] ? [SOURCE_FORMULAR[input.source]] : [];
 
   try {
     const existing = await findLeadByEmail(apiKey, input.email);

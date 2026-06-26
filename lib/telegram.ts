@@ -145,11 +145,27 @@ export async function answerCallback(callbackId: string, text?: string, opts?: {
  * Standard-Bot (TELEGRAM_*) zurück, falls die Outreach-Variablen nicht gesetzt sind.
  * So landen Outreach-Alerts/Reports getrennt von den normalen Lead-Alerts.
  */
+export function outreachTelegramConfig(): { token?: string; chatId?: string } {
+  return {
+    token: process.env.OUTREACH_TELEGRAM_BOT_TOKEN || process.env.TELEGRAM_BOT_TOKEN,
+    chatId: process.env.OUTREACH_TELEGRAM_CHAT_ID || process.env.TELEGRAM_CHAT_ID,
+  };
+}
+
 export async function sendOutreachTelegram(html: string): Promise<boolean> {
-  return sendTelegramMessage(html, {
-    token: process.env.OUTREACH_TELEGRAM_BOT_TOKEN,
-    chatId: process.env.OUTREACH_TELEGRAM_CHAT_ID,
-  });
+  return sendTelegramMessage(html, outreachTelegramConfig());
+}
+
+export async function sendOutreachTelegramButtons(html: string, buttons: InlineButton[][]): Promise<number | null> {
+  return sendTelegramButtons(html, buttons, outreachTelegramConfig());
+}
+
+export async function editOutreachTelegram(messageId: number, html: string, buttons?: InlineButton[][]): Promise<boolean> {
+  return editTelegramMessage(messageId, html, buttons, outreachTelegramConfig());
+}
+
+export async function answerOutreachCallback(callbackId: string, text?: string): Promise<void> {
+  return answerCallback(callbackId, text, { token: outreachTelegramConfig().token });
 }
 
 /**

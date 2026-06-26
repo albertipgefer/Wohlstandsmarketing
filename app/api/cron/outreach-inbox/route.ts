@@ -1,55 +1,36 @@
 /**
- * GET /api/cron/outreach-inbox — Reply-/Bounce-Erkennung (Sequenz-Stopp).
+ * GET /api/cron/outreach-inbox — Reply-/Bounce-Erkennung + Befund-Freigabe-Loop.
  *
- * Läuft als Vercel-Cron (~alle 30 Min). Pollt jede Postfach-INBOX per IMAP auf
- * neue Nachrichten der letzten ~2 h:
- *   - Bounce (mailer-daemon/postmaster) → betroffene Adresse(n) → status=bounced
- *   - echte Antwort eines Prospects → status=replied + Telegram (Albert übernimmt)
+ * Läuft via launchd-Pinger (~alle 30 Min). Pro Lauf:
+ *   1) genehmigte Befund-Entwürfe versenden, deren 5-Minuten-Fenster erreicht ist
+ *   2) jede Postfach-INBOX per IMAP auf neue Nachrichten (~2 h) pollen:
+ *        - Bounce → status=bounced
+ *        - negative Antwort → auto-abmelden
+ *        - positive Antwort → Close-Lead + HOT-Task, Befund-Entwurf, Telegram-Freigabe
  *
- * Idempotent über den Status-Check (bereits replied/bounced → kein Doppel-Event).
  * Auth: Authorization: Bearer ${CRON_SECRET}
- * Required ENV: CRON_SECRET, SUPABASE_*, OUTBOUND_INBOXES (JSON), TELEGRAM_* (opt.)
- *
- * Feinschliff (mit echten Antworten): positiv/negativ-Klassifizierung + Entwurf
- * mit Check-Link automatisch anlegen. v1 alarmiert Albert, der manuell antwortet.
+ * Required ENV: CRON_SECRET, SUPABASE_*, OUTBOUND_INBOXES (JSON), TELEGRAM_* bzw. OUTREACH_*
  */
 import { NextRequest, NextResponse } from "next/server";
 import { ImapFlow } from "imapflow";
-import MailComposer from "nodemailer/lib/mail-composer/index.js";
-import { getProspectByEmail, setStatusByEmail, logEvent } from "@/lib/outreach-db";
-import { sendOutreachTelegram } from "@/lib/telegram";
+import nodemailer from "nodemailer";
+import {
+  getProspectByEmail, getProspectById, setStatusByEmail, logEvent,
+  insertPendingReply, getApprovedDuePending, updatePendingReply,
+} from "@/lib/outreach-db";
+import {
+  sendOutreachTelegram, sendOutreachTelegramButtons,
+} from "@/lib/telegram";
+import { buildBefund, befundButtons, befundPreview } from "@/lib/outreach-befund";
+import { syncLeadToClose } from "@/lib/close";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const SITE = "https://wohlstandsmarketing.de";
-const TERMIN = "https://tidycal.com/albertipgefer/erstgespraech-mit-wohlstandsmarketing-2";
-
-type Inbox = { host: string; port: number; user: string; pass: string; imapHost?: string };
-
-/** Legt einen fertigen Antwort-Entwurf (Re:) im Drafts-Ordner an. Albert sendet nur noch. */
-async function createDraft(
-  client: ImapFlow, ib: Inbox, to: string, subject: string,
-  salutation: string | null | undefined, checkLink: string, msgId?: string,
-): Promise<boolean> {
-  const text =
-    `${salutation ? `Hallo ${salutation}` : "Guten Tag"},\n\n` +
-    `danke für Ihre Antwort! Hier der Link zum kostenlosen KI-Sichtbarkeitscheck — ` +
-    `das Ergebnis kommt in wenigen Minuten direkt per Mail:\n${checkLink}\n\n` +
-    `Wenn Sie lieber kurz sprechen, finden wir hier in 15 Minuten einen Slot:\n${TERMIN}\n\n` +
-    `Beste Grüße\nAlbert Ipgefer · Wohlstandsmarketing`;
-  try {
-    const raw: Buffer = await new MailComposer({
-      from: ib.user, to, subject: subject.startsWith("Re:") ? subject : `Re: ${subject}`,
-      text, inReplyTo: msgId, references: msgId,
-    }).compile().build();
-    // Drafts-Ordnername ist providerabhängig (Gmail: "[Gmail]/Drafts") → Feinschliff
-    for (const box of ["Drafts", "[Gmail]/Drafts", "Entwürfe"]) {
-      try { await client.append(box, raw, ["\\Draft"]); return true; } catch { /* nächster */ }
-    }
-  } catch { /* ignore */ }
-  return false;
-}
+type Inbox = {
+  host: string; port: number; user: string; pass: string;
+  imapHost?: string; fromName?: string; fromEmail?: string;
+};
 
 function loadInboxes(): Inbox[] {
   try {
@@ -61,6 +42,54 @@ function loadInboxes(): Inbox[] {
 
 const EMAIL_RE = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/gi;
 
+/** Grobe Extraktion des eigentlichen Antworttextes (Zitate/Header raus). */
+function extractReplyText(raw: string): string {
+  const out: string[] = [];
+  for (const line of raw.split(/\r?\n/)) {
+    if (/^>/.test(line)) continue;
+    if (/^(From|To|Subject|Date|Content-|MIME|Return-Path|Received|DKIM|Authentication-Results|Message-ID|References|In-Reply-To|X-[\w-]+):/i.test(line)) continue;
+    if (/^--/.test(line)) continue;
+    if (/^(Am .* schrieb|On .* wrote|Von:|Gesendet:|-----Urspr)/i.test(line)) break;
+    const t = line.replace(/=$/, "").trim();
+    if (t) out.push(t);
+    if (out.length >= 12) break;
+  }
+  return out.join(" ").replace(/\s{2,}/g, " ").slice(0, 600);
+}
+
+/** Versendet genehmigte Befund-Entwürfe (status=approved, send_at erreicht) als Thread-Antwort. */
+async function sendApprovedBefunde(inboxes: Inbox[]): Promise<number> {
+  const pendings = await getApprovedDuePending();
+  let sent = 0;
+  for (const pr of pendings) {
+    const p = pr.prospect_id ? await getProspectById(pr.prospect_id) : null;
+    if (!p || !pr.draft_body) { await updatePendingReply(pr.id, { status: "rejected" }); continue; }
+    const ib = inboxes.find((x) => x.user === p.sent_from_inbox) || inboxes[0];
+    if (!ib) continue;
+    try {
+      const tx = nodemailer.createTransport({
+        host: ib.host, port: ib.port, secure: ib.port === 465,
+        auth: { user: ib.user, pass: ib.pass },
+      });
+      await tx.sendMail({
+        from: `"${ib.fromName || "Albert Ipgefer"}" <${ib.fromEmail || ib.user}>`,
+        to: p.email,
+        subject: pr.draft_subject || `Re: ${p.mail1_subject || ""}`,
+        text: pr.draft_body,
+        ...(pr.thread_message_id
+          ? { inReplyTo: pr.thread_message_id, references: pr.thread_message_id }
+          : {}),
+      });
+      await updatePendingReply(pr.id, { status: "sent" });
+      sent++;
+      await sendOutreachTelegram(`📤 Befund-Mail an ${p.company || p.email} ist raus.`);
+    } catch (e) {
+      console.warn("Befund-Send-Fehler", p.email, e instanceof Error ? e.message : e);
+    }
+  }
+  return sent;
+}
+
 export async function GET(req: NextRequest) {
   if (req.headers.get("authorization") !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
@@ -68,6 +97,10 @@ export async function GET(req: NextRequest) {
   const inboxes = loadInboxes();
   if (inboxes.length === 0) return NextResponse.json({ ok: false, error: "no_inboxes" });
 
+  // 1) genehmigte Befunde versenden
+  const befundeSent = await sendApprovedBefunde(inboxes);
+
+  // 2) Postfächer pollen
   const since = new Date(Date.now() - 2 * 3600 * 1000);
   let replies = 0, bounces = 0, scanned = 0;
 
@@ -85,15 +118,14 @@ export async function GET(req: NextRequest) {
           scanned++;
           const from = (msg.envelope?.from?.[0]?.address || "").toLowerCase();
           const subject = msg.envelope?.subject || "";
+          const raw = msg.source?.toString("utf8") || "";
           const isBounce = /mailer-daemon|postmaster|mail delivery/i.test(from) ||
             /undeliver|delivery (has )?failed|returned mail|zustellung fehlgeschlagen/i.test(subject);
 
           if (isBounce) {
-            // betroffene Adresse(n) aus dem Quelltext extrahieren und gegen DB prüfen
-            const raw = msg.source?.toString("utf8") || "";
             const candidates = [...new Set((raw.match(EMAIL_RE) || []).map((e) => e.toLowerCase()))];
             for (const cand of candidates) {
-              if (cand.endsWith("@" + (ib.user.split("@")[1] || ""))) continue; // eigene Adresse
+              if (cand.endsWith("@" + (ib.user.split("@")[1] || ""))) continue;
               const p = await getProspectByEmail(cand);
               if (p && p.status !== "bounced") {
                 await setStatusByEmail(cand, "bounced");
@@ -105,37 +137,60 @@ export async function GET(req: NextRequest) {
             continue;
           }
 
-          // echte Antwort eines Prospects?
           const p = from ? await getProspectByEmail(from) : null;
           if (p && !["replied", "converted", "unsubscribed", "bounced"].includes(p.status)) {
-            const bodyLower = (msg.source?.toString("utf8") || "").toLowerCase();
+            const bodyLower = raw.toLowerCase();
             const isNegative =
               /(kein interesse|nicht interessiert|kein bedarf|bitte keine|keine weiteren|abmelden|austragen|unsubscribe|nehmen sie mich (raus|heraus)|entfernen sie|streichen sie|kein\s*danke|nicht kontaktieren)/.test(bodyLower);
 
             if (isNegative) {
-              // höfliches Nein → automatisch abmelden, KEIN Entwurf
               await setStatusByEmail(from, "unsubscribed");
               await logEvent(p.id, "unsubscribe", { meta: { via: "reply_negative" } });
               await sendOutreachTelegram(
-                `🚫 <b>Negative Antwort</b> — automatisch abgemeldet.\n` +
-                  `${p.company || from} · ${from}\nBetreff: ${subject}`,
+                `🚫 <b>Negative Antwort</b> — automatisch abgemeldet.\n${p.company || from} · ${from}`,
               );
             } else {
               await setStatusByEmail(from, "replied");
               await logEvent(p.id, "reply", { ab_arm: p.ab_arm, sequence_step: p.sequence_step });
               replies++;
-              const checkLink = `${SITE}/sichtbarkeits-check?src=outreach&pid=${p.id}`;
-              const drafted = await createDraft(
-                client, ib, from, subject, p.salutation, checkLink, msg.envelope?.messageId,
-              );
-              await sendOutreachTelegram(
-                `✉️ <b>Antwort auf Cold-Outreach!</b>\n\n` +
-                  `👤 ${p.company || from}\n✉️ ${from}\n📞 ${p.phone || "—"}\n` +
-                  `Betreff: ${subject}\n\n` +
-                  (drafted
-                    ? `📝 Antwort-Entwurf liegt im Postfach — nur noch senden.`
-                    : `➡️ Sequenz gestoppt — bitte persönlich antworten.`),
-              );
+              const replyText = extractReplyText(raw);
+
+              // Lead sofort in Close (HOT-Task + Telefon + Notiz)
+              try {
+                await syncLeadToClose({
+                  source: "cold-outreach",
+                  fullName: p.salutation?.replace(/^(Herr|Frau)\s+/, "") || undefined,
+                  email: from,
+                  phone: p.phone || undefined,
+                  company: p.company || undefined,
+                  noteLines: [
+                    `Positive Antwort auf Cold-Outreach (Bucket ${p.bucket || "—"}).`,
+                    replyText ? `Antwort: ${replyText.slice(0, 400)}` : null,
+                  ],
+                });
+              } catch (e) {
+                console.warn("Close-Sync (reply)", e instanceof Error ? e.message : e);
+              }
+
+              // Befund-Entwurf + Freigabe-Loop
+              const draft = await buildBefund(p, replyText);
+              const pendingId = await insertPendingReply({
+                prospect_id: p.id, reply_text: replyText,
+                draft_subject: draft.subject, draft_body: draft.body,
+                thread_message_id: p.thread_message_id || msg.envelope?.messageId || null,
+              });
+              const head =
+                `✉️ <b>Positive Antwort!</b>  ${p.company || from}\n` +
+                `📞 ${p.phone || "keine Nummer gefunden"}\n` +
+                (replyText ? `<i>${replyText.slice(0, 200)}</i>\n\n` : `\n`);
+              if (pendingId) {
+                await sendOutreachTelegramButtons(
+                  head + befundPreview(p.company || from, draft.subject, draft.body),
+                  befundButtons(pendingId),
+                );
+              } else {
+                await sendOutreachTelegram(head + "Entwurf konnte nicht gespeichert werden, bitte manuell antworten.");
+              }
             }
           }
         }
@@ -149,5 +204,5 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  return NextResponse.json({ ok: true, scanned, replies, bounces });
+  return NextResponse.json({ ok: true, scanned, replies, bounces, befundeSent });
 }

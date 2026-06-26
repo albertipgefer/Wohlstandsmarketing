@@ -3,7 +3,10 @@
  * Zugriff: ?pw=<OUTREACH_DASHBOARD_PASSWORD>. Liest live aus Supabase.
  * Öffnungen via Pixel (absolut ungenau wg. Auto-Bildladen — v. a. für A/B-Vergleich).
  */
-import { eventCounts, statusCounts, openStats } from "@/lib/outreach-db";
+import {
+  eventCounts, statusCounts, openStats,
+  getRepliesWithDetails, eventsByDay, bucketBreakdown, enrichStatusCounts,
+} from "@/lib/outreach-db";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -48,6 +51,18 @@ export default async function OutreachDashboard({
   const conv = byType.conversion || 0;
   const unsub = byType.unsubscribe || 0;
   const totalProspects = Object.values(status).reduce((a, b) => a + b, 0);
+
+  const replies = await getRepliesWithDetails(20);
+  const timeline = await eventsByDay(14);
+  const buckets = await bucketBreakdown();
+  const enrich = await enrichStatusCounts();
+  const BUCKET_LABEL: Record<string, string> = {
+    A: "A · Seite langsam", B: "B · keine Verkäufer-Strecke", C: "C · keine Bewertungen",
+    D: "D · KI-unsichtbar", E: "E · veraltete Seite", F: "F · Fallback", "—": "ohne Bucket",
+  };
+  const funnel: [string, number][] = [
+    ["Versendet", sent], ["Zugestellt", delivered], ["Antworten", reply], ["KI-Checks", conv],
+  ];
 
   const armRow = (arm: "link" | "reply") => {
     const a = byArm[arm] || {};
@@ -94,16 +109,88 @@ export default async function OutreachDashboard({
         <tbody>{armRow("link")}{armRow("reply")}</tbody>
       </table>
 
-      <h2 style={{ fontSize: 18, fontWeight: 700, margin: "28px 0 12px" }}>Prospect-Status</h2>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-        {Object.entries(status).sort((a, b) => b[1] - a[1]).map(([s, n]) => (
-          <span key={s} style={{ background: "#fff", border: "1px solid #ececec", borderRadius: 999, padding: "6px 14px", fontSize: 14 }}>
-            <strong>{n}</strong> <span style={{ color: "#737373" }}>{s}</span>
-          </span>
+      <h2 style={{ fontSize: 18, fontWeight: 700, margin: "28px 0 12px" }}>Funnel</h2>
+      <div style={{ background: "#fff", border: "1px solid #ececec", borderRadius: 14, padding: "16px 20px" }}>
+        {funnel.map(([label, n]) => (
+          <div key={label} style={{ display: "flex", alignItems: "center", gap: 12, margin: "8px 0" }}>
+            <div style={{ width: 110, fontSize: 13, color: "#737373" }}>{label}</div>
+            <div style={{ flex: 1, background: "#f0f0f0", borderRadius: 8, height: 22, overflow: "hidden" }}>
+              <div style={{ width: `${sent > 0 ? Math.max(2, (n / sent) * 100) : 0}%`, background: "#1663DE", height: "100%" }} />
+            </div>
+            <div style={{ width: 90, textAlign: "right", fontWeight: 700, fontSize: 14 }}>{n} <span style={{ color: "#a3a3a3", fontWeight: 400 }}>{pct(n, sent)}</span></div>
+          </div>
         ))}
       </div>
+
+      <h2 style={{ fontSize: 18, fontWeight: 700, margin: "28px 0 12px" }}>Buckets (welcher Befund antwortet)</h2>
+      <table style={tableStyle}>
+        <thead><tr style={{ background: "#f5f5f5" }}>{["Bucket", "Leads", "Antworten", "Conversions", "Antwortrate"].map((h) => (
+          <th key={h} style={{ ...td, fontWeight: 700, fontSize: 12, textTransform: "uppercase", color: "#737373" }}>{h}</th>
+        ))}</tr></thead>
+        <tbody>
+          {Object.entries(buckets).sort((a, b) => b[1].total - a[1].total).map(([b, v]) => (
+            <tr key={b}>
+              <td style={td}>{BUCKET_LABEL[b] || b}</td>
+              <td style={td}>{v.total}</td>
+              <td style={td}>{v.replied}</td>
+              <td style={td}>{v.converted}</td>
+              <td style={{ ...td, fontWeight: 700, color: "#1663DE" }}>{pct(v.replied, v.total)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <h2 style={{ fontSize: 18, fontWeight: 700, margin: "28px 0 12px" }}>Anreicherung & Status</h2>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 6 }}>
+        {Object.entries(enrich).sort((a, b) => b[1] - a[1]).map(([s, n]) => (
+          <span key={s} style={chip}><strong>{n}</strong> <span style={{ color: "#737373" }}>{s === "ready_v3" ? "Spiegel-Copy (v3)" : s}</span></span>
+        ))}
+        {Object.entries(status).sort((a, b) => b[1] - a[1]).map(([s, n]) => (
+          <span key={s} style={chip}><strong>{n}</strong> <span style={{ color: "#737373" }}>{s}</span></span>
+        ))}
+      </div>
+
+      <h2 style={{ fontSize: 18, fontWeight: 700, margin: "28px 0 12px" }}>Letzte 14 Tage</h2>
+      <table style={tableStyle}>
+        <thead><tr style={{ background: "#f5f5f5" }}>{["Tag", "Versendet", "Antworten", "Bounces"].map((h) => (
+          <th key={h} style={{ ...td, fontWeight: 700, fontSize: 12, textTransform: "uppercase", color: "#737373" }}>{h}</th>
+        ))}</tr></thead>
+        <tbody>
+          {Object.entries(timeline).sort((a, b) => b[0].localeCompare(a[0])).map(([day, t]) => (
+            <tr key={day}>
+              <td style={td}>{day}</td>
+              <td style={td}>{t.sent || 0}</td>
+              <td style={td}>{t.reply || 0}</td>
+              <td style={td}>{t.bounce || 0}</td>
+            </tr>
+          ))}
+          {Object.keys(timeline).length === 0 && <tr><td style={td} colSpan={4}>Noch keine Events.</td></tr>}
+        </tbody>
+      </table>
+
+      <h2 style={{ fontSize: 18, fontWeight: 700, margin: "28px 0 12px" }}>Antworten</h2>
+      <table style={tableStyle}>
+        <thead><tr style={{ background: "#f5f5f5" }}>{["Wann", "Firma", "E-Mail", "Telefon", "Bucket"].map((h) => (
+          <th key={h} style={{ ...td, fontWeight: 700, fontSize: 12, textTransform: "uppercase", color: "#737373" }}>{h}</th>
+        ))}</tr></thead>
+        <tbody>
+          {replies.map((r, i) => (
+            <tr key={i}>
+              <td style={td}>{r.created_at?.slice(0, 16).replace("T", " ")}</td>
+              <td style={td}>{r.company || "—"}</td>
+              <td style={td}>{r.email || "—"}</td>
+              <td style={td}>{r.phone || "—"}</td>
+              <td style={td}>{r.bucket || "—"}</td>
+            </tr>
+          ))}
+          {replies.length === 0 && <tr><td style={td} colSpan={5}>Noch keine Antworten.</td></tr>}
+        </tbody>
+      </table>
     </>,
   );
 }
+
+const tableStyle: React.CSSProperties = { width: "100%", borderCollapse: "collapse", background: "#fff", border: "1px solid #ececec", borderRadius: 14, overflow: "hidden" };
+const chip: React.CSSProperties = { background: "#fff", border: "1px solid #ececec", borderRadius: 999, padding: "6px 14px", fontSize: 14 };
 
 const td: React.CSSProperties = { padding: "10px 14px", textAlign: "left", borderBottom: "1px solid #f0f0f0", fontSize: 14 };

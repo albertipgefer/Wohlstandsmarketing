@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 import type { KiCheckResult, PillarResult } from "@/lib/ki-check/types";
 import { syncLeadToClose } from "@/lib/close";
 import { getProspectByEmail, updateProspect, logEvent } from "@/lib/outreach-db";
-import { sendOutreachTelegram } from "@/lib/telegram";
+import { sendOutreachTelegram, notifyNewLead, metaAdsTelegramConfig } from "@/lib/telegram";
 
 export const runtime = "nodejs";
 
@@ -114,7 +114,26 @@ function renderPagesTable(r: KiCheckResult): string {
     </div>`;
 }
 
-function renderReportHtml(r: KiCheckResult, firstName: string): string {
+// Buchungs-Varianten je Funnel. Default = generischer KI-Check (unverändert).
+type Booking = { url: string; redText: string; ctaBlurb: string; ctaButton: string };
+
+const DEFAULT_BOOKING: Booking = {
+  url: "https://tidycal.com/albertipgefer/erstgespraech-mit-wohlstandsmarketing-2",
+  redText: "kostenloses 15-Min-Erstgespräch mit Albert",
+  ctaBlurb:
+    "In einem 15-minütigen Erstgespräch zeige ich dir persönlich, wie wir deine Webseite in 90 Tagen auf Google, ChatGPT und Perplexity nach vorne bringen.",
+  ctaButton: "Erstgespräch buchen → 15 Min mit Albert",
+};
+
+const LOCATION_BOOKING: Booking = {
+  url: "https://tidycal.com/albertipgefer/kostenloses-strategiegespraech-eventlocations-30min",
+  redText: "kostenloses 30-Min-Strategiegespräch mit Albert",
+  ctaBlurb:
+    "In einem 30-minütigen Strategiegespräch schauen wir uns gemeinsam deinen Webseiten-Prototyp an und wie deine Location planbar mehr Firmenanfragen gewinnt.",
+  ctaButton: "Strategiegespräch buchen → 30 Min mit Albert",
+};
+
+function renderReportHtml(r: KiCheckResult, firstName: string, booking: Booking): string {
   const recs = r.topRecommendations
     .map(
       (rec, i) => `
@@ -165,7 +184,7 @@ function renderReportHtml(r: KiCheckResult, firstName: string): string {
             an Wettbewerber, die diese Punkte bereits umgesetzt haben.
           </p>
           <p style="margin:14px 0 0;font-size:13px;color:#7f1d1d;">
-            👉 Buche dir ein <a href="https://tidycal.com/albertipgefer/erstgespraech-mit-wohlstandsmarketing-2" style="color:#b91c1c;font-weight:700;">kostenloses 15-Min-Erstgespräch mit Albert</a> — wir zeigen dir, wie du diese Lücken am schnellsten schließt.
+            👉 Buche dir ein <a href="${booking.url}" style="color:#b91c1c;font-weight:700;">${booking.redText}</a> — wir zeigen dir, wie du diese Lücken am schnellsten schließt.
           </p>
         </div>
       </div>
@@ -188,9 +207,9 @@ function renderReportHtml(r: KiCheckResult, firstName: string): string {
     <div style="margin:48px 0 24px;padding:32px;background:linear-gradient(135deg,#1663DE,#0a4bb8);border-radius:24px;color:#fff;text-align:center;">
       <h2 style="margin:0;font-size:22px;font-weight:800;color:#fff;">Bereit, deine Sichtbarkeit auf das nächste Level zu heben?</h2>
       <p style="margin:12px 0 20px;font-size:14px;opacity:0.9;line-height:1.6;">
-        In einem 15-minütigen Erstgespräch zeige ich dir persönlich, wie wir deine Webseite in 90 Tagen auf Google, ChatGPT und Perplexity nach vorne bringen.
+        ${escapeHtml(booking.ctaBlurb)}
       </p>
-      <a href="https://tidycal.com/albertipgefer/erstgespraech-mit-wohlstandsmarketing-2" style="display:inline-block;background:#fff;color:#1663DE;font-weight:700;padding:14px 28px;border-radius:999px;text-decoration:none;font-size:14px;">Erstgespräch buchen → 15 Min mit Albert</a>
+      <a href="${booking.url}" style="display:inline-block;background:#fff;color:#1663DE;font-weight:700;padding:14px 28px;border-radius:999px;text-decoration:none;font-size:14px;">${escapeHtml(booking.ctaButton)}</a>
     </div>
 
     <div style="text-align:center;color:#a3a3a3;font-size:12px;line-height:1.6;padding:24px 0;border-top:1px solid #e5e5e5;">
@@ -211,6 +230,10 @@ export async function POST(req: NextRequest) {
     phone?: string;
     consent?: boolean;
     result?: KiCheckResult;
+    // Eventlocation-Funnel (optional, additiv — generischer Check ignoriert sie):
+    locationName?: string;
+    fit?: boolean;
+    campaign?: string;
   };
   try {
     body = await req.json();
@@ -223,6 +246,13 @@ export async function POST(req: NextRequest) {
   const email = (body.email || "").trim().slice(0, 160);
   const phone = (body.phone || "").trim().slice(0, 40);
   const { consent, result } = body;
+
+  // Eventlocation-Kampagne: eigener Buchungslink, Close-Quelle + Prototyp-Signal.
+  const isLocationCheck = body.campaign === "location-check";
+  const locationName = (body.locationName || "").trim().slice(0, 120);
+  const fit = body.fit === true;
+  const wantsPrototype = isLocationCheck && fit;
+  const booking = isLocationCheck ? LOCATION_BOOKING : DEFAULT_BOOKING;
 
   if (!firstName || !lastName || !email || !phone || !consent || !result) {
     return NextResponse.json(
@@ -263,7 +293,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const html = renderReportHtml(result, firstName);
+  const html = renderReportHtml(result, firstName, booking);
 
   // 1) Bericht an User
   const userMail = await fetch("https://api.resend.com/emails", {
@@ -299,9 +329,22 @@ export async function POST(req: NextRequest) {
     body: JSON.stringify({
       from: `WSM Lead-Bot <${fromEmail}>`,
       to: ["info@wohlstandsmarketing.de"],
-      subject: `🎯 Neuer KI-Check-Lead: ${firstName} ${lastName} (Score ${result.score})`,
+      subject: wantsPrototype
+        ? `🏛️ PROTOTYP BAUEN — ${escapeHtml(locationName || `${firstName} ${lastName}`)} (Score ${result.score})`
+        : isLocationCheck
+          ? `🎯 Eventlocation-Lead: ${escapeHtml(locationName || `${firstName} ${lastName}`)} (Score ${result.score})`
+          : `🎯 Neuer KI-Check-Lead: ${firstName} ${lastName} (Score ${result.score})`,
       html: `
-        <h2>Neuer Lead über KI-Sichtbarkeits-Check</h2>
+        <h2>Neuer Lead über ${isLocationCheck ? "Eventlocation-Check (Firmenfeiern)" : "KI-Sichtbarkeits-Check"}</h2>
+        ${
+          isLocationCheck
+            ? `<p style="padding:10px 14px;border-radius:8px;background:${wantsPrototype ? "#ecfdf5" : "#fef2f2"};border-left:4px solid ${wantsPrototype ? "#16a34a" : "#dc2626"};">
+                 <strong>Prototyp:</strong> ${wantsPrototype ? "✅ GEWÜNSCHT — über die website-fabrik bauen und in 24 h liefern." : "— kein Fit (Location vermietet nicht für Firmenfeiern). Nur KI-Check."}
+               </p>
+               <p><strong>Location:</strong> ${escapeHtml(locationName || "—")}</p>
+               <p><strong>Firmenfeiern:</strong> ${fit ? "Ja" : "Nein"}</p>`
+            : ""
+        }
         <p><strong>Name:</strong> ${escapeHtml(firstName)} ${escapeHtml(lastName)}</p>
         <p><strong>E-Mail:</strong> <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></p>
         <p><strong>Telefon:</strong> <a href="tel:${escapeHtml(phone.replace(/\s/g, ""))}">${escapeHtml(phone)}</a></p>
@@ -309,7 +352,7 @@ export async function POST(req: NextRequest) {
         <p><strong>Geprüfte URL:</strong> <a href="${escapeHtml(result.normalizedUrl)}">${escapeHtml(result.normalizedUrl)}</a></p>
         <p><strong>Score:</strong> ${result.score}/100 (${result.scoreLabel})</p>
         <p><strong>Stadt:</strong> ${escapeHtml(result.answers.city || "—")}</p>
-        <p><strong>Hauptziel:</strong> ${escapeHtml(result.answers.goal || "—")}</p>
+        ${isLocationCheck ? "" : `<p><strong>Hauptziel:</strong> ${escapeHtml(result.answers.goal || "—")}</p>`}
         <p><strong>Geprüft am:</strong> ${escapeHtml(result.fetchedAt)}</p>
       `,
     }),
@@ -317,26 +360,62 @@ export async function POST(req: NextRequest) {
 
   // 3) Lead automatisch in Close CRM anlegen (gelabelt: Webseite + Lead Magnet).
   //    Gekapselt: Ein Close-Fehler darf den bereits versendeten Report nie blockieren.
+  let closeLeadId: string | undefined;
   try {
     const sync = await syncLeadToClose({
-      source: "ki-check",
+      source: isLocationCheck ? "location-check" : "ki-check",
       firstName,
       lastName,
       email,
       phone,
+      company: isLocationCheck ? locationName || undefined : undefined,
       kiScore: result.score, // steuert HOT-Einstufung (< 60 = großer Handlungsbedarf)
       noteLines: [
+        ...(isLocationCheck
+          ? [
+              `Location: ${locationName || "—"}`,
+              `Firmenfeiern: ${fit ? "Ja" : "Nein"}`,
+              `Prototyp gewünscht: ${wantsPrototype ? "Ja — bauen & in 24 h liefern" : "Nein"}`,
+            ]
+          : []),
         `Score: ${result.score}/100 (${result.scoreLabel})`,
         `Geprüfte URL: ${result.normalizedUrl}`,
         result.answers.city ? `Stadt: ${result.answers.city}` : null,
-        result.answers.goal ? `Hauptziel: ${result.answers.goal}` : null,
+        isLocationCheck ? null : result.answers.goal ? `Hauptziel: ${result.answers.goal}` : null,
       ],
     });
-    if (!sync.ok) {
-      console.warn("Close-Sync fehlgeschlagen:", sync.reason);
-    }
+    if (sync.ok) closeLeadId = sync.leadId;
+    else console.warn("Close-Sync fehlgeschlagen:", sync.reason);
   } catch (e) {
     console.warn("Close-Sync Exception:", e);
+  }
+
+  // 3b) Eventlocation-Lead: Sofort-Push an den WSMMetaAdsLeadsBot mit Deep-Link
+  //     in den frisch angelegten Close-Lead. Gekapselt — darf den Report nie blockieren.
+  if (isLocationCheck) {
+    try {
+      await notifyNewLead(
+        {
+          sourceLabel: "Eventlocation-Check (Meta Ads)",
+          name: locationName ? `${firstName} ${lastName} · ${locationName}` : `${firstName} ${lastName}`,
+          email,
+          phone,
+          detailLines: [
+            `📊 Score ${result.score}/100 (${result.scoreLabel})`,
+            `🔗 ${result.normalizedUrl}`,
+            `🎉 Firmenfeiern: ${fit ? "Ja" : "Nein"}`,
+            wantsPrototype
+              ? "🛠️ PROTOTYP BAUEN — über website-fabrik, in 24 h liefern"
+              : "Kein Prototyp (kein Fit) — nur KI-Check",
+          ],
+          leadId: closeLeadId,
+          hot: result.score < 60,
+        },
+        metaAdsTelegramConfig(),
+      );
+    } catch (e) {
+      console.warn("Telegram-Push (Meta Ads) Exception:", e);
+    }
   }
 
   // 4) Cold-Outreach: Stammt der Lead aus einer laufenden Outreach-Sequenz?

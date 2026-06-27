@@ -213,10 +213,25 @@ export type LeadNotification = {
   hot?: boolean;
 };
 
+/**
+ * Eventlocation-Kampagne (Meta Ads, /location-check) → DEDIZIERTER
+ * WSMMetaAdsLeadsBot. Nutzt WSM_LEADS_TELEGRAM_BOT_TOKEN / _CHAT_ID; fällt auf
+ * den Standard-Bot (TELEGRAM_*) zurück, solange die Variablen nicht gesetzt sind.
+ */
+export function metaAdsTelegramConfig(): { token?: string; chatId?: string } {
+  return {
+    token: process.env.WSM_LEADS_TELEGRAM_BOT_TOKEN || process.env.TELEGRAM_BOT_TOKEN,
+    chatId: process.env.WSM_LEADS_TELEGRAM_CHAT_ID || process.env.TELEGRAM_CHAT_ID,
+  };
+}
+
 /** Schickt eine formatierte Lead-Benachrichtigung an den hinterlegten Telegram-Chat. */
-export async function notifyNewLead(n: LeadNotification): Promise<void> {
-  const token = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
+export async function notifyNewLead(
+  n: LeadNotification,
+  opts?: { token?: string; chatId?: string },
+): Promise<void> {
+  const token = opts?.token || process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = opts?.chatId || process.env.TELEGRAM_CHAT_ID;
   if (!token || !chatId) return; // Feature optional — nicht konfiguriert = still überspringen
 
   const header = n.hot

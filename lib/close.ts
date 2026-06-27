@@ -45,7 +45,7 @@ const ASSIGNEE_USER_ID =
 // Der Report selbst stuft < 60 als "deutliche Lücken" bis "kritisch" ein.
 const HOT_KICHECK_MAX_SCORE = 60;
 
-export type LeadSource = "ki-check" | "kontakt" | "angebot" | "lead-magnet" | "cold-outreach";
+export type LeadSource = "ki-check" | "kontakt" | "angebot" | "lead-magnet" | "cold-outreach" | "location-check";
 
 const SOURCE_LABEL: Record<LeadSource, string> = {
   "ki-check": "KI-Sichtbarkeitscheck",
@@ -53,6 +53,7 @@ const SOURCE_LABEL: Record<LeadSource, string> = {
   angebot: "Angebots-Konfigurator",
   "lead-magnet": "Lead-Magnet (PDF)",
   "cold-outreach": "Cold-Outreach (Antwort)",
+  "location-check": "Eventlocation-Check (Firmenfeiern)",
 };
 
 // Zusätzliche Leadquelle-Werte je Weg (zu "Webseite", das immer gesetzt wird)
@@ -62,6 +63,9 @@ const SOURCE_EXTRA_LEADQUELLE: Record<LeadSource, string[]> = {
   angebot: [],
   "lead-magnet": ["Lead Magnet"],
   "cold-outreach": [],
+  // Kommt aus der Meta-Ads-Kampagne → existierender Choice "META Paid ads"
+  // macht die Leads in Close sauber filterbar (plus "Lead Magnet" als Funnel-Art).
+  "location-check": ["META Paid ads", "Lead Magnet"],
 };
 
 // Wert im Feld "Website-Formular" je Weg (muss exakt den Choice-Werten entsprechen).
@@ -72,6 +76,7 @@ const SOURCE_FORMULAR: Record<LeadSource, string> = {
   angebot: "Angebots-Konfigurator",
   "lead-magnet": "Lead-Magnet",
   "cold-outreach": "",
+  "location-check": "Eventlocation-Check",
 };
 
 function authHeader(apiKey: string): string {
@@ -156,7 +161,7 @@ function isHotLead(input: SyncLeadInput): boolean {
   if (input.source === "angebot") return true;
   if (input.source === "cold-outreach") return true; // positive Cold-Antwort = sofort anrufen
   if (
-    input.source === "ki-check" &&
+    (input.source === "ki-check" || input.source === "location-check") &&
     typeof input.kiScore === "number" &&
     input.kiScore < HOT_KICHECK_MAX_SCORE
   ) {

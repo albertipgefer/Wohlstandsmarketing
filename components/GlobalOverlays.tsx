@@ -15,11 +15,14 @@ import CookieBanner from "@/components/CookieBanner";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import MarketingOverlays from "@/components/MarketingOverlays";
 import CursorGlow from "@/components/CursorGlow";
-import { isInternalRoute } from "@/lib/tracking-routes";
+import { isInternalRoute, isBareLandingRoute } from "@/lib/tracking-routes";
 
 export default function GlobalOverlays() {
   const pathname = usePathname();
   if (isInternalRoute(pathname)) return null;
+
+  // Conversion-Landingpages: nur Cookie-Banner (DSGVO), keine Marketing-Overlays.
+  if (isBareLandingRoute(pathname)) return <CookieBanner />;
 
   return (
     <>

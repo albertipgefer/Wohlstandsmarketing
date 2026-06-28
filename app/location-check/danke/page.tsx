@@ -34,35 +34,46 @@ export default async function LocationCheckDankePage({
         <div className="relative mx-auto max-w-2xl text-center">
           <span className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-emerald-700">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-            Eingegangen
+            Check eingegangen
           </span>
           <h1
             className="mt-5 font-[family-name:var(--font-display)] font-black leading-[1.05] tracking-[-0.02em]"
             style={{ fontSize: "clamp(1.9rem, 4.8vw, 3rem)" }}
           >
-            {firstName ? `Geschafft, ${firstName}.` : "Geschafft."}
+            {firstName ? `Fast geschafft, ${firstName}!` : "Fast geschafft!"}
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-[var(--text-muted)] md:text-[16px]">
             Dein KI-Sichtbarkeits-Check ist unterwegs und landet gleich in deinem Postfach.
-            {isFit
-              ? " Deinen persönlichen Webseiten-Prototyp deiner Location erstellen wir vorab."
-              : " Schau gerne in dein Postfach für deine Auswertung."}
           </p>
 
-          {isFit && (
-            <div className="mx-auto mt-6 max-w-xl rounded-2xl border border-[var(--accent)]/25 bg-[var(--accent)]/[0.06] p-5 text-left">
-              <p className="text-[14px] leading-relaxed text-[var(--text)] md:text-[15px]">
-                <strong>Deinen fertigen Prototyp zeigen wir dir live im Gespräch.</strong> Wir gehen ihn
-                gemeinsam Schritt für Schritt durch, du siehst genau, wie deine Location online wirken
-                kann. Buch dir dafür unten deinen Termin.
-              </p>
-            </div>
-          )}
+          {/* PROMINENTER CTA — der entscheidende nächste Schritt, unübersehbar */}
+          <div className="mx-auto mt-8 max-w-xl rounded-3xl border-2 border-[var(--accent)] bg-[var(--accent)]/[0.07] p-6 text-center shadow-[0_14px_50px_-12px_rgba(22,99,222,0.4)] md:p-8">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[var(--accent)] px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-white">
+              ⚠️ Ein letzter Schritt fehlt
+            </span>
+            <p className="mt-4 font-[family-name:var(--font-display)] font-black leading-[1.15] tracking-tight text-[var(--text)]" style={{ fontSize: "clamp(1.3rem, 3.6vw, 1.9rem)" }}>
+              {isFit
+                ? "Deinen fertigen Prototyp + deine Auswertung zeigen wir dir live im Termin."
+                : "Deine persönliche Auswertung besprechen wir live im Termin."}
+            </p>
+            <p className="mx-auto mt-3 max-w-md text-[14px] leading-relaxed text-[var(--text-muted)] md:text-[15px]">
+              Ohne gebuchten Termin bleibt es bei der E-Mail. {isFit ? "Den Prototyp und den" : "Den"} echten
+              Mehrwert für deine Location bekommst du erst im Gespräch. Sichere dir jetzt deinen Platz, das
+              dauert keine 60 Sekunden.
+            </p>
+            <a
+              href="#termin"
+              className="mt-6 inline-flex items-center gap-2 rounded-full bg-[var(--accent)] px-8 py-4 text-[15px] font-bold text-white shadow-lg transition hover:opacity-90 md:text-[16px]"
+            >
+              Jetzt Termin sichern
+              <span className="animate-bounce">↓</span>
+            </a>
+          </div>
         </div>
       </section>
 
       {/* Booking */}
-      <section className="relative px-4 pb-20 sm:px-6 md:pb-28">
+      <section id="termin" className="relative scroll-mt-6 px-4 pb-20 sm:px-6 md:pb-28">
         <div className="mx-auto max-w-2xl rounded-3xl border border-[var(--border)] bg-white p-6 shadow-[0_10px_40px_-12px_rgba(10,10,10,0.12)] md:p-10">
           <h2 className="font-[family-name:var(--font-display)] text-2xl font-black leading-tight tracking-tight md:text-3xl">
             Sichere dir jetzt deinen Termin

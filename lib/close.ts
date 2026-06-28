@@ -149,6 +149,13 @@ export type SyncLeadInput = {
    * Lead doppelt an (einmal Standard-Bot, einmal dedizierter Bot).
    */
   skipTelegram?: boolean;
+  /**
+   * Wenn gesetzt: legt IMMER eine High-Priority-Aufgabe (fällig heute) mit
+   * diesem Text an — unabhängig von der HOT-Einstufung. Genutzt für Meta-Ads-
+   * Location-Leads, die immer sofort eine klare Anruf-Aufgabe brauchen. Ersetzt
+   * für diesen Lead die generische HOT-Aufgabe (kein Duplikat).
+   */
+  priorityTask?: string;
 };
 
 export type CloseSyncResult = {
@@ -181,24 +188,25 @@ function isHotLead(input: SyncLeadInput): boolean {
  * Legt eine "Sofort anrufen"-Aufgabe für Albert an (Fälligkeit: morgen = 24 h).
  * Gekapselt vom Aufrufer — ein Fehler hier darf den Lead-Sync nie sprengen.
  */
-async function createCallTask(
+async function createLeadTask(
   apiKey: string,
   leadId: string,
-  sourceLabel: string,
+  text: string,
+  opts?: { dueToday?: boolean; priority?: "low" | "medium" | "high" },
 ): Promise<void> {
-  // Fälligkeit morgen im Format YYYY-MM-DD (Close-Task-Due-Date ist datumsbasiert)
-  const due = new Date(Date.now() + 24 * 60 * 60 * 1000)
-    .toISOString()
-    .slice(0, 10);
+  // Close-Task-Due-Date ist datumsbasiert (YYYY-MM-DD, keine Uhrzeit).
+  const offsetMs = opts?.dueToday ? 0 : 24 * 60 * 60 * 1000;
+  const due = new Date(Date.now() + offsetMs).toISOString().slice(0, 10);
   await closeFetch(apiKey, `/task/`, {
     method: "POST",
     body: JSON.stringify({
       _type: "lead",
       lead_id: leadId,
       assigned_to: ASSIGNEE_USER_ID,
-      text: `🔥 HOT-Lead — sofort anrufen (${sourceLabel})`,
+      text,
       date: due,
       is_complete: false,
+      ...(opts?.priority ? { priority: opts.priority } : {}),
     }),
   });
 }
@@ -296,12 +304,27 @@ export async function syncLeadToClose(
       body: JSON.stringify({ lead_id: leadId, note }),
     });
 
-    // HOT-Lead-Routing: bei hoher Kaufabsicht eine "Sofort anrufen"-Aufgabe (24 h)
-    // für Albert anlegen (eigenes try/catch — nie blockierend).
+    // Aufgaben-Routing (eigenes try/catch — nie blockierend):
+    //  - priorityTask gesetzt → IMMER eine High-Prio-Aufgabe, fällig heute
+    //    (Meta-Ads-Location-Leads). Ersetzt die HOT-Aufgabe (kein Duplikat).
+    //  - sonst HOT-Lead → "sofort anrufen"-Aufgabe, fällig morgen.
     const hot = isHotLead(input);
-    if (hot) {
+    if (input.priorityTask) {
       try {
-        await createCallTask(apiKey, leadId, SOURCE_LABEL[input.source]);
+        await createLeadTask(apiKey, leadId, input.priorityTask, {
+          dueToday: true,
+          priority: "high",
+        });
+      } catch (e) {
+        console.warn("Close-Task (Priority) Exception:", e);
+      }
+    } else if (hot) {
+      try {
+        await createLeadTask(
+          apiKey,
+          leadId,
+          `🔥 HOT-Lead — sofort anrufen (${SOURCE_LABEL[input.source]})`,
+        );
       } catch (e) {
         console.warn("Close-Task (HOT) Exception:", e);
       }

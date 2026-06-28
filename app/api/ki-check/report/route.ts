@@ -373,6 +373,17 @@ export async function POST(req: NextRequest) {
       // Location-Leads werden unten separat über den dedizierten WSMMetaAdsLeadsBot
       // gemeldet → interne Standard-Bot-Benachrichtigung unterdrücken (sonst doppelt).
       skipTelegram: isLocationCheck,
+      // Location-Leads bekommen IMMER sofort eine High-Prio-Anruf-Aufgabe (fällig
+      // heute) mit Meta-Hinweis + was der Lead erhalten hat.
+      priorityTask: isLocationCheck
+        ? `🔴 Meta-Ads-Lead anrufen — ${locationName || `${firstName} ${lastName}`}. ` +
+          `Quelle: Eventlocation-Check (Meta Paid Ads). ` +
+          `Erhalten: KI-Sichtbarkeits-Check${
+            wantsPrototype
+              ? " + Webseiten-Prototyp (bauen & in 24 h liefern)"
+              : " (kein Prototyp — kein Fit)"
+          }. Firmenfeiern: ${fit ? "Ja" : "Nein"} · Score ${result.score}/100.`
+        : undefined,
       noteLines: [
         ...(isLocationCheck
           ? [

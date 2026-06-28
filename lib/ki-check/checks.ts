@@ -1016,20 +1016,44 @@ export interface RawCheckOutput {
 export async function runAllChecks(rawUrl: string): Promise<RawCheckOutput | null> {
   const errors: CrawlError[] = [];
 
-  // URL normalisieren
-  let normalized = rawUrl.trim();
-  if (!/^https?:\/\//i.test(normalized)) normalized = `https://${normalized}`;
-  let parsed: URL;
+  // URL normalisieren — bewusst tolerant: Das eingegebene Protokoll wird
+  // ignoriert (egal ob "http://", "https://" oder nackte Domain) und www/
+  // ohne-www wird automatisch durchprobiert. So bricht der Check nicht ab,
+  // nur weil jemand "http://" tippt oder die falsche www-Variante erwischt.
+  const cleaned = rawUrl
+    .trim()
+    .replace(/^https?:\/\//i, "")
+    .replace(/\/+$/, "");
+  let host: string;
   try {
-    parsed = new URL(normalized);
+    host = new URL(`https://${cleaned}`).host;
   } catch {
     return null;
   }
-  const origin = `${parsed.protocol}//${parsed.host}`;
+  if (!host) return null;
 
-  // 1) Startseite laden (für Meta + Smoke-Test)
-  const homeRes = await fetchText(origin);
-  if (!homeRes.text) {
+  const bareHost = host.replace(/^www\./i, "");
+  // Reihenfolge = Präferenz: https zuerst, dann die andere www-Variante,
+  // http nur als letzter Rettungsanker.
+  const candidates = [
+    `https://${host}`,
+    host === bareHost ? `https://www.${host}` : `https://${bareHost}`,
+    `http://${host}`,
+  ];
+
+  // 1) Startseite laden (für Meta + Smoke-Test) — ersten erreichbaren Origin nehmen
+  let origin = "";
+  let homeRes: { text: string | null; error?: string } = { text: null };
+  for (const cand of candidates) {
+    const res = await fetchText(cand);
+    if (res.text) {
+      const u = new URL(cand);
+      origin = `${u.protocol}//${u.host}`;
+      homeRes = res;
+      break;
+    }
+  }
+  if (!origin || !homeRes.text) {
     return null;
   }
   const $home = cheerio.load(homeRes.text);

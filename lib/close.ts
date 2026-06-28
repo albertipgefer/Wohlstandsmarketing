@@ -142,6 +142,13 @@ export type SyncLeadInput = {
   noteLines?: (string | null | undefined)[];
   /** Nur bei source "ki-check": Gesamtscore 0–100 — steuert die HOT-Einstufung. */
   kiScore?: number;
+  /**
+   * Unterdrückt die interne Telegram-Benachrichtigung (Standard-Bot). Setzen,
+   * wenn der Aufrufer den Lead selbst über einen DEDIZIERTEN Bot meldet (z. B.
+   * der Eventlocation-Funnel über den WSMMetaAdsLeadsBot) — sonst kommt der
+   * Lead doppelt an (einmal Standard-Bot, einmal dedizierter Bot).
+   */
+  skipTelegram?: boolean;
 };
 
 export type CloseSyncResult = {
@@ -300,19 +307,22 @@ export async function syncLeadToClose(
       }
     }
 
-    // Telegram-Sofort-Benachrichtigung aufs Handy (eigenes try/catch — nie blockierend)
-    try {
-      await notifyNewLead({
-        sourceLabel: SOURCE_LABEL[input.source],
-        name: personName || leadName,
-        email: input.email,
-        phone: input.phone,
-        detailLines: input.noteLines,
-        leadId,
-        hot,
-      });
-    } catch (e) {
-      console.warn("Telegram-Notify Exception:", e);
+    // Telegram-Sofort-Benachrichtigung aufs Handy (eigenes try/catch — nie blockierend).
+    // Übersprungen, wenn der Aufrufer den Lead selbst über einen dedizierten Bot meldet.
+    if (!input.skipTelegram) {
+      try {
+        await notifyNewLead({
+          sourceLabel: SOURCE_LABEL[input.source],
+          name: personName || leadName,
+          email: input.email,
+          phone: input.phone,
+          detailLines: input.noteLines,
+          leadId,
+          hot,
+        });
+      } catch (e) {
+        console.warn("Telegram-Notify Exception:", e);
+      }
     }
 
     return { ok: true, leadId, created };

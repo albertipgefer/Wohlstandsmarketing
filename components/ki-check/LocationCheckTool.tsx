@@ -295,12 +295,33 @@ export default function LocationCheckTool() {
 
   return (
     <div className="mx-auto w-full max-w-2xl">
-      {/* Korrektheits-Hinweis — sichtbar während der Eingabe */}
-      {(phase === "qualify" || phase === "contact") && (
+      {/* QUALIFY — dezenter Korrektheits-Hinweis */}
+      {phase === "qualify" && (
         <p className="mb-4 rounded-2xl border border-[var(--border)] bg-[var(--bg)] px-4 py-3 text-center text-[12.5px] leading-relaxed text-[var(--text-muted)]">
           Bitte alles korrekt ausfüllen. Nur mit echten Angaben können wir dir einen
           passenden Webseiten-Prototyp deiner Location erstellen.
         </p>
+      )}
+
+      {/* CONTACT — klare Leit-Headline: korrekte Daten sind Voraussetzung für den Versand */}
+      {phase === "contact" && (
+        <div className="mb-5 text-center">
+          <h2
+            className="font-[family-name:var(--font-display)] font-black leading-[1.1] tracking-[-0.02em] text-[var(--text)]"
+            style={{ fontSize: "clamp(1.5rem, 3.8vw, 2.15rem)" }}
+          >
+            Wohin dürfen wir deinen{" "}
+            <span className="font-[family-name:var(--font-serif)] font-normal italic text-[var(--accent)]">
+              Check + Prototyp
+            </span>{" "}
+            schicken?
+          </h2>
+          <p className="mx-auto mt-3 max-w-lg text-[13.5px] leading-relaxed text-[var(--text-muted)] md:text-[14.5px]">
+            Wir erstellen und versenden deine Auswertung und deinen Webseiten-Prototyp{" "}
+            <strong className="font-semibold text-[var(--text)]">nur mit korrekten Angaben</strong>.
+            Trag bitte deine echten Kontaktdaten ein, sonst können wir dir beides nicht zustellen.
+          </p>
+        </div>
       )}
 
       <AnimatePresence mode="wait">

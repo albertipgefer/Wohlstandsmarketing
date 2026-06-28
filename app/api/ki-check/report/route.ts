@@ -370,6 +370,9 @@ export async function POST(req: NextRequest) {
       phone,
       company: isLocationCheck ? locationName || undefined : undefined,
       kiScore: result.score, // steuert HOT-Einstufung (< 60 = großer Handlungsbedarf)
+      // Location-Leads werden unten separat über den dedizierten WSMMetaAdsLeadsBot
+      // gemeldet → interne Standard-Bot-Benachrichtigung unterdrücken (sonst doppelt).
+      skipTelegram: isLocationCheck,
       noteLines: [
         ...(isLocationCheck
           ? [

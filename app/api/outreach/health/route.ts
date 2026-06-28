@@ -8,6 +8,7 @@
  */
 import { NextResponse } from "next/server";
 import { sentTodayByInbox, recentBounceRate } from "@/lib/outreach-db";
+import { loadInboxes, effectiveCap } from "@/lib/outreach-inboxes";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -16,6 +17,15 @@ export async function GET() {
   const byInbox = await sentTodayByInbox();
   const sentToday = Object.values(byInbox).reduce((a, b) => a + b, 0);
   const bounceRate = await recentBounceRate();
+
+  // Alters-abhängiges Tageslimit je Postfach (Warm-up-Ramp) sichtbar machen.
+  const inboxes = loadInboxes();
+  const capacity = inboxes.map((ib) => {
+    const cap = effectiveCap(ib);
+    const sent = byInbox[ib.user] || 0;
+    return { inbox: ib.user, cap, sent, remaining: Math.max(0, cap - sent) };
+  });
+  const capToday = capacity.reduce((a, c) => a + c.cap, 0);
 
   // letzten Sende-Zeitpunkt holen (best effort)
   let lastSentAt: string | null = null;
@@ -33,7 +43,9 @@ export async function GET() {
     ok: true,
     sendEnabled: process.env.OUTREACH_SEND_ENABLED === "1",
     sentToday,
+    capToday,
     byInbox,
+    capacity,
     lastSentAt,
     bounceRate: Number(bounceRate.toFixed(4)),
   });

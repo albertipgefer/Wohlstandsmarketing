@@ -40,7 +40,30 @@ export default async function OutreachDashboard({
   );
 
   if (!expected || pw !== expected) {
-    return shell(<p style={{ fontSize: 15, color: "#525252" }}>🔒 Geschützt. Zugriff über <code>?pw=…</code></p>);
+    const wrong = pw !== undefined && pw !== "";
+    return shell(
+      <div style={{ minHeight: "70vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <form method="GET" action="/outreach" style={{ background: "#fff", border: "1px solid #ececec", borderRadius: 16, padding: 36, width: 360, maxWidth: "100%", boxShadow: "0 8px 30px rgba(0,0,0,.05)", textAlign: "center" }}>
+          <div style={{ fontSize: 22, fontWeight: 800, marginBottom: 6 }}>Cold-Outreach</div>
+          <div style={{ fontSize: 14, color: "#737373", marginBottom: 22 }}>Bitte Passwort eingeben</div>
+          <input
+            type="password"
+            name="pw"
+            placeholder="Passwort"
+            autoFocus
+            style={{ width: "100%", boxSizing: "border-box", padding: "12px 14px", fontSize: 15, border: "1px solid #d4d4d4", borderRadius: 10, marginBottom: 12 }}
+          />
+          <button
+            type="submit"
+            style={{ width: "100%", padding: "12px 14px", fontSize: 15, fontWeight: 700, color: "#fff", background: "#1663DE", border: "none", borderRadius: 10, cursor: "pointer" }}
+          >
+            Anmelden
+          </button>
+          {wrong && <div style={{ marginTop: 14, fontSize: 13, color: "#dc2626" }}>Falsches Passwort.</div>}
+          {!expected && <div style={{ marginTop: 14, fontSize: 13, color: "#dc2626" }}>Kein Passwort konfiguriert (Env fehlt).</div>}
+        </form>
+      </div>,
+    );
   }
 
   const { byType } = await eventCounts();

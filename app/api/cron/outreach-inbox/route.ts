@@ -146,7 +146,7 @@ export async function GET(req: NextRequest) {
             // angewendet würde jede positive Antwort fälschlich als negativ gewertet.
             const replyText = extractReplyText(raw);
             const isNegative =
-              /(kein interesse|nicht interessiert|kein bedarf|bitte keine|keine weiteren|bitte.{0,12}(abmelden|austragen)|nehmen sie mich (raus|heraus)|entfernen sie|streichen sie|kein\s*danke|nicht kontaktieren)/.test(replyText.toLowerCase());
+              /(kein(en)? interesse|nicht interessiert|kein(en)? bedarf|bitte keine|keine weiteren|bitte.{0,12}(abmelden|austragen)|nehmen sie mich (raus|heraus)|entfernen sie|streichen sie|nein\s*,?\s*danke|kein\s*danke|nicht kontaktieren|unsubscribe|abbestellen)/.test(replyText.toLowerCase());
 
             if (isNegative) {
               await setStatusByEmail(from, "unsubscribed");

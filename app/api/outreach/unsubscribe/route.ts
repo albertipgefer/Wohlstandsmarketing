@@ -34,16 +34,36 @@ function page(title: string, message: string): Response {
   });
 }
 
-export async function GET(req: NextRequest) {
-  const token = req.nextUrl.searchParams.get("token") || "";
+/** Abmeldung ausführen (idempotent). Gibt true zurück, wenn der Token gültig war. */
+async function doUnsubscribe(token: string): Promise<boolean> {
   const email = verifyUnsubToken(token);
-  if (!email) {
-    return page("Link ungültig", "Dieser Abmeldelink ist ungültig oder abgelaufen.");
-  }
+  if (!email) return false;
   const id = await setStatusByEmail(email, "unsubscribed");
   if (id) await logEvent(id, "unsubscribe", {});
+  return true;
+}
+
+export async function GET(req: NextRequest) {
+  const token = req.nextUrl.searchParams.get("token") || "";
+  const ok = await doUnsubscribe(token);
+  if (!ok) {
+    return page("Link ungültig", "Dieser Abmeldelink ist ungültig oder abgelaufen.");
+  }
   return page(
     "Sie sind abgemeldet",
     "Sie erhalten ab sofort keine weiteren Nachrichten von uns. Danke für Ihre Zeit — und falls es doch ein Versehen war, antworten Sie einfach kurz auf eine unserer Mails.",
   );
+}
+
+/**
+ * POST /api/outreach/unsubscribe?token=...
+ * One-Click-Abmeldung nach RFC 8058: Gmail/Outlook senden bei gesetztem Header
+ * `List-Unsubscribe-Post: List-Unsubscribe=One-Click` einen POST an die URL.
+ * Der Token steckt in der Query (nicht im Body). Antwort ist ein schlichtes 200.
+ */
+export async function POST(req: NextRequest) {
+  const token = req.nextUrl.searchParams.get("token") || "";
+  await doUnsubscribe(token);
+  // One-Click erwartet nur einen Erfolgs-Statuscode, keinen Inhalt.
+  return new Response(null, { status: 200 });
 }

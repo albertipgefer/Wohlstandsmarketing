@@ -27,7 +27,7 @@ function ready(): boolean {
 
 export type ProspectStatus =
   | "active" | "paused" | "replied" | "converted"
-  | "bounced" | "unsubscribed" | "exhausted" | "suppressed";
+  | "bounced" | "unsubscribed" | "exhausted" | "suppressed" | "excluded";
 
 export type EventType =
   | "sent" | "delivered" | "bounce" | "click"
@@ -176,13 +176,14 @@ export async function logEvent(
   }
 }
 
-/** Fällige, aktive Prospects für den Versand (next_send_at <= jetzt, status active/paused). */
+/** Fällige, aktive Prospects für den Versand (next_send_at <= jetzt, NUR status=active).
+ *  `paused` ist bewusst ausgenommen: pausierte Leads werden nicht versendet. */
 export async function getDueProspects(limit = 50): Promise<Prospect[]> {
   if (!ready()) return [];
   try {
     const nowIso = new Date().toISOString();
     const q =
-      `status=in.(active,paused)&hook_status=eq.ready` +
+      `status=eq.active&hook_status=eq.ready` +
       `&or=(next_send_at.is.null,next_send_at.lte.${nowIso})` +
       // nullslast: fällige Follow-ups (next_send_at gesetzt, älteste zuerst) vor
       // neuen Erstkontakten (null) → Sequenz bleibt pünktlich, Rest-Cap = neue Leads.
@@ -406,7 +407,7 @@ export async function pendingReplyStats(): Promise<Record<string, number>> {
 export async function sequenceDistribution(): Promise<Record<string, number>> {
   if (!ready()) return {};
   try {
-    const q = `select=sequence_step&status=in.(active,paused)&hook_status=eq.ready`;
+    const q = `select=sequence_step&status=eq.active&hook_status=eq.ready`;
     const r = await fetch(`${URL}/rest/v1/outreach_prospects?${q}`, { headers: headers() });
     if (!r.ok) return {};
     const rows = (await r.json()) as { sequence_step: number }[];
@@ -488,5 +489,47 @@ export async function getApprovedDuePending(): Promise<PendingReply[]> {
     return (await r.json()) as PendingReply[];
   } catch {
     return [];
+  }
+}
+
+/* ───────────────── Single-Flight-Lock (Schutz gegen Doppelversand) ───────────────── */
+
+/**
+ * Versucht, den Versand-Lock exklusiv zu nehmen. Liefert true, wenn dieser Lauf
+ * ihn erhält; false, wenn bereits ein anderer Lauf aktiv ist. Atomar über ein
+ * bedingtes UPDATE (nur wenn der bestehende Lock abgelaufen ist). Selbstheilend:
+ * ein verwaister Lock (Crash) läuft nach ttlSeconds ab und gibt den Slot frei.
+ * Setzt eine Zeile outreach_runlock(name, locked_until) voraus.
+ */
+export async function acquireSendLock(name = "send", ttlSeconds = 600): Promise<boolean> {
+  if (!ready()) return true; // ohne DB kein Lock erzwingbar → nicht blockieren
+  try {
+    const nowIso = new Date().toISOString();
+    const until = new Date(Date.now() + ttlSeconds * 1000).toISOString();
+    const q = `name=eq.${name}&locked_until=lt.${encodeURIComponent(nowIso)}`;
+    const r = await fetch(`${URL}/rest/v1/outreach_runlock?${q}`, {
+      method: "PATCH",
+      headers: headers({ Prefer: "return=representation" }),
+      body: JSON.stringify({ locked_until: until }),
+    });
+    if (!r.ok) return true; // Lock-Tabelle fehlt o.ä. → Versand nicht blockieren
+    const rows = (await r.json()) as unknown[];
+    return rows.length > 0; // genau dann erworben, wenn eine Zeile aktualisiert wurde
+  } catch {
+    return true;
+  }
+}
+
+/** Gibt den Versand-Lock wieder frei (locked_until in die Vergangenheit). */
+export async function releaseSendLock(name = "send"): Promise<void> {
+  if (!ready()) return;
+  try {
+    await fetch(`${URL}/rest/v1/outreach_runlock?name=eq.${name}`, {
+      method: "PATCH",
+      headers: headers({ Prefer: "return=minimal" }),
+      body: JSON.stringify({ locked_until: new Date(0).toISOString() }),
+    });
+  } catch {
+    /* egal */
   }
 }

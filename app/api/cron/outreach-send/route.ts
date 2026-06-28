@@ -17,7 +17,7 @@ import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import {
   getDueProspects, updateProspect, logEvent,
-  sentTodayByInbox, recentBounceRate, type Prospect,
+  sentTodayByInbox, recentBounceRate, acquireSendLock, releaseSendLock, type Prospect,
 } from "@/lib/outreach-db";
 import { createUnsubToken } from "@/lib/outreach-token";
 import { sendOutreachTelegram } from "@/lib/telegram";
@@ -25,11 +25,15 @@ import { type Inbox, loadInboxes, effectiveCap } from "@/lib/outreach-inboxes";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 60; // genug Spielraum für PER_RUN_CAP Sends inkl. Delays
 
 const SITE = "https://wohlstandsmarketing.de";
 // Abstände in Tagen NACH Versand von Schritt s (0→1, 1→2, …). Ergibt Mail-Tage 0/3/7/14/28.
 const NEXT_OFFSET_DAYS = [3, 4, 7, 14];
 const KILL_BOUNCE_RATE = 0.1; // harter Stopp = Alarm-Schwelle (10 %)
+// Höchstens so viele Mails pro Lauf — verteilt den Tagesversand über die Fenster-
+// Läufe (alle 30 Min) statt alles im ersten Lauf abzufeuern (Reputations-Schutz).
+const PER_RUN_CAP = 15;
 
 /** Sende-Fenster Mo–Sa (NIE Sonntag), 9–11 & 14–16 Uhr in echter Europe/Berlin-Zeit
  *  (unabhängig von der UTC-Serverzeit auf Vercel). */
@@ -138,6 +142,12 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "no_inboxes_configured" });
   }
 
+  // Single-Flight: nur ein echter Versand-Lauf gleichzeitig (Schutz gegen Doppelversand,
+  // falls sich zwei Trigger überschneiden). Dryrun braucht keinen Lock.
+  if (!dryrun && !(await acquireSendLock("send", 600))) {
+    return NextResponse.json({ ok: true, skipped: "locked" });
+  }
+  try {
   const sentToday = await sentTodayByInbox();
   const capacity: Record<string, number> = {};
   // Tageslimit alters-abhängig (Warm-up-Ramp), nicht statisch.
@@ -154,6 +164,7 @@ export async function GET(req: NextRequest) {
   const results: { email: string; step: number; inbox?: string; sent: boolean }[] = [];
   const alertedInboxes = new Set<string>(); // pro Lauf max. 1 Sperr-Alarm je Postfach
   let rr = 0; // Round-Robin-Zeiger
+  let sentThisRun = 0; // Per-Lauf-Limit (PER_RUN_CAP)
 
   for (const p of due) {
     // E-Mail-Format validieren (ungültige überspringen, keine Bounces produzieren)
@@ -220,6 +231,10 @@ export async function GET(req: NextRequest) {
       await updateProspect(p.id, updates);
       await logEvent(p.id, "sent", { sequence_step: step, inbox: chosen.user, ab_arm: p.ab_arm });
       results.push({ email: p.email, step, inbox: chosen.user, sent: true });
+      sentThisRun++;
+      if (sentThisRun >= PER_RUN_CAP) break; // Per-Lauf-Limit erreicht, Rest im nächsten Lauf
+      // Kleines Delay zwischen echten Sends — glättet den Burst, schont die Reputation.
+      await new Promise((res) => setTimeout(res, 1500 + Math.floor(Math.random() * 2500)));
     } catch (e) {
       results.push({ email: p.email, step, inbox: chosen.user, sent: false });
       console.warn("Send-Fehler", p.email, e);
@@ -245,4 +260,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({
     ok: true, dryrun, bounceRate, processed: results.length, results: results.slice(0, 50),
   });
+  } finally {
+    if (!dryrun) await releaseSendLock("send");
+  }
 }

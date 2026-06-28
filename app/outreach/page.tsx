@@ -6,7 +6,7 @@
  * Gemessen wird, was zählt: Versand, Zustellung, Antworten und der Befund-Freigabe-Loop.
  */
 import {
-  eventCounts, statusCounts,
+  eventCounts, eventCountsSince, statusCounts,
   getRepliesWithDetails, eventsByDay, bucketBreakdown, enrichStatusCounts,
   pendingReplyStats, sequenceDistribution, sentTodayByInbox, recentBounceRate,
 } from "@/lib/outreach-db";
@@ -50,9 +50,9 @@ function Section({ title, hint, children }: { title: string; hint?: string; chil
 export default async function OutreachDashboard({
   searchParams,
 }: {
-  searchParams: Promise<{ pw?: string }>;
+  searchParams: Promise<{ pw?: string; range?: string; from?: string; to?: string }>;
 }) {
-  const { pw } = await searchParams;
+  const { pw, range: rangeRaw, from, to } = await searchParams;
   const expected = process.env.OUTREACH_DASHBOARD_PASSWORD;
 
   // ---------- Login (Stil wie /angebot/login) ----------
@@ -72,8 +72,26 @@ export default async function OutreachDashboard({
     );
   }
 
+  // ---------- Zeitraum-Filter ----------
+  const RANGE_DAYS: Record<string, number> = { today: 1, "7": 7, "30": 30, "60": 60, "90": 90 };
+  const range =
+    rangeRaw && (RANGE_DAYS[rangeRaw] || rangeRaw === "all" || rangeRaw === "custom") ? rangeRaw : "all";
+  let sinceIso: string | null = null;
+  let days = 30; // Tage für den Verlaufs-Chart
+  if (range === "today") {
+    const m = new Date(); m.setHours(0, 0, 0, 0); sinceIso = m.toISOString(); days = 1;
+  } else if (RANGE_DAYS[range]) {
+    days = RANGE_DAYS[range]; sinceIso = new Date(Date.now() - days * 86400000).toISOString();
+  } else if (range === "custom" && from) {
+    sinceIso = new Date(from + "T00:00:00").toISOString();
+    days = Math.min(365, Math.max(1, Math.ceil((Date.now() - Date.parse(sinceIso)) / 86400000)));
+  }
+  const RANGE_LABEL: Record<string, string> = {
+    today: "Heute", "7": "7 Tage", "30": "30 Tage", "60": "60 Tage", "90": "90 Tage", all: "Gesamt", custom: "Individuell",
+  };
+
   // ---------- Daten ----------
-  const { byType } = await eventCounts();
+  const { byType } = sinceIso ? await eventCountsSince(sinceIso) : await eventCounts();
   const status = await statusCounts();
   const sent = byType.sent || 0;
   const bounce = byType.bounce || 0;
@@ -83,7 +101,7 @@ export default async function OutreachDashboard({
   const totalProspects = Object.values(status).reduce((a, b) => a + b, 0);
 
   const replies = await getRepliesWithDetails(20);
-  const timeline = await eventsByDay(14);
+  const timeline = await eventsByDay(range === "all" ? 30 : days);
   const buckets = await bucketBreakdown();
   const enrich = await enrichStatusCounts();
   const pending = await pendingReplyStats();
@@ -138,12 +156,12 @@ export default async function OutreachDashboard({
           </span>
         </div>
 
-        {/* Heute */}
+        {/* Heute / Live (zeitunabhängig) */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: 14, marginTop: 24 }}>
           <Stat label="Heute gesendet" value={`${sentToday}`} sub={`von ${capToday} Kapazität`} accent={C.blue} />
-          <Stat label="Antworten gesamt" value={`${reply}`} sub={`${pct(reply, delivered)} Reply-Rate`} />
           <Stat label="Wartet auf Freigabe" value={`${befundAwaiting}`} sub="Befunde im Telegram-Loop" accent={befundAwaiting > 0 ? C.gold : undefined} />
-          <Stat label="Bounce-Quote" value={pct(bounce, sent)} sub={`Kill-Switch bei 10 %`} accent={bounceRate > 0.05 ? C.red : undefined} />
+          <Stat label="Versandfähig" value={`${readyToSend}`} sub="Leads mit v3-Copy" />
+          <Stat label="Bounce (Kill-Switch)" value={`${(bounceRate * 100).toFixed(1)} %`} sub="Stopp bei 10 %" accent={bounceRate > 0.05 ? C.red : undefined} />
         </div>
 
         {/* Handlungsbedarf */}
@@ -179,8 +197,36 @@ export default async function OutreachDashboard({
           </Section>
         )}
 
+        {/* Zeitraum-Auswertung */}
+        <Section title="Auswertung" hint={`Zeitraum: ${RANGE_LABEL[range]}`}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16, alignItems: "center" }}>
+            {["today", "7", "30", "60", "90", "all"].map((r) => {
+              const active = r === range;
+              return (
+                <a key={r} href={`/outreach?pw=${encodeURIComponent(pw || "")}&range=${r}`}
+                  style={{ padding: "7px 14px", borderRadius: 999, fontSize: 13, fontWeight: 700, textDecoration: "none",
+                    border: `1px solid ${active ? C.blue : C.border}`, background: active ? C.blue : C.card, color: active ? "#fff" : C.muted }}>
+                  {RANGE_LABEL[r]}
+                </a>
+              );
+            })}
+            <form method="GET" action="/outreach" style={{ display: "inline-flex", gap: 6, alignItems: "center", marginLeft: 4 }}>
+              <input type="hidden" name="pw" value={pw || ""} />
+              <input type="hidden" name="range" value="custom" />
+              <input type="date" name="from" defaultValue={from || ""} style={{ border: `1px solid ${C.border}`, borderRadius: 8, padding: "6px 10px", fontSize: 13, fontFamily: "inherit", color: C.text }} />
+              <button type="submit" style={{ padding: "7px 12px", borderRadius: 8, fontSize: 13, fontWeight: 700, border: "none", background: range === "custom" ? C.blue : "#e4e4e7", color: range === "custom" ? "#fff" : C.muted, cursor: "pointer" }}>ab Datum</button>
+            </form>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: 14 }}>
+            <Stat label="Versendet" value={`${sent}`} accent={C.blue} />
+            <Stat label="Zugestellt" value={`${delivered}`} sub={`Bounce ${pct(bounce, sent)}`} />
+            <Stat label="Antworten" value={`${reply}`} sub={`${pct(reply, delivered)} Reply-Rate`} />
+            <Stat label="Abmeldungen" value={`${unsub}`} sub={pct(unsub, delivered)} />
+          </div>
+        </Section>
+
         {/* Funnel */}
-        <Section title="Funnel" hint="vom Versand zur Antwort">
+        <Section title="Funnel" hint={`Zeitraum: ${RANGE_LABEL[range]}`}>
           <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 16, padding: "18px 22px" }}>
             {funnel.map(([label, n]) => (
               <div key={label} style={{ display: "flex", alignItems: "center", gap: 14, margin: "10px 0" }}>
@@ -244,7 +290,7 @@ export default async function OutreachDashboard({
         </Section>
 
         {/* Verlauf */}
-        <Section title="Letzte 14 Tage">
+        <Section title="Verlauf" hint={range === "all" ? "letzte 30 Tage" : `Zeitraum: ${RANGE_LABEL[range]}`}>
           <table style={tableStyle}>
             <thead><tr style={{ background: "#f7f7f8" }}>{["Tag", "Versendet", "Antworten", "Bounces"].map((h) => (
               <th key={h} style={th}>{h}</th>

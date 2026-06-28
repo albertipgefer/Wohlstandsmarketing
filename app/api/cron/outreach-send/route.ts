@@ -21,6 +21,7 @@ import {
 } from "@/lib/outreach-db";
 import { createUnsubToken } from "@/lib/outreach-token";
 import { sendOutreachTelegram } from "@/lib/telegram";
+import { type Inbox, loadInboxes, effectiveCap } from "@/lib/outreach-inboxes";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -29,19 +30,6 @@ const SITE = "https://wohlstandsmarketing.de";
 // Abstände in Tagen NACH Versand von Schritt s (0→1, 1→2, …). Ergibt Mail-Tage 0/3/7/14/28.
 const NEXT_OFFSET_DAYS = [3, 4, 7, 14];
 const KILL_BOUNCE_RATE = 0.1; // harter Stopp = Alarm-Schwelle (10 %)
-
-type Inbox = {
-  host: string; port: number; user: string; pass: string;
-  fromName: string; fromEmail: string; dailyCap: number;
-};
-
-function loadInboxes(): Inbox[] {
-  try {
-    return JSON.parse(process.env.OUTBOUND_INBOXES || "[]");
-  } catch {
-    return [];
-  }
-}
 
 /** Sende-Fenster Mo–Sa (NIE Sonntag), 9–11 & 14–16 Uhr in echter Europe/Berlin-Zeit
  *  (unabhängig von der UTC-Serverzeit auf Vercel). */
@@ -152,7 +140,8 @@ export async function GET(req: NextRequest) {
 
   const sentToday = await sentTodayByInbox();
   const capacity: Record<string, number> = {};
-  for (const ib of inboxes) capacity[ib.user] = Math.max(0, ib.dailyCap - (sentToday[ib.user] || 0));
+  // Tageslimit alters-abhängig (Warm-up-Ramp), nicht statisch.
+  for (const ib of inboxes) capacity[ib.user] = Math.max(0, effectiveCap(ib) - (sentToday[ib.user] || 0));
 
   const transporters: Record<string, nodemailer.Transporter> = {};
   const tx = (ib: Inbox) =>

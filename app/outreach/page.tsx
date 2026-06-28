@@ -1,11 +1,14 @@
 /**
  * /outreach — geschütztes KPI-Dashboard für die Cold-Outreach-Engine.
  * Zugriff: ?pw=<OUTREACH_DASHBOARD_PASSWORD>. Liest live aus Supabase.
- * Öffnungen via Pixel (absolut ungenau wg. Auto-Bildladen — v. a. für A/B-Vergleich).
+ *
+ * Strategie v3 (reply-only): kein Tracking-Pixel, kein Link in Mail 1, kein A/B.
+ * Gemessen wird, was zählt: Versand, Zustellung, Antworten und der Befund-Freigabe-Loop.
  */
 import {
-  eventCounts, statusCounts, openStats,
+  eventCounts, statusCounts,
   getRepliesWithDetails, eventsByDay, bucketBreakdown, enrichStatusCounts,
+  pendingReplyStats, sequenceDistribution,
 } from "@/lib/outreach-db";
 
 export const dynamic = "force-dynamic";
@@ -40,15 +43,12 @@ export default async function OutreachDashboard({
     return shell(<p style={{ fontSize: 15, color: "#525252" }}>🔒 Geschützt. Zugriff über <code>?pw=…</code></p>);
   }
 
-  const { byType, byArm } = await eventCounts();
+  const { byType } = await eventCounts();
   const status = await statusCounts();
-  const opens = await openStats();
   const sent = byType.sent || 0;
   const bounce = byType.bounce || 0;
   const delivered = Math.max(0, sent - bounce);
-  const click = byType.click || 0;
   const reply = byType.reply || 0;
-  const conv = byType.conversion || 0;
   const unsub = byType.unsubscribe || 0;
   const totalProspects = Object.values(status).reduce((a, b) => a + b, 0);
 
@@ -56,58 +56,51 @@ export default async function OutreachDashboard({
   const timeline = await eventsByDay(14);
   const buckets = await bucketBreakdown();
   const enrich = await enrichStatusCounts();
+  const pending = await pendingReplyStats();
+  const seq = await sequenceDistribution();
+
+  const readyToSend = enrich.ready_v3 || 0;
+  const befundSent = pending.sent || 0;
+  const befundAwaiting = pending.awaiting || 0;
+  const befundApproved = pending.approved || 0;
+  const befundRejected = pending.rejected || 0;
+  const befundDecided = befundSent + befundRejected;
+
   const BUCKET_LABEL: Record<string, string> = {
     A: "A · Seite langsam", B: "B · keine Verkäufer-Strecke", C: "C · keine Bewertungen",
-    D: "D · KI-unsichtbar", E: "E · veraltete Seite", F: "F · Fallback", "—": "ohne Bucket",
+    D: "D · KI unsichtbar (kein Schema)", E: "E · veraltete Seite", F: "F · sauber (Markt-Aufhänger)",
+    G: "G · SEO / Meta-Description", "—": "ohne Bucket",
+  };
+  const SEQ_LABEL: Record<string, string> = {
+    "0": "Erstkontakt (Mail 1)", "1": "Nachfass 1 (Mail 2)", "2": "Nachfass 2 (Mail 3)",
+    "3": "Nachfass 3 (Mail 4)", "4": "Break-up (Mail 5)",
   };
   const funnel: [string, number][] = [
-    ["Versendet", sent], ["Zugestellt", delivered], ["Antworten", reply], ["KI-Checks", conv],
+    ["Versendet", sent], ["Zugestellt", delivered], ["Antworten", reply], ["Befund raus", befundSent],
   ];
-
-  const armRow = (arm: "link" | "reply") => {
-    const a = byArm[arm] || {};
-    const s = a.sent || 0;
-    const opensArm = opens.byArm[arm] || 0;
-    const qualified = (a.reply || 0) + (a.conversion || 0);
-    return (
-      <tr key={arm}>
-        <td style={td}>{arm === "link" ? "Direkter Link" : "Reply-CTA"}</td>
-        <td style={td}>{s}</td>
-        <td style={{ ...td, fontWeight: 700 }}>{pct(opensArm, s)}</td>
-        <td style={td}>{a.click || 0}</td>
-        <td style={td}>{a.reply || 0}</td>
-        <td style={td}>{a.conversion || 0}</td>
-        <td style={{ ...td, fontWeight: 700, color: "#1663DE" }}>{pct(qualified, s)}</td>
-      </tr>
-    );
-  };
 
   return shell(
     <>
       <h1 style={{ fontSize: 26, fontWeight: 800, margin: "0 0 4px" }}>Cold-Outreach — Dashboard</h1>
       <p style={{ fontSize: 14, color: "#737373", margin: "0 0 28px" }}>
-        {totalProspects} Prospects · live aus Supabase · Öffnungen via Pixel (absolut ungenau wg. Auto-Bildladen — v. a. für A/B-Betreffvergleich)
+        {totalProspects} Prospects · {readyToSend} versandfähig (v3-Copy) · live aus Supabase · reply-only, kein Pixel/Link in Mail 1
       </p>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: 14, marginBottom: 14 }}>
         <Card label="Versendet" value={String(sent)} />
         <Card label="Zugestellt" value={String(delivered)} sub={`Bounce ${pct(bounce, sent)}`} />
-        <Card label="Öffnungen" value={String(opens.unique)} sub={`${pct(opens.unique, delivered)} (≈, Richtwert)`} />
-        <Card label="Klicks" value={String(click)} sub={`${pct(click, delivered)} der Zustellungen`} />
         <Card label="Antworten" value={String(reply)} sub={`${pct(reply, delivered)} Reply-Rate`} />
-        <Card label="KI-Checks" value={String(conv)} sub={`${pct(conv, delivered)} Conversion`} />
+        <Card label="Befund raus" value={String(befundSent)} sub={`aus ${reply} Antworten`} />
         <Card label="Abmeldungen" value={String(unsub)} sub={`${pct(unsub, delivered)}`} />
       </div>
 
-      <h2 style={{ fontSize: 18, fontWeight: 700, margin: "28px 0 12px" }}>A/B — qualifizierte Reaktion (Reply + Conversion)</h2>
-      <table style={{ width: "100%", borderCollapse: "collapse", background: "#fff", border: "1px solid #ececec", borderRadius: 14, overflow: "hidden" }}>
-        <thead><tr style={{ background: "#f5f5f5" }}>
-          {["Arm", "Versendet", "Öffnungsrate", "Klicks", "Antworten", "KI-Checks", "Quote"].map((h) => (
-            <th key={h} style={{ ...td, fontWeight: 700, fontSize: 12, textTransform: "uppercase", color: "#737373" }}>{h}</th>
-          ))}
-        </tr></thead>
-        <tbody>{armRow("link")}{armRow("reply")}</tbody>
-      </table>
+      <h2 style={{ fontSize: 18, fontWeight: 700, margin: "28px 0 12px" }}>Befund-Freigabe-Loop</h2>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: 14 }}>
+        <Card label="Wartet auf Freigabe" value={String(befundAwaiting)} sub="im Telegram-Loop" />
+        <Card label="Genehmigt (geht raus)" value={String(befundApproved)} />
+        <Card label="Versendet" value={String(befundSent)} />
+        <Card label="Abgelehnt" value={String(befundRejected)} sub={`Freigabequote ${pct(befundSent, befundDecided)}`} />
+      </div>
 
       <h2 style={{ fontSize: 18, fontWeight: 700, margin: "28px 0 12px" }}>Funnel</h2>
       <div style={{ background: "#fff", border: "1px solid #ececec", borderRadius: 14, padding: "16px 20px" }}>
@@ -121,6 +114,22 @@ export default async function OutreachDashboard({
           </div>
         ))}
       </div>
+
+      <h2 style={{ fontSize: 18, fontWeight: 700, margin: "28px 0 12px" }}>Sequenz-Fortschritt (versandfähige Leads)</h2>
+      <table style={tableStyle}>
+        <thead><tr style={{ background: "#f5f5f5" }}>{["Schritt", "Leads"].map((h) => (
+          <th key={h} style={{ ...td, fontWeight: 700, fontSize: 12, textTransform: "uppercase", color: "#737373" }}>{h}</th>
+        ))}</tr></thead>
+        <tbody>
+          {["0", "1", "2", "3", "4"].map((s) => (
+            <tr key={s}>
+              <td style={td}>{SEQ_LABEL[s]}</td>
+              <td style={{ ...td, fontWeight: 700 }}>{seq[s] || 0}</td>
+            </tr>
+          ))}
+          {Object.keys(seq).length === 0 && <tr><td style={td} colSpan={2}>Noch keine versandfähigen Leads.</td></tr>}
+        </tbody>
+      </table>
 
       <h2 style={{ fontSize: 18, fontWeight: 700, margin: "28px 0 12px" }}>Buckets (welcher Befund antwortet)</h2>
       <table style={tableStyle}>
@@ -143,7 +152,7 @@ export default async function OutreachDashboard({
       <h2 style={{ fontSize: 18, fontWeight: 700, margin: "28px 0 12px" }}>Anreicherung & Status</h2>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 6 }}>
         {Object.entries(enrich).sort((a, b) => b[1] - a[1]).map(([s, n]) => (
-          <span key={s} style={chip}><strong>{n}</strong> <span style={{ color: "#737373" }}>{s === "ready_v3" ? "Spiegel-Copy (v3)" : s}</span></span>
+          <span key={s} style={chip}><strong>{n}</strong> <span style={{ color: "#737373" }}>{s === "ready_v3" ? "Spiegel-Copy (v3)" : s === "unreachable" ? "ausgeschlossen (nicht erreichbar)" : s}</span></span>
         ))}
         {Object.entries(status).sort((a, b) => b[1] - a[1]).map(([s, n]) => (
           <span key={s} style={chip}><strong>{n}</strong> <span style={{ color: "#737373" }}>{s}</span></span>

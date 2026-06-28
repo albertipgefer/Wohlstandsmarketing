@@ -387,6 +387,40 @@ export async function enrichStatusCounts(): Promise<Record<string, number>> {
   }
 }
 
+/** Befund-Freigabe-Loop: Entwürfe je Status (awaiting/revising/approved/sent/rejected). */
+export async function pendingReplyStats(): Promise<Record<string, number>> {
+  if (!ready()) return {};
+  try {
+    const r = await fetch(`${URL}/rest/v1/outreach_pending_replies?select=status`, { headers: headers() });
+    if (!r.ok) return {};
+    const rows = (await r.json()) as { status: string }[];
+    const out: Record<string, number> = {};
+    for (const row of rows) out[row.status] = (out[row.status] || 0) + 1;
+    return out;
+  } catch {
+    return {};
+  }
+}
+
+/** Verteilung der versandfähigen Leads über die Sequenz-Schritte (0=Erstkontakt … 4=letzte). */
+export async function sequenceDistribution(): Promise<Record<string, number>> {
+  if (!ready()) return {};
+  try {
+    const q = `select=sequence_step&status=in.(active,paused)&hook_status=eq.ready`;
+    const r = await fetch(`${URL}/rest/v1/outreach_prospects?${q}`, { headers: headers() });
+    if (!r.ok) return {};
+    const rows = (await r.json()) as { sequence_step: number }[];
+    const out: Record<string, number> = {};
+    for (const row of rows) {
+      const k = String(row.sequence_step ?? 0);
+      out[k] = (out[k] || 0) + 1;
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}
+
 /* ─────────────────── Pending Replies (Befund-Freigabe-Loop) ─────────────────── */
 
 export async function insertPendingReply(p: Partial<PendingReply>): Promise<string | null> {

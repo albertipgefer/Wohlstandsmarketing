@@ -294,7 +294,40 @@ export default function LocationCheckTool() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl">
+    <>
+      {/* HERO — nur in der Eingabephase. Ab Score/Kontaktdaten bewusst ausgeblendet. */}
+      {phase === "qualify" && (
+        <div className="mx-auto mb-10 max-w-3xl text-center">
+          <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white/80 px-4 py-1.5 text-[11px] font-medium tracking-wide text-[var(--text-muted)] shadow-[0_4px_20px_-6px_rgba(10,10,10,0.08)] backdrop-blur">
+            <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
+            <span className="font-semibold text-[var(--accent)]">Für Eventlocations</span>
+            <span className="text-[var(--text-subtle)]">·</span>
+            Fokus Firmenfeiern
+          </span>
+          <h1
+            className="mt-6 font-[family-name:var(--font-display)] font-black leading-[1.04] tracking-[-0.03em] text-[var(--text)]"
+            style={{ fontSize: "clamp(2rem, 5.2vw, 3.75rem)" }}
+          >
+            Wird deine Location gefunden, wenn Firmen einen Ort für ihre{" "}
+            <span className="font-[family-name:var(--font-serif)] font-normal italic text-[var(--accent)]">
+              Feier
+            </span>{" "}
+            suchen?
+          </h1>
+          <p className="mx-auto mt-6 max-w-2xl text-[15px] leading-relaxed text-[var(--text-muted)] md:text-[17px]">
+            Mach den kostenlosen Check und sieh in unter 24 Stunden, wie sichtbar deine
+            Location für ChatGPT, Google und Co. ist. Wenn ihr Firmenfeiern macht, bauen
+            wir dir gratis einen Webseiten-Prototyp deiner Location dazu.
+          </p>
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[12px] text-[var(--text-muted)]">
+            <span className="flex items-center gap-1.5"><span className="text-emerald-500">✓</span> 100 % kostenlos</span>
+            <span className="flex items-center gap-1.5"><span className="text-emerald-500">✓</span> Ergebnis in unter 24 h</span>
+            <span className="flex items-center gap-1.5"><span className="text-emerald-500">✓</span> Echte Live-Analyse</span>
+          </div>
+        </div>
+      )}
+
+      <div className="mx-auto w-full max-w-2xl">
       {/* QUALIFY — dezenter Korrektheits-Hinweis */}
       {phase === "qualify" && (
         <p className="mb-4 rounded-2xl border border-[var(--border)] bg-[var(--bg)] px-4 py-3 text-center text-[12.5px] leading-relaxed text-[var(--text-muted)]">
@@ -590,6 +623,7 @@ export default function LocationCheckTool() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+      </div>
+    </>
   );
 }

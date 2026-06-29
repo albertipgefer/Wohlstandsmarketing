@@ -379,13 +379,7 @@ export async function POST(req: NextRequest) {
       // Location-Leads bekommen IMMER sofort eine High-Prio-Anruf-Aufgabe (fällig
       // heute) mit Meta-Hinweis + was der Lead erhalten hat.
       priorityTask: isLocationCheck
-        ? `🔴 ${wantsPrototype ? "Termin ausmachen + Prototyp bauen" : "Termin ausmachen"}: ${locationName || `${firstName} ${lastName}`} (Meta-Ads-Lead). ` +
-          `Quelle: Eventlocation-Check (Meta Paid Ads). ` +
-          `Erhalten: KI-Sichtbarkeits-Check${
-            wantsPrototype
-              ? " + Webseiten-Prototyp (bauen & in 24 h liefern)"
-              : " (kein Prototyp — kein Fit)"
-          }. Firmenfeiern: ${fit ? "Ja" : "Nein"} · Score ${result.score}/100.`
+        ? `🔴 ${wantsPrototype ? "Termin ausmachen + Prototyp bauen" : "Termin ausmachen"}`
         : undefined,
       noteLines: [
         ...(isLocationCheck

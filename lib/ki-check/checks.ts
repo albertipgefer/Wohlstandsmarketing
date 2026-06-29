@@ -1086,11 +1086,16 @@ export function extractContentAssets(
     const logo = absolutize(logoSrc, origin);
     if (logo) assets.logoUrl = logo;
 
-    // Marken-Farbe
-    const themeColor =
+    // Marken-Farbe: nur echte Akzentfarben übernehmen. Reines Weiß/Schwarz ist
+    // KEINE Markenfarbe (oft theme-color der UI) → ignorieren, damit die Pipeline
+    // auf die Standard-Markenfarbe (dunkles Blau) zurückfallen kann.
+    const themeColorRaw =
       $('meta[name="theme-color"]').attr("content")?.trim() ||
       $('meta[name="msapplication-TileColor"]').attr("content")?.trim();
-    if (themeColor && HEX_RE.test(themeColor)) assets.accentColor = themeColor;
+    if (themeColorRaw && HEX_RE.test(themeColorRaw)) {
+      const norm = themeColorRaw.toLowerCase().replace(/^#([0-9a-f])([0-9a-f])([0-9a-f])$/, "#$1$1$2$2$3$3");
+      if (norm !== "#ffffff" && norm !== "#000000") assets.accentColor = themeColorRaw;
+    }
 
     // Bilder: og:image zuerst, dann inhaltliche <img> (ohne Icons/Logos), dedupe.
     const images: string[] = [];

@@ -421,7 +421,8 @@ export async function POST(req: NextRequest) {
         phone,
         logoUrl: a.logoUrl,
         accentColor: a.accentColor,
-        photoUrls: a.imageUrls,
+        // Bewusst KEINE Kundenbilder in den Prototyp (Albert-Vorgabe): das Template
+        // nutzt seine eigenen, hochwertigen Platzhalter/Glow statt fremder Fotos.
         social: a.social,
         about: a.aboutText,
         services: a.services,

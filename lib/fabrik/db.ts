@@ -110,6 +110,22 @@ export async function createEventProject(input: EventProjectInput): Promise<stri
   return rows?.[0]?.id ?? null;
 }
 
+/** Liest den aktuellen Status eines Fabrik-Projekts (für Doppelklick-Schutz). */
+export async function getEventProjectStatus(projectId: string): Promise<string | null> {
+  if (!fabrikDbReady()) return null;
+  try {
+    const res = await fetch(
+      `${SUPA_URL}/rest/v1/factory_projects?id=eq.${projectId}&select=status`,
+      { headers: headers() },
+    );
+    if (!res.ok) return null;
+    const rows = (await res.json()) as Array<{ status?: string }>;
+    return rows?.[0]?.status ?? null;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Stösst die Build-Pipeline für ein Projekt an (GitHub repository_dispatch).
  * @returns true bei erfolgreichem Dispatch.

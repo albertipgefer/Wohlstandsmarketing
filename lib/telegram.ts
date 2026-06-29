@@ -228,7 +228,7 @@ export function metaAdsTelegramConfig(): { token?: string; chatId?: string } {
 /** Schickt eine formatierte Lead-Benachrichtigung an den hinterlegten Telegram-Chat. */
 export async function notifyNewLead(
   n: LeadNotification,
-  opts?: { token?: string; chatId?: string },
+  opts?: { token?: string; chatId?: string; buttons?: InlineButton[][] },
 ): Promise<void> {
   const token = opts?.token || process.env.TELEGRAM_BOT_TOKEN;
   const chatId = opts?.chatId || process.env.TELEGRAM_CHAT_ID;
@@ -265,6 +265,7 @@ export async function notifyNewLead(
       text,
       parse_mode: "HTML",
       disable_web_page_preview: true,
+      ...(opts?.buttons && opts.buttons.length ? { reply_markup: { inline_keyboard: opts.buttons } } : {}),
     }),
   });
 }

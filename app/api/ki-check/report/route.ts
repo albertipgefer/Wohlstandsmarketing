@@ -8,7 +8,7 @@ import type { KiCheckResult, PillarResult } from "@/lib/ki-check/types";
 import { syncLeadToClose } from "@/lib/close";
 import { getProspectByEmail, updateProspect, logEvent } from "@/lib/outreach-db";
 import { sendOutreachTelegram, notifyNewLead, metaAdsTelegramConfig } from "@/lib/telegram";
-import { spawnEventPrototype, autoPrototypeEnabled } from "@/lib/fabrik/db";
+import { createEventProject, autoPrototypeEnabled } from "@/lib/fabrik/db";
 
 export const runtime = "nodejs";
 // Mehrere externe Calls (2x Resend, Close, Telegram, optional Fabrik-Bridge) → mehr Zeit geben.
@@ -379,7 +379,7 @@ export async function POST(req: NextRequest) {
       // Location-Leads bekommen IMMER sofort eine High-Prio-Anruf-Aufgabe (fällig
       // heute) mit Meta-Hinweis + was der Lead erhalten hat.
       priorityTask: isLocationCheck
-        ? `🔴 Meta-Ads-Lead anrufen — ${locationName || `${firstName} ${lastName}`}. ` +
+        ? `🔴 ${wantsPrototype ? "Termin ausmachen + Prototyp bauen" : "Termin ausmachen"}: ${locationName || `${firstName} ${lastName}`} (Meta-Ads-Lead). ` +
           `Quelle: Eventlocation-Check (Meta Paid Ads). ` +
           `Erhalten: KI-Sichtbarkeits-Check${
             wantsPrototype
@@ -407,6 +407,33 @@ export async function POST(req: NextRequest) {
     console.warn("Close-Sync Exception:", e);
   }
 
+  // Event-Prototyp VORBEREITEN: aus dem Lead ein Fabrik-Projekt anlegen (Inhalte/
+  // Assets sichern) — aber NICHT automatisch bauen. Der Build wird bewusst erst per
+  // Telegram-Button ausgelöst (volle Kontrolle pro Lead). Gekapselt, blockiert nie.
+  let fabrikProjectId: string | null = null;
+  if (wantsPrototype && autoPrototypeEnabled()) {
+    try {
+      const a = result.assets || {};
+      fabrikProjectId = await createEventProject({
+        company: locationName || a.brandName || `${firstName} ${lastName}`,
+        city: result.answers.city || undefined,
+        email,
+        phone,
+        logoUrl: a.logoUrl,
+        accentColor: a.accentColor,
+        photoUrls: a.imageUrls,
+        social: a.social,
+        about: a.aboutText,
+        services: a.services,
+        sourceUrl: result.normalizedUrl,
+        kiScore: result.score,
+        closeLeadId,
+      });
+    } catch (e) {
+      console.warn("Event-Projekt anlegen fehlgeschlagen:", e);
+    }
+  }
+
   // 3b) Eventlocation-Lead: Sofort-Push an den WSMMetaAdsLeadsBot mit Deep-Link
   //     in den frisch angelegten Close-Lead. Gekapselt — darf den Report nie blockieren.
   if (isLocationCheck) {
@@ -422,13 +449,20 @@ export async function POST(req: NextRequest) {
             `🔗 ${result.normalizedUrl}`,
             `🎉 Firmenfeiern: ${fit ? "Ja" : "Nein"}`,
             wantsPrototype
-              ? "🛠️ PROTOTYP BAUEN — über website-fabrik, in 24 h liefern"
+              ? fabrikProjectId
+                ? "🛠️ Prototyp bereit zum Bauen — unten per Button starten (in 24 h liefern)"
+                : "🛠️ Prototyp gewünscht — über website-fabrik bauen"
               : "Kein Prototyp (kein Fit) — nur KI-Check",
           ],
           leadId: closeLeadId,
           hot: result.score < 60,
         },
-        metaAdsTelegramConfig(),
+        {
+          ...metaAdsTelegramConfig(),
+          buttons: fabrikProjectId
+            ? [[{ text: "🔨 Prototyp bauen", callback_data: `proto:${fabrikProjectId}` }]]
+            : undefined,
+        },
       );
     } catch (e) {
       console.warn("Telegram-Push (Meta Ads) Exception:", e);
@@ -458,34 +492,6 @@ export async function POST(req: NextRequest) {
     }
   } catch (e) {
     console.warn("Outreach-Conversion Exception:", e);
-  }
-
-  // 5) Auto-Prototyp (Event): aus dem Lead direkt ein Fabrik-Projekt anlegen + Build triggern.
-  //    Hinter Schalter FABRIK_ENABLE_AUTO_PROTOTYP (Default AUS) und gekapselt (fire-and-forget) —
-  //    darf den bereits versendeten Report niemals blockieren. Der fertige Prototyp-Link kommt
-  //    nach dem Build vom Fabrik-Telegram-Bot (build-preview.mjs), NICHT hier.
-  if (wantsPrototype && autoPrototypeEnabled()) {
-    try {
-      const a = result.assets || {};
-      const projectId = await spawnEventPrototype({
-        company: locationName || a.brandName || `${firstName} ${lastName}`,
-        city: result.answers.city || undefined,
-        email,
-        phone,
-        logoUrl: a.logoUrl,
-        accentColor: a.accentColor,
-        photoUrls: a.imageUrls,
-        social: a.social,
-        about: a.aboutText,
-        services: a.services,
-        sourceUrl: result.normalizedUrl,
-        kiScore: result.score,
-        closeLeadId,
-      });
-      if (projectId) console.log(`[fabrik] Event-Prototyp angestoßen: ${projectId}`);
-    } catch (e) {
-      console.warn("Auto-Prototyp Exception:", e);
-    }
   }
 
   return NextResponse.json({ ok: true });

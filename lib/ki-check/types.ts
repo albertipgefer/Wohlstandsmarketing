@@ -51,6 +51,28 @@ export interface CrawlError {
   message: string;
 }
 
+/**
+ * Inhalte/Assets, die beim Crawl von der Kundenseite extrahiert werden, um
+ * daraus automatisch eine personalisierte (Event-)Seite zu generieren.
+ * Alles optional + best-effort: fehlt etwas, degradiert das Template elegant.
+ * Bild-/Logo-URLs werden in der Pipeline nach Supabase Storage gespiegelt
+ * (kein Hotlinking), bevor sie in den Build gehen.
+ */
+export interface ContentAssets {
+  brandName?: string;
+  logoUrl?: string;
+  /** Markenfarbe (Hex) aus theme-color o. ä. */
+  accentColor?: string;
+  /** Kandidaten-Bild-URLs (absolut), grob nach Relevanz sortiert. */
+  imageUrls?: string[];
+  tagline?: string;
+  aboutText?: string;
+  services?: string[];
+  phone?: string;
+  email?: string;
+  social?: Record<string, string>;
+}
+
 export interface UserAnswers {
   url: string;
   city?: string;
@@ -83,6 +105,8 @@ export interface KiCheckResult {
   /** Errors die während des Crawls aufgetreten sind, aber nicht fatal waren */
   errors: CrawlError[];
   reportEmailSent?: boolean;
+  /** Best-effort extrahierte Inhalte/Assets der Kundenseite (für Prototyp-Generierung). */
+  assets?: ContentAssets;
 }
 
 export interface ReportRequest {

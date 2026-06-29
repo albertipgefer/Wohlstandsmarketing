@@ -9,6 +9,7 @@ import type {
   PageReport,
   PageIssue,
   CrawlError,
+  ContentAssets,
 } from "./types";
 
 const FETCH_TIMEOUT_MS = 8_000;
@@ -1011,6 +1012,153 @@ export interface RawCheckOutput {
     pagesWithIssues: number;
   };
   errors: CrawlError[];
+  /** Best-effort extrahierte Inhalte/Assets der Startseite (für Prototyp-Generierung). */
+  assets: ContentAssets;
+}
+
+// ─────────────────────────────────────────────────────────────
+// Content-/Asset-Extraktion (best-effort, fuer automatische Prototyp-Generierung)
+// Nutzt die bereits geladene Startseite ($home) — KEIN zusaetzlicher Fetch.
+// ─────────────────────────────────────────────────────────────
+const HEX_RE = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+const ICONISH_RE = /(favicon|sprite|icon|logo|placeholder|pixel|spinner|loading|1x1|blank)/i;
+
+function absolutize(href: string | undefined, origin: string): string | undefined {
+  if (!href) return undefined;
+  const h = href.trim();
+  if (!h || h.startsWith("data:")) return undefined;
+  try {
+    return new URL(h, origin).href;
+  } catch {
+    return undefined;
+  }
+}
+
+function clipText(s: string | undefined, max: number): string | undefined {
+  if (!s) return undefined;
+  const v = s.replace(/\s+/g, " ").trim();
+  if (!v) return undefined;
+  return v.length > max ? v.slice(0, max - 1).trim() + "…" : v;
+}
+
+/** Extrahiert Logo, Marken-Farbe, Bilder, Texte, Kontakt + Social aus der Startseite. */
+export function extractContentAssets(
+  $: cheerio.CheerioAPI,
+  origin: string,
+): ContentAssets {
+  const assets: ContentAssets = {};
+  try {
+    // Markenname: og:site_name → Organization-Schema → <title> erstes Segment.
+    const ogSite = $('meta[property="og:site_name"]').attr("content")?.trim();
+    let schemaName: string | undefined;
+    $('script[type="application/ld+json"]').each((_, el) => {
+      if (schemaName) return;
+      try {
+        const parsed = JSON.parse($(el).text());
+        const find = (obj: unknown): string | undefined => {
+          if (!obj || typeof obj !== "object") return undefined;
+          if (Array.isArray(obj)) {
+            for (const x of obj) { const r = find(x); if (r) return r; }
+            return undefined;
+          }
+          const o = obj as Record<string, unknown>;
+          const t = o["@type"];
+          const isOrg = (typeof t === "string" && /Organization|LocalBusiness/i.test(t)) ||
+            (Array.isArray(t) && t.some((x) => typeof x === "string" && /Organization|LocalBusiness/i.test(x)));
+          if (isOrg && typeof o.name === "string") return o.name;
+          if (o["@graph"]) return find(o["@graph"]);
+          return undefined;
+        };
+        schemaName = find(parsed);
+      } catch { /* ignore */ }
+    });
+    const titleFirst = ($("title").first().text() || "").split(/[|–—\-·•]/)[0].trim();
+    assets.brandName = clipText(ogSite || schemaName || titleFirst, 80);
+
+    // Logo
+    const logoSrc =
+      $('img[alt*="logo" i]').first().attr("src") ||
+      $('img[class*="logo" i]').first().attr("src") ||
+      $('img[id*="logo" i]').first().attr("src") ||
+      $('header img').first().attr("src") ||
+      $('a[href="/"] img').first().attr("src") ||
+      $('meta[property="og:logo"]').attr("content");
+    const logo = absolutize(logoSrc, origin);
+    if (logo) assets.logoUrl = logo;
+
+    // Marken-Farbe
+    const themeColor =
+      $('meta[name="theme-color"]').attr("content")?.trim() ||
+      $('meta[name="msapplication-TileColor"]').attr("content")?.trim();
+    if (themeColor && HEX_RE.test(themeColor)) assets.accentColor = themeColor;
+
+    // Bilder: og:image zuerst, dann inhaltliche <img> (ohne Icons/Logos), dedupe.
+    const images: string[] = [];
+    const pushImg = (u?: string) => {
+      const abs = absolutize(u, origin);
+      if (!abs) return;
+      if (/\.svg(\?|$)/i.test(abs)) return;
+      if (ICONISH_RE.test(abs)) return;
+      if (abs === assets.logoUrl) return;
+      if (!images.includes(abs)) images.push(abs);
+    };
+    pushImg($('meta[property="og:image"]').attr("content"));
+    $("main img, section img, figure img, article img, .hero img, [class*='gallery' i] img").each((_, el) => {
+      if (images.length >= 10) return;
+      pushImg($(el).attr("src") || $(el).attr("data-src"));
+    });
+    if (!images.length) {
+      $("img").each((_, el) => { if (images.length < 8) pushImg($(el).attr("src") || $(el).attr("data-src")); });
+    }
+    if (images.length) assets.imageUrls = images.slice(0, 8);
+
+    // Texte: Tagline + Über-uns + Leistungen (best-effort).
+    assets.tagline = clipText(
+      $('meta[name="description"]').attr("content") || $("h2").first().text(),
+      180,
+    );
+    const aboutEl = $('[id*="about" i], [class*="about" i], [id*="ueber" i], [class*="ueber" i], [id*="über" i], [class*="über" i]').first();
+    const aboutText = clipText(aboutEl.find("p").first().text() || aboutEl.text(), 600);
+    if (aboutText) assets.aboutText = aboutText;
+    const services: string[] = [];
+    $('[id*="service" i], [class*="service" i], [id*="leistung" i], [class*="leistung" i]').first()
+      .find("li, h3").each((_, el) => {
+        if (services.length >= 8) return;
+        const t = clipText($(el).text(), 80);
+        if (t && t.length >= 3 && !services.includes(t)) services.push(t);
+      });
+    if (services.length) assets.services = services;
+
+    // Kontakt
+    const tel = $('a[href^="tel:"]').first().attr("href");
+    if (tel) assets.phone = clipText(tel.replace(/^tel:/i, ""), 40);
+    const mail = $('a[href^="mailto:"]').first().attr("href");
+    if (mail) assets.email = clipText(mail.replace(/^mailto:/i, "").split("?")[0], 120);
+
+    // Social-Profile (volle URLs, ein Eintrag je Plattform)
+    const social: Record<string, string> = {};
+    const PLATFORMS: Record<string, RegExp> = {
+      instagram: /instagram\.com/i,
+      facebook: /facebook\.com/i,
+      linkedin: /linkedin\.com/i,
+      youtube: /youtube\.com|youtu\.be/i,
+      tiktok: /tiktok\.com/i,
+      x: /twitter\.com|(?:^|\.)x\.com/i,
+    };
+    $('a[href]').each((_, el) => {
+      const href = $(el).attr("href") || "";
+      for (const [key, re] of Object.entries(PLATFORMS)) {
+        if (!social[key] && re.test(href)) {
+          const abs = absolutize(href, origin);
+          if (abs) social[key] = abs;
+        }
+      }
+    });
+    if (Object.keys(social).length) assets.social = social;
+  } catch {
+    /* best-effort: bei Fehlern liefern wir, was bis dahin gesammelt wurde */
+  }
+  return assets;
 }
 
 export async function runAllChecks(rawUrl: string): Promise<RawCheckOutput | null> {
@@ -1061,6 +1209,13 @@ export async function runAllChecks(rawUrl: string): Promise<RawCheckOutput | nul
     title: $home("title").first().text().trim() || null,
     description: $home('meta[name="description"]').attr("content")?.trim() || null,
   };
+  // Inhalte/Assets der Startseite extrahieren (best-effort, kein zusaetzlicher Fetch).
+  let assets: ContentAssets = {};
+  try {
+    assets = extractContentAssets($home, origin);
+  } catch (e) {
+    errors.push({ context: "assets", message: e instanceof Error ? e.message : "unknown" });
+  }
 
   // 2) Seiten entdecken (Sitemap → Links)
   const urls = await discoverPages(origin, errors);
@@ -1122,5 +1277,6 @@ export async function runAllChecks(rawUrl: string): Promise<RawCheckOutput | nul
       pagesWithIssues,
     },
     errors,
+    assets,
   };
 }

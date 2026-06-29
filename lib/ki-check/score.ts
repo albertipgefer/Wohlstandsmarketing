@@ -144,6 +144,7 @@ export async function performKiCheck(
     pages: raw.pages,
     stats: raw.stats,
     errors: raw.errors,
+    assets: raw.assets,
   };
 
   cache.set(id, { data: result, expiresAt: Date.now() + TTL_MS });

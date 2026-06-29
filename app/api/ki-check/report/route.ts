@@ -8,8 +8,11 @@ import type { KiCheckResult, PillarResult } from "@/lib/ki-check/types";
 import { syncLeadToClose } from "@/lib/close";
 import { getProspectByEmail, updateProspect, logEvent } from "@/lib/outreach-db";
 import { sendOutreachTelegram, notifyNewLead, metaAdsTelegramConfig } from "@/lib/telegram";
+import { spawnEventPrototype, autoPrototypeEnabled } from "@/lib/fabrik/db";
 
 export const runtime = "nodejs";
+// Mehrere externe Calls (2x Resend, Close, Telegram, optional Fabrik-Bridge) → mehr Zeit geben.
+export const maxDuration = 30;
 
 function escapeHtml(s: string) {
   return s
@@ -455,6 +458,34 @@ export async function POST(req: NextRequest) {
     }
   } catch (e) {
     console.warn("Outreach-Conversion Exception:", e);
+  }
+
+  // 5) Auto-Prototyp (Event): aus dem Lead direkt ein Fabrik-Projekt anlegen + Build triggern.
+  //    Hinter Schalter FABRIK_ENABLE_AUTO_PROTOTYP (Default AUS) und gekapselt (fire-and-forget) —
+  //    darf den bereits versendeten Report niemals blockieren. Der fertige Prototyp-Link kommt
+  //    nach dem Build vom Fabrik-Telegram-Bot (build-preview.mjs), NICHT hier.
+  if (wantsPrototype && autoPrototypeEnabled()) {
+    try {
+      const a = result.assets || {};
+      const projectId = await spawnEventPrototype({
+        company: locationName || a.brandName || `${firstName} ${lastName}`,
+        city: result.answers.city || undefined,
+        email,
+        phone,
+        logoUrl: a.logoUrl,
+        accentColor: a.accentColor,
+        photoUrls: a.imageUrls,
+        social: a.social,
+        about: a.aboutText,
+        services: a.services,
+        sourceUrl: result.normalizedUrl,
+        kiScore: result.score,
+        closeLeadId,
+      });
+      if (projectId) console.log(`[fabrik] Event-Prototyp angestoßen: ${projectId}`);
+    } catch (e) {
+      console.warn("Auto-Prototyp Exception:", e);
+    }
   }
 
   return NextResponse.json({ ok: true });

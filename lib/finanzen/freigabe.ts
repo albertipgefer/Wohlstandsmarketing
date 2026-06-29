@@ -51,6 +51,29 @@ export async function getFreigabe(id: string): Promise<Freigabe | null> {
   }
 }
 
+/**
+ * Atomarer Claim vor dem Versand (Schutz gegen Doppelversand bei Telegram-
+ * Webhook-Retries): setzt status nur dann von "wartet" → "sende", wenn die
+ * Freigabe aktuell wirklich "wartet". Gibt die Zeile zurück, wenn DIESER Aufruf
+ * den Claim gewonnen hat; null, wenn schon jemand sendet/gesendet hat. So läuft
+ * sendeFreigabe garantiert höchstens einmal — der Kunde bekommt nie zwei Mails.
+ */
+export async function claimFreigabeZumSenden(id: string): Promise<Freigabe | null> {
+  if (!URL || !KEY || !id) return null;
+  try {
+    const r = await fetch(`${REST()}?id=eq.${encodeURIComponent(id)}&status=eq.wartet`, {
+      method: "PATCH",
+      headers: headers({ Prefer: "return=representation" }),
+      body: JSON.stringify({ status: "sende", updated_at: new Date().toISOString() }),
+    });
+    if (!r.ok) return null;
+    const rows = (await r.json()) as Freigabe[];
+    return rows[0] || null; // leer = Claim verloren (Retry/bereits in Arbeit)
+  } catch {
+    return null;
+  }
+}
+
 export async function updateFreigabe(id: string, fields: Partial<Freigabe>): Promise<Freigabe | null> {
   if (!URL || !KEY) return null;
   try {

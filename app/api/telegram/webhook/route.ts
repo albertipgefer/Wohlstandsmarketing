@@ -15,6 +15,7 @@ export const runtime = "nodejs";
 import { NextRequest, NextResponse } from "next/server";
 import {
   getFreigabe,
+  claimFreigabeZumSenden,
   updateFreigabe,
   findFreigabeWartetAnpassung,
   sendeFreigabe,
@@ -64,18 +65,31 @@ export async function POST(req: NextRequest) {
     const fg = await getFreigabe(id);
     if (!fg || !fg.telegram_message_id) return ok();
 
-    if (fg.status === "gesendet" || fg.status === "abgelehnt") {
-      await editFinanzenTelegram(fg.telegram_message_id, `Diese Freigabe ist bereits ${fg.status}.`);
+    if (fg.status === "gesendet" || fg.status === "abgelehnt" || fg.status === "sende") {
+      await editFinanzenTelegram(
+        fg.telegram_message_id,
+        fg.status === "sende" ? `Diese Freigabe wird gerade gesendet …` : `Diese Freigabe ist bereits ${fg.status}.`,
+      );
       return ok();
     }
 
     if (action === "ok") {
-      const res = await sendeFreigabe(fg);
+      // Atomar claimen (wartet → sende), BEVOR gesendet wird. Verliert dieser
+      // Aufruf den Claim (z.B. Telegram-Retry parallel), passiert nichts weiter
+      // → der Kunde bekommt garantiert nur eine Mail.
+      const claimed = await claimFreigabeZumSenden(id);
+      if (!claimed) {
+        await editFinanzenTelegram(fg.telegram_message_id, `Diese Freigabe wird gerade gesendet …`);
+        return ok();
+      }
+      const res = await sendeFreigabe(claimed);
       if (res.ok) {
         await updateFreigabe(id, { status: "gesendet" });
         await editFinanzenTelegram(fg.telegram_message_id, `✅ Gesendet an ${fg.empfaenger}\nBetreff: ${fg.betreff}`);
       } else {
-        await updateFreigabe(id, { status: "fehler", fehler: res.error || null });
+        // Versand fehlgeschlagen: zurück auf "wartet", damit Albert es erneut
+        // freigeben kann (Claim wird wieder möglich).
+        await updateFreigabe(id, { status: "wartet", fehler: res.error || null });
         await editFinanzenTelegram(fg.telegram_message_id, `⚠️ Senden fehlgeschlagen: ${res.error}`, freigabeButtons(id));
       }
     } else if (action === "edit") {

@@ -16,11 +16,22 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+/** Markenzeichen wie in der Dokument-Ansicht: Icon + „Wohlstandsmarketing". */
+function Brand() {
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 15, fontWeight: 700, letterSpacing: "-0.3px" }}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/icon.png" alt="Wohlstandsmarketing" width={24} height={24} style={{ width: 24, height: 24, borderRadius: 6, flexShrink: 0 }} />
+      <span>Wohlstands<span style={{ color: "#1663de" }}>marketing</span></span>
+    </span>
+  );
+}
+
 function ErrorView({ msg }: { msg: string }) {
   return (
     <main style={{ minHeight: "100vh", display: "grid", placeItems: "center", background: "#e9eaee", fontFamily: "var(--font-inter), system-ui, sans-serif", padding: "40px 20px" }}>
       <div style={{ background: "#fff", border: "1px solid #e4e4e7", borderRadius: 16, padding: "32px 28px", maxWidth: 420, textAlign: "center" }}>
-        <div style={{ fontSize: 14, fontWeight: 700 }}>WOHLSTANDS<span style={{ color: "#1663de" }}>MARKETING</span></div>
+        <div style={{ display: "flex", justifyContent: "center" }}><Brand /></div>
         <p style={{ fontSize: 15, color: "#52525b", marginTop: 16, lineHeight: 1.5 }}>{msg}</p>
       </div>
     </main>
@@ -68,7 +79,7 @@ export default async function PublicAngebotPage({
   return (
     <main className="ag-page" style={{ background: "#e9eaee", minHeight: "100vh", fontFamily: "var(--font-inter), system-ui, sans-serif" }}>
       <div className="ag-no-print" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 24px", background: "#fff", borderBottom: "1px solid #e4e4e7", position: "sticky", top: 0, zIndex: 10 }}>
-        <div style={{ fontSize: 14, fontWeight: 700 }}>WOHLSTANDS<span style={{ color: "#1663de" }}>MARKETING</span></div>
+        <Brand />
         <PrintButton />
       </div>
 

@@ -173,7 +173,9 @@ export type CloseSyncResult = {
  */
 function isHotLead(input: SyncLeadInput): boolean {
   if (input.source === "angebot") return true;
-  if (input.source === "cold-outreach") return true; // positive Cold-Antwort = sofort anrufen
+  // Cold-Antworten bewusst NICHT mehr HOT: jede positive Antwort bekommt ohnehin
+  // eine Befund-Follow-up-Mail (mit Freigabe), eine separate "sofort anrufen"-Task
+  // ist redundant und erzeugte bei Auto-/Abwesenheits-Antworten Fehlalarme.
   if (
     (input.source === "ki-check" || input.source === "location-check") &&
     typeof input.kiScore === "number" &&

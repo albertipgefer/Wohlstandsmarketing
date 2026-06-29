@@ -14,6 +14,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ImapFlow } from "imapflow";
 import nodemailer from "nodemailer";
+import { simpleParser } from "mailparser";
 import {
   getProspectByEmail, getProspectById, setStatusByEmail, logEvent,
   insertPendingReply, getApprovedDuePending, updatePendingReply,
@@ -23,6 +24,7 @@ import {
 } from "@/lib/telegram";
 import { buildBefund, befundButtons, befundPreview } from "@/lib/outreach-befund";
 import { syncLeadToClose } from "@/lib/close";
+import { claudeText } from "@/lib/llm";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -55,6 +57,82 @@ function extractReplyText(raw: string): string {
     if (out.length >= 12) break;
   }
   return out.join(" ").replace(/\s{2,}/g, " ").slice(0, 600);
+}
+
+/**
+ * Klartext-Body aus einer geparsten Mail, Zitate/Signatur-Reste raus.
+ * Stoppt an der zitierten Originalmail ("Am ... schrieb", "Von:", Trennlinien),
+ * damit unser eigener Footer (enthält "Abmelden") die Bewertung nicht verfälscht.
+ */
+function cleanBody(text: string): string {
+  const out: string[] = [];
+  for (const line of (text || "").split(/\r?\n/)) {
+    if (/^\s*>/.test(line)) continue;
+    if (/^\s*(Am .*schrieb|On .*wrote|Von:|Gesendet:|-{3,}\s*Urspr|_{5,})/i.test(line)) break;
+    out.push(line);
+  }
+  return out.join("\n").replace(/[ \t]{2,}/g, " ").replace(/\n{3,}/g, "\n\n").trim();
+}
+
+/**
+ * Harte Header-Signale für automatische Antworten (RFC 3834 u. a.). Wenn eines
+ * davon gesetzt ist, ist es sicher eine Maschine, keine echte Person — dann
+ * sparen wir uns die KI-Klassifizierung.
+ */
+function isAutoHeader(raw: string): boolean {
+  return (
+    /(^|\n)auto-submitted:\s*auto-(replied|generated|notified)/i.test(raw) ||
+    /(^|\n)x-autoreply:/i.test(raw) ||
+    /(^|\n)x-autorespond:/i.test(raw) ||
+    /(^|\n)x-auto-response-suppress:/i.test(raw) ||
+    /(^|\n)precedence:\s*(auto_reply|bulk|junk)/i.test(raw) ||
+    /(^|\n)return-path:\s*<>\s*$/im.test(raw)
+  );
+}
+
+/** Keyword-Fallback (nur falls die KI nicht verfügbar ist). */
+function looksNegativeKw(body: string): boolean {
+  return /(kein(en)? interesse|nicht interessiert|kein(en)? bedarf|bitte keine|keine weiteren|bitte.{0,12}(abmelden|austragen)|nehmen sie mich (raus|heraus)|entfernen sie|streichen sie|nein\s*,?\s*danke|kein\s*danke|nicht kontaktieren|unsubscribe|abbestellen)/.test(body.toLowerCase());
+}
+function looksAutoKw(subject: string, body: string): boolean {
+  const s = (subject || "").toLowerCase();
+  const b = (body || "").toLowerCase();
+  const re = /(abwesen|out[\s-]?of[\s-]?office|automatische?\s+(antwort|benachrichtigung)|automatic\s+reply|auto[-\s]?reply|betriebsferien|urlaub|ferien|nicht\s+im\s+büro|außer\s+haus|wieder\s+(für\s+sie\s+)?(da|erreichbar)\s+ab|erreichen\s+sie\s+uns\s+wieder)/i;
+  return re.test(s) || re.test(b);
+}
+
+type Intent = "positive" | "negative" | "auto" | "irrelevant";
+
+/**
+ * Bestimmt die Absicht einer Antwort. Generalisiert (kein starres Muster):
+ *   1) Harte Auto-Header  -> "auto" (sicher, ohne KI)
+ *   2) KI-Klassifizierung des echten Body-Textes (Haiku)
+ *   3) Keyword-Fallback, falls die KI nicht erreichbar ist
+ * Nur "positive" löst Lead + Befund aus.
+ */
+async function classifyIntent(subject: string, body: string, raw: string): Promise<Intent> {
+  if (isAutoHeader(raw)) return "auto";
+
+  const prompt =
+    `Eine Person hat auf eine geschäftliche Akquise-Mail geantwortet. ` +
+    `Klassifiziere ihre Absicht in GENAU EIN Wort:\n` +
+    `- positive: echte, persönliche Antwort mit Interesse, Rückfrage oder Gesprächsbereitschaft\n` +
+    `- negative: Absage, kein Interesse, Bitte um Abmeldung\n` +
+    `- auto: automatische Antwort (Abwesenheit, Urlaub, Out of Office, Eingangsbestätigung, automatische Weiterleitung), also nichts, was inhaltlich auf unsere Mail eingeht\n` +
+    `- irrelevant: themenfremd, leer, unverständlich oder eine technische Benachrichtigung\n\n` +
+    `Betreff: ${subject || "(kein)"}\n` +
+    `Nachricht: ${(body || "(leer)").slice(0, 1200)}\n\n` +
+    `Antworte nur mit einem Wort: positive, negative, auto oder irrelevant.`;
+  const out = (await claudeText(prompt, { maxTokens: 8 }))?.toLowerCase() || "";
+  if (out.includes("positive")) return "positive";
+  if (out.includes("negative")) return "negative";
+  if (out.includes("auto")) return "auto";
+  if (out.includes("irrelevant")) return "irrelevant";
+
+  // Fallback ohne KI
+  if (looksNegativeKw(body)) return "negative";
+  if (looksAutoKw(subject, body)) return "auto";
+  return "positive";
 }
 
 /** Versendet genehmigte Befund-Entwürfe (status=approved, send_at erreicht) als Thread-Antwort. */
@@ -104,7 +182,7 @@ export async function GET(req: NextRequest) {
 
   // 2) Postfächer pollen (Fenster knapp über dem 30-Min-Pinger -> wenig Überlappung)
   const since = new Date(Date.now() - 50 * 60 * 1000);
-  let replies = 0, bounces = 0, scanned = 0;
+  let replies = 0, bounces = 0, scanned = 0, autoReplies = 0;
 
   for (const ib of inboxes) {
     const client = new ImapFlow({
@@ -141,14 +219,41 @@ export async function GET(req: NextRequest) {
 
           const p = from ? await getProspectByEmail(from) : null;
           if (p && !["replied", "converted", "unsubscribed", "bounced"].includes(p.status)) {
-            // WICHTIG: nur den eigentlichen Antworttext prüfen, NICHT die ganze Roh-Mail.
-            // Unsere zitierte Originalmail enthält im Footer das Wort "Abmelden" — auf raw
-            // angewendet würde jede positive Antwort fälschlich als negativ gewertet.
-            const replyText = extractReplyText(raw);
-            const isNegative =
-              /(kein(en)? interesse|nicht interessiert|kein(en)? bedarf|bitte keine|keine weiteren|bitte.{0,12}(abmelden|austragen)|nehmen sie mich (raus|heraus)|entfernen sie|streichen sie|nein\s*,?\s*danke|kein\s*danke|nicht kontaktieren|unsubscribe|abbestellen)/.test(replyText.toLowerCase());
+            // Echten Klartext-Body holen (mailparser); Fallback auf den groben
+            // Header-Filter, falls das Parsen scheitert. Vorher kam hier teils
+            // reiner Header-Müll an, wodurch jede Bewertung des Inhalts versagte.
+            let replyText = "";
+            try {
+              if (msg.source) {
+                const parsed = await simpleParser(msg.source);
+                replyText = cleanBody(parsed.text || "");
+              }
+            } catch { /* Fallback unten */ }
+            if (!replyText) replyText = extractReplyText(raw);
+            replyText = replyText.slice(0, 600);
 
-            if (isNegative) {
+            // Absicht generalisiert bestimmen: Auto-Header -> KI (Haiku) -> Keyword-Fallback.
+            const intent = await classifyIntent(subject, replyText, raw);
+
+            // Automatische/themenfremde Antwort: NICHT als positive Antwort werten.
+            // Kein Statuswechsel (Sequenz läuft normal weiter), kein Lead, kein
+            // Befund, keine Task. Nur eine ruhige Telegram-Info, und die nur für
+            // frische Mails (Anti-Spam: dieselbe Mail wird im 50-Min-Scanfenster
+            // sonst mehrfach getroffen, weil der Status unverändert bleibt).
+            if (intent === "auto" || intent === "irrelevant") {
+              const msgTs = msg.envelope?.date ? new Date(msg.envelope.date).getTime() : 0;
+              const fresh = msgTs > 0 && Date.now() - msgTs < 15 * 60 * 1000;
+              if (fresh) {
+                autoReplies++;
+                await sendOutreachTelegram(
+                  `ℹ️ <b>Automatische Antwort</b> von ${p.company || from}\n` +
+                  `Nicht als Antwort gewertet, die Sequenz läuft normal weiter.`,
+                );
+              }
+              continue;
+            }
+
+            if (intent === "negative") {
               await setStatusByEmail(from, "unsubscribed");
               await logEvent(p.id, "unsubscribe", { meta: { via: "reply_negative" } });
               await sendOutreachTelegram(
@@ -208,5 +313,5 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  return NextResponse.json({ ok: true, scanned, replies, bounces, befundeSent });
+  return NextResponse.json({ ok: true, scanned, replies, autoReplies, bounces, befundeSent });
 }

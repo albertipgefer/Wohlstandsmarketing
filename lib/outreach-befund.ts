@@ -10,7 +10,7 @@ import { claudeText } from "@/lib/llm";
 import type { Prospect } from "@/lib/outreach-db";
 import type { InlineButton } from "@/lib/telegram";
 
-const TERMIN = "https://tidycal.com/albertipgefer/erstgespraech-mit-wohlstandsmarketing-2";
+const TERMIN = "https://tidycal.com/albertipgefer/kostenloses-strategiegespraech-immobilienbranch-30min";
 
 const escHtml = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
@@ -44,7 +44,9 @@ function greeting(p: Partial<Prospect>): string {
 
 function ctaBlock(): string {
   return (
-    `\n\nWollen wir das kurz telefonisch durchgehen? Ich zeige es Ihnen in zehn Minuten.\n` +
+    `\n\nWollen wir gemeinsam in einem kostenlosen Strategiegespräch über Ihre Website schauen? ` +
+    `In rund 30 Minuten zeige ich Ihnen konkret, wo Ihnen verkaufsbereite Eigentümer entgehen ` +
+    `und wie Sie diese früher erreichen. Sie nehmen auf jeden Fall ein paar sofort umsetzbare Ansätze mit.\n` +
     `Hier können Sie direkt einen Termin wählen: ${TERMIN}\n` +
     `Oder schreiben Sie mir einfach eine Nummer, dann melde ich mich bei Ihnen.\n\n` +
     `Beste Grüße\nAlbert Ipgefer, Wohlstandsmarketing`
